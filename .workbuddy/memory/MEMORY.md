@@ -1,7 +1,8 @@
 ﻿# ZlPhotoEdit — 项目速查
 
-> 只留**速查**。规格在 `docs/`（架构规划 / **实现铁律** / 功能覆盖审计 / 曲线 / 画布与文件），
-> 阶段记录在 `.workbuddy/memory/YYYY-MM-DD.md`。**动任何模块前先读 `实现铁律.md` 对应章。**
+> 只留**速查**。规格在 `docs/`（架构规划 / **实现铁律** / 构建与运行 / 自检与验证 / 图标体系 /
+> 实现要点详解 / 功能覆盖审计 / 曲线 / 画布与文件），阶段记录在 `.workbuddy/memory/YYYY-MM-DD.md`。
+> **动任何模块前先读 `实现铁律.md` 对应章。** README 只做功能简介，别往里塞实现细节。
 
 **范围**：Qt 5.15.16 + MSVC 2022 轻量图片编辑器，**纯 Qt、严禁第三方库**。多图层 + 16 混合模式、
 矩形/椭圆/羽化选区、14 个工具、调整与滤镜、旋转/翻转/裁剪/缩放、撤销重做、打开为图层、
@@ -14,7 +15,13 @@ Qt `C:\Qt\5.15.16-VS2022-rel`（Release-only）、VS 2022 Pro。Git Bash 先 `so
 **双路径都要编过**：qmake+nmake、cmake+ninja。
 ★ **`.pro` 不能有 BOM**；**`.cpp/.h/.md` 必须有 BOM**。
 ★ `/utf-8` 只能用 `target_compile_options`；报错"分散、原因各异"时**先怀疑全局因素**。
-★ **qmake 增量会掩盖错误** → 提交前必须 CMake `--clean-first` 全量。
+★ **qmake 增量会掩盖错误** → **收口时**用 CMake `--clean-first` 全量兜底（与全量自检同频，别每改一处就跑）。
+
+## 版本控制
+本地 git 仓库（`git init` 于 2026-09-21，分支 **`main`**）。仓库级账户
+`user.name=邹磊` / `user.email=zoulei.csu@gmail.com`；`core.autocrlf=false`（保住 `.sh` 的 LF）。
+`.gitignore` 已挡住 `build*/`、`Makefile*`、`debug/`、`release/`、`.qmake.stash`、`.buildlog/`。
+★ `.workbuddy/memory/` **入库**（是项目笔记，不是缓存）；`.buildlog/` 不入库。
 
 ## 架构
 `ui → tools → commands → core → engine` 单向；engine 不碰 QtWidgets、全无副作用纯函数；
