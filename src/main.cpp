@@ -1,0 +1,253 @@
+﻿// ============================================================================
+//  main.cpp —— 程序入口
+// ----------------------------------------------------------------------------
+//  这里做的事情看似很少，但每一件的顺序都有讲究：
+//
+//    1. 高 DPI 属性      —— 必须在 QApplication 构造**之前**设置
+//    2. 组织名/应用名    —— 必须在读 QSettings 之前设置
+//    3. 编码设置         —— 必须在任何中文字符串比较/转换之前
+//    4. QApplication     —— 之后才能用图形相关的一切
+//    5. 样式与字体       —— 影响后续创建的所有控件
+//    6. MainWindow       —— 最后创建主窗口
+//
+//  ★ 本文件是 Qt5/Qt6 版本判断的合法位置之一 ★
+//    另一个是 src/compat/QtCompat.h。除这两处外，
+//    工程内不应出现任何 #if QT_VERSION 分支。
+// ============================================================================
+
+#include "compat/QtCompat.h"
+#include "ui/MainWindow.h"
+
+#include <QApplication>
+#include <QSettings>
+#include <QFont>
+#include <QFontDatabase>
+#include <QString>
+// Qt5 与 Qt6 都把 QTextCodec 放在这里（Qt6 需要 Qt5Compat 模块；
+// 本机是 Qt5，所以在本文件的 Qt5 分支里使用）。
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <QTextCodec>
+#endif
+
+#include <QImageReader>
+#include <QImageWriter>
+#include <QDebug>
+#include <QByteArray>
+#include <QStringList>
+
+#include <cstdio>
+
+// ============================================================================
+//  应用标识
+// ============================================================================
+//
+//  ★ 为什么要显式设置 ★
+//
+//    QSettings 的位置由"组织名 + 应用名"决定：
+//      Windows 注册表：HKEY_CURRENT_USER\Software\<组织>\<应用>
+//      Linux/Mac：~/.config/<组织>/<应用>.conf
+//
+//    如果不设置，QSettings 会用一个空的/默认的路径 ——
+//    结果是"设置能存能读，但下次启动读不到"，或者写入了一个
+//    非常奇怪的位置（例如注册表里的 Software\Unknown Organization）。
+//
+//    这个 bug 的表现是"窗口大小、工具参数每次启动都回到默认值"，
+//    而查起来又很费劲，所以必须在 main 里就设好。
+//
+//  ★ 这两个字符串一旦发布就不能改 ★
+//    改了会让用户丢失全部既有设置（相当于"重置"）。
+// ============================================================================
+
+namespace {
+constexpr const char *kOrganizationName = "ZlStudio";
+constexpr const char *kApplicationName  = "ZlPhotoEdit";
+constexpr const char *kApplicationVer   = "0.1.0";
+} // anonymous namespace
+
+// ============================================================================
+//  高 DPI 设置
+// ============================================================================
+//
+//  ★ Qt5 与 Qt6 的差异是"根本性"的 ★
+//
+//    Qt 5：高 DPI 缩放默认**关闭**，需要显式打开两个属性：
+//            AA_EnableHighDpiScaling     —— 让逻辑像素与设备像素分离
+//            AA_UseHighDpiPixmaps        —— 让 QPixmap 按设备像素比渲染
+//          并且这两个属性必须在 QApplication 构造前设置，
+//          构造之后设置无效（Qt 会打印警告但不会崩溃）。
+//
+//    Qt 6：高 DPI 缩放**永远开启**，上面两个属性已废弃。
+//          在 Qt6 下设置它们会得到"deprecated"警告。
+//          取而代之的是 AA_UseHighDpiPixmaps 的替代品不需要了，
+//          而 AA_EnableHighDpiScaling 在 Qt6 里设了也无害（被忽略）。
+//
+//  ★ 所以这里必须做版本判断 ★
+//    这是 QtCompat.h 之外的第二个（也是最后一个）合法判断点 ——
+//    因为高 DPI 必须在 QApplication 构造前设置，而 QtCompat.h
+//    提供的工具函数都是运行期的，来不及。
+//
+//  ★ 为什么要设 rounding policy ★
+//    Qt5.14+ 提供了 PassThrough 舍入策略，让 1.5 倍缩放下的
+//    1 像素线条不会因为取整而时粗时细。对图像编辑程序尤其重要 ——
+//    画布的 1 像素边框在 150% 缩放下必须始终是 1 个物理像素的粗细。
+static void setupHighDpi()
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // ── Qt 5 分支 ──
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
+#endif
+
+    // 舍入策略在 Qt5.14 与 Qt6 都有，不需要判断版本。
+    // PassThrough 表示"不做额外的整数取整"，直接把逻辑坐标
+    // 乘以缩放系数交给系统 —— 这是目前在分数缩放下最清晰的选择。
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
+        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
+}
+
+// ============================================================================
+//  编码设置
+// ============================================================================
+//
+//  ★ Qt5 与 Qt6 的差异 ★
+//
+//    Qt 5.15：QTextCodec 仍然存在但已标记废弃。
+//             常用做法是 QTextCodec::setCodecForLocale(
+//                         QTextCodec::codecForName("UTF-8"));
+//             但更推荐用 QTextStream 的默认编码设置。
+//
+//    Qt 6：QTextCodec 被整个移出 QtCore（挪到了 Qt5Compat 模块）。
+//          取而代之的是 QStringConverter + QStringEncoder。
+//          设置默认编码要用 QStringConverter::setDefaultCodec
+//          （注意这个 API 在 6.0 引入，6.5 又被改名，
+//            所以这里用最保守的方式）
+//
+//  ★ 实际上本工程"不需要"做这件事 ★
+//
+//    因为我们：
+//      · 源码是 UTF-8 with BOM，字符串常量在编译期就正确了
+//      · 通过 /utf-8 显式告诉 MSVC 了
+//      · 读写文件全部走 QImage / QImageReader，不涉及文本编码
+//      · 没有用 QTextStream 读写用户文件
+//
+//    所以这里只做一件事：把"本地编码"确认为 UTF-8，
+//    以防某个第三方代码（例如某个插件的日志）用了
+//    QString::fromLocal8Bit —— 在中文 Windows 上那会得到 GBK 解析结果。
+//
+//  ★ 保守实现：只在 Qt5 下做，Qt6 下不动 ★
+//    Qt6 在 Windows 上默认就是 UTF-8（因为 Qt6 内部统一用 UTF-8 且
+//    ::fromLocal8Bit 会走 QStringConverter 的 UTF-8 实现），
+//    主动设置反而可能踩到 API 变动的坑。
+static void setupUtf8Encoding()
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    // 该调用在 Qt5 里有轻微性能开销（首次调用时构造编解码器），
+    // 但只在启动时执行一次，可以忽略。
+    QTextCodec *utf8 = QTextCodec::codecForName("UTF-8");
+    if (utf8)
+        QTextCodec::setCodecForLocale(utf8);
+#endif
+}
+
+// ============================================================================
+//  启动日志：把本机可用的图像格式打出来
+// ============================================================================
+//
+//  ★ 为什么要在启动时打这个 ★
+//
+//    用户最常见的抱怨之一是"这张图打不开"。可能的原因有三种：
+//      ① 文件真的损坏
+//      ② 这个格式的 Qt 插件没装（例如没装 WebP 插件）
+//      ③ 我们的代码把它过滤掉了
+//
+//    把 QImageReader::supportedImageFormats() 打出来，就能一眼区分
+//    ② 和 ③ —— 如果列表里没有 "webp"，那就是插件缺失，与我们的代码无关。
+//    排查时间从"半小时"降到"一眼"。
+//
+//  ★ 用 qInfo 而不是 qDebug ★
+//    这样默认在 Release 下也会输出（qInfo 默认开启），
+//    同时能被 QT_LOGGING_RULES 关掉（不污染用户的日志）。
+static void logSupportedImageFormats()
+{
+    QStringList readFormats;
+    const QList<QByteArray> rawRead = QImageReader::supportedImageFormats();
+    readFormats.reserve(rawRead.size());
+    for (const QByteArray &f : rawRead)
+        readFormats << QString::fromLatin1(f);
+
+    QStringList writeFormats;
+    const QList<QByteArray> rawWrite = QImageWriter::supportedImageFormats();
+    writeFormats.reserve(rawWrite.size());
+    for (const QByteArray &f : rawWrite)
+        writeFormats << QString::fromLatin1(f);
+
+    qInfo().noquote() << "[ZlPhotoEdit] 可读格式:" << readFormats.join(QStringLiteral(" "));
+    qInfo().noquote() << "[ZlPhotoEdit] 可写格式:" << writeFormats.join(QStringLiteral(" "));
+}
+
+// ============================================================================
+//  main
+// ============================================================================
+
+int main(int argc, char *argv[])
+{
+    // ── 步骤 1：高 DPI（必须在 QApplication 之前）──
+    setupHighDpi();
+
+    // ── 步骤 2：QApplication ──
+    QApplication app(argc, argv);
+
+    // ── 步骤 3：应用标识（必须在任何 QSettings 之前）──
+    QCoreApplication::setOrganizationName(QString::fromLatin1(kOrganizationName));
+    QCoreApplication::setApplicationName(QString::fromLatin1(kApplicationName));
+    QCoreApplication::setApplicationVersion(QString::fromLatin1(kApplicationVer));
+
+    // ★ 关于 QApplication 构造顺序的一个细节 ★
+    //   setOrganizationName 在 QApplication 构造**之后**调用是没问题的，
+    //   只要它早于第一次使用 QSettings 即可。
+    //   MainWindow 的构造函数里会读 QSettings，所以这里必须在前。
+
+    // ── 步骤 4：编码 ──
+    setupUtf8Encoding();
+
+    // ── 步骤 5：启动日志 ──
+    //
+    //  ★ 这一行不是"调试残留"，是刻意保留的 ★
+    //    图像编辑程序在用户机器上出问题时（"打开某张图就崩"），
+    //    第一件要知道的事就是"它跑在哪个 Qt 版本上"。
+    //    Qt5 与 Qt6 的图片插件能力不同，很多"格式打不开"的问题
+    //    其实是 Qt 版本的插件缺失而不是我们的 bug。
+    //
+    //    输出到 stderr：在 Windows GUI 模式下不可见（没有控制台），
+    //    但从命令行启动 or 用调试器附加时能看到。
+    //    代价是零，收益是排查问题时的第一手线索。
+    std::fprintf(stderr,
+                 "[ZlPhotoEdit %s] Qt %s | 编译期 Qt %s\n",
+                 kApplicationVer,
+                 qPrintable(zl::compat::qtVersionString()),
+                 QT_VERSION_STR);
+
+    // 打印本机可用的图像格式 —— 同样是为了排查"为什么打不开这个文件"。
+    // 用 qInfo 而不是 fprintf，这样能用 QT_LOGGING_RULES 关掉。
+    logSupportedImageFormats();
+
+    // ── 步骤 6：主窗口 ──
+    //
+    // ★ 命令行参数 = 要打开的文件 ★
+    //   `ZlPhotoEdit a.png b.png` 开两个标签、不额外送一个空白画布；
+    //   不带参数时内部会回落到一个空白画布。
+    //
+    //   这一步从"多标签"才开始有意义 —— 单文档时代第二个参数只能被
+    //   丢掉。Qt 已经把自己识别的选项（如 -style）从 arguments() 里
+    //   摘掉了，所以这里剩下的基本都是文件路径。
+    QStringList initialFiles = app.arguments();
+    if (!initialFiles.isEmpty())
+        initialFiles.removeFirst();     // 第 0 个是程序自身路径
+
+    zl::MainWindow window(nullptr, initialFiles);
+    window.show();
+
+    return app.exec();
+}

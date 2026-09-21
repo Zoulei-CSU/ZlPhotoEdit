@@ -1,0 +1,51 @@
+# ============================================================================
+#  .gitignore —— ZlPhotoEdit
+# ============================================================================
+
+# ── 构建产物 ──
+build/
+build-*/
+build_cmake/
+build_*/
+tests/build/
+.buildlog/
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.idb
+*.res
+*.tlog
+*.lastbuildstate
+
+# ── qmake / nmake 生成物 ──
+Makefile
+Makefile.Debug
+Makefile.Release
+*.pro.user
+*.pro.user.*
+.qmake.stash
+*.qmake.stash
+debug/
+release/
+
+# ── CMake 生成物 ──
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+*.cmake.user
+
+# ── Qt Creator ──
+*.autosave
+
+# ── 编辑器 ──
+.vs/
+.vscode/
+.idea/
+*.swp
+*~
