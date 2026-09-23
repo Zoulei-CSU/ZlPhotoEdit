@@ -314,7 +314,19 @@ void ShapeTool::applyRegion(const QRect &region, const ShapeMask &mask)
     painter.drawImage(region.topLeft(), out);
     painter.end();
 
-    document()->markDirty();
+    // ── 只失效"这次真正重算的那一块" ──
+    //
+    // region 就是本函数的入参：上一次 updatePreview 算出来的
+    // "上一帧包围盒 ∪ 本帧包围盒"（再与画布求过交）。
+    // 换句话说，**改动的像素恰好就是这个矩形**，多一个都没有 ——
+    // 所以这里可以精确回答，不需要保守估计。
+    //
+    // ★ 为什么不是 markDirty() ★
+    //   拖动期间每个鼠标事件都会走到这里。原先每次都整图失效 →
+    //   大画布上拖一个矩形，每一帧都要整张画布重合成
+    //   （实测 4K 431 ms/帧，见 docs/性能优化评估.md）。而真正变的
+    //   往往只有形状那一小块。
+    document()->markDirtyRegion(region);
 }
 
 void ShapeTool::finishShape()
@@ -386,7 +398,9 @@ void ShapeTool::discardShape()
                     painter.setCompositionMode(QPainter::CompositionMode_Source);
                     painter.drawImage(r.topLeft(), restore);
                     painter.end();
-                    document()->markDirty();
+                    // 恢复回去的那一块 = 这段拖动碰过的全部区域（r）。
+                    // 与 applyRegion 同一条理由：能精确回答就别整图失效。
+                    document()->markDirtyRegion(r);
                 }
             }
         }

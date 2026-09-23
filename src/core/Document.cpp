@@ -456,10 +456,58 @@ bool Document::flattenImage()
 
 void Document::markDirty()
 {
+    // ★ 全量失效：语义 = "整画布都脏了" ★
+    //   这是正确性的最终保证，**永久保留**。任何"不确定这次改了什么"
+    //   的调用点都用它，行为与引入脏矩形之前完全一致。
     m_compositeValid = false;
     m_contentBoundsValid = false;
+
+    // ★ 必须把全量标志也立起来 ★
+    //   它会让上一次累积的局部脏矩形失效。否则 composite() 可能
+    //   拿着一个"小块脏矩形"走快路径，而实际整张图都变了 ——
+    //   症状是画面大部分区域停在旧内容上。
+    //   这一条正是"markDirty() 后紧跟 markDirtyRegion(小块)"必须
+    //   仍然整图重算的原因，perf 自检里有专门的兜底断言。
+    m_fullInvalidate = true;
+    m_dirtyRegion = QRect();
+
     ++m_revision;
     emit contentChanged();
+}
+
+void Document::markDirtyRegion(const QRect &region)
+{
+    // 局部失效：只有这一块像素变了（图像坐标）。
+    //
+    // ★ region 为空怎么办？按全量失效处理，不赌"也许真的什么都没变" ★
+    //   调用方传空矩形，要么是"什么都没变"（那就不该调这个函数），
+    //   要么是算错了（例如忘了与画布求交、或者脏矩形在画布之外）。
+    //   两种情况下按全量失效都是安全的，最多白算一次。
+    //   这条"算不出来就保守"的规矩，是脏矩形机制唯一的安全阀。
+    if (region.isEmpty()) {
+        markDirty();
+        return;
+    }
+
+    m_compositeValid = false;
+    m_contentBoundsValid = false;   // 在空白处画一笔会把内容包围盒撑大
+
+    // ★ 已经是全量失效时保持全量，不要被一个局部矩形"降级" ★
+    //   （标志位本身不用动，这里只是把"为什么"写清楚）
+    if (!m_fullInvalidate)
+        m_dirtyRegion = m_dirtyRegion.united(region);
+
+    ++m_revision;
+    emit contentChanged();
+}
+
+QRect Document::pendingDirtyRegion() const
+{
+    // 空 QRect = 整画布都脏（约定见头文件 —— 调用方必须按全图处理）
+    if (m_fullInvalidate)
+        return QRect();
+
+    return m_dirtyRegion;
 }
 
 QImage Document::composite()
@@ -487,10 +535,58 @@ QImage Document::composite()
         visible.append(layer->isVisible());
     }
 
+    // ── 快路径：只重算脏矩形，再把补丁贴回缓存 ──
+    //
+    // 三个条件必须同时满足：
+    //   · 不是全量失效
+    //   · 缓存已存在，且尺寸仍与画布一致 —— 否则"贴回"会贴到错误的坐标系上
+    //     （画布尺寸变化一定会调 markDirty()，所以这只是双保险）
+    //   · 脏矩形与画布求交后非空
+    if (!m_fullInvalidate && !m_compositeCache.isNull()
+        && m_compositeCache.size() == m_canvasSize) {
+
+        const QRect region = m_dirtyRegion.intersected(canvasRect());
+
+        if (!region.isEmpty()) {
+            const QImage patch = blend::compositeLayersRegion(
+                images, modes, opacities, visible, m_canvasSize,
+                region, Qt::transparent);
+
+            if (!patch.isNull()) {
+                // ★ "贴回"这一步有副作用，所以只能发生在 core 层 ★
+                //   engine 层是"无副作用纯函数"，它只负责算出补丁；
+                //   把它写进缓存是 Document 的职责。这条边界不能破 ——
+                //   否则 engine 就不再能被离线自检直接调用了。
+                QPainter patcher(&m_compositeCache);
+                if (patcher.isActive()) {
+                    // Source 而不是 SourceOver：我们要的是"把这块**替换**成
+                    // 补丁"，包括补丁里变透明的像素。SourceOver 会把透明
+                    // 当作"不覆盖"，于是擦掉的内容擦不掉（同一个坑在
+                    // BrushTool 写回处也踩过）。
+                    patcher.setCompositionMode(QPainter::CompositionMode_Source);
+                    patcher.drawImage(region.topLeft(), patch);
+                    patcher.end();
+
+                    m_compositeValid = true;
+                    m_fullInvalidate = false;
+                    m_dirtyRegion = QRect();
+                    ++m_regionCompositeCount;
+                    return m_compositeCache;
+                }
+            }
+            // 补丁算不出来（内存不足等）→ 掉到下面的全量路径，
+            // 而不是返回一个"贴了一半"的缓存
+        }
+    }
+
+    // ── 兜底路径：整图重算 ──
     m_compositeCache = blend::compositeLayers(images, modes, opacities,
                                               visible, m_canvasSize,
                                               Qt::transparent);
     m_compositeValid = true;
+    m_fullInvalidate = false;
+    m_dirtyRegion = QRect();
+    ++m_fullCompositeCount;
 
     return m_compositeCache;
 }

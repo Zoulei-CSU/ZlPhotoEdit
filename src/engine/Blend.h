@@ -76,8 +76,17 @@ qreal blendChannel(BlendMode mode, qreal base, qreal blend);
 //
 // 注意色相/饱和度/颜色/明度这四种"分量模式"需要 RGB↔HSL 转换，
 // 由本函数内部处理，调用方无需关心。
+//
+// fastPixelsOut —— 可选诊断输出（默认不传）：本次调用中"走了
+//   『完全不透明上层直接覆盖』快路径"的像素个数（**按层累加**，
+//   所以两层各覆盖一遍整张图时会给出 2×像素数，不是算重了）。
+//   产品代码一律不传它。
+//   存在的唯一理由是自检：快路径的产物与慢路径**逐位相同**，
+//   于是"结果正确"根本证明不了快路径被走到了 —— 只能靠计数。
+//   （同理见 docs/性能优化评估.md §4.5、铁律 §20 的遥测纪律）
 QImage compositeLayer(const QImage &base, const QImage &blend,
-                      BlendMode mode, qreal opacity);
+                      BlendMode mode, qreal opacity,
+                      quint64 *fastPixelsOut = nullptr);
 
 // ---------------------------------------------------------------------------
 //  整组图层合成
@@ -99,6 +108,39 @@ QImage compositeLayers(const QList<QImage> &images,
                        const QList<bool> &visible,
                        const QSize &bounds,
                        const QColor &background = Qt::transparent);
+
+// ---------------------------------------------------------------------------
+//  整组图层合成（只算一个矩形）★ 性能关键 ★
+// ---------------------------------------------------------------------------
+
+// 与 compositeLayers 语义**完全相同**，但只计算 region 内的结果，
+// 返回 region.size() 大小的图（region 已与画布求交；region 为空则返回空图）。
+//
+// ★ 为什么"只算一块"能保证结果一模一样，而不是近似 ★
+//   本文件全部 16 种混合模式都是**逐像素（pointwise）**运算 ——
+//   每个输出像素只依赖**相同坐标**的输入像素，没有任何空间邻域运算
+//   （无模糊、无位移、无卷积、无形态学）。因此
+//       "某矩形内独立合成的结果" ≡ "全图合成结果的对应子区域"
+//   是**逐位相等**。这条是整个脏矩形优化的正确性基石，
+//   由 tests/perf_test.cpp 对 16 种模式逐一钉死。
+//
+// ★ 用法约束 ★
+//   region 必须已与 QRect(QPoint(0,0), bounds) 求交。传入越界矩形会被
+//   这里裁掉（不会越界写入），但**脏矩形算小了会留下旧内容的残影** ——
+//   那种 bug 不崩不报，只能靠自检抓。
+//
+// ★ 实现约束 ★
+//   必须复用 compositeLayer() 这一个内核，**禁止**为了"顺手优化"在这里
+//   再写一份合成逻辑 —— 两份实现漂移的症状是"预览与实际不一致"，
+//   本项目在蚂蚁线、画笔/形状写回上都吃过这个亏（见 docs/实现铁律.md）。
+QImage compositeLayersRegion(const QList<QImage> &images,
+                             const QList<BlendMode> &modes,
+                             const QList<qreal> &opacities,
+                             const QList<bool> &visible,
+                             const QSize &bounds,
+                             const QRect &region,
+                             const QColor &background = Qt::transparent,
+                             quint64 *fastPixelsOut = nullptr);
 
 } // namespace blend
 } // namespace zl

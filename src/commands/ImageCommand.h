@@ -3,9 +3,19 @@
 // ============================================================================
 //  ImageCommand.h —— 整层快照类命令
 // ----------------------------------------------------------------------------
-//  适用于：滤镜、调整（亮度/对比度/曲线等）、去色/反色。
-//  这些操作会改变**整层**的像素，无法用脏矩形优化 —— 因为改动的
-//  区域就是整个图层。
+//  适用于：滤镜、调整（亮度/对比度/曲线等）、去色/反色，以及**移动图层**。
+//
+//  ★ 关于"能不能用脏矩形优化" ★
+//    原先这里写的是一句断言："这些操作会改变整层像素，无法用脏矩形优化"。
+//    对滤镜/调整/去色/反色——**成立**：它们逐个像素改，改动区域就是整个图层。
+//    但**移动图层不成立**：平移只是在挪位置，画布上真正变化的像素
+//    只有"旧位置 ∪ 新位置"那两块。而移动恰恰是拖动时每帧都要执行一次的操作，
+//    恰恰是最该省的那一类。
+//
+//    所以本类改成"**可选**地携带一个脏区域"（见构造函数的 dirtyRegion 参数）：
+//      · 不传（默认空矩形）→ 行为与改造前**完全一致**（全图失效）；
+//      · 传了            → CommandStack 只失效那一块。
+//    "说得清才局部、说不清就全量"这条纪律与 DrawCommand 那边是同一条。
 //
 //  ★ 内存策略：qCompress 压缩 ★
 //
@@ -37,14 +47,15 @@
 #include "commands/CommandStack.h"
 
 #include <QUndoCommand>
-#include <QImage>
 #include <QByteArray>
+#include <QImage>
+#include <QRect>
 
 namespace zl {
 
 class Document;
 
-class ImageCommand : public QUndoCommand, public IMemoryAware
+class ImageCommand : public QUndoCommand, public IMemoryAware, public IRegionAware
 {
 public:
     // ── 构造（从图像数据）──
@@ -54,6 +65,9 @@ public:
     //   index —— 目标图层索引
     //   before/after —— 改动前后的完整图层位图（会被压缩存储）
     //   text  —— 历史面板显示的文字（如"亮度/对比度"）
+    //   dirtyRegion —— ★ 可选 ★ redo()/undo() 之后只有这块像素会变
+    //                   （图像坐标）。不传 = 空矩形 = "我不知道" →
+    //                   CommandStack 走整图失效，行为与改造前完全一致。
     //
     // 注意：构造时会立即压缩，因此传入的 QImage 可以随后释放。
     // 压缩是 CPU 密集操作，48MB 的图约 100~200ms。对于滤镜这类
@@ -62,7 +76,8 @@ public:
     // 撤销时才压）—— 不过那样内存峰值会高一些。
     ImageCommand(Document *doc, int index,
                  const QImage &before, const QImage &after,
-                 const QString &text);
+                 const QString &text,
+                 const QRect &dirtyRegion = QRect());
 
     // ── 构造（从已压缩的数据）──
     //
@@ -83,6 +98,22 @@ public:
     bool mergeWith(const QUndoCommand *other) override;
 
     qint64 memoryUsage() const override;
+
+    // ── 区域提示（IRegionAware）──
+    //
+    // ★ 空矩形 = "我不知道 / 可能整张图都变了" → 调用方走全量失效 ★
+    //   这正是默认值。滤镜/调整类的调用点什么都不用做就是安全的。
+    //
+    // ★ 使用它的唯一场景是移动图层 ★
+    //   平移动的是"位置"而不是"内容"，所以变化的像素 = 旧位置 ∪ 新位置，
+    //   而那两块由调用方（MoveTool）算得出来 —— 它知道位移量，
+    //   也知道图层内容的包围盒。
+    //
+    // ★ 有一个坑：restoreImage() 里原先有一句 m_doc->markDirty() ★
+    //   它跑在 push() 内部（push 会立刻执行 redo()），会把 CommandStack
+    //   刚设好的区域失效**降级成全量** —— 于是"移动松手"那一下照旧卡。
+    //   那句已删除，失效统一由 CommandStack 负责（见 .cpp 的说明）。
+    QRect dirtyRegion() const override { return m_dirtyRegion; }
 
     // ── 压缩参数 ──
     //
@@ -113,6 +144,9 @@ private:
 
     // 未压缩时的原始字节数，用于内存估算（压缩后的大小不能反映真实占用）
     qint64 m_rawBytes = 0;
+
+    // 本次改动影响的区域（图像坐标）。空 = 不知道 → 全量失效兜底。
+    QRect m_dirtyRegion;
 };
 
 } // namespace zl

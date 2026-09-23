@@ -38,6 +38,8 @@
 #include <QFontMetrics>
 #include <QSignalBlocker>
 
+#include <functional>
+
 namespace zl {
 
 // ============================================================================
@@ -162,6 +164,51 @@ QHBoxLayout *makeBarLayout(QWidget *parent)
 void addStretch(QHBoxLayout *layout)
 {
     layout->addStretch(1);
+}
+
+// ── 四个"选区运算"按钮（新建 / 添加 / 减去 / 交集）──
+//
+// ★ 为什么抽成共享函数，而不是让选框与魔术棒各写一遍 ★
+//   这两个工具用的是**同一套**运算语义（同一个 SelectionMode 枚举、
+//   同一个 SelectionOptions::toSelectionOp 映射）。各写一份的话，
+//   某天把"交叉"改成"交集"只会改到一处，用户就会在两个工具的选项条上
+//   看到两个名字而含义相同；更糟的是顺序或默认选中错位 ——
+//   那种错误点一下就把用户的选区算错，却看不出是谁的错。
+//
+//   onPick 由调用方接到自己的 setMode() 上（本函数不认识具体选项对象）。
+void addModeButtons(QWidget *bar, QHBoxLayout *layout,
+                    SelectionMode current,
+                    const std::function<void(SelectionMode)> &onPick)
+{
+    struct Entry {
+        SelectionMode mode;
+        const char   *text;
+        const char   *tip;
+    };
+    static const Entry entries[] = {
+        { SelectionMode::Replace,   QT_TR_NOOP("新建"), QT_TR_NOOP("替换现有选区") },
+        { SelectionMode::Add,       QT_TR_NOOP("添加"), QT_TR_NOOP("把新选区并入现有选区（也可按住 Shift）") },
+        { SelectionMode::Subtract,  QT_TR_NOOP("减去"), QT_TR_NOOP("从现有选区中挖掉新选区（也可按住 Alt）") },
+        { SelectionMode::Intersect, QT_TR_NOOP("交叉"), QT_TR_NOOP("只保留两者的重叠部分（Shift+Alt）") },
+    };
+
+    for (const Entry &entry : entries) {
+        auto *btn = new QToolButton(bar);
+        btn->setText(QObject::tr(entry.text));
+        btn->setToolTip(QObject::tr(entry.tip));
+        btn->setCheckable(true);
+        // ★ 互斥交给 QToolButton 自己 ★
+        //   手写"点了 B 就取消 A"在通过快捷键切工具时会漏掉同步。
+        btn->setAutoExclusive(true);
+        btn->setChecked(entry.mode == current);
+        layout->addWidget(btn);
+
+        const SelectionMode mode = entry.mode;
+        QObject::connect(btn, &QToolButton::clicked, btn, [onPick, mode]() {
+            if (onPick)
+                onPick(mode);
+        });
+    }
 }
 
 } // anonymous namespace
@@ -1245,32 +1292,10 @@ QWidget *SelectionOptions::createWidget(QWidget *parent)
 
     // ── 四个模式按钮 ──
     // 用互斥的 QToolButton 组，模拟 Photoshop 选项条上的四个按钮。
-    auto *replaceBtn   = new QToolButton(bar);
-    auto *addBtn       = new QToolButton(bar);
-    auto *subtractBtn  = new QToolButton(bar);
-    auto *intersectBtn = new QToolButton(bar);
-
-    struct { QToolButton *btn; SelectionMode mode; const char *text; const char *tip; } buttons[] = {
-        { replaceBtn,   SelectionMode::Replace,   QT_TR_NOOP("新建"),   QT_TR_NOOP("替换现有选区") },
-        { addBtn,       SelectionMode::Add,       QT_TR_NOOP("添加"),   QT_TR_NOOP("把新选区并入现有选区（也可按住 Shift）") },
-        { subtractBtn,  SelectionMode::Subtract,  QT_TR_NOOP("减去"),   QT_TR_NOOP("从现有选区中挖掉新选区（也可按住 Alt）") },
-        { intersectBtn, SelectionMode::Intersect, QT_TR_NOOP("交叉"),   QT_TR_NOOP("只保留两者的重叠部分（Shift+Alt）") },
-    };
-
-    for (auto &entry : buttons) {
-        entry.btn->setText(tr(entry.text));
-        entry.btn->setToolTip(tr(entry.tip));
-        entry.btn->setCheckable(true);
-        entry.btn->setAutoExclusive(true);
-        entry.btn->setChecked(entry.mode == m_mode);
-        layout->addWidget(entry.btn);
-
-        QToolButton *btn = entry.btn;
-        const SelectionMode mode = entry.mode;
-        connect(btn, &QToolButton::clicked, this, [this, mode]() {
-            setMode(mode);
-        });
-    }
+    // ★ 实现搬到了文件内的 addModeButtons() ★
+    //   魔术棒的选项条上也有同样四个按钮，语义必须逐字一致
+    //   （见那个函数上方的说明）。
+    addModeButtons(bar, layout, m_mode, [this](SelectionMode m) { setMode(m); });
 
     layout->addSpacing(12);
 
@@ -1318,6 +1343,187 @@ void SelectionOptions::save(QSettings &settings) const
     settings.setValue(QStringLiteral("mode"),      int(m_mode));
     settings.setValue(QStringLiteral("feather"),   m_featherRadius);
     settings.setValue(QStringLiteral("antialias"), m_antialias);
+    settings.endGroup();
+}
+
+// ============================================================================
+//  MagicWandOptions —— 魔术棒
+// ============================================================================
+
+MagicWandOptions::MagicWandOptions(QObject *parent)
+    : ToolOptions(parent)
+{
+    // ★ 独立分组，不与 "selection"（选框）共用 ★
+    //   理由见头文件：两者的常用取值差别很大（选框常羽化、魔术棒常不羽化），
+    //   共用分组会让"在魔术棒里没动羽化"顺带改掉选框的羽化。
+    setSettingsGroup(QStringLiteral("tool/magicwand"));
+}
+
+void MagicWandOptions::setMode(SelectionMode m)
+{
+    if (m == m_mode)
+        return;
+    m_mode = m;
+    notifyChanged();
+}
+
+void MagicWandOptions::setTolerance(int v)
+{
+    v = qBound(0, v, 255);
+    if (v == m_tolerance)
+        return;
+    m_tolerance = v;
+    notifyChanged();
+}
+
+void MagicWandOptions::setContiguous(bool v)
+{
+    if (v == m_contiguous)
+        return;
+    m_contiguous = v;
+    notifyChanged();
+}
+
+void MagicWandOptions::setAntialias(bool v)
+{
+    if (v == m_antialias)
+        return;
+    m_antialias = v;
+    notifyChanged();
+}
+
+void MagicWandOptions::setSampleAllLayers(bool v)
+{
+    if (v == m_sampleAllLayers)
+        return;
+    m_sampleAllLayers = v;
+    notifyChanged();
+}
+
+void MagicWandOptions::setFeatherRadius(qreal v)
+{
+    v = qBound(0.0, v, 250.0);
+    if (qFuzzyCompare(v, m_featherRadius))
+        return;
+    m_featherRadius = v;
+    notifyChanged();
+}
+
+QWidget *MagicWandOptions::createWidget(QWidget *parent)
+{
+    auto *bar = new QWidget(parent);
+    auto *layout = makeBarLayout(bar);
+
+    // ── 四个运算按钮（与选框共用同一份实现）──
+    addModeButtons(bar, layout, m_mode, [this](SelectionMode m) { setMode(m); });
+
+    layout->addSpacing(12);
+
+    // ── 容差 ──
+    // ★ 与油漆桶同一个刻度 ★
+    //   floodFill 的判据是"与起点颜色的三通道欧氏距离归一化到 0-255"
+    //   （见 engine/Fill.h），所以两处的"容差 30"手感完全一致 ——
+    //   用户在油漆桶里练出来的直觉在魔术棒上直接可用。
+    auto *tol = new QSlider(Qt::Horizontal, bar);
+    tol->setRange(0, 255);
+    tol->setValue(m_tolerance);
+    tol->setFixedWidth(110);
+    tol->setToolTip(tr("与落点颜色差异小于容差的像素会被一起选中。\n"
+                       "采用三通道欧氏距离，容差 30 大致相当于肉眼刚能看出的差异。"));
+    addLabeled(layout, tr("容差"), tol);
+
+    auto *tolSpin = new QSpinBox(bar);
+    tolSpin->setRange(0, 255);
+    tolSpin->setValue(m_tolerance);
+    layout->addWidget(tolSpin);
+
+    connect(tol, &QSlider::valueChanged, tolSpin, &QSpinBox::setValue);
+    connect(tolSpin, QOverload<int>::of(&QSpinBox::valueChanged), tol, &QSlider::setValue);
+    connect(tolSpin, QOverload<int>::of(&QSpinBox::valueChanged),
+            this, &MagicWandOptions::setTolerance);
+
+    layout->addSpacing(10);
+
+    // ── 连续 ──
+    auto *contiguous = new QCheckBox(tr("连续"), bar);
+    contiguous->setChecked(m_contiguous);
+    contiguous->setToolTip(tr("勾选：只选中与落点连通的那一片（常规行为）\n"
+                              "取消：选中整张图中所有在容差内的像素，不管是否连通"));
+    layout->addWidget(contiguous);
+    connect(contiguous, &QCheckBox::toggled, this, &MagicWandOptions::setContiguous);
+
+    layout->addSpacing(6);
+
+    // ── 抗锯齿 ──
+    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    aa->setChecked(m_antialias);
+    aa->setToolTip(tr("在选区边缘生成 1~254 的过渡值，避免硬台阶"));
+    layout->addWidget(aa);
+    connect(aa, &QCheckBox::toggled, this, &MagicWandOptions::setAntialias);
+
+    layout->addSpacing(6);
+
+    // ── 判据取哪张图 ──
+    // ★ 勾选状态与 Photoshop **相反**，提示里必须说清楚 ★
+    //   否则用户会以为程序错了（"我明明没勾对所有图层，怎么取的是合成图"）。
+    auto *allLayers = new QCheckBox(tr("对所有图层取样"), bar);
+    allLayers->setChecked(m_sampleAllLayers);
+    allLayers->setToolTip(tr("勾选（默认）：按**合成图**判定颜色 —— 所见即所得，\n"
+                             "透明处可透过下层看到颜色（与吸管一致）\n"
+                             "取消：只按**当前图层**判定 —— 该层透明处会判成"
+                             "整片同色，适合严格按层选取"));
+    layout->addWidget(allLayers);
+    connect(allLayers, &QCheckBox::toggled, this, &MagicWandOptions::setSampleAllLayers);
+
+    layout->addSpacing(12);
+
+    // ── 羽化 ──
+    // ★ 与"抗锯齿"不是一回事 ★
+    //   抗锯齿是 floodFill 按**色差**给出的过渡带；羽化是按**像素距离**
+    //   的模糊。两者都让边缘更软，同时打开不会出错 —— 但别指望它们叠加
+    //   能得到"更精确"的边缘。
+    auto *feather = new QDoubleSpinBox(bar);
+    feather->setRange(0.0, 250.0);
+    feather->setSingleStep(0.5);
+    feather->setDecimals(1);
+    feather->setValue(m_featherRadius);
+    feather->setSuffix(tr(" px"));
+    feather->setToolTip(tr("羽化半径。0（默认）表示边缘清晰。\n"
+                           "数值越大，选区边缘的过渡越柔和。"));
+    addLabeled(layout, tr("羽化"), feather);
+    connect(feather, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this, &MagicWandOptions::setFeatherRadius);
+
+    addStretch(layout);
+    return bar;
+}
+
+void MagicWandOptions::load(QSettings &settings)
+{
+    settings.beginGroup(settingsGroup());
+
+    const int modeValue = settings.value(QStringLiteral("mode"), int(m_mode)).toInt();
+    if (modeValue >= int(SelectionMode::Replace) && modeValue <= int(SelectionMode::Intersect))
+        m_mode = static_cast<SelectionMode>(modeValue);
+
+    m_tolerance       = qBound(0, settings.value(QStringLiteral("tolerance"), m_tolerance).toInt(), 255);
+    m_contiguous      = settings.value(QStringLiteral("contiguous"), m_contiguous).toBool();
+    m_antialias       = settings.value(QStringLiteral("antialias"), m_antialias).toBool();
+    m_sampleAllLayers = settings.value(QStringLiteral("sampleAllLayers"), m_sampleAllLayers).toBool();
+    m_featherRadius   = qBound(0.0, settings.value(QStringLiteral("feather"), m_featherRadius).toDouble(), 250.0);
+
+    settings.endGroup();
+}
+
+void MagicWandOptions::save(QSettings &settings) const
+{
+    settings.beginGroup(settingsGroup());
+    settings.setValue(QStringLiteral("mode"),            int(m_mode));
+    settings.setValue(QStringLiteral("tolerance"),       m_tolerance);
+    settings.setValue(QStringLiteral("contiguous"),      m_contiguous);
+    settings.setValue(QStringLiteral("antialias"),       m_antialias);
+    settings.setValue(QStringLiteral("sampleAllLayers"), m_sampleAllLayers);
+    settings.setValue(QStringLiteral("feather"),         m_featherRadius);
     settings.endGroup();
 }
 

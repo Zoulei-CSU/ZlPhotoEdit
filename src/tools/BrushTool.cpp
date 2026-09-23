@@ -314,7 +314,27 @@ void BrushTool::applyRegion(const QRect &region)
     painter.drawImage(region.topLeft(), composed);
     painter.end();
 
-    document()->markDirty();
+    // ── 只让"本帧真正写过的那一块"失效 ──
+    //
+    // ★ 这里曾经是 markDirty()，那是一个把本功能整个架空的错误 ★
+    //   markDirty() 会立起 m_fullInvalidate → CanvasView 下一帧把**整张画布**
+    //   重新合成一遍。也就是说：本类费了很大力气把每帧的像素级重算限制在
+    //   `region` 内（见 BrushTool.h 顶部"两层限制"），结果到了呈现层
+    //   又被整图重合成抵消掉了 —— 4K 图上每帧约 430ms，拖动依然卡。
+    //   实测 4K 画笔的卡顿（评估文档 §1.3）根因就在这一句。
+    //
+    // ★ 为什么改成 region 是安全的 ★
+    //   · 本帧真正动过的像素恰好是 region（paintSegment 返回的并集矩形，
+    //     已与画布求交）；
+    //   · region 之外的图层像素这一帧没被写过 —— 它们保留着前几帧写入的
+    //     正确值（composeStroke 对"快照 + 累积蒙版"是幂等的，见 BrushTool.h）；
+    //   · 选区、画布尺寸、图层结构本帧都没动。
+    //   所以"只脏 region"与"脏整图"在结果上完全一致，只是不再白算。
+    //
+    // ★ region 为空时无需在这里兜底 ★
+    //   调用点（mousePress / mouseMove）都在 region 非空时才调用本函数；
+    //   而即便漏传，markDirtyRegion(空) 的语义也是"退回全量"，是安全方向。
+    document()->markDirtyRegion(region);
 }
 
 void BrushTool::finishStroke()
@@ -392,7 +412,10 @@ void BrushTool::discardStroke()
                 painter.setCompositionMode(QPainter::CompositionMode_Source);
                 painter.drawImage(m_strokeBounds.topLeft(), restore);
                 painter.end();
-                document()->markDirty();
+
+                // 恢复的范围就是这一笔改过的范围（m_strokeBounds），
+                // 所以走局部失效 —— 取消一笔不该让整张画布重算一次。
+                document()->markDirtyRegion(m_strokeBounds);
             }
         }
     }
@@ -473,8 +496,33 @@ ToolResult BrushTool::mouseMove(const ToolEvent &e)
     if (e.buttons == Qt::NoButton)
         return ToolResult::ignored();
 
+    // ★★ 先把悬停缓存挪到新位置 —— 这一句必须在下面**所有**提前 return 之前 ★★
+    //
+    //   笔刷轮廓圆画在 m_hoverWidgetPos 上，而这个缓存原本只有两处更新：
+    //   beginStroke()（落笔瞬间）与 hoverMove()（不按键的悬停）。
+    //
+    //   可是画布是**按"此刻有没有按键"分派**的（见 CanvasView::mouseMoveEvent
+    //   里"区分悬停与拖动"那段）：没有键按下 → hoverMove，有键按下 → 本函数。
+    //   于是"按住鼠标拖动"这条路**一次都走不到 hoverMove** ——
+    //   轮廓圆就死死钉在落笔点（beginStroke 设的那个值）不动，
+    //   非要松开鼠标才恢复跟随。
+    //
+    //   这正是用户报的："用画笔或橡皮按住拖动时，小圆圈不跟着鼠标走，
+    //   不按住的时候才跟着走。"
+    //
+    //   ★ 为什么放在最前面（先于"这一笔有没有落成"的判断）★
+    //     图层被锁、图层为空、画布尺寸为 0 时 beginStroke() 会失败，
+    //     此时 m_layerIndex 仍是 -1，下面的分支直接返回。
+    //     但用户眼睛盯着的还是这个圆圈 —— 它照样得跟着鼠标走，
+    //     否则"点一下没反应、圈还卡在别处"会让人以为工具坏了。
+    //
+    //   取色工具（ColorPickerTool::mouseMove）是同一套处理，可对照。
+    m_hoverWidgetPos = e.widgetPos;
+    m_hoverViewZoom  = e.viewZoom;
+    m_hoverStale     = false;
+
     if (m_layerIndex < 0 || !m_hasLastStamp)
-        return ToolResult::ignored();
+        return ToolResult::repaint();
 
     const QRect dirty = paintSegment(m_lastStampPos, e.imagePos);
 
@@ -483,10 +531,14 @@ ToolResult BrushTool::mouseMove(const ToolEvent &e)
     // 会从很久以前的位置补出一长条穿越画布的直线。
     m_lastStampPos = e.imagePos;
 
-    if (dirty.isEmpty())
-        return ToolResult::accepted();
+    if (!dirty.isEmpty())
+        applyRegion(dirty);
 
-    applyRegion(dirty);
+    // ★ 本帧没落笔也必须重绘 ★
+    //   dirty 为空只表示"这一帧没写任何像素"（笔尖整体在画布外，
+    //   或者位置变了但覆盖度没变），**轮廓圆已经挪了位置** ——
+    //   不重绘就等于退回上面那个 bug。
+    //   重绘本身很便宜：合成缓存没失效，只是把它重贴一遍再画个圆。
     return ToolResult::repaint();
 }
 
@@ -534,7 +586,6 @@ void BrushTool::paintScreenOverlay(QPainter &painter, CanvasView *view)
     //
     //  ★★ 为什么这里完全不调用 view 的成员函数 ★★
     //
-    //    view 只用来判空（"现在确实有一个画布"），不调用它的任何方法。
     //    原因：tools/ 层不允许 include ui/CanvasView.h（那会破坏分层），
     //    所以在编译期 CanvasView 是个**不完整类型** ——
     //    编译器根本不知道它有没有 imageToWidget() / zoom()。
@@ -545,7 +596,26 @@ void BrushTool::paintScreenOverlay(QPainter &painter, CanvasView *view)
     //      · viewZoom  —— 当前缩放比，算屏幕上的圆半径要用
     //    这两个字段本来就是为"屏幕尺寸恒定的预览"准备的，
     //    工具只需把它们缓存下来。缓存失效见 viewChanged()。
-    if (!view || !m_options || m_hoverStale)
+    //
+    //  ★ view 允许为空 ★（原来这里写的是 `if (!view || ...)`）
+    //
+    //    本函数真正需要的两个量全在 m_hoverWidgetPos / m_hoverViewZoom 里，
+    //    view 一个都用不上 —— 唯一的用处是"确认现在确实有个画布"。
+    //    可这个判断是死的：生产路径上唯一的调用者是 CanvasView::paintEvent，
+    //    它传的就是 this，永不为空。
+    //
+    //    留着它的代价却是实打实的：**离线自检里画不出这个圆**。
+    //    而轮廓圆是一条自绘管线 —— 本项目对自绘管线的纪律是"量它画出的
+    //    像素"，不量就守不住（圆心算错、半径算错、少一次 resetTransform
+    //    都能全绿）。传 nullptr 直接早退，等于把这条管线整个让出去。
+    //
+    //    放宽之后，自检可以拿一张内存 QImage 当画布直接画、直接量
+    //    （见 tests/brush_tool_test.cpp 的"轮廓圆跟随鼠标"组）。
+    //    若将来真要用到 view，会在自检里立刻空指针崩掉 —— 那正是我们
+    //    想要的**响亮的失败**，而不是静默地画错。
+    Q_UNUSED(view)
+
+    if (!m_options || m_hoverStale)
         return;
 
     // 半径 = 图像里的半径 × 当前缩放比。

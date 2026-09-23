@@ -49,6 +49,28 @@ public:
     // 只处理包围盒内的像素，而不是整张图。
     QRect bounds() const;
 
+    // ── 修订号：选区**内容**变没变 ──
+    //
+    // ★ 为什么下游需要它 ★
+    //   CanvasView 缓存着"选区轮廓"（把蒙版扫成一条边界线段路径，
+    //   全选时扫的是整张画布，几十毫秒）。原先是"凡是像素脏了就让轮廓
+    //   失效"，于是**每个画笔事件**都要重扫一遍 —— 而画笔改的是图层
+    //   像素，与选区蒙版毫无关系（评估文档 §1.3）。
+    //   有了修订号，缓存的有效性判据才能精确到"选区真的变了没有"。
+    //
+    // ★ 语义只有一条，但必须严格成立 ★
+    //   修订号相同  ⇒  选区内容相同。
+    //   逆命题不要求（同一次内容可以有不同的号，只是会多重建一次）。
+    //   为了让这条成立，发号器是**全局单调递增**的，
+    //   否则"撤销把旧快照赋回来"会让号回到一个旧值，
+    //   而那个旧值对应的内容与被覆盖的内容往往不同（见 Selection.cpp）。
+    //
+    // ★ 只有**真的改了**才能递增 ★
+    //   提前返回的分支（translate(0,0) / inactive 时 invert() / feather(0)…）
+    //   一律不许递增 —— 否则"号没变就跳过"的优化会静默失效，
+    //   表现是"功能全对，但那个优化根本不生效"。
+    quint64 revision() const { return m_revision; }
+
     // 是否处于"全选 / 没有选区限制"的状态。
     //
     // ★ 语义修正记录（不要改回 m_active && m_allSelected）★
@@ -160,9 +182,14 @@ private:
     // 确保蒙版已按指定尺寸分配，并返回是否需要重建
     void ensureMask(const QSize &size);
 
+    // 内容变更的唯一记账点：置脏包围盒缓存 + 取一个新修订号。
+    // ★ 所有改到 m_mask / m_active / m_allSelected 的地方都必须走它 ★
+    void touch();
+
     QImage m_mask;                  // Format_Grayscale8，尺寸与画布一致
     bool   m_active      = false;   // false 表示"全选"（无选区限制）
     bool   m_allSelected = true;    // 与 m_active 配合表达状态
+    quint64 m_revision   = 0;       // 内容修订号（见 revision()）
     // 包围盒缓存。选区频繁被查询 bounds()（每个工具在写入前都要问一次），
     // 每次遍历整个蒙版太浪费，所以缓存起来，markModified() 时失效。
     mutable QRect m_cachedBounds;

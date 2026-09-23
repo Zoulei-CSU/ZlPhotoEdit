@@ -74,6 +74,7 @@ SOURCES += \
     src/engine/Text.cpp \
     src/engine/ImageMeta.cpp \
     src/engine/RulerMetrics.cpp \
+    src/engine/Outline.cpp \
     src/engine/IcoWriter.cpp \
     src/commands/CommandStack.cpp \
     src/commands/DrawCommand.cpp \
@@ -91,6 +92,7 @@ SOURCES += \
     src/tools/CropTool.cpp \
     src/tools/BucketTool.cpp \
     src/tools/ColorPickerTool.cpp \
+    src/tools/MagicWandTool.cpp \
     src/tools/ShapeTool.cpp \
     src/tools/TextTool.cpp \
     src/tools/HandTool.cpp \
@@ -142,6 +144,7 @@ HEADERS += \
     src/engine/Text.h \
     src/engine/ImageMeta.h \
     src/engine/RulerMetrics.h \
+    src/engine/Outline.h \
     src/engine/IcoWriter.h \
     src/commands/CommandStack.h \
     src/commands/DrawCommand.h \
@@ -160,6 +163,7 @@ HEADERS += \
     src/tools/CropTool.h \
     src/tools/BucketTool.h \
     src/tools/ColorPickerTool.h \
+    src/tools/MagicWandTool.h \
     src/tools/ShapeTool.h \
     src/tools/TextTool.h \
     src/tools/HandTool.h \

@@ -34,11 +34,13 @@ int nextAdjustSessionId()
 
 ImageCommand::ImageCommand(Document *doc, int index,
                            const QImage &before, const QImage &after,
-                           const QString &text)
+                           const QString &text,
+                           const QRect &dirtyRegion)
     : QUndoCommand(text)
     , m_doc(doc)
     , m_layerIndex(index)
     , m_mergeId(nextAdjustSessionId())
+    , m_dirtyRegion(dirtyRegion)
 {
     m_imageSize = before.size();
 
@@ -186,8 +188,18 @@ void ImageCommand::restoreImage(const QByteArray &compressed,
     // setImage 内部会做格式规范化，保证图层格式铁律不被破坏。
     layer->setImage(restored);
 
-    // 图层缩略图需要刷新
-    m_doc->markDirty();
+    // ★ 这里**故意没有** m_doc->markDirty() ★
+    //
+    //   原先有一句。它是一处反向优化（而且位置很隐蔽）：
+    //   redo()/undo() 只经由 CommandStack::push()/undo()/redo() 调用，
+    //   而那三个函数在调用完之后**一定会**通知 Document 刷新 ——
+    //   带着本命令报出的区域提示（notifyDocument 里的 markDirtyRegion）。
+    //   于是这一句 markDirty() 跑在它**之前**（redo 在 push 内部先执行），
+    //   把整图失效标志立起来 → 紧接着的区域失效被降级成全量。
+    //
+    //   症状：给移动图层带上了脏区域，松手那一下却依然整图重算 ——
+    //   画面完全正确，只是慢，没有任何报错可查。
+    //   识别它只能靠 Document 的遥测计数（perf 自检的"全量重算 == 0"）。
 }
 
 // ===========================================================================
@@ -221,6 +233,19 @@ bool ImageCommand::mergeWith(const QUndoCommand *other)
     // 因为两份数据都是完整的图层快照，覆盖关系是明确的，
     // 不需要像脏矩形那样拼合区域。
     m_compressedAfter = next->m_compressedAfter;
+
+    // ── 脏区域也要合并 ──
+    //
+    // ★ "空 = 我不知道"的传播规则必须显式写出来 ★
+    //   直接写 m_dirtyRegion = m_dirtyRegion.united(next->m_dirtyRegion)
+    //   是**错的**：QRect().united(r) 返回 r —— 等于把"不知道"
+    //   当成了"什么都不脏"，合并后反而得到一个"很小但错误"的区域。
+    //   一旦被采纳，画面就会残留旧内容（不崩、不报错）。
+    //   正确规则：只要有一方说不出，整体就说不出。
+    if (m_dirtyRegion.isEmpty() || next->m_dirtyRegion.isEmpty())
+        m_dirtyRegion = QRect();
+    else
+        m_dirtyRegion = m_dirtyRegion.united(next->m_dirtyRegion);
 
     // 原始字节数不变（每张图都是整层大小）
     return true;

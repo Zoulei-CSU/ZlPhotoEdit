@@ -28,6 +28,7 @@
 #include "tools/CropTool.h"
 #include "tools/BucketTool.h"
 #include "tools/ColorPickerTool.h"
+#include "tools/MagicWandTool.h"
 #include "tools/ShapeTool.h"
 #include "tools/TextTool.h"
 #include "tools/HandTool.h"
@@ -541,6 +542,19 @@ void MainWindow::setupTools()
     m_toolManager->addTool(new SelectionTool(SelectionTool::Kind::Ellipse, nullptr,
                                             m_commandStack, m_toolManager));
 
+    // ── 魔术棒（按相似颜色建选区）──
+    //
+    // ★ 位置紧跟两个选框之后、裁剪之前 ★
+    //   它们同属"划定范围"那一组：选框按几何划、魔术棒按颜色划，
+    //   裁剪则把划出来的范围变成新画布。工具箱顺序 = 注册顺序，
+    //   排在一起用户从一个走到另一个不用来回找（Photoshop 也是这么排的）。
+    //
+    // ★ 它不需要在这里接线 ★
+    //   与油漆桶同类：自己 floodFill、自己把蒙版接到选区、自己压
+    //   SelectionCommand。工具之间零耦合 —— 唯一共享的是
+    //   engine/Fill 的内核与 core/Selection 的布尔运算。
+    m_toolManager->addTool(new MagicWandTool(nullptr, m_commandStack, m_toolManager));
+
     // ── Phase 4：裁剪 ──
     //
     // ★ 位置紧跟着两个选框工具 ★
@@ -578,10 +592,11 @@ void MainWindow::setupTools()
     m_toolManager->addTool(new HandTool(nullptr, m_commandStack, m_toolManager));
     m_toolManager->addTool(new ZoomTool(nullptr, m_commandStack, m_toolManager));
 
-    // 至此 14 个工具全部注册完毕：
+    // 至此 15 个工具全部注册完毕：
     //   移动 / 画笔 / 橡皮 / 吸管 / 油漆桶 / 直线 / 矩形 / 椭圆 / 文字 /
-    //   矩形选框 / 椭圆选框 / 裁剪 / 抓手 / 缩放
-    //   （Phase 6a 吸管+油漆桶、6b 直线/矩形/椭圆、6c 文字、6d 抓手/缩放）
+    //   矩形选框 / 椭圆选框 / 魔术棒 / 裁剪 / 抓手 / 缩放
+    //   （Phase 6a 吸管+油漆桶、6b 直线/矩形/椭圆、6c 文字、6d 抓手/缩放，
+    //     之后补上魔术棒 —— 它是第一个"算法全在 engine 里现成"的工具）
 
     // ★ 加载工具参数 ★
     //   必须在工具注册之后、绑定文档之前。

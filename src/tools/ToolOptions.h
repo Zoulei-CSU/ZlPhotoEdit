@@ -395,6 +395,58 @@ private:
     bool          m_antialias     = true;
 };
 
+// ── 魔术棒 ───────────────────────────────────────────────────────────────
+// 参数：模式（新建/添加/减去/交集）、容差、连续、抗锯齿、
+//       是否对所有图层取样（判据取哪张图）、羽化半径
+//
+// ★ 为什么不复用 SelectionOptions ★
+//   两者只有"四个模式按钮 + 抗锯齿"是重合的，其余完全不同：
+//   选框要的是"羽化 + 形状"，魔术棒要的是"容差 + 连通 + 判据图"。
+//   塞进一个类的话，选框的选项条上会冒出"容差"，魔术棒的选项条上会冒出
+//   与它无关的东西（比如椭圆的形状参数），用户会看不懂哪个参数此刻有效。
+//   共用的那两块各只有一二十行，且**语义完全一致**，抽成文件内的小工具
+//   函数即可（见 ToolOptions.cpp 的 addModeButtons）。
+//
+// ★ 与 SelectionOptions 共用 QSettings 分组吗 —— 不共用 ★
+//   羽化与运算模式这两个"看起来同名"的参数，在选框与魔术棒里的
+//   常用取值差别很大（选框常羽化，魔术棒常不羽化）。
+//   共用一个分组会让"在魔术棒里不改羽化"顺带改掉选框的羽化 —— 反直觉。
+class MagicWandOptions : public ToolOptions
+{
+    Q_OBJECT
+
+public:
+    explicit MagicWandOptions(QObject *parent = nullptr);
+
+    QWidget *createWidget(QWidget *parent) override;
+    void load(QSettings &settings) override;
+    void save(QSettings &settings) const override;
+
+    SelectionMode mode() const { return m_mode; }
+    int           tolerance() const { return m_tolerance; }
+    bool          contiguous() const { return m_contiguous; }
+    bool          antialias() const { return m_antialias; }
+    bool          sampleAllLayers() const { return m_sampleAllLayers; }
+    qreal         featherRadius() const { return m_featherRadius; }
+
+    void setMode(SelectionMode m);
+    void setTolerance(int v);
+    void setContiguous(bool v);
+    void setAntialias(bool v);
+    void setSampleAllLayers(bool v);
+    void setFeatherRadius(qreal v);
+
+private:
+    SelectionMode m_mode            = SelectionMode::Replace;
+    int           m_tolerance       = 32;
+    bool          m_contiguous      = true;
+    bool          m_antialias       = true;
+    // ★ 默认 true = 取样**合成图**（所见即所得）★
+    //   与 Photoshop 的默认相反，理由见 MagicWandTool.h 决定 ①。
+    bool          m_sampleAllLayers = true;
+    qreal         m_featherRadius   = 0.0;
+};
+
 // ── 移动 ─────────────────────────────────────────────────────────────────
 // 参数：是否自动选择图层、是否显示变换框
 // 注意：这个工具的参数确实不修改任何像素算法，因此放在这里也无妨 ——

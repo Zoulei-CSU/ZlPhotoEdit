@@ -3,6 +3,7 @@
 #include "compat/QtCompat.h"
 #include "core/Document.h"
 #include "core/Layer.h"
+#include "engine/Outline.h"     // maskOutline（选区轮廓的算法本体搬到了 engine）
 #include "tools/AbstractTool.h"
 #include "tools/MarchingAnts.h"
 #include "tools/ToolEvent.h"
@@ -1226,16 +1227,57 @@ void CanvasView::onDocumentContentChanged()
 {
     m_compositeDirty = true;
 
-    // 选区变化也会走到这里（SelectionCommand 与各选区区段都会调
-    // Document::markDirty()）。轮廓缓存必须跟着失效，否则会出现
-    // "选区已经改了，画面上还是旧的蚂蚁线"。
-    invalidateSelectionOutline();
-
-    // 顺带按新的选区状态决定动画要不要跑 —— 刚建立选区就启动，
-    // 刚取消选区就停下。
+    // ── 选区轮廓**不再**在这里失效 ──
+    //
+    // 原先是这么写的：
+    //     // "选区变化也会走到这里，所以顺手让轮廓失效"
+    //     invalidateSelectionOutline();
+    // 那句话本身没错（选区确实会走到这里），但它**不区分**"选区变了"
+    // 和"只是画了一笔" —— 于是用户一拖动画笔，每个事件都要把选区轮廓
+    // 整块重扫一遍（全选时等于整张画布）。实测见 perf 自检的轮廓计时组。
+    //
+    // 现在改为在**真的要画蚂蚁线的时候**按 (选区修订号, 画布尺寸) 判断
+    // （CanvasView::outlineNeedsRebuild）。选区真变了，修订号会变；
+    // 只是像素脏了，修订号纹丝不动 —— 判据精确到"这件事该不该做"，
+    // 而不是"有没有可能受影响"。
+    //
+    // ★ 顺带按新的选区状态决定动画要不要跑 ★
+    //   这一句必须留着：刚建立选区要启动定时器，刚取消要停下。
     updateAntsTimer();
 
-    update();
+    // ── 只重绘改动了的那一块 ──
+    //
+    // 文档既然能告诉我们"这次只有这块像素变了"，就没有理由让 Qt
+    // 重绘整个视口。
+    //
+    // ★ 为什么必须在这里读，而不能等到 paintEvent ★
+    //   本槽是在 Document::markDirtyRegion() 里的 emit contentChanged()
+    //   过程中**被同步调用**的，此刻脏区域一定还在。
+    //   而下一个 paintEvent 里的 composite() 会把它清零（补丁贴完就没用了）。
+    //   读取时机一旦挪后，拿到的就是空 → 退化成全量重绘。
+    //
+    // ★ 空矩形 = "整画布都脏"，不是"什么都没变" ★
+    //   这是 Document::pendingDirtyRegion() 的约定（见其头文件说明）。
+    //   选区变化、图层属性变化、几何变换走的都是全量失效这条路。
+    const QRect dirtyImageRect = m_doc ? m_doc->pendingDirtyRegion() : QRect();
+
+    if (dirtyImageRect.isEmpty()) {
+        update();
+        return;
+    }
+
+    // ── 图像坐标 → 控件坐标 ──
+    //
+    // ★ 必须往外扩几个像素，不能正好贴着边界 ★
+    //   呈现时做了平滑缩放 / 抗锯齿，一个屏幕像素会采样到邻域的图像像素 ——
+    //   也就是脏区域边界**外**的一圈屏幕像素同样会变。
+    //   不外扩的话，笔迹边缘会留下一圈没刷新的旧像素：不崩、不报错，
+    //   而且要缩放到特定比例才看得见，属于本项目最讨厌的那类"静默失效"。
+    //   两个控件像素足以覆盖双线性采样的支撑范围。
+    const QRect widgetRect =
+        imageToWidget(QRectF(dirtyImageRect)).toAlignedRect().adjusted(-2, -2, 2, 2);
+
+    update(widgetRect.intersected(rect()));
 }
 
 void CanvasView::onDocumentStructureChanged()
@@ -1272,6 +1314,18 @@ void CanvasView::onCanvasSizeChanged(const QSize &)
 
 void CanvasView::invalidateSelectionOutline()
 {
+    // ── 强制失效：不比较那两个输入，下次一定重建 ──
+    //
+    // 只留给"选区本身没改、但轮廓的语义变了"的场合：
+    //   · setDocument()        —— 换了一份完全不同的选区
+    //   · onDocumentStructureChanged() —— 图层增删伴随的连锁变化
+    //   · onCanvasSizeChanged()        —— 画布尺寸变化（修订号判据也覆盖它，
+    //                                     这里是双保险）
+    //
+    // ★ 不要拿它当"万能刷新"用 ★
+    //   它一被调用，下一次绘制就必然重扫一遍选区轮廓（全选时 = 整张画布）。
+    //   像素层面的改动（画一笔、填一块）**不需要**它 ——
+    //   那正是 outlineNeedsRebuild() 存在的意义。
     m_selectionOutlineDirty = true;
 }
 
@@ -1337,7 +1391,16 @@ void CanvasView::onAntsTick()
 void CanvasView::rebuildSelectionOutline()
 {
     m_selectionOutline = QPainterPath();
-    m_selectionOutlineDirty = false;
+
+    // ── 先记账，再干活 ──
+    //   ★ 这里记的是"本次重建所依据的那两个输入"，而不是"重建过了" ★
+    //   下次要不要重建，由这两个值有没有变决定（见 outlineNeedsRebuild）。
+    //   放在最前面是刻意的：任何一条提前 return 都算"已经按当前输入
+    //   重建完毕"，否则空选区那条路径会每次都判成"该重建"。
+    m_outlineSelectionRevision = m_doc ? m_doc->selection().revision() : 0;
+    m_outlineCanvasSize        = m_doc ? m_doc->canvasSize() : QSize();
+    m_selectionOutlineDirty    = false;
+    ++m_outlineRebuildCount;
 
     if (!m_doc)
         return;
@@ -1350,110 +1413,41 @@ void CanvasView::rebuildSelectionOutline()
     if (mask.isNull() || mask.format() != QImage::Format_Grayscale8)
         return;
 
-    // ── 只扫描选区的包围盒 ──
+    // ── 算法本体在 engine/outline::maskOutline（纯函数）──
     //
-    // ★ 这是本函数最重要的优化 ★
-    //   Selection::bounds() 已经带缓存，且明确给出"非零区域"的矩形。
-    //   包围盒之外全是 0（未选中），那里的边界只可能是画布边缘 ——
+    // 这里只负责"喂哪些输入"和"缓存到哪"。搬出去的理由有三条
+    // （架构分层 / 可断言 / 可测量），详见 engine/Outline.h 的文件头。
+    //
+    // ★ boundsHint 传 sel.bounds()，而不是让它扫整张蒙版 ★
+    //   包围盒之外全是 0（未选中），那里的"边界"只可能是画布边缘 ——
     //   而画布边缘本来就不需要画蚂蚁线。
-    //   用户框选一个小区域时，扫描量可以从"整张图"降到"那个小方块"。
-    const QRect b = sel.bounds();
-    if (b.isEmpty())
-        return;
+    //   用户只框了一个小图标时，扫描量从"整张图"降到那个小方块。
+    //   全选时它退化成整张图，此时本来就没有更省的办法。
+    m_selectionOutline = outline::maskOutline(mask, sel.bounds());
+}
 
-    // 向外扩 1 像素：边界线位于"内/外交界"处，需要访问到外圈那一圈
-    // 未选中的邻居才能判断出来。
-    const QRect scanRect = b.adjusted(-1, -1, 1, 1).intersected(sel.mask().rect());
-    if (scanRect.isEmpty())
-        return;
-
-    const int W = scanRect.width();
-    const int H = scanRect.height();
-    const int ox = scanRect.x();
-    const int oy = scanRect.y();
-
-    // 先把二值化结果摊平成一维字节数组。
-    // 之所以不直接访问 mask.constScanLine()：下面要在**两个方向**上
-    // 做同样的扫描（横向找上下边界、纵向找左右边界），用一维数组可以
-    // 用同一个索引公式表达两个方向，代码只写一遍。
+bool CanvasView::outlineNeedsRebuild() const
+{
+    // ── 选区轮廓的**全部输入**只有两个 ──
     //
-    // ★ 阈值取 128 ★
-    //   抗锯齿与羽化产生 1~254 的过渡值。取 128 让边界落在过渡带正中，
-    //   视觉上最稳定；取 1 会让蚂蚁线跑到羽化的最外圈，取 255 则跑到内圈。
-    QVector<uchar> bits(W * H);
-    for (int y = 0; y < H; ++y) {
-        const uchar *src = mask.constScanLine(y + oy) + ox;
-        uchar *dst = bits.data() + y * W;
-        for (int x = 0; x < W; ++x)
-            dst[x] = (src[x] >= 128) ? uchar(1) : uchar(0);
-    }
+    //   ① 选区蒙版      —— 用 Selection::revision() 代表（"选区真的变了"才递增）
+    //   ② 画布尺寸      —— 蒙版的尺寸由它决定
+    //
+    //   两者都没变 → 轮廓一定没变 → **一次重建都不做**。
+    //
+    //   ★ 这条判据取代了原来那句无条件的 invalidateSelectionOutline() ★
+    //     原来的写法是"凡是像素脏了就顺手让轮廓失效"，于是**每一个画笔事件**
+    //     都要把选区轮廓整块重扫一遍（评估文档 §1.3 记的就是它）。
+    //     而画笔改的是图层像素，与选区蒙版毫无关系 —— 那笔成本纯属白花。
+    //
+    //   ★ 为什么用修订号而不是"比较蒙版内容" ★
+    //     比较内容要遍历整张蒙版，本身就是我们要省掉的那笔开销。
+    const quint64 rev = m_doc ? m_doc->selection().revision() : 0;
+    const QSize   cs  = m_doc ? m_doc->canvasSize() : QSize();
 
-    // 两个方向统一取值的访问器。
-    //   dir == 0：a0 是 x、a1 是 y
-    //   dir == 1：a0 是 y、a1 是 x（相当于把图转置）
-    // 越界一律视为 0（未选中），这样画布边缘处也能正确生成边界线。
-    auto at = [&](int dir, int a0, int a1) -> bool {
-        if (dir == 0) {
-            if (a0 < 0 || a1 < 0 || a0 >= W || a1 >= H) return false;
-            return bits[a1 * W + a0] != 0;
-        }
-        if (a0 < 0 || a1 < 0 || a0 >= H || a1 >= W) return false;
-        return bits[a0 * W + a1] != 0;
-    };
-
-    for (int dir = 0; dir < 2; ++dir) {
-        const int len0 = (dir == 0) ? W : H;   // 沿线方向长度
-        const int len1 = (dir == 0) ? H : W;   // 垂直方向长度
-
-        for (int a1 = 0; a1 < len1; ++a1) {
-            // side == 0 → 上边界（或左边界），参考格在 a1-1
-            // side == 1 → 下边界（或右边界），参考格在 a1+1
-            for (int side = 0; side < 2; ++side) {
-                const int refOffset = (side == 0) ? -1 : +1;
-                const int lineCoord = (side == 0) ? a1 : a1 + 1;
-
-                int runStart = -1;
-                // 循环多跑一格（a0 <= len0），用于在末端把最后一段收尾。
-                for (int a0 = 0; a0 <= len0; ++a0) {
-                    bool isEdge = false;
-                    if (a0 < len0) {
-                        const bool inside    = at(dir, a0, a1);
-                        const bool refInside = at(dir, a0, a1 + refOffset);
-                        isEdge = inside && !refInside;
-                    }
-
-                    if (isEdge) {
-                        if (runStart < 0)
-                            runStart = a0;
-                    } else if (runStart >= 0) {
-                        // [runStart, a0) 是一段连续的边界，合并成一条线段。
-                        //
-                        // ★ 为什么要"合并成段"而不是每个像素加一小段 ★
-                        //   两个原因：
-                        //   ① 虚线相位。Qt 的虚线样式是按子路径分别起算的，
-                        //      如果每条子路径只有 1 像素长，虚线图案
-                        //      会在每个像素处重新开始 —— 结果是画出来
-                        //      看着像一条实线，完全没有"蚂蚁"的效果。
-                        //   ② 性能。一条 1000 像素的边若拆成 1000 个子路径，
-                        //      光路径构建与描边就要慢一个数量级。
-                        const qreal f = qreal(runStart + (dir == 0 ? ox : oy));
-                        const qreal t = qreal(a0       + (dir == 0 ? ox : oy));
-                        const qreal lc = qreal(lineCoord + (dir == 0 ? oy : ox));
-
-                        if (dir == 0) {
-                            m_selectionOutline.moveTo(f, lc);
-                            m_selectionOutline.lineTo(t, lc);
-                        } else {
-                            m_selectionOutline.moveTo(lc, f);
-                            m_selectionOutline.lineTo(lc, t);
-                        }
-
-                        runStart = -1;
-                    }
-                }
-            }
-        }
-    }
+    return m_selectionOutlineDirty
+           || rev != m_outlineSelectionRevision
+           || cs  != m_outlineCanvasSize;
 }
 
 void CanvasView::drawSelectionAnts(QPainter &painter, const QRectF &visibleImageRect)
@@ -1461,7 +1455,7 @@ void CanvasView::drawSelectionAnts(QPainter &painter, const QRectF &visibleImage
     if (!m_doc || !m_doc->selection().isActive())
         return;
 
-    if (m_selectionOutlineDirty)
+    if (outlineNeedsRebuild())
         rebuildSelectionOutline();
 
     if (m_selectionOutline.isEmpty())

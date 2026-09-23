@@ -2,6 +2,7 @@
 
 #include "engine/Filters.h"   // featherGrayMask（羽化的实现搬到了 engine 层）
 
+#include <QAtomicInteger>
 #include <QPainter>
 #include <QRegion>
 #include <QVector>
@@ -10,8 +11,37 @@
 namespace zl {
 
 // ===========================================================================
+//  修订号的发号器
+// ===========================================================================
+
+namespace {
+
+// ★ 必须是**全局**单调递增，不能是每个 Selection 各一个计数器 ★
+//
+//   下游（CanvasView）用"修订号变了没有"决定要不要重建选区轮廓。
+//   如果号只在单个对象内部从 1 开始数，那么**撤销/重做把一份旧快照
+//   赋回选区**时，"快照里的号"与"下游记着的号"完全可能相等，
+//   而两者的蒙版内容并不相同 —— 判据会说"没变"，
+//   画面上的蚂蚁线于是停在上一版选区上：不崩、不报错、只是画错。
+//   全局发号器让"号相同 ⇒ 内容相同"这条性质恒成立。
+quint64 nextRevision()
+{
+    static QAtomicInteger<quint64> counter(1);
+    return counter.fetchAndAddRelaxed(1);
+}
+
+} // namespace
+
+// ===========================================================================
 //  内部辅助
 // ===========================================================================
+
+// 内容变更的唯一记账点。所有改到蒙版或状态标志的地方都必须走它。
+void Selection::touch()
+{
+    m_boundsDirty = true;
+    m_revision    = nextRevision();
+}
 
 void Selection::ensureMask(const QSize &size)
 {
@@ -24,7 +54,7 @@ void Selection::ensureMask(const QSize &size)
         // 在几何变化后决定如何处置选区 —— 它更清楚该保留还是清空。
         m_mask = QImage(size, QImage::Format_Grayscale8);
         m_mask.fill(0);
-        m_boundsDirty = true;
+        touch();
     }
 }
 
@@ -133,7 +163,7 @@ void Selection::prepareCanvas(const QSize &size)
     //   底色代表"当前处于全选状态"，Add/Subtract/Intersect 才有正确语义。
     m_mask.fill(255);
 
-    m_boundsDirty = true;
+    touch();
     m_active      = false;   // 尺寸已变，旧选区作废
     m_allSelected = true;
 
@@ -153,7 +183,7 @@ void Selection::clear()
     m_mask = QImage();
     m_active      = false;
     m_allSelected = true;
-    m_boundsDirty = true;
+    touch();
 }
 
 void Selection::setFromPath(const QPainterPath &path, bool antialiased)
@@ -188,7 +218,7 @@ void Selection::setFromPath(const QPainterPath &path, bool antialiased)
     m_mask  = target;
     m_active = true;
     m_allSelected = false;
-    m_boundsDirty = true;
+    touch();
 }
 
 void Selection::setMask(const QImage &grayMask)
@@ -205,12 +235,12 @@ void Selection::setMask(const QImage &grayMask)
 
     m_active      = true;
     m_allSelected = false;
-    m_boundsDirty = true;
+    touch();
 }
 
 void Selection::markModified()
 {
-    m_boundsDirty = true;
+    touch();
     if (!m_mask.isNull()) {
         m_active      = true;
         m_allSelected = false;
@@ -393,7 +423,7 @@ void Selection::translate(const QPoint &delta)
     }
 
     m_mask = moved;
-    m_boundsDirty = true;
+    touch();
 }
 
 void Selection::invert()
@@ -413,7 +443,7 @@ void Selection::invert()
             line[x] = uchar(255 - line[x]);
     }
 
-    m_boundsDirty = true;
+    touch();
 }
 
 Selection Selection::clone() const
@@ -422,6 +452,11 @@ Selection Selection::clone() const
     copy.m_mask = m_mask.isNull() ? QImage() : m_mask.copy();
     copy.m_active      = m_active;
     copy.m_allSelected = m_allSelected;
+    // ★ 克隆是"同一份内容"的副本：修订号**原样带走**，不另取新号 ★
+    //   取新号会让"撤销恢复出来的选区"看起来像被改过 —— 不至于出错，
+    //   但会白白多重建一次轮廓。带同一个号是安全的：内容确实相同
+    //   （这正是 revision() 那条语义要求的）。
+    copy.m_revision    = m_revision;
     copy.m_boundsDirty = true;
     return copy;
 }
@@ -435,7 +470,7 @@ void Selection::resizeCanvas(const QSize &newSize, const QPoint &offset)
     if (!m_active || m_allSelected || m_mask.isNull()) {
         // 无有效选区时只需跟随画布尺寸
         m_mask = QImage();
-        m_boundsDirty = true;
+        touch();
         return;
     }
 
@@ -464,7 +499,7 @@ void Selection::resizeCanvas(const QSize &newSize, const QPoint &offset)
     }
 
     m_mask = resized;
-    m_boundsDirty = true;
+    touch();
 }
 
 } // namespace zl

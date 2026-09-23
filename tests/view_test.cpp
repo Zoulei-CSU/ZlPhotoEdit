@@ -16,6 +16,10 @@
 //      ④ ★ 以光标为锚点缩放：光标下的图像点在缩放前后必须不变 ★
 //      ⑤ 缩放上下限被正确钳制
 //      ⑥ imageToWidget / widgetToImage 互为逆映射
+//      ⑦ 呈现的几何位置（边框/棋盘格/图像的像素级落点）
+//      ⑧ 预览画布尺寸（任意角度旋转的预览）—— 判据只看渲染结果
+//      ⑨ ★ 选区轮廓重建的**门控** ★（批次二性能改动）
+//         遥测计数：像素脏了但选区没变 → 一次都不重建（评估文档 §1.3）
 //
 //  用法：
 //      view_test [图像文件]
@@ -25,6 +29,7 @@
 #include "ui/CanvasView.h"
 #include "core/Document.h"
 #include "core/Layer.h"
+#include "core/Selection.h"
 #include "engine/ImageMeta.h"
 
 #include <QApplication>
@@ -643,6 +648,129 @@ static void testPreviewCanvasSize(const QSize &viewport)
 }
 
 // ---------------------------------------------------------------------------
+//  9. 选区轮廓重建的**门控**（批次二性能改动的核心行为）
+// ---------------------------------------------------------------------------
+//
+//  为什么这一条必须单独测：
+//    "轮廓要不要重建"从画面上**完全看不出来** ——
+//      · 该重建却没重建 → 蚂蚁线不跟手（看得见）；
+//      · 不消重建却重建了 → 只是慢（看不见），而它原来发生在**每一个画笔
+//        事件**上（全选时一次要扫整张画布，实测 4K 约 440ms，见 perf 自检
+//        的轮廓计时组）。评估文档 §1.3 记的就是这笔白花的开销。
+//    所以它只能靠 CanvasView::outlineRebuildCount() 这个遥测计数来钉 ——
+//    光断言"蚂蚁线画对了"在"每次都重建"的错误实现下同样是绿的。
+//
+//  本组断言：
+//    ① 无活动选区 → 一次都不重建（drawSelectionAnts 直接返回）
+//    ② 建立选区 → 首次绘制恰好 1 次
+//    ③ ★ 像素脏 N 次、选区没变 → 重建次数纹丝不动 ★（§1.3 的根治）
+//    ④ 选区真的变了 → 恰好再重建 1 次
+//    ⑤ 画布尺寸变化 → 必定重建（蚂蚁线不许滞留在旧位置）
+// ---------------------------------------------------------------------------
+
+// 造一张"指定矩形内全选中、其余全不选"的灰度蒙版。
+// 用矩形而不是羽化边缘，是为了让 outline 的扫描结果确定（端点都是整数）。
+static QImage makeRectMask(const QSize &size, const QRect &r)
+{
+    QImage m(size, QImage::Format_Grayscale8);
+    m.fill(0);
+    const QRect c = r.intersected(QRect(QPoint(0, 0), size));
+    for (int y = c.top(); y <= c.bottom(); ++y) {
+        uchar *line = m.scanLine(y);
+        for (int x = c.left(); x <= c.right(); ++x)
+            line[x] = 255;
+    }
+    return m;
+}
+
+static void testOutlineRebuildGating(const QSize &viewport)
+{
+    std::printf("\n[9] 选区轮廓重建门控（遥测计数）\n");
+
+    const QSize docSize(400, 300);
+
+    Document doc(docSize, Qt::transparent);
+    if (Layer *bg = doc.layers().layer(0)) {
+        QImage img(docSize, QImage::Format_ARGB32_Premultiplied);
+        img.fill(qRgba(20, 20, 20, 255));
+        bg->setImage(img);
+        doc.markDirty();
+    }
+
+    CanvasView cv;
+    cv.show();
+    cv.resize(viewport);
+    QApplication::processEvents();
+    cv.setDocument(&doc);
+
+    // 一次"呈现"：grab() 会同步走一遍 paintEvent（含 drawSelectionAnts）。
+    auto paint = [&cv]() { cv.grab(); };
+
+    // ── 9.1 没有活动选区 → 不该重建任何东西 ──
+    {
+        paint();
+        std::printf("     无选区：重建次数 = %llu\n",
+                    static_cast<unsigned long long>(cv.outlineRebuildCount()));
+        checkEqInt(int(cv.outlineRebuildCount()), 0,
+                   "无活动选区时，轮廓一次都不重建");
+    }
+
+    // ── 9.2 建立活动选区 → 首次绘制恰好重建 1 次 ──
+    //
+    // ★ 选区变化为什么还要显式 markDirty ★
+    //   本项目的选区没有独立信号（见 Document.h），
+    //   "选区变了"这件事是靠调用方（工具）改完之后调 markDirty() 通知画布的。
+    doc.selection().setMask(makeRectMask(docSize, QRect(60, 50, 240, 150)));
+    doc.markDirty();
+    paint();
+
+    const quint64 afterFirst = cv.outlineRebuildCount();
+    std::printf("     建立选区后：重建次数 = %llu\n",
+                static_cast<unsigned long long>(afterFirst));
+    checkEqInt(int(afterFirst), 1, "建立选区后首次绘制恰好重建 1 次");
+
+    // ── 9.3 ★ 核心断言 ★ 像素脏了、选区没变 → 重建次数不许动 ──
+    //
+    //   模拟"用户连续画了 10 笔"：每次都只有一块像素变脏，
+    //   而选区蒙版自始至终没有变。原实现在这里会重建 10 次。
+    for (int i = 0; i < 10; ++i) {
+        doc.markDirtyRegion(QRect(10 + i * 3, 10, 20, 20));
+        paint();
+    }
+    checkEqInt(int(cv.outlineRebuildCount()), int(afterFirst),
+               "★★ 像素脏了 10 次、选区没变 → 轮廓重建次数纹丝不动（§1.3 的根治）");
+
+    //   全量失效（图层增删伴随的那种）同样"只脏像素、不动选区"——
+    //   也不许重建。注意它走的是 update() 整块重绘，而不是 update(rect)。
+    for (int i = 0; i < 3; ++i) {
+        doc.markDirty();
+        paint();
+    }
+    checkEqInt(int(cv.outlineRebuildCount()), int(afterFirst),
+               "★ 全量失效（选区没变）也不重建轮廓");
+
+    // ── 9.4 选区真的变了 → 恰好再重建 1 次 ──
+    doc.selection().setMask(makeRectMask(docSize, QRect(100, 80, 120, 100)));
+    doc.markDirty();
+    paint();
+    checkEqInt(int(cv.outlineRebuildCount()), int(afterFirst) + 1,
+               "★ 选区真的变了 → 下一次绘制恰好重建 1 次");
+
+    // ── 9.5 画布尺寸变化 → 轮廓必定重建（不许滞留在旧位置）──
+    //
+    //   用户会看到的症状是"图像已经缩小了，蚂蚁线还停在原来的位置"。
+    //   ★ 这条路同时会递增选区修订号（syncSelectionToCanvas 内部 touch），
+    //     所以这里**不隔离**"画布尺寸"这个输入 —— 它另有双保险
+    //     （onCanvasSizeChanged 里的 invalidateSelectionOutline）。
+    //     本断言守的是"用户可见结果"：几何操作之后蚂蚁线必须重新对齐。
+    const quint64 beforeResize = cv.outlineRebuildCount();
+    doc.resizeCanvas(QSize(320, 240), Anchor::TopLeft, Qt::transparent);
+    paint();
+    checkEqInt(int(cv.outlineRebuildCount()), int(beforeResize) + 1,
+               "★ 画布尺寸变化 → 轮廓重建一次（蚂蚁线不滞留旧位置）");
+}
+
+// ---------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
@@ -685,6 +813,7 @@ int main(int argc, char **argv)
     testStartupSequence(photo, viewport);
     testRenderedGeometry(viewport);
     testPreviewCanvasSize(viewport);
+    testOutlineRebuildGating(viewport);
 
     std::printf("\n================================================\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);

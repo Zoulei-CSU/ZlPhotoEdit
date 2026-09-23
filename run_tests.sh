@@ -15,8 +15,11 @@
 #      source build_env.sh
 #      ./run_tests.sh              # 跑全部（含一条不编译的静态对账）
 #      ./run_tests.sh brush        # 只跑某一个
+#      ./run_tests.sh brushtool    # 只跑画笔/橡皮**工具**（增量失效 / 幂等 / 撤销粒度）
+#      ./run_tests.sh movetool     # 只跑移动**工具**（残影 / 上帧∪本帧 / 撤销粒度）
 #      ./run_tests.sh fill         # 只跑油漆桶填充（扫描线 / 容差 / 连通性）
 #      ./run_tests.sh toolpaint    # 只跑吸管 + 油漆桶（判据来源 / 撤销粒度 / 不透明度）
+#      ./run_tests.sh magicwand    # 只跑魔术棒（判据取哪张图 / 容差边界 / 四种运算 / 羽化顺序）
 #      ./run_tests.sh shape        # 只跑直线 / 矩形 / 椭圆（蒙版形状 / 拖影 / 撤销粒度）
 #      ./run_tests.sh handzoom     # 只跑抓手 / 缩放（位移坐标系 / 阈值 / 框选矩形）
 #      ./run_tests.sh text         # 只跑文字排版引擎（对齐 / 行距 / 画布裁剪 / 抗锯齿）
@@ -25,6 +28,7 @@
 #      ./run_tests.sh icon         # 只跑 SVG 图标（逐图标量像素 + 接触表）
 #      ./run_tests.sh layer_panel # 只跑图层面板（行序映射 / 热点 / 拖拽 / 自绘像素）
 #      ./run_tests.sh tabs        # 只跑多标签容器（三件套绑定 / 摘页账本 / 每页独立撤销栈）
+#      ./run_tests.sh perf         # 只跑脏矩形增量合成（区域==全图子区域 / 遥测 / 边界 / 成本）
 #      ./run_tests.sh mainwin      # 只跑主窗口装配（最慢：要编整个 src/）
 #      ./run_tests.sh actions      # 只跑静态对账（菜单动作，秒回）
 #
@@ -105,6 +109,31 @@ TOTAL_FAILED=0
 #     lib 没加 → 链接报一堆 QComboBox/QFormLayout 的未解析符号）。
 moc_headers_for() {
     case "$1" in
+        brush_tool_test)
+            # BrushTool / AbstractTool / ToolOptions 都带 Q_OBJECT
+            # （BrushTool 构造里 connect 了 options 的 changed()，
+            #  AbstractTool 是 QObject 子类），外加 **CommandStack**
+            # （撤销粒度那组要看 undoStack()->count()，它带 Q_OBJECT）
+            # 与 Document。漏一个只在**链接期**报"无法解析的外部符号
+            # … vtable / metaObject"，看起来像"少编译了某个 .cpp"，
+            # 其实只是没跑 moc。
+            echo "src/tools/BrushTool.h \
+                  src/tools/AbstractTool.h \
+                  src/tools/ToolOptions.h \
+                  src/commands/CommandStack.h \
+                  src/core/Document.h"
+            ;;
+        move_tool_test)
+            # MoveTool（QObject，connect 了 options 的 changed）、基类
+            # AbstractTool、ToolOptions（MoveOptions），外加 **CommandStack**
+            # （撤销粒度那组要看 undoStack()->count()）与 Document。
+            # 漏一个只在**链接期**报"无法解析的外部符号 … vtable / metaObject"。
+            echo "src/tools/MoveTool.h \
+                  src/tools/AbstractTool.h \
+                  src/tools/ToolOptions.h \
+                  src/commands/CommandStack.h \
+                  src/core/Document.h"
+            ;;
         ui_smoke_test)
             echo "src/ui/AdjustmentDialog.h \
                   src/ui/BrightnessContrastDialog.h \
@@ -124,6 +153,15 @@ moc_headers_for() {
             # 其余被 include 的类型（Layer / LayerList / Selection）
             # 都是纯值类型，不需要 moc。
             echo "src/core/Document.h"
+            ;;
+        perf_test)
+            # 与 geometry_test 同源（要真建 Document 来验缓存/遥测），
+            # 外加 **CommandStack** —— 第 ⑥ 组要压真实的命令进撤销栈，
+            # 看"DrawCommand 报出的矩形"是否被采纳；它带 Q_OBJECT，
+            # 不 moc 就只在**链接期**报"无法解析的外部符号 … vtable"。
+            # DrawCommand 不是 QObject（QUndoCommand 子类），不用 moc。
+            echo "src/core/Document.h \
+                  src/commands/CommandStack.h"
             ;;
         layer_panel_test)
             # 面板这一侧有三个带 Q_OBJECT 的类（LayerPanel / LayerListWidget /
@@ -164,6 +202,21 @@ moc_headers_for() {
             echo "src/tools/CropTool.h \
                   src/tools/AbstractTool.h \
                   src/tools/ToolOptions.h \
+                  src/core/Document.h"
+            ;;
+        magic_wand_test)
+            # MagicWandTool 是 QObject 子类（构造里 connect 了 options 的
+            # changed 信号）；基类 AbstractTool、ToolOptions（MagicWandOptions
+            # 自己也有信号）、**CommandStack**（撤销粒度那组要看 count()）、
+            # Document 都要 moc。
+            # 本组还要构造 BucketTool（"与油漆桶同源"那一组）→ 它的头也 moc 上。
+            # 漏一个只在**链接期**报未解析符号（vtable / metaObject），
+            # 看起来像"少编译了某个 .cpp"，其实只是没跑 moc。
+            echo "src/tools/MagicWandTool.h \
+                  src/tools/BucketTool.h \
+                  src/tools/AbstractTool.h \
+                  src/tools/ToolOptions.h \
+                  src/commands/CommandStack.h \
                   src/core/Document.h"
             ;;
         shape_tool_test)
@@ -240,6 +293,7 @@ moc_headers_for() {
                   src/tools/SelectionTool.h \
                   src/tools/CropTool.h \
                   src/tools/BucketTool.h \
+                  src/tools/MagicWandTool.h \
                   src/tools/ColorPickerTool.h \
                   src/tools/ShapeTool.h \
                   src/tools/HandTool.h \
@@ -275,7 +329,7 @@ extra_libs_for() {
         # 图标要用 QSvgRenderer 自己光栅化 → 必须真链 Qt5Svg
         icon_test|mainwin_test|layer_panel_test)
                                            echo "Qt5Widgets.lib Qt5Svg.lib" ;;
-        ui_smoke_test|view_test|crop_test|tool_paint_test|shape_tool_test|hand_zoom_test|text_tool_test|document_tabs_test)
+        ui_smoke_test|view_test|crop_test|tool_paint_test|shape_tool_test|hand_zoom_test|text_tool_test|document_tabs_test|perf_test|brush_tool_test|move_tool_test|magic_wand_test)
                                            echo "Qt5Widgets.lib" ;;
         *)                                 echo "" ;;
     esac
@@ -543,6 +597,106 @@ run_one() {
                 tests/brush_test.cpp \
                 src/engine/Brush.cpp
             ;;
+        brushtool)
+            # 画笔 / 橡皮的**工具层**（不是 engine 的 brush_test）。
+            #   · tools/BrushTool.cpp   —— 被测对象（快照 / 累积蒙版 /
+            #     每帧从快照重算 / 松手打包一条命令 / 取消还原）；
+            #   · tools/ToolOptions.cpp —— BrushOptions（大小/硬度/不透明度/颜色），
+            #     它拖着整个 QtWidgets，所以本组必须链 Qt5Widgets；
+            #   · tools/AbstractTool.cpp + ToolEvent.cpp —— 基类与事件；
+            #   · commands/DrawCommand.cpp + CommandStack.cpp —— 撤销粒度那组
+            #     要真的压栈才能看 count()；缺少它们会报未解析符号；
+            #   · engine/Brush.cpp —— composeStroke，工具的合成就走它
+            #     （"选区限制 / 预乘合成 / 颜色 alpha"全工程只有这一份实现）；
+            #   · Document.cpp 一个 TU 里引用了合成/变换/重采样，
+            #     所以 core + engine 那一串一个都不能少（少列报未解析符号）。
+            #
+            # ★ 它盯的是 brush_test 管不着的那一半 ★
+            #   brush_test 把算法钉死了（笔尖蒙版形状 / 预乘合成 / 幂等数学），
+            #   本组管"工具行为"，其中最要紧的一条是：
+            #   **拖动期间只重算一小块**（用 Document 的遥测计数来判，
+            #   而不是看画面 —— 批次一真踩过 BrushTool::applyRegion() 残留
+            #   markDirty() 全量失效，像素全对但每帧整图重合成）。
+            #
+            # ★ 它**刻意不链 ui/** ★
+            #   呈现与浮层归 CanvasView，属装配；本组只钉工具本身。
+            #   ★ 但 [6] 组确实要"量叠加层画出的像素"（轮廓圆跟随鼠标）★
+            #     做法是把 paintScreenOverlay 渲染到一张内存 QImage 上再量 ——
+            #     所以 BrushTool 那边把 `if (!view) return;` 这个死判断去掉了
+            #     （view 本来一个方法都不调用，见 paintScreenOverlay 的注释）。
+            #     这样就不必为了量一个圆圈把整个 ui/ 拖进来。
+            build_and_run brush_tool_test \
+                tests/brush_tool_test.cpp \
+                src/tools/BrushTool.cpp \
+                src/tools/ToolOptions.cpp \
+                src/tools/AbstractTool.cpp \
+                src/tools/ToolEvent.cpp \
+                src/commands/CommandStack.cpp \
+                src/commands/DrawCommand.cpp \
+                src/core/Document.cpp \
+                src/core/Layer.cpp \
+                src/core/LayerList.cpp \
+                src/core/Selection.cpp \
+                src/core/ImageTypes.cpp \
+                src/engine/Adjust.cpp \
+                src/engine/Blend.cpp \
+                src/engine/Brush.cpp \
+                src/engine/Curves.cpp \
+                src/engine/Filters.cpp \
+                src/engine/Geometry.cpp \
+                src/engine/Histogram.cpp \
+                src/engine/ImageMeta.cpp \
+                src/engine/Lut.cpp \
+                src/engine/Resample.cpp \
+                src/engine/Transform.cpp
+            ;;
+        movetool)
+            # 移动**工具**（不是视图平移，也不是"移动图层"命令本身）。
+            #   · tools/MoveTool.cpp    —— 被测对象（整层快照 / 每帧从原始位图
+            #     重算 / "上帧 ∪ 本帧"失效 / 松手压一条命令）；
+            #   · tools/ToolOptions.cpp —— MoveOptions（自动选择图层 / 显示变换框），
+            #     它拖着整个 QtWidgets，所以本组必须链 Qt5Widgets；
+            #   · tools/AbstractTool.cpp + ToolEvent.cpp —— 基类与事件；
+            #   · commands/ImageCommand.cpp —— 移动的撤销命令（第 ⑩ 组同源）；
+            #   · commands/LayerCommand.cpp —— Alt 复制式拖动时会用到；
+            #   · commands/CommandStack.cpp —— 撤销粒度那组要真压栈看 count()；
+            #   · engine/Transform.cpp  —— translate()，每帧整层重算走它；
+            #   · Document.cpp 一个 TU 里引用了合成/变换/重采样，
+            #     所以 core + engine 那一串一个都不能少（少列报未解析符号）。
+            #
+            # ★ 它盯的是"残影"这一类只在拖动中可见的 bug ★
+            #   判据有两面：合成缓存里旧位置必须已经变透明（不残留），
+            #   以及拖动期间一次全图重算都不许有（不白算）。前者靠像素，
+            #   后者靠 Document 的遥测计数 —— 缺任何一面都抓不住。
+            #
+            # ★ 它**刻意不链 ui/** ★
+            #   "叠加层画在哪"属装配，归 mainwin_test；本组只钉工具本身。
+            build_and_run move_tool_test \
+                tests/move_tool_test.cpp \
+                src/tools/MoveTool.cpp \
+                src/tools/ToolOptions.cpp \
+                src/tools/AbstractTool.cpp \
+                src/tools/ToolEvent.cpp \
+                src/commands/CommandStack.cpp \
+                src/commands/ImageCommand.cpp \
+                src/commands/LayerCommand.cpp \
+                src/core/Document.cpp \
+                src/core/Layer.cpp \
+                src/core/LayerList.cpp \
+                src/core/Selection.cpp \
+                src/core/ImageTypes.cpp \
+                src/engine/Adjust.cpp \
+                src/engine/Blend.cpp \
+                src/engine/Brush.cpp \
+                src/engine/Curves.cpp \
+                src/engine/Filters.cpp \
+                src/engine/Geometry.cpp \
+                src/engine/Histogram.cpp \
+                src/engine/ImageMeta.cpp \
+                src/engine/Lut.cpp \
+                src/engine/Resample.cpp \
+                src/engine/Transform.cpp
+            ;;
         fill)
             # 油漆桶填充。Fill.cpp 的 composeFill() 直接转调
             # composeStroke()（"填充与画笔共用同一条合成路径"，
@@ -643,6 +797,53 @@ run_one() {
                 src/engine/Transform.cpp
             ;;
 
+        perf)
+            # 脏矩形增量合成。依赖与 geometry 是同一套 core + engine
+            # （Document.cpp 一个 TU 里就引用了合成/变换/重采样，
+            #  少列一个会报"无法解析的外部符号"），额外多两个：
+            #   · commands/CommandStack.cpp —— 第 ⑥ 组要压真实命令进栈，
+            #     验"DrawCommand 报出的脏矩形被采纳"；
+            #   · commands/DrawCommand.cpp —— 被压进栈的那个命令本身；
+            #   · commands/ImageCommand.cpp —— 第 ⑩ 组要验"移动图层那条命令
+            #     报出的脏区域被采纳"，并且要证明 restoreImage() 里那句
+            #     画蛇添足的 markDirty() 已经不在了（否则区域会被降级成全量）；
+            #   · engine/Outline.cpp —— 第 ⑧ 组直接调 outline::maskOutline()
+            #     做像素级断言与计时（算法已经搬出 CanvasView，见铁律 §8.3）。
+            #
+            # ★ 它盯的是"性能改动不许改变结果"这一面 ★
+            #   ② 连续局部失效**确实没触发**全图重算（靠 Document 的遥测计数，
+            #      否则"结果正确"可能只是因为一直在偷偷全量重算）；
+            #   ③ 选区轮廓：算法正确 + 4K 全选下的实测成本（"先量后改"的证据）；
+            #   ③ 脏矩形外一个像素都不许变。
+            #   详见 tests/perf_test.cpp 的文件头。
+            #
+            # ★ 必须链接 Qt5Widgets ★
+            #   CommandStack.h 里 `#include <QUndoStack>`（Qt5 起在 Widgets 模块）。
+            build_and_run perf_test \
+                tests/perf_test.cpp \
+                src/commands/CommandStack.cpp \
+                src/commands/DrawCommand.cpp \
+                src/commands/ImageCommand.cpp \
+                src/engine/Outline.cpp \
+                src/core/Document.cpp \
+                src/core/Layer.cpp \
+                src/core/LayerList.cpp \
+                src/core/Selection.cpp \
+                src/core/ClipboardData.cpp \
+                src/core/ImageTypes.cpp \
+                src/engine/Adjust.cpp \
+                src/engine/Blend.cpp \
+                src/engine/Brush.cpp \
+                src/engine/Curves.cpp \
+                src/engine/Filters.cpp \
+                src/engine/Geometry.cpp \
+                src/engine/Histogram.cpp \
+                src/engine/ImageMeta.cpp \
+                src/engine/Lut.cpp \
+                src/engine/Resample.cpp \
+                src/engine/Transform.cpp
+            ;;
+
         view)
             # 画布视图测试。CanvasView 的依赖比前面几个测试重得多：
             # 它要真的建一个 Document、合成图层、算视图矩阵。
@@ -654,6 +855,7 @@ run_one() {
             build_and_run view_test \
                 tests/view_test.cpp \
                 src/ui/CanvasView.cpp \
+                src/engine/Outline.cpp \
                 src/core/Document.cpp \
                 src/core/Layer.cpp \
                 src/core/LayerList.cpp \
@@ -701,6 +903,57 @@ run_one() {
                 src/tools/ToolEvent.cpp \
                 src/commands/CommandStack.cpp \
                 src/commands/DrawCommand.cpp \
+                src/core/Document.cpp \
+                src/core/Layer.cpp \
+                src/core/LayerList.cpp \
+                src/core/Selection.cpp \
+                src/core/ImageTypes.cpp \
+                src/engine/Adjust.cpp \
+                src/engine/Blend.cpp \
+                src/engine/Brush.cpp \
+                src/engine/Fill.cpp \
+                src/engine/Curves.cpp \
+                src/engine/Filters.cpp \
+                src/engine/Geometry.cpp \
+                src/engine/Histogram.cpp \
+                src/engine/ImageMeta.cpp \
+                src/engine/Lut.cpp \
+                src/engine/Resample.cpp \
+                src/engine/Transform.cpp
+            ;;
+        magicwand)
+            # 魔术棒。依赖与 toolpaint 几乎相同（它复用同一个 engine/Fill 内核）：
+            #   · tools/MagicWandTool.cpp   —— 被测对象（判据取哪张图 + 接到选区 + 压栈）；
+            #   · tools/BucketTool.cpp      —— "与油漆桶同源"那一组要真的跑一遍油漆桶
+            #     才能对照两者的包围盒；少了它这条基线就没了；
+            #   · commands/SelectionCommand.cpp —— 撤销粒度那组要真压栈，
+            #     缺了报未解析符号；
+            #   · commands/DrawCommand.cpp + CommandStack.cpp —— 上面那个对照的油漆桶要用；
+            #   · engine/Fill.cpp           —— 判据算法本体（本组不测它，但必须链上）；
+            #   · engine/Filters.cpp        —— 羽化那一组（featherGrayMask）；
+            #   · Document.cpp 一个 TU 里引用了合成/变换/重采样，
+            #     所以 core + engine 那一串一个都不能少（少列报"无法解析的外部符号"）。
+            #
+            # ★ 它盯的是 fill_test / tool_paint_test 都管不着的那一半 ★
+            #   fill_test   —— 算法本身（连通性 / 容差刻度 / 透明黑）；
+            #   toolpaint   —— 油漆桶怎么用这张蒙版（写像素那一侧）；
+            #   本组        —— 魔术棒怎么用这张蒙版（改选区那一侧）：
+            #                 判据取哪张图、容差的等于号、四种运算、
+            #                 退化归一化、羽化顺序、与油漆桶的口径一致。
+            #
+            # ★ 必须链接 Qt5Widgets ★
+            #   ToolOptions.cpp 要造控件（即使这里不调 createWidget，
+            #   符号也会被引进来）。
+            build_and_run magic_wand_test \
+                tests/magic_wand_test.cpp \
+                src/tools/MagicWandTool.cpp \
+                src/tools/BucketTool.cpp \
+                src/tools/ToolOptions.cpp \
+                src/tools/AbstractTool.cpp \
+                src/tools/ToolEvent.cpp \
+                src/commands/CommandStack.cpp \
+                src/commands/DrawCommand.cpp \
+                src/commands/SelectionCommand.cpp \
                 src/core/Document.cpp \
                 src/core/Layer.cpp \
                 src/core/LayerList.cpp \
@@ -965,6 +1218,7 @@ run_one() {
                 tests/document_tabs_test.cpp \
                 src/ui/DocumentTabs.cpp \
                 src/ui/CanvasView.cpp \
+                src/engine/Outline.cpp \
                 src/commands/CommandStack.cpp \
                 src/core/Document.cpp \
                 src/core/DocumentManager.cpp \
@@ -1040,6 +1294,7 @@ run_one() {
                 src/tools/CropTool.cpp \
                 src/tools/BucketTool.cpp \
                 src/tools/ColorPickerTool.cpp \
+                src/tools/MagicWandTool.cpp \
                 src/tools/ShapeTool.cpp \
                 src/tools/HandTool.cpp \
                 src/tools/ZoomTool.cpp \
@@ -1049,6 +1304,7 @@ run_one() {
                 src/ui/MainWindowActions.cpp \
                 src/ui/MainWindowCommands.cpp \
                 src/ui/CanvasView.cpp \
+                src/engine/Outline.cpp \
                 src/ui/DocumentTabs.cpp \
                 src/ui/RulerWidget.cpp \
                 src/ui/AdjustmentDialog.cpp \
@@ -1090,16 +1346,20 @@ else
     TEST_ARGS_ARR=()
     run_action_check
     run_one brush
+    run_one brushtool
+    run_one movetool
     run_one fill
     run_one selection
     run_one adjust
     run_one ui_smoke
     run_one geometry
+    run_one perf
     run_one ruler
     run_one ico
     run_one view
     run_one crop
     run_one toolpaint
+    run_one magicwand
     run_one shape
     run_one text
     run_one texttool

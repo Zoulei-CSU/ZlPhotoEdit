@@ -134,6 +134,10 @@ QIcon iconForTool(const QString &toolId)
         {"text",           "tool_text"},
         {"hand",           "tool_hand"},
         {"zoom",           "tool_zoom"},
+        // ── 以下是"魔术棒"接入时补的（第 15 个工具）──
+        //   图标在 Phase 6 之前就先画好了（见 gen_icons.py 的图标表），
+        //   所以这里只是把 id 与那张图接上。
+        {"magicwand",      "tool_magicwand"},
     };
 
     for (const auto &e : kMap) {

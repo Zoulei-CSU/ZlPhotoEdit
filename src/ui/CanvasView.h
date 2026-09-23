@@ -114,6 +114,18 @@ public:
     void      setDocument(Document *doc);
     Document *document() const { return m_doc; }
 
+    // ── 诊断：选区轮廓"真的重建了几次" ──
+    //
+    // ★ 为什么这张计数器必须存在 ★
+    //   轮廓重建这件事**从画面上完全看不出来**：
+    //     · 重建得太频繁 → 没有任何外部症状，只是慢（全选时一次几十毫秒，
+    //       而它在"每个画笔事件"里都发生过）；
+    //     · 该重建却没重建 → 症状是"蚂蚁线不跟着选区走"。
+    //   没有这个计数，自检只能验"轮廓画得对不对"，
+    //   **验不了"有没有白算"** —— 那正是本次改动要消灭的东西。
+    //   （与 Document::fullCompositeCount() 同一套路，见铁律 §20.5。）
+    quint64 outlineRebuildCount() const { return m_outlineRebuildCount; }
+
     // ── 工具 ──
     //
     // 借用指针，不接管所有权。传 nullptr 表示没有活动工具
@@ -385,16 +397,26 @@ private:
 
     // ── 选区轮廓缓存 ──
 
-    // 把选区灰度蒙版提取成"边界线段路径"，缓存在 m_selectionOutline 里。
-    //
-    // ★ 为什么必须缓存 ★
-    //   提取过程要对蒙版做多趟全图扫描（约 4 次），4000×3000 的图
-    //   需要几十毫秒。而 paintEvent 是高频调用的 —— 放在里面会让
-    //   画布每次重绘都卡一下，拖动滑块时尤其明显。
-    //   选区只在用户松手时才变化，所以缓存的性价比极高。
+    // 重建缓存：算法本体在 engine/outline::maskOutline（纯函数），
+    // 这里只负责"喂哪些输入 + 缓存到哪 + 记账"。
     void rebuildSelectionOutline();
 
-    // 失效轮廓缓存（选区内容或画布尺寸变化时调用）
+    // ★ 需不需要重建：只看轮廓的**全部输入**有没有变 ★
+    //
+    //   输入① 选区蒙版  —— 用 Selection::revision() 代表
+    //   输入② 画布尺寸
+    //
+    //   ★ 这条判据是"每个画笔事件重扫一遍选区轮廓"的终结者 ★
+    //     （评估文档 §1.3）。画笔改的是图层像素，与选区蒙版无关，
+    //     所以那笔开销原来是纯白花的。
+    //
+    //   ★ 为什么不用"比较蒙版内容" ★
+    //     比较内容要遍历整张蒙版 —— 那正是要省掉的开销本身。
+    //     所以 Selection 必须能回答"我变了没有"（revision）。
+    bool outlineNeedsRebuild() const;
+
+    // 强制失效（不改输入、但语义变了的场合：切文档 / 结构变化）。
+    // ★ 别拿它当万能刷新用 ★ 它一定会导致下一次绘制重建整条轮廓。
     void invalidateSelectionOutline();
 
     // 根据"是否存在选区"决定要不要跑蚂蚁线动画定时器。
@@ -569,7 +591,16 @@ private:
     // 选区边界的轮廓路径（图像坐标）。
     // 由 rebuildSelectionOutline() 从灰度蒙版提取，选区不变时就一直是这份。
     QPainterPath m_selectionOutline;
-    bool         m_selectionOutlineDirty = true;
+
+    // 缓存的有效性 = "重建时所依据的两个输入"
+    //   ★ 记的是**输入**，不是"重建过了"这个事件 ★
+    //     记事件的话就没法回答"现在这份缓存还算不算数"。
+    quint64 m_outlineSelectionRevision = 0;
+    QSize   m_outlineCanvasSize;
+    // 强制失效标志（切文档 / 结构变化 / 画布尺寸变化）
+    bool    m_selectionOutlineDirty = true;
+    // 遥测：真的重建了几次（见 outlineRebuildCount()）
+    quint64 m_outlineRebuildCount = 0;
 
     // 蚂蚁线的虚线相位。每次定时器触发加 1，让虚线段"流动"起来 ——
     // 这是"蚂蚁线"这个叫法的由来，也是让用户一眼看出

@@ -98,18 +98,65 @@ public:
     //   只要图层内容没变（由一个"修订号"标识），就直接返回缓存。
     //   任何修改像素或图层属性的操作都必须调用 markDirty()。
     //
-    //   缓存的失效粒度是"整个画布"。更精细的做法是脏矩形，
-    //   但标准版的画布尺寸通常在几百万像素量级，一次合成为 10~30ms，
-    //   配合下面的降采样策略已经够用。
+    // ★ 失效粒度：局部（脏矩形）为主、全量为兜底 ★
+    //
+    //   这里原先的注释写着"缓存的失效粒度是整个画布 …… 一次合成为
+    //   10~30ms，已经够用"。**这个前提已被实测推翻**（2026-09-21）：
+    //   实际一次全画布合成是 146 ~ 4134 ms，比该估计慢 5 ~ 140 倍 ——
+    //   因为今天的常见输入是 24MP 相机照片（6000×4000），而不是
+    //   该注释假设的 2000×1500 量级。于是"每个鼠标移动重算整张画布"
+    //   直接把画笔变成了幻灯片（4K / 3 图层 = 2.3 fps）。
+    //
+    //   现在的模型：
+    //     · markDirtyRegion(rect) —— 快路径，调用方明确知道只改了哪一块
+    //     · markDirty()           —— 兜底，语义仍是"整图失效"，永久保留
+    //   实测收益：4K / 3 图层 431 ms → 0.25 ms。详见 docs/性能优化评估.md
     QImage composite();
 
-    // 强制缓存失效。任何修改图层/像素的操作后都必须调用。
+    // 强制缓存失效（= 整画布都脏）。任何修改图层/像素的操作后都必须调用。
+    // ★ 这个无参版本**永久保留**，它是正确性的最终保证 ★
+    //   任何"我不确定这次改了什么"的地方都调它，行为与引入脏矩形之前
+    //   完全一致。局部失效只是省掉重算的一条快路径，不是替代品。
     void markDirty();
 
-    // 修订号。每次 markDirty() 递增。
+    // 局部失效：只有 region 内的**像素内容**变了（图像坐标）。
+    //
+    // ★ 算小了比算大了危险得多 ★
+    //   · 算大了 → 多算几块，只是慢一点，画面仍然正确
+    //   · 算小了 → 被漏掉的区域**画面残留旧内容**：不崩、不报错、
+    //     松手后可能就看不出来了，是本项目最难复现的一类 bug
+    //   所以调用点必须保守，且必须有自检钉住（tests/perf_test.cpp）。
+    //
+    // 与 markDirty() 一样会递增修订号并发出 contentChanged()。
+    void markDirtyRegion(const QRect &region);
+
+    // 自上次成功合成以来累积的脏区域（图像坐标），供界面层决定重绘范围。
+    //
+    // ★ 返回空 QRect 表示"整画布都脏"（全量失效）★
+    //   调用方遇到空矩形必须按全图处理 —— 不能理解成"什么都不用重绘"。
+    //
+    // 为什么放在这里查询、而不是把区域塞进 contentChanged 信号：
+    //   改信号签名会牵动 CanvasView / LayerPanel / StatusBarWidget
+    //   三处 connect，以及测试里"连打 20 次只刷一次"那类断言写法。
+    //   而这里需要的信息只有画布一个人用 → 查询法改动面小得多，
+    //   语义不变，其余消费者完全不受影响。
+    QRect pendingDirtyRegion() const;
+
+    // 修订号。每次 markDirty() / markDirtyRegion() 递增。
     // CanvasView 可以通过比较修订号判断"需不需要重绘"，
     // 避免无意义的 paintEvent。
     quint64 revision() const { return m_revision; }
+
+    // ── 合成遥测（供自检与性能诊断）──
+    //
+    // ★ 为什么需要这两个计数 ★
+    //   本功能唯一的失效方式是"表面正常、其实每次仍在全图重算"。
+    //   而"composite() 返回了非空图"这类断言**抓不住**它 ——
+    //   所以必须有一个能区分"走了哪条路径"的可观测量。
+    //   有了计数，perf 自检才能断言"连续 20 次局部失效没有触发过
+    //   任何一次全图重算"，截图工具也才能打印实测报告。
+    quint64 fullCompositeCount()   const { return m_fullCompositeCount; }
+    quint64 regionCompositeCount() const { return m_regionCompositeCount; }
 
     // ── 内容包围盒 ──
 
@@ -236,6 +283,22 @@ private:
     mutable QImage  m_compositeCache;
     mutable quint64 m_revision = 0;
     mutable bool    m_compositeValid = false;
+
+    // ── 脏区域累积（图像坐标）──
+    //   m_fullInvalidate == true → 下次合成必须整图重算（m_dirtyRegion 无意义）
+    //   否则                     → 只需重算 m_dirtyRegion 这一块，再贴回缓存
+    //
+    // ★ 为什么用两个成员，而不是"用空矩形表示全图" ★
+    //   空矩形在语义上是二义的：既可能是"什么都没脏"，也可能是"整图都脏"。
+    //   分开之后，"矩形为空 + 全量标志为假"这种状态根本不会出现 ——
+    //   会不会重算由 m_compositeValid 单独承担。
+    //   少一个二义状态，就少一类静默 bug。
+    QRect m_dirtyRegion;
+    bool  m_fullInvalidate = true;
+
+    // 合成遥测计数（见头文件访问器的说明）
+    mutable quint64 m_fullCompositeCount   = 0;
+    mutable quint64 m_regionCompositeCount = 0;
 
     // 内容包围盒缓存
     mutable QRect m_contentBoundsCache;

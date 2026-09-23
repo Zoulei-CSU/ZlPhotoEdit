@@ -306,13 +306,14 @@ static void testToolIcons()
 {
     beginGroup("工具 id → 图标");
 
-    // 当前已注册的六个 + Phase 6 待接入的八个。
+    // 当前已注册的工具 id（15 个）。
     // ★ 这张表是"契约"：工具 id 是持久化键，不能改；
     //   新接一个工具时若忘了配图标，这条会立刻告诉你。
     const char *ids[] = {
         "move", "brush", "eraser", "rectselect", "ellipseselect", "crop",
         "bucket", "eyedropper", "line", "rect", "ellipse", "text",
         "hand", "zoom",
+        "magicwand",
     };
 
     QStringList missing;

@@ -304,7 +304,8 @@ bool isComponentMode(BlendMode mode)
 // ===========================================================================
 
 QImage compositeLayer(const QImage &base, const QImage &blendImage,
-                      BlendMode mode, qreal opacity)
+                      BlendMode mode, qreal opacity,
+                      quint64 *fastPixelsOut)
 {
     if (base.isNull())
         return base;
@@ -330,6 +331,32 @@ QImage compositeLayer(const QImage &base, const QImage &blendImage,
 
     const bool componentMode = isComponentMode(mode);
 
+    // ── ★ 快路径门槛：完全不透明的上层在 Normal 模式下等于直接覆盖 ★ ──
+    //
+    //  推导（全部是**精确**等式，不是近似）：
+    //    sa       = 255/255.0            = 1.0
+    //    effAlpha = sa * layerAlpha(=1.0) = 1.0
+    //    1.0 - effAlpha                   = 0.0
+    //    br       = blendChannel(Normal, dr, sr) = sr
+    //    mixR     = sr*1.0 + dr*da*0.0    = sr
+    //    outA     = da + 1.0*(1.0-da)     = 1.0  → qRound(255.0) = 255
+    //    finalR   = qRound((qRed(src)/255.0)*255.0)
+    //             = qRed(src)             ← 256 个值穷举过，0 例外
+    //  于是整条 source-over 退化为 `dstLine[x] = src`，且**逐位相同**。
+    //
+    //  ★★ 门必须带全：只有"上层分量原样通过"的模式才成立 ★★
+    //    其他模式 br 由公式算出、不等于 sr，覆盖就会算错。
+    //    Normal/Dissolve 都在 blendChannel() 里走 blendNormal，故二者都在列。
+    //    ⚠ 将来若真实现"溶解"（引入随机抖动），Dissolve 就不再等价于 Normal，
+    //      必须**同时**把它从这里和 blendChannel 的分派里拿掉；
+    //      tests/perf_test.cpp 第 ⑪ 组有一条"由 blendChannel 反推候选集"的断言，
+    //      届时会立刻变红 —— 那条就是为这个雷埋的。
+    const bool opaqueCoverAllowed =
+        (mode == BlendMode::Normal || mode == BlendMode::Dissolve)
+        && layerAlpha >= 1.0;
+
+    quint64 fastPixels = 0;
+
     // 逐行处理，每行一次 scanLine 调用，比逐像素调用 pixel()/setPixel() 快
     // 一到两个数量级（后者每次都做格式转换和边界检查）。
     for (int y = 0; y < h; ++y) {
@@ -344,6 +371,16 @@ QImage compositeLayer(const QImage &base, const QImage &blendImage,
 
         for (int x = 0; x < copyW; ++x) {
             const QRgb src = srcLine[x];
+
+            // ── ★ 快路径：完全不透明的上层像素，结果就是它自己 ★ ──
+            //   判据是**逐像素**的，不是"整层"：一张照片上叠了一笔不透明笔迹时，
+            //   笔迹那部分像素走快路，其余（柔边、半透明）照旧走下面那条。
+            //   ★ 与慢路径**逐位相同**（推导见函数上方），故不需要任何容差。
+            if (opaqueCoverAllowed && qAlpha(src) == 255) {
+                dstLine[x] = src;
+                ++fastPixels;
+                continue;
+            }
 
             // 提取上层分量。注意这是在预乘空间 ——
             // 预乘像素的 RGB 已经乘过 alpha，要还原"原始颜色"必须先除回去，
@@ -451,21 +488,35 @@ QImage compositeLayer(const QImage &base, const QImage &blendImage,
         }
     }
 
+    // 诊断输出（产品代码不传，只有自检传）——见 Blend.h 里 fastPixelsOut 的说明。
+    if (fastPixelsOut)
+        *fastPixelsOut += fastPixels;
+
     return result;
 }
 
-QImage compositeLayers(const QList<QImage> &images,
-                       const QList<BlendMode> &modes,
-                       const QList<qreal> &opacities,
-                       const QList<bool> &visible,
-                       const QSize &bounds,
-                       const QColor &background)
+QImage compositeLayersRegion(const QList<QImage> &images,
+                            const QList<BlendMode> &modes,
+                            const QList<qreal> &opacities,
+                            const QList<bool> &visible,
+                            const QSize &bounds,
+                            const QRect &region,
+                            const QColor &background,
+                            quint64 *fastPixelsOut)
 {
     if (!bounds.isValid() || bounds.isEmpty())
         return QImage();
 
-    // 初始画布：填充指定底色（通常透明，但"拼合图像"时可能是白色）
-    QImage canvas(bounds, QImage::Format_ARGB32_Premultiplied);
+    // 只认画布内的部分。脏矩形是调用方算出来的，可能贴边越界
+    // （例如笔尖一半在画布外），裁掉比让 QImage 分配出一个越界矩形安全。
+    const QRect full(QPoint(0, 0), bounds);
+    const QRect r = region.intersected(full);
+    if (r.isEmpty())
+        return QImage();
+
+    // 初始画布：填充指定底色（通常透明，但"拼合图像"时可能是白色）。
+    // 尺寸是 r.size() 而不是 bounds —— 整个函数的意义就在于此。
+    QImage canvas(r.size(), QImage::Format_ARGB32_Premultiplied);
     canvas.fill(background);
 
     // 从底到顶依次合成。QList 索引 0 是最底部，与 LayerList 的约定一致。
@@ -482,10 +533,59 @@ QImage compositeLayers(const QList<QImage> &images,
         if (img.isNull())
             continue;
 
-        canvas = compositeLayer(canvas, img, modes.at(i), opacities.at(i));
+        // ── 取出该图层落在 r 内的子图 ──
+        //
+        // ★ 这里的坐标对应关系是整个函数的要害 ★
+        //   图层位图与画布同尺寸、左上角对齐（见 Document.h 的模型说明），
+        //   所以 img 的 (0,0) 就是画布的 (0,0)。
+        //   compositeLayer() 是按"相同坐标"逐像素处理的，它要求
+        //   blend 的 (0,0) 对齐 base 的 (0,0)。而 base 是 r.size() 的
+        //   补丁画布，它的 (0,0) 对应画布坐标 r.topLeft()。
+        //   因此必须喂进去"左上角正好在 r.topLeft() 的那一块"。
+        //
+        //   由于 img 与画布同尺寸、r 又在画布内，r.topLeft() 必然落在
+        //   img 内 → sub.topLeft() == r.topLeft()，对应关系成立。
+        //   若 img 比画布小（理论上不该发生），sub 会变小，
+        //   compositeLayer() 把子图之外的像素视为全透明 —— 正是
+        //   "这一层在这个位置没有像素"的正确语义。
+        const QRect sub = r.intersected(QRect(QPoint(0, 0), img.size()));
+        if (sub.isEmpty())
+            continue;   // 该图层在 r 内一个像素都没有
+
+        // ★ 判据必须是"r 就是整张图层"，不能写成"sub == r" ★
+        //   后者在"r 落在图层内部"时同样成立 —— 而那是绝大多数情况。
+        //   此时 img 的 (0,0) 对齐的是**画布原点**，不是 r 的原点，
+        //   直接传 img 会让整个补丁错位（错位量正好是 r.topLeft()）。
+        //   更阴的是：全画布路径（r 恰好是整张图）不受影响，
+        //   所以"打开图、看全图"完全正常，只有局部重算才错 ——
+        //   典型的自检盲区。tests/perf_test.cpp 里专门用了非原点脏矩形。
+        const bool wholeImage = (r == QRect(QPoint(0, 0), img.size()));
+        const QImage part = wholeImage ? img : img.copy(sub);
+
+        canvas = compositeLayer(canvas, part, modes.at(i), opacities.at(i),
+                                fastPixelsOut);
     }
 
     return canvas;
+}
+
+QImage compositeLayers(const QList<QImage> &images,
+                       const QList<BlendMode> &modes,
+                       const QList<qreal> &opacities,
+                       const QList<bool> &visible,
+                       const QSize &bounds,
+                       const QColor &background)
+{
+    // ★ 全图版就是"区域 = 整个画布"的特例，直接转发 ★
+    //   两条路径共用同一个 compositeLayer() 内核，所以
+    //   "某矩形内独立合成" 与 "全图合成结果的对应子区域" 必然逐位相等 ——
+    //   这不是巧合，而是"只有一份实现"的结构性结果。
+    //   千万不要为了省一次 intersected() 把上面那段循环再抄一遍。
+    if (!bounds.isValid() || bounds.isEmpty())
+        return QImage();
+
+    return compositeLayersRegion(images, modes, opacities, visible, bounds,
+                                 QRect(QPoint(0, 0), bounds), background);
 }
 
 } // namespace blend

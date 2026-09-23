@@ -281,7 +281,18 @@ bool TextTool::renderText(const QString &text, const QPointF &anchor)
     //   自己 new 并传固定编号的话，连续两段文字会被 QUndoStack 静默合并成一步。
     stack->push(DrawCommand::standalone(doc, index, region, before, after,
                                         tr("文字")));
-    doc->markDirty();
+
+    // ★ 这里**故意没有** doc->markDirty() ★
+    //
+    //   原先有一句，而它是一处反向优化：push() 内部已经按命令报出的
+    //   区域做过局部失效了（DrawCommand 实现了 IRegionAware，
+    //   返回的就是上面那个 region），紧接着再调一次无参的 markDirty()
+    //   会把整图失效标志立起来 —— 于是刚设好的区域失效被**降级成全量**，
+    //   写一段字又要整张画布重算一次。
+    //
+    //   这类"多做一步反而变慢"的写法没有任何外部症状（画面完全正确），
+    //   只能靠 Document 的遥测计数发现（见 tests/perf_test.cpp 的
+    //   "全量重算次数 == 0"那几组断言）。
     return true;
 }
 

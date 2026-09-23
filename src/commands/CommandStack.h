@@ -20,6 +20,7 @@
 
 #include <QUndoStack>
 #include <QObject>
+#include <QRect>
 #include <QString>
 
 namespace zl {
@@ -129,6 +130,26 @@ class IMemoryAware
 public:
     virtual ~IMemoryAware() = default;
     virtual qint64 memoryUsage() const = 0;
+};
+
+// ============================================================================
+//  可选接口：让命令报告"这次执行只改了哪块区域"
+// ============================================================================
+//  与 IMemoryAware 同一套路：命令类额外继承这个接口并实现 dirtyRegion()，
+//  CommandStack 用 dynamic_cast 探测。不实现它的命令行为与改造前完全一致。
+//
+//  语义：redo() 之后（以及 undo() 之后）**只有这个矩形内的像素会变**。
+//        矩形用**图像坐标**（画布坐标系），与 DrawCommand 的约定一致。
+//
+//  ★ 返回空 QRect = "我不确定 / 可能整图都变了" → 调用方走全量失效 ★
+//    这个默认值是整个机制的安全阀：拿不准的命令什么都不用做。
+//    **不要**为了"看起来更快"而返回一个估出来的矩形 ——
+//    矩形算小了的症状是画面残留旧内容，不崩、不报错，属于最难查的一类 bug。
+class IRegionAware
+{
+public:
+    virtual ~IRegionAware() = default;
+    virtual QRect dirtyRegion() const = 0;
 };
 
 } // namespace zl

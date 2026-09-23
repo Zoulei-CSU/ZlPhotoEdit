@@ -136,6 +136,17 @@ void MoveTool::beginDrag(const ToolEvent &e, const QPoint & /*startImagePos*/, b
     //   只在按下鼠标时发生一次）。
     m_originalImage = layer->image().copy();
 
+    // ── 内容包围盒：整个拖动期间算这一次就够 ──
+    //
+    // 它是"旧位置 ∪ 新位置"那两块区域的计算基础（见 movedRegion）。
+    // 平移是刚体运动，包围盒的形状不随位移改变，所以每帧只需 translated()。
+    //
+    // ★ 为什么不能偷懒用 m_originalImage.rect()（= 整张画布）★
+    //   那样区域就永远是整个画布，等于没优化 —— 白算一次还是整图重合成。
+    //   绝大多数图层的实际内容都比画布小（贴图、抠出来的素材、
+    //   带透明边距的照片），那部分空白正是可省掉的重算量。
+    m_contentBounds = transform::contentBounds(m_originalImage);
+
     if (duplicate) {
         // ── 复制式拖动：先新增一个图层 ──
         //
@@ -247,6 +258,11 @@ void MoveTool::applyDragOffset(const QPoint &offset, bool /*constrain*/)
     if (offset == m_currentOffset)
         return;
 
+    // ★ 先记住"上一帧在哪"，再改成新的 ★
+    //   顺序不能反 —— 反了就只剩"本帧"，
+    //   而"只脏本帧会留残影"（见头文件那段说明）。
+    const QPoint prevOffset = m_currentOffset;
+
     m_currentOffset = offset;
     m_anythingMoved = true;
 
@@ -265,8 +281,39 @@ void MoveTool::applyDragOffset(const QPoint &offset, bool /*constrain*/)
         layer->setImage(moved);
     }
 
-    doc->markDirty();
+    // ── 只失效"旧位置 ∪ 新位置" ──
+    //
+    // 拖动期间本函数**每一帧**都被调用（mouseMove 每秒上百次）。
+    // 原先这里是 doc->markDirty()：每帧整张画布重合成
+    // （4K 431 ms/帧 → 拖动变成幻灯片，见 docs/性能优化评估.md）。
+    //
+    // 而平移改动的像素只有两块：内容在旧位置的样子（要擦掉）
+    // 与在新位置的样子（要画上）。movedRegion 给的就是这两块的并集，
+    // 已与画布求过交；算不出来时返回空 → markDirtyRegion 会按全量处理。
+    doc->markDirtyRegion(movedRegion(prevOffset, offset));
     emit overlayChanged();
+}
+
+// ============================================================================
+//  movedRegion —— 这次平移真正改变了哪一块
+// ============================================================================
+
+QRect MoveTool::movedRegion(const QPoint &from, const QPoint &to) const
+{
+    // 内容包围盒为空 = 这一层没有任何非透明像素（或还没算出来）。
+    // 返回空矩形 = "我说不准" → 调用方走全量失效。宁多算，不越界。
+    if (m_contentBounds.isEmpty() || m_originalImage.isNull())
+        return QRect();
+
+    const QRect canvas(QPoint(0, 0), m_originalImage.size());
+
+    // ★ 两个位置都要算，不是一个 ★
+    //     from → 旧内容所在的那块（平移后要擦掉，所以也得重合成）
+    //     to   → 新内容所在的那块
+    //   只算 to 的后果是"旧位置留着残影"，且只在对上号的那一刻可见。
+    return m_contentBounds.translated(from)
+               .united(m_contentBounds.translated(to))
+           & canvas;
 }
 
 // ============================================================================
@@ -286,8 +333,12 @@ void MoveTool::restoreOriginalImage()
     if (!layer)
         return;
 
+    // 恢复 = 把内容从"当前位置"搬回"原位"，同样是两块（当前位置 ∪ 原位）。
+    // ★ 必须在 setImage 之前算好区域 —— m_currentOffset 由调用方随后清零 ★
+    const QRect region = movedRegion(m_currentOffset, QPoint());
+
     layer->setImage(m_originalImage);
-    doc->markDirty();
+    doc->markDirtyRegion(region);   // 空 → 按全量处理（安全方向）
 }
 
 // ============================================================================
@@ -348,10 +399,16 @@ ToolResult MoveTool::mouseRelease(const ToolEvent &e)
                 //   复制式拖动的 beginMacro 在 beginDrag 里已经调用，
                 //   这里 push 完"移动"命令后再 endMacro；
                 //   非复制式拖动没有宏，直接 push。
+                // ★ 带上脏区域 ★
+                //   拖动期间每帧已经只失效一小块了，如果这一条命令不带区域，
+                //   push() 之后就会退回全图失效 —— "松手那一下"照样卡
+                //   （实测 4K 一次 431 ms）。带上它，整段拖动（含松手）
+                //   都只重算那两块。
                 auto *cmd = new ImageCommand(doc, m_dragLayerIndex,
                                              m_originalImage, afterImage,
                                              m_duplicated ? tr("复制并移动图层")
-                                                          : tr("移动图层"));
+                                                          : tr("移动图层"),
+                                             movedRegion(QPoint(), m_currentOffset));
                 stack->push(cmd);
 
                 if (m_duplicated)
@@ -404,7 +461,20 @@ ToolResult MoveTool::keyPress(const ToolEvent &e)
     const QImage before = layer->image().copy();
     const QImage after  = transform::translate(before, delta);
     layer->setImage(after);
-    doc->markDirty();
+
+    // ── 区域 = 旧位置 ∪ 新位置 ──
+    //
+    // 方向键是**一次性的**平移，没有"拖动期间"可言，所以这里现算一次
+    // 内容包围盒（O(W×H) 一次扫描，4000×3000 约 2~3ms）。
+    // 相比它换掉的"整图重合成 431ms"，这点扫描可以忽略。
+    //
+    // ★ 注意不能用成员 m_contentBounds —— 那是拖动的状态，
+    //   方向键路径压根没进 beginDrag。用局部变量，两处互不干扰。
+    const QRect cb = transform::contentBounds(before);
+    const QRect region = cb.isEmpty() || before.isNull()
+                             ? QRect()
+                             : (cb.united(cb.translated(delta))
+                                & QRect(QPoint(0, 0), before.size()));
 
     if (stack) {
         // ★ 连续按方向键应当合并成一次撤销 ★
@@ -420,8 +490,11 @@ ToolResult MoveTool::keyPress(const ToolEvent &e)
         //   留 5 条撤销记录不会造成困扰；而错误地合并会把
         //   "上一次的移动"和"这一次的移动"粘在一起，反而更难用。
         auto *cmd = new ImageCommand(doc, doc->activeLayerIndex(),
-                                     before, after, tr("移动图层"));
+                                     before, after, tr("移动图层"), region);
         stack->push(cmd);
+    } else {
+        // 没有撤销栈时降级：自己失效（区域同样有效，空 → 全量）
+        doc->markDirtyRegion(region);
     }
 
     emit overlayChanged();
@@ -450,7 +523,8 @@ void MoveTool::commit()
             auto *cmd = new ImageCommand(doc, m_dragLayerIndex,
                                          m_originalImage, layer->image().copy(),
                                          m_duplicated ? tr("复制并移动图层")
-                                                      : tr("移动图层"));
+                                                      : tr("移动图层"),
+                                         movedRegion(QPoint(), m_currentOffset));
             stack->push(cmd);
             if (m_duplicated)
                 stack->endMacro();
