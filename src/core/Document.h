@@ -234,6 +234,17 @@ public:
     QString filePath() const { return m_filePath; }
     void    setFilePath(const QString &path);
 
+    // 显示名提示 —— **没有文件路径**的文档用它代替"未命名"。
+    // 例如屏幕截图生成的页：它没有磁盘来源，但"未命名-3"完全说明不了
+    // 这一页是什么，而"屏幕截图-1"可以。
+    //
+    // ★ 为什么不干脆给 filePath 编一个假名（"屏幕截图-1.png"）★
+    //   那会让「保存」以为已经有目标文件，于是**不问路径直接往相对目录写盘**。
+    //   一个显示用的字符串绝不该有这种副作用 —— 所以单开一个字段，
+    //   它只影响显示，不影响任何文件操作。
+    QString titleHint() const { return m_titleHint; }
+    void    setTitleHint(const QString &hint) { m_titleHint = hint; }
+
     // 是否有未保存的修改。由 commands 层在压栈/撤销时通过
     // undoStack 的 cleanChanged 信号同步，这里只是个标志位。
     bool isModified() const { return m_modified; }
@@ -305,6 +316,11 @@ private:
     mutable bool  m_contentBoundsValid = false;
 
     QString m_filePath;
+
+    // 没有文件路径时的显示名（见 titleHint() 的说明）。
+    // 空 = 用"未命名"。
+    QString m_titleHint;
+
     bool    m_modified = false;
 
     qreal m_dpiX = 72.0;

@@ -52,6 +52,8 @@ INCLUDEPATH += $$PWD/src
 
 SOURCES += \
     src/main.cpp \
+    src/compat/GlobalHotkey.cpp \
+    src/compat/ScreenCapture.cpp \
     src/core/Layer.cpp \
     src/core/LayerList.cpp \
     src/core/Document.cpp \
@@ -122,6 +124,8 @@ SOURCES += \
 
 HEADERS += \
     src/compat/QtCompat.h \
+    src/compat/GlobalHotkey.h \
+    src/compat/ScreenCapture.h \
     src/core/Layer.h \
     src/core/LayerList.h \
     src/core/Document.h \

@@ -216,7 +216,13 @@ QString DocumentTabs::tabTitle(int index) const
 
     QString base;
     if (tab->doc->filePath().isEmpty()) {
-        base = tr("未命名-%1").arg(index + 1);
+        // ★ 没有磁盘来源的页优先用文档自带的"提示名" ★
+        //   屏幕截图生成的页就是这种：它没路径，但"未命名-3"什么也说明不了。
+        //   提示名由创建者给（MainWindow 给"屏幕截图-1"这种带序号的名字），
+        //   这里不做编号 —— 编号是创建者的事，因为它才知道"第几张"。
+        base = tab->doc->titleHint();
+        if (base.isEmpty())
+            base = tr("未命名-%1").arg(index + 1);
     } else {
         base = QFileInfo(tab->doc->filePath()).fileName();
         if (base.isEmpty())

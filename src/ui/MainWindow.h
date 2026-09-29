@@ -43,6 +43,10 @@
 //   但 Qt5 的 QList 在部分配置下会实例化 sizeof(T)，导致不完整类型报错）。
 #include <QAction>
 
+// ★ 需要完整定义 ★
+//   setScreenGrabber() 的形参是 std::function<QImage()> —— 值传递，必须完整类型。
+#include <functional>
+
 // ★ 需要完整定义，而不是前置声明 ★
 //   commitGeometryChange() 的参数用到了 GeometryChangeCommand 的两个
 //   **嵌套类型**（Snapshot / Kind），嵌套类型无法前置声明。
@@ -55,6 +59,12 @@ class QToolBar;
 class QUndoView;
 class QProgressBar;
 class QComboBox;
+// ★ Qt 的类只能声明在**全局**命名空间 ★
+//   曾经把 `class QTimer;` 写进了下面的 namespace zl 里 —— 那声明出来的是
+//   **zl::QTimer**，一个与 ::QTimer 毫不相干的类。头文件里（成员是指针）
+//   看不出任何异常，报错要等到 .cpp 里去 new 它：
+//   "使用了未定义类型 zl::QTimer"。同族的坑见下面 GlobalHotkey 的说明。
+class QTimer;
 
 namespace zl {
 
@@ -73,6 +83,7 @@ class RulerWidget;
 class ToolManager;
 class ToolOptionsBar;
 class StatusBarWidget;
+class GlobalHotkey;   // compat/GlobalHotkey.h（只用到指针，无需完整定义）
 class AdjustmentDialog;
 class RotateImageDialog;
 struct DocumentTab;   // ★ 它是 struct（纯数据聚合），前置声明必须用 struct ★
@@ -150,6 +161,88 @@ public:
     // ★ 本函数不弹任何对话框 ★（弹窗是 writeImage 那条 UI 路径的事）
     bool exportIcon(const QString &path, QString *errorOut = nullptr);
 
+    // ── 屏幕截图（「文件 → 屏幕截图」子菜单）──────────────────────────────
+    //
+    // ★ 为什么这里也是"拆成两半"的 ★
+    //   抓屏幕这件事**依赖真实显示器**：自检跑在 offscreen 平台上，
+    //   那里根本没有屏幕可抓。如果"建立新页"这一步只能跟在"真的抓一次"
+    //   后面，这个功能就永远只能靠人眼验证 —— 与"带对话框的功能"是同一个
+    //   困境（模态框会挂死 / 屏幕不存在），解法也一样：把**真正干活的那一半**
+    //   （把一张内存里的图变成一页）做成公开入口，抓屏只是"图从哪来"之一。
+    //   见 setScreenGrabber()。
+
+    // 把一张**内存里的图**变成新的一页。不弹任何框、不写任何文件。
+    // 返回新文档；失败（空图 / 建不出文档）返回 nullptr。
+    //
+    // ★ 与「文件 → 打开」共用同一份实现 ★
+    //   "图 → 一页"在本工程里只有这一处。否则"图层 0 的名字从哪来"
+    //   "路径必须在开页之前设好"（标签标题是从 filePath 现算的）这类规则
+    //   会有两份，迟早只更新其中一份。
+    struct ImagePageSpec {
+        QImage  image;             // 必须非空
+        QString filePath;          // 空 = 没有磁盘来源（屏幕截图就是这种）
+        QString layerName;         // 图层 0 的名字；空 = 保留默认名
+        QString titleHint;         // 无路径时的显示名（如"屏幕截图-1"）
+        qreal   dpiX = 0.0;        // 0 = 不改（保持 Document 的默认值）
+        qreal   dpiY = 0.0;
+    };
+    Document *createImagePage(const ImagePageSpec &spec);
+
+    // 立即抓取当前屏幕的内容，开为新的一页。
+    //
+    // 返回 false = 抓不到屏幕（没有显示器 / 平台拒绝）。此时**什么都不做**：
+    // 不开空页、不动当前页，只在状态栏说一句为什么。
+    bool captureScreenNow();
+
+    // 延迟抓取：**先把本窗口最小化**，到点抓屏，抓完自动恢复窗口。
+    //
+    // ★ 为什么必须自己先最小化 ★
+    //   用户点"延迟 3 秒"的意思 100% 是"给我 3 秒切到目标窗口去"。
+    //   不最小化的话，3 秒后抓到的就是本程序自己的窗口 —— 一张废图，
+    //   而且用户只会认为"截图坏了"。
+    //
+    // delayMs 期间重复调用 = **重新计时**（不会攒出两张图）。
+    void scheduleScreenCapture(int delayMs);
+
+    // 还有多少毫秒要截（-1 = 没有待发的截图）。自检用。
+    int pendingCaptureDelayMs() const { return m_captureDelayMs; }
+
+    // 替换"抓屏幕"这一步（自检 / 截图工具用）。
+    // 传空的 std::function = 恢复默认（真的去抓屏幕）。
+    void setScreenGrabber(std::function<QImage()> grabber);
+
+    // 全局快捷键对象（自检要验"登记成功没有""系统消息走不走得通"）。
+    //
+    // ★ 登记失败时它不是 nullptr ★
+    //   对象一直都在，只是 isRegistered() 为假、lastError() 里有原因
+    //   （例如被别的程序占用了）。"注册失败"绝不允许表现为"对象不存在"
+    //   那种沉默 —— 否则上层会以为功能正常，而用户按了没反应。
+    GlobalHotkey *globalHotkey() const { return m_hotkey; }
+
+    // 立即截图的全局快捷键 —— "产品定的那一个"（候选表的第一项）。
+    // 只能有一份定义：菜单、文档、登记、失败兜底都从它取。
+    static constexpr const char *kCaptureHotkey = "Ctrl+Alt+S";
+
+    // 全部候选，**首选在前**（第一项就是 kCaptureHotkey）。
+    // setupScreenCapture() 逐个登记，第一个成功的即为实际生效键，
+    // 并把这个键**写回菜单**（菜单上写的 = 真正能按的）。
+    //
+    // ★ 为什么允许回落，而不是死守一个键 ★
+    //   全局热键是稀缺资源：同一个组合键全系统只能被一个进程登记，
+    //   而 QQ / 微信 / 各家截图工具抢的恰好就是 Ctrl+Alt+S 这一类
+    //   （实测开发机上这个键已被占用）。
+    //   只留一个键的话，撞车的用户拿到的是"装好了、按下去永远没反应"——
+    //   而这正是全局热键最典型的失败形态：与"程序坏了"无法区分。
+    //   回落的代价只是状态栏多一句提示，换来的是在真实机器上**确实可用**。
+    //
+    // ★ 写成函数而不是静态数组 ★
+    //   避免跨编译单元的静态初始化顺序问题；自检也能直接调它来断言
+    //   "菜单上显示的键一定在候选表里"。
+    static QStringList captureHotkeyCandidates();
+
+    // 全局热键的登记 id（自检用它"伪造一次按键"，见 GlobalHotkey 的说明）
+    static constexpr int kCaptureHotkeyId = 1;
+
     // ── 批量打开：命令行参数与"拖入多个文件"共用 ──
     //
     // 逐个开成一页。**已经打开过的文件不重复开**，只切到已有那一页 ——
@@ -188,6 +281,26 @@ private:
     void setupToolBars();
     void setupDocks();
     void setupStatusBar();
+
+    // ★ 屏幕截图的两件"活物"：全局热键与延迟定时器 ★
+    //   必须在 setupStatusBar() **之后**调用 —— 热键登记失败时要用状态栏
+    //   把原因说出来（登记失败最常见的形态就是"被别的程序占用了"，
+    //   而那正是"按了没反应"最容易被误认为程序坏了的地方）。
+    //   内部顺序也是定死的：先 connect、后 register（见 .cpp）。
+    void setupScreenCapture();
+
+    // 把"实际生效的那个键"写到「立即截图」动作上（快捷键 + 提示文字）。
+    //
+    // ★ 为什么必须有一个函数来做这件事，而不是在两处各写一遍 ★
+    //   setupActions() 建动作时先按首选键显示（那时还没登记，只能这么办），
+    //   setupScreenCapture() 登记完可能发现首选键被占、换成了别的键。
+    //   于是这个组合键有**两个时刻**的值：桌面上的说明文字必须跟着
+    //   后者走。两处各写一遍的话，迟早出现"菜单写 A、按 B 才管用"。
+    void applyCaptureHotkey(const QKeySequence &sequence);
+
+    // 延迟截图的定时器到点了（抓屏 → 恢复窗口）。私有：只给定时器用。
+    void onCaptureTimerFired();
+
     void setupConnections();
 
     // 加载/保存窗口状态（几何、停靠位置、上次的工具）
@@ -574,6 +687,18 @@ private:
     QAction *m_actionNew = nullptr;
     QAction *m_actionOpen = nullptr;
     QAction *m_actionOpenAsLayer = nullptr;   // 文件 → 打开为图层
+
+    // 文件 → 屏幕截图（子菜单里的四项）
+    //   ★ 为什么四个都是独立动作，而不是"一个动作 + 参数" ★
+    //     菜单项的触发是"点击"这一个动作，参数只能靠 lambda 捕获延时；
+    //     而自动化与对账脚本要按 objectName 找到**每一项**（见 action_check.py
+    //     与 mainwin_test 的"每个有名字的菜单动作都有图标"）。四个动作各自
+    //     有名字、有图标，代价只是三行声明。
+    QAction *m_actionCaptureNow = nullptr;       // 立即截图（带全局快捷键）
+    QAction *m_actionCaptureDelay3 = nullptr;
+    QAction *m_actionCaptureDelay5 = nullptr;
+    QAction *m_actionCaptureDelay10 = nullptr;
+
     QAction *m_actionSave = nullptr;
     QAction *m_actionSaveAs = nullptr;
     QAction *m_actionClose = nullptr;
@@ -656,6 +781,36 @@ private:
     // 文档内嵌的"最近使用文件"上限
     static constexpr int kMaxRecentFiles = 10;
     QList<QAction *> m_recentFileActions;
+
+    // ── 屏幕截图的状态（装配在 setupScreenCapture 里）──
+
+    // 全局热键。★ 它不需要"有没有注册成功"来当判据：看 isRegistered() ★
+    GlobalHotkey *m_hotkey = nullptr;
+
+    // 延迟截图的单次定时器（只有一个 —— 重复点延迟项 = 重新计时，
+    // 而不是攒出好几个定时器然后一次截好几张）
+    QTimer *m_captureTimer = nullptr;
+
+    // 还有多少毫秒要截；-1 = 没有待发的截图（也是"上一张已经抓完"的标志）
+    int m_captureDelayMs = -1;
+
+    // 这次延迟截图是我们自己把窗口最小化的吗？
+    // 是 → 抓完要恢复窗口；不是（用户本来就把它最小化了）→ 抓完别乱动用户的窗口。
+    bool m_captureMinimizedSelf = false;
+
+    // 屏幕截图页的序号（"屏幕截图-1"、"屏幕截图-2"…）。
+    // ★ 只增不减 ★：关掉第一张之后下一张是 -2 而不是又回到 -1 ——
+    //   编号复用会让"我记得刚才那张叫 -1"变成一句没法验证的话。
+    int m_screenshotSeq = 0;
+
+    // "抓屏幕"这一步的实现。默认空 = 真的去抓（compat::grabScreen）。
+    // 自检用 setScreenGrabber() 换成一张造好的图，于是整条
+    // "定时器/热键 → 抓 → 建页" 都能在 offscreen 上跑通。
+    std::function<QImage()> m_screenGrabber;
+
+    // 延迟截图：先最小化再等 —— 公开入口是 scheduleScreenCapture()，
+    // 四个菜单项直接调它（不再包一层私有同名函数，少一个名字少一处不一致）。
+    // 定时器到点后走 onCaptureTimerFired()。
 
     // ── 最近文件列表管理 ──
     QStringList recentFiles() const;

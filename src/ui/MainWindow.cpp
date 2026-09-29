@@ -1,6 +1,7 @@
 ﻿#include "ui/MainWindow.h"
 
 #include "compat/QtCompat.h"
+#include "compat/GlobalHotkey.h"
 
 #include "core/DocumentManager.h"
 #include "core/Document.h"
@@ -49,6 +50,9 @@
 #include <QApplication>
 #include <QAction>
 #include <QActionGroup>
+// 屏幕截图的全局热键要从 kCaptureHotkey（字符串）构造它 —— 只此一处构造，
+// 菜单上的说明文字也从同一个 QKeySequence 取（见 setupScreenCapture）。
+#include <QKeySequence>
 #include <QGridLayout>
 #include <QPalette>
 #include <QMenuBar>
@@ -137,10 +141,14 @@ MainWindow::MainWindow(QWidget *parent, const QStringList &initialFiles)
     //  4. Actions / Menus / ToolBars
     //  5. Docks
     //  6. StatusBar
-    //  7. Connections
+    //  7. 屏幕截图的全局热键与定时器（要状态栏，所以排在 6 之后）
+    //  8. Connections
     //
     //  这个顺序不是随意的：例如第 3 步必须在第 2 步之后，
     //  因为 ToolManager 需要把工具推给 CanvasView。
+    //  第 7 步必须在第 6 步之后 —— 全局热键登记失败时要在状态栏说明原因，
+    //  而"被别的程序占用"是最常见的失败形态（症状恰好是"按了没反应"，
+    //  与程序坏了无法区分）。见 setupScreenCapture() 里的说明。
     //
     //  ★ 撤销栈不在这里建 ★
     //    它属于**标签页**（一页一个）。建栈的时机是"开一页"，
@@ -154,6 +162,7 @@ MainWindow::MainWindow(QWidget *parent, const QStringList &initialFiles)
     setupTools();
     setupDocks();
     setupStatusBar();
+    setupScreenCapture();
     setupConnections();
 
     loadSettings();

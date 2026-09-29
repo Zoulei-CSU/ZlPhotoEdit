@@ -284,6 +284,7 @@ moc_headers_for() {
             #   看起来像"少编译了某个 .cpp"，其实只是没跑 moc。
             echo "src/core/Document.h \
                   src/core/DocumentManager.h \
+                  src/compat/GlobalHotkey.h \
                   src/commands/CommandStack.h \
                   src/tools/AbstractTool.h \
                   src/tools/ToolManager.h \
@@ -1255,6 +1256,8 @@ run_one() {
             #   完整清单见 .pro 的 SOURCES（手工同步，见文件末尾的说明）。
             build_and_run mainwin_test \
                 tests/mainwin_test.cpp \
+                src/compat/GlobalHotkey.cpp \
+                src/compat/ScreenCapture.cpp \
                 src/core/Layer.cpp \
                 src/core/LayerList.cpp \
                 src/core/Document.cpp \

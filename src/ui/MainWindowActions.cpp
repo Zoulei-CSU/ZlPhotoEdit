@@ -19,6 +19,7 @@
 #include "ui/MainWindow.h"
 #include "ui/IconLibrary.h"
 #include "compat/QtCompat.h"
+#include "compat/GlobalHotkey.h"
 #include "ui/CanvasView.h"
 #include "ui/ToolOptionsBar.h"
 #include "ui/StatusBarWidget.h"
@@ -147,6 +148,74 @@ void MainWindow::setupActions()
     m_actionOpenAsLayer->setStatusTip(
         tr("把另一张图片作为新图层加入当前图像（不切换文档）"));
     connect(m_actionOpenAsLayer, &QAction::triggered, this, &MainWindow::openAsLayer);
+
+    // ── 屏幕截图：四个动作（子菜单在 setupMenus 里挂到「文件」下）──
+    //
+    // ★ 四个都写成显式的四件套，不搞表驱动循环 ★
+    //   tools/action_check.py 是**文本级**对账：它靠
+    //   `m_xxx = new QAction` 与 `m_xxx->setObjectName(` 两条正则确认
+    //   "创建 ⇄ 进菜单 ⇄ 有名字"三件事成对。写成
+    //   `*pa = new QAction(...)` 或循环里 `a->setObjectName(...)` 的话，
+    //   对账脚本一条都匹配不到 —— 而它给出的结论是"菜单项凭空消失"这类
+    //   真实故障的守门人。四行重复换一条守门，值。
+    //
+    // ★ 为什么"立即"带快捷键、其它三个不带 ★
+    //   延迟截图总得有人先点菜单，那时程序一定在前台，普通的应用内快捷键
+    //   就够用。而"立即截图"的典型用法恰恰是**程序在后台/最小化**，
+    //   随手截一下屏幕上的东西 —— 那种场景 Qt 层的快捷键收不到按键，
+    //   必须向系统登记（见 compat/GlobalHotkey.h）。
+    //
+    // ★ 同时 setShortcut 是全局登记失败时的兜底 ★
+    //   系统里已经有人占着这个组合键时 RegisterHotKey 会失败（QQ / 微信 /
+    //   各种截图工具都会抢），那时"程序在前台"这条路仍然要能用。
+    //   ★ 两个都生效时不会各截一张 ★ —— RegisterHotKey 是在系统层把这个键
+    //   **截走**的，那一次按键不会到达 Qt，所以只会触发一次。
+    //
+    // ★ 这里先按"首选键"显示，稍后可能被改写 ★
+    //   建动作时还没向系统登记，只能先显示候选表第一项；
+    //   setupScreenCapture() 登记完若发现首选键被别的程序占着、换用了别的键，
+    //   会调 applyCaptureHotkey() 把它改过来 —— 菜单上写的必须就是能按的。
+    // ★ 这里必须用花括号初始化 ★
+    //   写成 `const QKeySequence captureSeq(QLatin1String(kCaptureHotkey));`
+    //   会被解析成**函数声明**（"最令人烦恼的解析"）：
+    //   它声明了一个接受 QLatin1String、返回 QKeySequence 的函数，
+    //   报错出现在 setShortcut() 那一行（"无法把函数指针转成 QKeySequence"），
+    //   完全看不出根因在初始化写法上。
+    const QKeySequence captureSeq{QLatin1String(kCaptureHotkey)};
+
+    m_actionCaptureNow = new QAction(tr("立即截图"), this);
+    m_actionCaptureNow->setObjectName(QStringLiteral("actionCaptureNow"));
+    m_actionCaptureNow->setIcon(icons::icon(QStringLiteral("action_screen_capture")));
+    applyCaptureHotkey(captureSeq);
+    connect(m_actionCaptureNow, &QAction::triggered, this,
+            [this] { captureScreenNow(); });
+
+    // 延迟三项：同一件事的三个档。
+    // ★ 菜单上写"秒"、代码里给"毫秒" —— 换算只发生在这三个 lambda 里 ★
+    //   散出去就会有人把 3000 写成 3。
+    m_actionCaptureDelay3 = new QAction(tr("延迟 3 秒"), this);
+    m_actionCaptureDelay3->setObjectName(QStringLiteral("actionCaptureDelay3"));
+    m_actionCaptureDelay3->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    m_actionCaptureDelay3->setStatusTip(
+        tr("3 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+    connect(m_actionCaptureDelay3, &QAction::triggered, this,
+            [this] { scheduleScreenCapture(3000); });
+
+    m_actionCaptureDelay5 = new QAction(tr("延迟 5 秒"), this);
+    m_actionCaptureDelay5->setObjectName(QStringLiteral("actionCaptureDelay5"));
+    m_actionCaptureDelay5->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    m_actionCaptureDelay5->setStatusTip(
+        tr("5 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+    connect(m_actionCaptureDelay5, &QAction::triggered, this,
+            [this] { scheduleScreenCapture(5000); });
+
+    m_actionCaptureDelay10 = new QAction(tr("延迟 10 秒"), this);
+    m_actionCaptureDelay10->setObjectName(QStringLiteral("actionCaptureDelay10"));
+    m_actionCaptureDelay10->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    m_actionCaptureDelay10->setStatusTip(
+        tr("10 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+    connect(m_actionCaptureDelay10, &QAction::triggered, this,
+            [this] { scheduleScreenCapture(10000); });
 
     m_actionSave = new QAction(tr("保存(&S)"), this);
     m_actionSave->setObjectName(QStringLiteral("actionSave"));
@@ -656,6 +725,27 @@ void MainWindow::setupMenus()
     //   两者是"从文件拿东西进来"的一组，放一起用户才好对比：
     //   「打开」换掉当前这张，「打开为图层」保留当前这张、再叠一张上去。
     fileMenu->addAction(m_actionOpenAsLayer);
+
+    // ── 屏幕截图（子菜单）──
+    //
+    // ★ 为什么放在「打开为图层」之后 ★
+    //   它和上面两项同属"把外面的东西拿进来"这一组：
+    //   新建 / 打开是"从磁盘拿"，截图是"从屏幕拿"。
+    //   放一起用户才好对照"我要的东西从哪来"。
+    //
+    // ★ 子菜单自己也要图标 ★
+    //   addMenu() 返回的 QMenu 自带一个 menuAction()，它就是菜单里那一行
+    //   （与普通菜单项走同一套绘制），所以不挂图标的话它会在
+    //   "一栏都有图标"的菜单里明显掉队。
+    QMenu *captureMenu = fileMenu->addMenu(tr("屏幕截图(&C)"));
+    captureMenu->setObjectName(QStringLiteral("menuScreenCapture"));
+    captureMenu->setIcon(icons::icon(QStringLiteral("menu_screen_capture")));
+    captureMenu->addAction(m_actionCaptureNow);
+    // 三条延迟项归成一组：同一个动作的三个档，与"立即"之间用横线分开
+    captureMenu->addSeparator();
+    captureMenu->addAction(m_actionCaptureDelay3);
+    captureMenu->addAction(m_actionCaptureDelay5);
+    captureMenu->addAction(m_actionCaptureDelay10);
 
     // 最近打开（内容由 updateRecentFileActions 动态填充）
     QMenu *recentMenu = fileMenu->addMenu(tr("最近打开(&R)"));
@@ -1281,6 +1371,137 @@ void MainWindow::setupStatusBar()
             this, &MainWindow::setZoomLevel);
 
     m_statusBar->showMessage(tr("就绪"), 3000);
+}
+
+// ============================================================================
+//  captureHotkeyCandidates / applyCaptureHotkey
+// ============================================================================
+
+// 候选表（首选在前）。第一项必须就是 kCaptureHotkey —— 文档、菜单默认显示、
+// 全部登记失败时的兜底，都以"产品定的那一个"为准。
+//
+// ★ 后面的选项怎么挑的 ★
+//   全局热键是在**整个系统**里把这个键截走 —— 所以回落项也不能选
+//   "别的程序常用的键"（例如 Ctrl+Shift+S 到处是"另存为"，
+//   抢过来会让用户在别的软件里按不出那个功能）。
+//   因此回落项一律往"多加一个 Shift"的方向走：可记忆、且极少有人占用。
+QStringList MainWindow::captureHotkeyCandidates()
+{
+    return QStringList{
+        QString::fromLatin1(kCaptureHotkey),   // Ctrl+Alt+S ← 必须留在第一位
+        QStringLiteral("Ctrl+Alt+Shift+S"),
+        QStringLiteral("Ctrl+Alt+Shift+A"),
+    };
+}
+
+// 把"实际生效的键"写到「立即截图」动作上。
+// ★ 只有这一个地方写这个动作的快捷键与提示文字 ★
+//   两处各写一遍，就会出现"菜单上写着 A、按 B 才管用"。
+void MainWindow::applyCaptureHotkey(const QKeySequence &sequence)
+{
+    if (!m_actionCaptureNow || sequence.isEmpty())
+        return;
+
+    m_actionCaptureNow->setShortcut(sequence);
+    m_actionCaptureNow->setStatusTip(
+        tr("抓取当前屏幕并开为新标签页（%1；程序最小化时也有效）")
+            .arg(sequence.toString(QKeySequence::NativeText)));
+}
+
+// ============================================================================
+//  setupScreenCapture —— 屏幕截图的全局热键与延迟定时器
+// ============================================================================
+//
+//  ★ 内部顺序是定死的：先 connect，后 register ★
+//    register 一旦成功，系统随时可能把 WM_HOTKEY 投进来 ——
+//    也就是说"信号可能在下一行就发出"。连接还没建好就登记的话，那一次
+//    按键落进真空：热键明明登记着，按下去却什么都不发生。
+//    ★ 而且它只在"第一次按"时暴露 ★ 用户会以为是自己没按对，
+//    再按一次 —— 第二次就好了（那时连接早就建好了），于是这个 bug
+//    几乎不可能被报告出来。
+//    这与铁律第九章"信号传不了现状"同源：凡是"连接建立之前就可能已经
+//    发生的事"，顺序就必须钉死。
+//
+//  ★ 为什么放在 setupStatusBar() 之后 ★
+//    登记失败要说出来（说给用户听的地方是状态栏）。而失败最常见的形态是
+//    "这个组合键被别的程序先占了" —— 那正是"按了没反应"最容易被误认为
+//    "程序坏了"的地方。这一句提示是这条功能**唯一**的失败出口。
+
+void MainWindow::setupScreenCapture()
+{
+    // ── ① 延迟截图的定时器（单次）──
+    //   只建一个：重复点"延迟 N 秒"= 重新计时（见 scheduleScreenCapture）
+    m_captureTimer = new QTimer(this);
+    m_captureTimer->setSingleShot(true);
+    connect(m_captureTimer, &QTimer::timeout,
+            this, &MainWindow::onCaptureTimerFired);
+
+    // ── ② 全局热键：逐个试候选表，**第一个登记上的就是实际生效键** ──
+    //   ★ 对象总会建出来 ★（哪怕候选表全部失败）——"注册失败"绝不能表现为
+    //   "对象不存在"那种沉默，否则上层连"到底怎么了"都问不出来。
+    m_hotkey = new GlobalHotkey(this);
+
+    // ★ connect 必须在这之前 ★（理由见本节开头）
+    connect(m_hotkey, &GlobalHotkey::activated, this, [this](int id) {
+        if (id == kCaptureHotkeyId)
+            captureScreenNow();
+    });
+
+    const QStringList candidates = captureHotkeyCandidates();
+    QKeySequence effective;          // 实际登记上的那个键
+    QStringList  tried;              // 试过哪些键、各自为什么不行
+
+    for (const QString &text : candidates) {
+        // ★ 同样用花括号 ★（"最令人烦恼的解析"，见 setupActions 的说明）
+        const QKeySequence seq{text};
+        if (m_hotkey->registerSequence(seq, kCaptureHotkeyId)) {
+            effective = seq;
+            break;
+        }
+        tried << tr("%1（%2）").arg(text, m_hotkey->lastError());
+    }
+
+    if (!effective.isEmpty()) {
+        // ★ 把**真正生效**的键写回菜单 ★
+        //   回落到第二个键时，菜单上若还写着首选键，用户拿到的就是一把错钥匙：
+        //   他会一直按 Ctrl+Alt+S，然后认为这个功能是坏的。
+        applyCaptureHotkey(effective);
+
+        if (effective.toString(QKeySequence::PortableText)
+            != QString::fromLatin1(kCaptureHotkey)) {
+            // 回落不是错误，但**必须说出来**，否则用户按首选键毫无反应时
+            // 只会怀疑程序。状态栏 + 日志两处都留。
+            if (m_statusBar) {
+                m_statusBar->showMessage(
+                    tr("首选快捷键 %1 已被其它程序占用，本次改用 %2（程序最小化时也有效）")
+                        .arg(QString::fromLatin1(kCaptureHotkey),
+                             effective.toString(QKeySequence::NativeText)),
+                    15000);
+            }
+            qWarning("首选全局快捷键 %s 被占用，已回落到 %s",
+                     kCaptureHotkey,
+                     qUtf8Printable(effective.toString(QKeySequence::NativeText)));
+        }
+        return;
+    }
+
+    // ── 候选表全试完都没成 ──
+    //
+    // ★ 失败也**照常可用**，只是要用户知道怎么用 ★
+    //   动作上还挂着首选键的**应用内**快捷键（setupActions 设的，这里没有
+    //   改写），所以"程序在前台"这条路径一点没受影响 —— 提示里必须把这一点
+    //   说清，否则用户会以为整个截图功能都坏了。
+    if (m_statusBar) {
+        m_statusBar->showMessage(
+            tr("全局快捷键不可用（%1）。程序最小化时按不了，"
+               "但前台仍可用 %2，或走「文件 → 屏幕截图 → 立即截图」")
+                .arg(tried.join(QStringLiteral("；")),
+                     QString::fromLatin1(kCaptureHotkey)),
+            20000);
+    }
+    // 日志里也留一条：自检与截图工具拿不到状态栏（窗口没显示）。
+    qWarning("全局快捷键全部登记失败：%s",
+             qUtf8Printable(tried.join(QStringLiteral("；"))));
 }
 
 // ============================================================================

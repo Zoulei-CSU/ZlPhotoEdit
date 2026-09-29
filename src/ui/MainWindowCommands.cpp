@@ -31,6 +31,9 @@
 //    所以本文件里的每个命令都严格照这个骨架写，便于审查。
 // ============================================================================
 
+#include "compat/GlobalHotkey.h"
+#include "compat/ScreenCapture.h"
+
 #include "ui/MainWindow.h"
 #include "ui/CanvasView.h"
 #include "ui/ToolOptionsBar.h"
@@ -81,6 +84,9 @@
 
 #include <QApplication>
 #include <QAction>
+// 屏幕截图要用 QGuiApplication::primaryScreen() 取逻辑 DPI（见 captureScreenNow）
+#include <QGuiApplication>
+#include <QScreen>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFileInfo>
@@ -442,42 +448,24 @@ bool MainWindow::openDocumentFromPath(const QString &path)
     //    例如忘了重置选区：用户框选一小块后打开大图，
     //    会发现"画笔只在左上角能用"。
     //    多标签之后"每张图一份文档"本来就是模型本身，连选择都没有了。
-    Document *doc = m_docManager->createDocument(image.size(), Qt::transparent);
+    //
+    //  ★ 建立动作已收敛到 createImagePage() ★
+    //    屏幕截图那边要做完全相同的事（一张图 → 一页 + 切过去）。
+    //    两份实现的话，"图层 0 的名字从哪来""路径必须在开页之前设好"
+    //    这类规则迟早只更新一份 —— 于是这里只传参数，不重复那段顺序。
+    ImagePageSpec spec;
+    spec.image     = image;
+    spec.filePath  = path;
+    spec.layerName = QFileInfo(path).fileName();   // 图层面板里显示"photo.jpg"比"图层 1"有用
+    spec.dpiX      = loadedMeta.dpiX;
+    spec.dpiY      = loadedMeta.dpiY;
+
+    Document *doc = createImagePage(spec);
     if (!doc) {
         QMessageBox::warning(this, tr("打开失败"),
             tr("无法创建文档：%1").arg(m_docManager->lastError()));
         return false;
     }
-
-    // 把图像写进第一个图层
-    if (doc->layerCount() > 0) {
-        Layer *layer = doc->layers().layer(0);
-        if (layer) {
-            layer->setImage(image);
-            // ★ 用文件名（不含路径）做图层名 ★
-            //   这一点的作用比看起来大：图层面板里显示"photo.jpg"
-            //   比显示"图层 1"有用得多 —— 用户能立刻知道这个图层
-            //   是从哪个文件来的（尤其是拼贴多张图的工作流）。
-            layer->setName(QFileInfo(path).fileName());
-        }
-    }
-
-    doc->setFilePath(path);
-    doc->setDpi(loadedMeta.dpiX, loadedMeta.dpiY);
-    doc->markDirty();          // 让合成缓存与新图层同步
-    doc->setModified(false);   // 刚打开的文件不算已修改
-
-    // ★ 文件路径必须在开页**之前**设好 ★
-    //   标签页的标题是从 doc->filePath() 现算的（DocumentTabs::tabTitle），
-    //   顺序反了的话，标签会先显示"未命名-2"再被刷新成"photo.jpg" ——
-    //   虽然只是闪一下，但那是"两处真相"的味道。
-
-    // ★ 开一页（新页自带一个干净的撤销栈）★
-    //
-    //   旧实现这里要 `m_commandStack->clear()` —— 因为那时栈是全局的、
-    //   会跨文档复用。现在每页一个栈，新建的栈本来就是空的，
-    //   那行"清空"连同它要解决的问题一起消失了。
-    attachDocumentTab(doc);
 
     addRecentFile(path);
 
@@ -496,6 +484,207 @@ bool MainWindow::openDocumentFromPath(const QString &path)
     }
 
     return true;
+}
+
+// ============================================================================
+//  createImagePage —— "一张图 → 一页"的唯一实现
+// ============================================================================
+//
+//  两个调用者：openDocumentFromPath()（从磁盘读出来的图）与
+//  captureScreenNow()（从屏幕抓来的图）。两者的差别只有"图从哪来"与
+//  "有没有文件路径"，而**"怎么变成一页"完全一样**：
+//
+//    ① 建一个与图像同尺寸的文档（透明底）
+//    ② 把图写进图层 0
+//    ③ 设图层名 —— 图层面板里一眼看出这层是什么
+//    ④ ★ 设路径 / 显示名提示：必须在**开页之前** ★
+//       标签标题是 DocumentTabs::tabTitle 现算的（filePath 或 titleHint），
+//       顺序反了会先显示"未命名-2"再被刷新成"photo.jpg"：虽然只是闪一下，
+//       但那是"两处真相"的味道 —— 任何"只读一次标题"的地方都会读到错的。
+//    ⑤ markDirty() —— 让合成缓存看到新写的像素。
+//       新建文档的缓存本来就是空的，这句看似多余；但它是"改了像素就必须
+//       说一声"这条纪律的一部分 —— 省掉它，将来上面那句 setImage 被挪到
+//       别处时就会静默留下一片空白缓存。
+//    ⑥ setModified(false) —— 刚打开 / 刚截的图不算"已修改"，
+//       否则关它一下都要问"要不要保存"（撤销栈是 clean 的，这里说的是
+//       那个手动标志位，两者必须都表示"干净"）
+//    ⑦ 开一页并切过去（新页自带一个干净的撤销栈 —— 旧实现在这里写
+//       m_commandStack->clear()，现在每页一个栈，那句"清空"连同它要
+//       解决的问题一起消失了）
+
+Document *MainWindow::createImagePage(const ImagePageSpec &spec)
+{
+    if (!m_docManager || spec.image.isNull())
+        return nullptr;
+
+    Document *doc = m_docManager->createDocument(spec.image.size(), Qt::transparent);
+    if (!doc)
+        return nullptr;      // lastError() 里已经写明了原因（尺寸超限等）
+
+    if (doc->layerCount() > 0) {
+        if (Layer *layer = doc->layers().layer(0)) {
+            layer->setImage(spec.image);
+            if (!spec.layerName.isEmpty())
+                layer->setName(spec.layerName);
+        }
+    }
+
+    doc->setFilePath(spec.filePath);       // 空 = 没有磁盘来源（屏幕截图）
+    doc->setTitleHint(spec.titleHint);     // 无路径时的显示名（如"屏幕截图-1"）
+
+    if (spec.dpiX > 0.0 && spec.dpiY > 0.0)
+        doc->setDpi(spec.dpiX, spec.dpiY);
+
+    doc->markDirty();
+    doc->setModified(false);
+
+    attachDocumentTab(doc);
+    return doc;
+}
+
+// ============================================================================
+//  屏幕截图（compat/ScreenCapture + compat/GlobalHotkey）
+// ============================================================================
+//
+//  ★ 一条功能，两个"环境依赖" ★
+//    抓屏依赖真实显示器、全局热键依赖操作系统 API —— 两样在自检环境里
+//    都不存在。所以这条功能被切成三段，每段都能单独验：
+//
+//      grabScreen()        compat 层：抓不到就返回空图（契约见那边头文件）
+//      createImagePage()   建页（上面那个，已经是"图 → 一页"的唯一实现）
+//      captureScreenNow()  把两段接起来 + 报结果          ← 本函数
+//
+//    自检用 setScreenGrabber() 把第一段换成一张造好的图，于是
+//    "菜单立即截图 / 延迟截图 / 全局热键"三条入口全都能在 offscreen 上
+//    端到端跑通 —— 它们共用下面这一个函数，不存在"测的是另一条路"。
+//
+//  ★ 抓不到屏幕时必须"什么都不做 + 说一句" ★
+//    没有显示器、会话被锁、平台拒绝……都不是程序 bug，但它们的表现
+//    全都是"按了没反应"。所以失败路径一定有状态栏消息，绝不留白。
+
+bool MainWindow::captureScreenNow()
+{
+    // ── ① 取图：默认真的抓屏，自检/截图工具可以换成造好的图 ──
+    const QImage shot = m_screenGrabber ? m_screenGrabber() : grabScreen();
+
+    if (shot.isNull()) {
+        // 契约③（空图 = 抓不到）在这里翻译成人话
+        if (m_statusBar)
+            m_statusBar->showMessage(
+                tr("截图失败：抓不到屏幕内容（可能没有可用的显示器）"), 6000);
+        return false;
+    }
+
+    // ── ② 名字：序号只增不减（见 m_screenshotSeq 的说明）──
+    const QString hint = tr("屏幕截图-%1").arg(++m_screenshotSeq);
+
+    ImagePageSpec spec;
+    spec.image     = shot;
+    spec.layerName = tr("屏幕截图");
+    spec.titleHint = hint;
+
+    // ★ dpi 取主屏的**逻辑** DPI ★
+    //   抓回来的图是设备像素：150% 缩放的屏幕上，1920 逻辑像素宽的一屏
+    //   给出 2880 个像素。配 192 的逻辑 DPI（96 × 1.5）算出来的物理尺寸
+    //   才等于屏幕上那个尺寸 —— 否则打印预览会把一张 24 寸屏的截图
+    //   显示成 40 寸。
+    //
+    //   多屏 dpr 不同时这只是近似值。dpi 只影响打印尺寸与标尺单位换算，
+    //   不值得为它再引入一套"到底是哪块屏"的判断（要紧的是像素本身）。
+    if (QScreen *primary = QGuiApplication::primaryScreen()) {
+        spec.dpiX = primary->logicalDotsPerInch();
+        spec.dpiY = primary->logicalDotsPerInch();
+    }
+
+    Document *doc = createImagePage(spec);
+    if (!doc) {
+        if (m_statusBar)
+            m_statusBar->showMessage(
+                tr("截图失败：无法创建文档（%1）")
+                    .arg(m_docManager ? m_docManager->lastError() : QString()),
+                6000);
+        return false;
+    }
+
+    // 全新的页：缩放到适合窗口，用户一眼看到全貌
+    if (m_canvas)
+        m_canvas->zoomToFit();
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("已截取屏幕 %1 × %2，已开为新标签页")
+                                     .arg(shot.width()).arg(shot.height()),
+                                 4000);
+    return true;
+}
+
+void MainWindow::scheduleScreenCapture(int delayMs)
+{
+    if (delayMs < 0)
+        delayMs = 0;
+
+    // ★ "是不是我们把它最小化的"只在**新排一次**时判定 ★
+    //   ★ 这一条踩过：连点两次"延迟 3 秒"会让窗口在没有任何还原的情况下
+    //     留在最小化状态 ★
+    //     第二次进来时窗口正因为第一次而处于最小化，再判一次得到的是
+    //     false，于是 m_captureMinimizedSelf 从"是我们干的"被抹成"不是
+    //     我们干的"——到点抓完就没人负责还原，程序看起来消失了（只能在
+    //     任务栏里找回来）。
+    //     判据是"当时有没有一次在排队"，而不是"窗口现在是不是最小化的"：
+    //     后者把"我们已经接管了窗口状态"这个事实丢掉了。
+    const bool freshRequest = (m_captureDelayMs < 0);
+
+    if (freshRequest)
+        m_captureMinimizedSelf = !isMinimized();
+
+    m_captureDelayMs = delayMs;
+
+    if (m_captureTimer) {
+        m_captureTimer->setSingleShot(true);
+        // ★ start() 会重置正在跑的定时器 ★ —— 这正是"重复点 = 重新计时"。
+        //   不做成"每个请求一个定时器"：那会攒出好几张图，而用户连点三次
+        //   "延迟 3 秒"想要的显然只有一张。
+        m_captureTimer->start(delayMs);
+    }
+
+    // ── 先把本窗口最小化，再等 ──
+    //   ★ 记下"是不是我们干的" ★
+    //     用户本来就把它最小化了的话，抓完不该把窗口弹到他脸上 ——
+    //     那等于替他改了窗口状态（而他可能正忙着别的）。
+    if (m_captureMinimizedSelf)
+        showMinimized();
+
+    if (m_statusBar)
+        m_statusBar->showMessage(
+            tr("%1 秒后截图：本窗口已最小化，请切到要截取的画面")
+                .arg(delayMs / 1000.0, 0, 'g', 3),
+            delayMs + 1000);
+}
+
+void MainWindow::onCaptureTimerFired()
+{
+    m_captureDelayMs = -1;
+
+    const bool restoreWindow = m_captureMinimizedSelf;
+    m_captureMinimizedSelf = false;
+
+    // ── 先抓、后还原 ──
+    //   反过来的话，恢复出来的窗口会**出现在截下来的图里** ——
+    //   而"延迟截图"的全部意义就是不让自己挡住目标画面。
+    captureScreenNow();
+
+    if (restoreWindow) {
+        // ★ 失败也要还原 ★
+        //   只在成功时还原的话，用户面对的是一个"点完就消失"的程序，
+        //   只能去任务栏里把它找回来 —— 而原因只是一次抓屏失败。
+        showNormal();
+        raise();
+        activateWindow();
+    }
+}
+
+void MainWindow::setScreenGrabber(std::function<QImage()> grabber)
+{
+    m_screenGrabber = std::move(grabber);
 }
 
 // ============================================================================

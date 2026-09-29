@@ -963,7 +963,10 @@ QString Document::displayName() const
     QString base;
 
     if (m_filePath.isEmpty()) {
-        base = tr("未命名");
+        // ★ 没有文件路径时优先用"提示名"（屏幕截图这类无磁盘来源的页）★
+        //   都没有才落到"未命名"。两种情况都仍然只是**显示**，
+        //   保存路径的判断只认 m_filePath。
+        base = m_titleHint.isEmpty() ? tr("未命名") : m_titleHint;
     } else {
         base = QFileInfo(m_filePath).fileName();
         if (base.isEmpty())

@@ -54,6 +54,8 @@
 //    失败信息读不出来，断言的价值就打折了。
 // ============================================================================
 
+#include "compat/GlobalHotkey.h"
+
 #include "ui/MainWindow.h"
 #include "ui/CanvasView.h"
 #include "ui/IconLibrary.h"
@@ -84,10 +86,15 @@
 #include <QColor>
 #include <QComboBox>
 #include <QDir>
+// 屏幕截图那几组要用到：等待"延迟截图"的定时器到点（要真的跑事件循环）、
+// 以及把系统消息交给事件循环处理的时间预算。
+#include <QElapsedTimer>
+#include <QEventLoop>
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
 #include <QImageReader>
+#include <QKeySequence>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMouseEvent>
@@ -2315,6 +2322,591 @@ static void testCommandLineFiles()
 }
 
 // ---------------------------------------------------------------------------
+//  屏幕截图那几组共用的助手
+// ---------------------------------------------------------------------------
+
+/// 造一张能逐像素核对的"截图替身"：四象限四种颜色 + 右下角半透明。
+///
+/// ★ 尺寸刻意用非正方形、非 2 的幂 ★ —— 宽高写反、被取整到偶数之类的
+/// 错误才暴露得出来（37×23 这种数字不会"碰巧"对上）。
+/// ★ 透明像素直接写**预乘值** ★（50% 灰 = 64,64,64,128）。
+/// 写 qRgba(128,128,128,128) 那是"未预乘的量"，在搬运/转换时会被改掉，
+/// 断言就悄悄变成在测别的东西了。
+static QImage makeCaptureTestImage(int w, int h)
+{
+    QImage img(w, h, QImage::Format_ARGB32_Premultiplied);
+    img.fill(qRgba(0, 0, 0, 0));
+
+    for (int y = 0; y < h; ++y) {
+        QRgb *line = reinterpret_cast<QRgb *>(img.scanLine(y));
+        for (int x = 0; x < w; ++x) {
+            const bool left = (x < w / 2);
+            const bool top  = (y < h / 2);
+            line[x] = top ? (left ? qRgba(200, 30, 30, 255) : qRgba(30, 200, 30, 255))
+                          : (left ? qRgba(30, 30, 200, 255) : qRgba(64, 64, 64, 128));
+        }
+    }
+    return img;
+}
+
+/// 逐像素差异个数（-1 = 尺寸都不同）。0 容差 —— 与全项目的像素断言同一口径。
+static int diffPixelCount(const QImage &a, const QImage &b)
+{
+    if (a.size() != b.size())
+        return -1;
+
+    const QImage x = a.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    const QImage y = b.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+    int diff = 0;
+    for (int row = 0; row < x.height(); ++row) {
+        const QRgb *px = reinterpret_cast<const QRgb *>(x.constScanLine(row));
+        const QRgb *py = reinterpret_cast<const QRgb *>(y.constScanLine(row));
+        for (int col = 0; col < x.width(); ++col) {
+            if (px[col] != py[col])
+                ++diff;
+        }
+    }
+    return diff;
+}
+
+/// 跑事件循环直到条件成立（或超时），返回条件最终是否成立。
+///
+/// 这一组有两处**必须真的跑事件循环**才能验的东西：
+///   · 延迟截图的定时器（它靠事件循环到点）
+///   · 系统投来的 WM_HOTKEY（PostThreadMessage 是异步入队，要 PeekMessage 才取得出来）
+/// ★ 用模板而不是 std::function ★：省一个 include，也不引入分配。
+template <typename Predicate>
+static bool pumpUntil(Predicate done, int timeoutMs)
+{
+    QElapsedTimer t;
+    t.start();
+    while (!done() && t.elapsed() < timeoutMs)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 10);
+    return done();
+}
+
+// ===========================================================================
+//  [18] 屏幕截图：菜单装配
+// ===========================================================================
+//
+//  与「打开为图层」那组同一个理由：`QMenu::addAction(nullptr)` 是**合法且
+//  静默**的，所以"动作对象存在"完全证明不了"菜单里有它"。
+//  这一组钉的是"菜单树里的那几项"，而不是"某个对象存在"。
+
+// 找子菜单里的某一项（用 objectName —— 自动化与对账脚本都靠它定位）
+static QAction *namedAction(MainWindow *w, const char *name)
+{
+    return w->findChild<QAction *>(QLatin1String(name));
+}
+
+static void testScreenCaptureMenu()
+{
+    beginGroup("屏幕截图：菜单装配（子菜单 + 四项）");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    QMenu *fileMenu = fileMenuOf(w);
+    check(fileMenu != nullptr, "拿得到「文件」菜单");
+
+    // ── ① 子菜单确实在「文件」里 ──
+    QMenu *capMenu = w->findChild<QMenu *>(QStringLiteral("menuScreenCapture"));
+    check(capMenu != nullptr, "★ 建出了「屏幕截图」子菜单");
+
+    if (fileMenu && capMenu) {
+        check(fileMenu->actions().contains(capMenu->menuAction()),
+              "★ 它确实挂在「文件」菜单里（不是个没人引用的孤儿菜单）");
+    }
+    check(capMenu && !capMenu->menuAction()->icon().isNull(),
+          "子菜单自己有图标（否则在「一栏都有图标」的菜单里明显掉队）");
+
+    // 位置：紧跟在「打开为图层」之后
+    //   —— 它们同属"把外面的东西拿进来"那一组，放一起用户才好对照。
+    if (fileMenu && capMenu) {
+        QAction *asLayer = namedAction(w, "actionOpenAsLayer");
+        const int iAsLayer = asLayer ? fileMenu->actions().indexOf(asLayer) : -1;
+        const int iCap     = fileMenu->actions().indexOf(capMenu->menuAction());
+        check(iAsLayer >= 0 && iCap == iAsLayer + 1,
+              "★ 排在「打开为图层」的紧后面");
+    }
+
+    // ── ② 四项：都在子菜单里、都有名字、都有图标 ──
+    const char *names[] = { "actionCaptureNow", "actionCaptureDelay3",
+                            "actionCaptureDelay5", "actionCaptureDelay10" };
+
+    QStringList missing, unlisted, iconless;
+    for (const char *n : names) {
+        QAction *a = namedAction(w, n);
+        const QString name = QLatin1String(n);
+
+        if (!a) {
+            missing << name;
+            continue;
+        }
+        if (capMenu && !capMenu->actions().contains(a))
+            unlisted << name;
+        if (a->icon().isNull())
+            iconless << name;
+    }
+
+    check(missing.isEmpty(), "★ 四个动作都建出来了");
+    if (!missing.isEmpty())
+        std::printf("       没找到：%s\n", qUtf8Printable(missing.join(QStringLiteral(", "))));
+
+    check(unlisted.isEmpty(), "★ 四个动作都真的在子菜单里");
+    if (!unlisted.isEmpty())
+        std::printf("       不在菜单里：%s\n", qUtf8Printable(unlisted.join(QStringLiteral(", "))));
+
+    check(iconless.isEmpty(), "★ 四个动作都有图标");
+    if (!iconless.isEmpty())
+        std::printf("       缺图标：%s\n", qUtf8Printable(iconless.join(QStringLiteral(", "))));
+
+    // ── ③ 快捷键只在「立即截图」上，且必须来自候选表 ──
+    //   ★ 这条不变量值得钉住 ★
+    //     三个延迟项各带自己的秒数，给它们挂快捷键只会做出三个
+    //     "用户永远记不住、还占着系统组合键"的键；而"立即"必须有，
+    //     因为它是唯一需要"程序在后台也能按"的那一个。
+    //
+    //   ★ 为什么断言"属于候选表"，而不是"== kCaptureHotkey" ★
+    //     首选键被别的程序占着时，程序会回落到候选表里的下一个键，并
+    //     把菜单改成那一个 —— 这恰恰是对的（菜单上写的必须就是能按的）。
+    //     写死"== 首选键"的话，这条断言会在**某些机器上**变红，而那里
+    //     功能其实是好的：只是那台机器上恰好有别的软件占着这个键。
+    //     真正与环境无关的不变量是这两条：
+    //       ① 候选表第一项就是 kCaptureHotkey（"产品定的那一个"没被偷偷改掉）；
+    //       ② 菜单上显示的键一定是候选表里的某一个（不会显示一个没人登记过的键）。
+    QAction *now = namedAction(w, "actionCaptureNow");
+    check(now && !now->shortcut().isEmpty(), "★ 「立即截图」带着快捷键");
+
+    const QStringList hotkeyCandidates = MainWindow::captureHotkeyCandidates();
+    check(!hotkeyCandidates.isEmpty()
+              && hotkeyCandidates.first() == QString::fromLatin1(MainWindow::kCaptureHotkey),
+          "★ 候选表第一项就是 kCaptureHotkey（产品定的那一个）");
+
+    const QString shownShortcut =
+        now ? now->shortcut().toString(QKeySequence::PortableText) : QString();
+    check(hotkeyCandidates.contains(shownShortcut),
+          "★ 菜单上显示的快捷键是候选表里的某一个（菜单写的 = 能按的）");
+    if (!hotkeyCandidates.contains(shownShortcut)) {
+        std::printf("       菜单上写的是「%s」，候选表是 %s\n",
+                    qUtf8Printable(shownShortcut),
+                    qUtf8Printable(hotkeyCandidates.join(QStringLiteral(" / "))));
+    }
+
+    QStringList withShortcut;
+    for (const char *n : { "actionCaptureDelay3", "actionCaptureDelay5",
+                           "actionCaptureDelay10" }) {
+        QAction *a = namedAction(w, n);
+        if (a && !a->shortcut().isEmpty())
+            withShortcut << a->objectName();
+    }
+    check(withShortcut.isEmpty(), "★ 三个延迟项都不带快捷键");
+    if (!withShortcut.isEmpty())
+        std::printf("       不该有快捷键：%s\n", qUtf8Printable(withShortcut.join(QStringLiteral(", "))));
+
+    // ── ④ 全局热键对象：要么登记成功，要么给出原因 ──
+    //   ★ 这条断言的形式是刻意的 ★
+    //     "Ctrl+Alt+S 是否登记得上"取决于**这台机器上同时跑着什么程序**
+    //     （QQ / 微信 / 各种截图工具都会抢这个键），拿它当成功判据会做出
+    //     一个随环境时红时绿的自检 —— 那类假失败最耗人。
+    //     真正与环境无关的不变量是：**绝不允许静默失败**。
+    //     机制本身的成功路径在下面 [19] 组用"几乎不可能被占用"的键验。
+    GlobalHotkey *hk = w->globalHotkey();
+    check(hk != nullptr, "★ 建出了全局热键对象（登记失败也不许是 nullptr）");
+    if (hk) {
+        const bool reg = hk->isRegistered(MainWindow::kCaptureHotkeyId);
+        check(reg || !hk->lastError().isEmpty(),
+              "★★ 全局快捷键要么登记成功、要么把原因说出来（绝不静默失败）");
+
+        // ★★ 本组最值钱的一条：菜单上写的 == 真正向系统登记上的 ★★
+        //   回落到别的键时这条才是真的会抓 bug：菜单如果还显示首选键，
+        //   用户拿到的就是一把**错的钥匙** —— 他会一直按 Ctrl+Alt+S，
+        //   然后认为整个功能坏了。而这条不可能靠"看代码"发现。
+        const QKeySequence effective =
+            hk->registeredSequence(MainWindow::kCaptureHotkeyId);
+        if (reg) {
+            checkStr(now ? now->shortcut().toString(QKeySequence::PortableText) : QString(),
+                     effective.toString(QKeySequence::PortableText),
+                     "★★ 菜单上写的 == 真正登记上的键（回落时也得成立）");
+        }
+
+        if (reg) {
+            const bool primary = (effective.toString(QKeySequence::PortableText)
+                                  == QString::fromLatin1(MainWindow::kCaptureHotkey));
+            std::printf("       全局快捷键：%s（登记成功%s）\n",
+                        qUtf8Printable(effective.toString(QKeySequence::NativeText)),
+                        primary ? "" : "；首选键被别的程序占用，已回落到它");
+        } else {
+            std::printf("       全局快捷键：%s —— 候选表一个都没登记上：%s\n",
+                        MainWindow::kCaptureHotkey,
+                        qUtf8Printable(hk->lastError()));
+        }
+    }
+
+    delete w;
+}
+
+// ===========================================================================
+//  [19] 全局快捷键：登记 / 系统消息通路 / 注销
+// ===========================================================================
+//
+//  ★ 本组最重要的一条是"系统消息真的能走到我们的代码里" ★
+//    登记成功只证明"系统收下了这个请求"；真正没把握的是**后半段**：
+//    WM_HOTKEY 是投给**线程**的消息（不带窗口句柄），Qt 的事件循环会不会
+//    把它交到 nativeEventFilter 手上，并没有明确承诺。
+//    这条通路不通的话，症状就是"热键登记着、按下去毫无反应"—— 而且
+//    只在真机上按才暴露。所以这里造一条真的 WM_HOTKEY 投进本线程队列。
+
+static void testGlobalHotkey()
+{
+    beginGroup("全局快捷键：登记 / 系统消息通路 / 注销");
+
+    constexpr int kId = 7;
+
+    GlobalHotkey hk;
+
+    // ── ① 登记：连试几个"几乎不可能被占用"的组合 ──
+    //   ★ 为什么不用产品那个 Ctrl+Alt+S ★
+    //     本组要验的是**机制**，不是某几个特定的键。用产品键的话，
+    //     开发机上真被占用了就会红，而那是假失败。
+    //     Ctrl+Alt+Shift 三修饰 + F13 及以上：只有扩展键位的键盘才发得出，
+    //     全系统几乎不可能有程序登记它。
+    const char *candidates[] = { "Ctrl+Alt+Shift+F13", "Ctrl+Alt+Shift+F14",
+                                 "Ctrl+Alt+Shift+F15", "Ctrl+Alt+Shift+F16" };
+    bool reg = false;
+    QString why;
+    for (const char *c : candidates) {
+        if (hk.registerSequence(QKeySequence(QString::fromLatin1(c)), kId)) {
+            reg = true;
+            break;
+        }
+        why = hk.lastError();
+    }
+
+    check(reg, "★ 登记一个几乎不会被占用的组合键 → 成功");
+    if (!reg) {
+        std::printf("       登记失败原因：%s\n", qUtf8Printable(why));
+        check(!why.isEmpty(), "就算失败也必须带着原因");
+        check(!hk.isRegistered(kId), "失败之后 isRegistered 为假");
+        return;   // 后面的通路断言必须建立在"登记着"的前提下
+    }
+    check(hk.isRegistered(kId), "登记成功后 isRegistered 为真");
+    check(hk.lastError().isEmpty(), "成功后不带错误信息");
+
+    // ── ② ★ 系统消息 → 信号：这条通路必须真的通 ★ ──
+    int    gotId = -1;
+    int    count = 0;
+    QObject::connect(&hk, &GlobalHotkey::activated, [&](int id) {
+        gotId = id;
+        ++count;
+    });
+
+    check(hk.simulateActivation(kId), "把一条 WM_HOTKEY 投进本线程消息队列");
+    pumpUntil([&] { return count > 0; }, 500);
+
+    checkEqInt(count, 1, "★★ 系统消息走通：WM_HOTKEY → nativeEventFilter → activated()");
+    checkEqInt(gotId, kId, "信号带来的 id 就是登记时用的那一个");
+
+    // ── ③ 没登记过的 id：什么都不该发生 ──
+    //   ★ 这条防的是"来了消息就发信号"这种粗糙实现 ★
+    //     同一个进程里将来可能有第二个热键使用者，靠 id 才分得清。
+    hk.simulateActivation(kId + 100);
+    pumpUntil([&] { return count > 1; }, 200);
+    checkEqInt(count, 1, "★ 没登记过的 id 不触发任何东西");
+
+    // ── ④ 注销之后不再响应 ──
+    hk.unregister(kId);
+    check(!hk.isRegistered(kId), "注销后 isRegistered 为假");
+
+    hk.simulateActivation(kId);
+    pumpUntil([&] { return count > 1; }, 200);
+    checkEqInt(count, 1, "★ 注销之后同一条消息不再触发");
+
+    // ── ⑤ 不合法的组合键：被拒绝**并且**给出能读的原因 ──
+    //   ★ 这一条比"返回 false"重要得多 ★
+    //     上层要靠这句话去告诉用户"换个键"，空字符串等于把问题藏起来。
+    check(!hk.registerSequence(QKeySequence(), kId + 1), "空组合键被拒绝");
+    check(!hk.lastError().isEmpty(), "★ 空组合键：给出了原因");
+
+    check(!hk.registerSequence(QKeySequence(QStringLiteral("F9")), kId + 2),
+          "★ 不带修饰键的单键被拒绝（否则全系统那个键都被我们吃掉）");
+    check(!hk.lastError().isEmpty(), "★ 单键：给出了原因");
+
+    check(!hk.registerSequence(QKeySequence(QStringLiteral("Ctrl+Alt+MediaPlay")), kId + 3),
+          "★ 不支持的主键被拒绝（宁可不支持，也不登记到一个别的键上）");
+    check(!hk.lastError().isEmpty(), "★ 不支持的主键：给出了原因");
+
+    check(!hk.isRegistered(kId + 1) && !hk.isRegistered(kId + 2) && !hk.isRegistered(kId + 3),
+          "被拒绝的三个都没进登记表");
+}
+
+// ===========================================================================
+//  [20] 屏幕截图：立即 / 延迟 / 全局热键（三条入口）
+// ===========================================================================
+//
+//  ★ 为什么要注入抓屏器 ★
+//    自检跑在 offscreen 平台上，那里**没有真实屏幕**可抓 —— 不注入的话，
+//    这三条入口在这里全都只能"优雅失败"，什么都验不到。
+//    注入只换掉"图从哪来"这一步，其余代码路径一行不少：
+//    菜单动作 / 定时器 / 全局热键信号 / 建页 / 还原窗口。
+
+/// 核对"最新那一页"就是这张图变成的（尺寸 / 像素 / 标题 / 干净状态）。
+static void checkLastPageIs(const DocumentTabs *tabs, const QImage &shot,
+                            const QString &expectTitle)
+{
+    const int idx = tabs->count() - 1;
+    Document *doc = tabs->tabAt(idx) ? tabs->tabAt(idx)->doc : nullptr;
+
+    check(doc != nullptr, "★ 多出了一页");
+    if (!doc)
+        return;
+
+    checkEqInt(doc->canvasSize().width(),  shot.width(),  "页宽 == 截图宽");
+    checkEqInt(doc->canvasSize().height(), shot.height(), "页高 == 截图高");
+    checkEqInt(doc->layerCount(), 1, "只有一层");
+
+    Layer *l0 = doc->layers().layer(0);
+    check(l0 != nullptr && l0->size() == shot.size(), "图层尺寸 == 截图尺寸");
+    if (l0)
+        checkEqInt(diffPixelCount(l0->image(), shot), 0,
+                   "★★ 图层像素与截下来的图逐点相同（0 容差）");
+
+    check(doc->filePath().isEmpty(), "没有文件路径（截图不落盘）");
+    check(!doc->isModified(), "不算已修改（关它一下不该问「要不要保存」）");
+    checkStr(doc->titleHint(), expectTitle, "带上了提示名（屏幕截图-N）");
+    checkStr(tabs->tabTitle(idx), expectTitle,
+             "★ 标签标题就是提示名，不是「未命名-N」");
+    check(tabs->currentTab() && tabs->currentTab()->doc == doc, "★ 新页是当前页");
+    check(tabs->tabAt(idx)->stack && tabs->tabAt(idx)->stack->isClean(), "撤销栈是干净的");
+}
+
+static void testScreenCaptureFlow()
+{
+    beginGroup("屏幕截图：立即 / 延迟 / 全局热键（注入抓屏器）");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    DocumentTabs *tabs = tabsOf(w);
+    check(tabs != nullptr, "拿得到标签容器");
+    if (!tabs) {
+        delete w;
+        return;
+    }
+
+    // 注入"抓屏"这一步（offscreen 平台没有真实屏幕）
+    int grabCount = 0;
+    const QImage shot = makeCaptureTestImage(37, 23);
+    w->setScreenGrabber([&grabCount, shot] { ++grabCount; return shot; });
+
+    const int base = tabs->count();
+
+    // ── 本地序号账本 ──
+    //   ★ 为什么不用字面量 "屏幕截图-3" / "-4" ★
+    //     ③ 那一节**可能整段跑不到** —— 本机就有别的程序占着 Ctrl+Alt+S 的时候
+    //     （实测遇到过：同一台机器上前后两次全量，一次登记成功、一次被占用）。
+    //     写死字面量的话，后面每一处序号都会跟着错位，那是把"环境差异"
+    //     伪装成"功能坏了" —— 最难查的一类假红。
+    //     所以这里按"成功截了几次"记账：③ 跑不跑，后面的期望值都自洽。
+    int seq = 0;
+    const auto nextTitle = [&seq] { return QStringLiteral("屏幕截图-%1").arg(++seq); };
+
+    // ── ① 立即截图：走菜单动作 ──
+    QAction *actNow = namedAction(w, "actionCaptureNow");
+    check(actNow != nullptr, "拿得到「立即截图」动作");
+    if (actNow)
+        actNow->trigger();
+    QApplication::processEvents();
+
+    checkEqInt(grabCount, 1, "触发一次只抓一次屏");
+    checkEqInt(tabs->count(), base + 1, "★ 立即截图开出了新的一页");
+    checkLastPageIs(tabs, shot, nextTitle());
+
+    // ── ② 延迟截图：先最小化 → 到点抓 → 抓完还原 ──
+    const int beforeDelay  = tabs->count();
+    const int grabsBefore  = grabCount;
+
+    w->scheduleScreenCapture(60);
+    checkEqInt(w->pendingCaptureDelayMs(), 60, "排上了（剩余延时记录在案）");
+    check(w->isMinimized(), "★★ 延迟期间本窗口已最小化（否则截到的是自己）");
+
+    // ★ 重复排 = 重新计时 ★
+    //   否则连点三次"延迟 3 秒"会攒出三张图，而用户想要的显然只有一张。
+    w->scheduleScreenCapture(120);
+    checkEqInt(w->pendingCaptureDelayMs(), 120, "★ 重复排 = 重新计时，不是排队");
+
+    check(pumpUntil([&] { return w->pendingCaptureDelayMs() < 0; }, 3000),
+          "定时器到点了");
+    checkEqInt(grabCount, grabsBefore + 1, "★ 只抓了一次（排两次 ≠ 抓两次）");
+    checkEqInt(tabs->count(), beforeDelay + 1, "★ 延迟截图也开出了新的一页");
+    checkLastPageIs(tabs, shot, nextTitle());
+    // ★ 这条同时也是"连排两次"那个 bug 的守门人 ★
+    //   第二次排的时候，窗口正因为第一次而处于最小化；如果那时重新判定
+    //   "是不是我们干的"，标记会被抹成 false —— 抓完就没人负责还原，
+    //   程序看起来消失了。所以这条断言钉的是"连排之后也必须还原"。
+    check(!w->isMinimized(), "★★ 抓完自动还原窗口（连排两次也必须还原）");
+
+    // ── ③ 全局热键那条路：系统消息 → 信号 → 截图 → 新页 ──
+    //   只有登记成功才走得通（登记失败的原因与提示见上一组）。
+    GlobalHotkey *hk = w->globalHotkey();
+    if (hk && hk->isRegistered(MainWindow::kCaptureHotkeyId)) {
+        const int beforeHot = tabs->count();
+        const int grabsHot  = grabCount;
+
+        check(hk->simulateActivation(MainWindow::kCaptureHotkeyId),
+              "投一条 WM_HOTKEY（等同于用户按下了那个组合键）");
+        pumpUntil([&] { return tabs->count() > beforeHot; }, 1000);
+
+        checkEqInt(grabCount, grabsHot + 1, "★ 热键触发了抓屏");
+        checkEqInt(tabs->count(), beforeHot + 1,
+                   "★★ 全局热键 → 信号 → 截图 → 新页（整条链路走通）");
+        checkLastPageIs(tabs, shot, nextTitle());
+    } else {
+        // ★ 不静默跳过 ★：把"这一段没跑到"说出来，否则覆盖率掉了没人知道。
+        //   同时说清"这是环境差异、不是功能坏了" —— 免得看日志的人去查代码。
+        //   ★ 注意这一段已经比原来难走到了 ★
+        //     候选表会自动回落，所以走到 else 意味着**整张表都被占着**
+        //     （或平台不支持），而不是"首选键被占"这一种常见情况。
+        std::printf("       跳过热键那一节：候选表里的键一个都没登记上"
+                    "（原因见上一组），属环境差异。\n");
+    }
+
+    // ── ④ 序号只增不减 ──
+    //   关掉当前这张再截一张，编号继续往后走而不是回到 -2：
+    //   编号复用会让"我记得刚才那张叫 -3"变成一句没法验证的话。
+    //
+    //   ★ 这一组**必须与 ③ 是否跑到无关** ★
+    //     基准取"关之前有几页"，而不是 base + 常量 —— 后者等于断言"③ 一定成功"，
+    //     一有环境差异就红（本次全量就是这么红的，3 条失败全部源于此）。
+    {
+        const int beforeClose = tabs->count();
+        QAction *actClose = namedAction(w, "actionClose");
+        if (actClose)
+            actClose->trigger();   // 未修改的页 → 不会弹"要不要保存"（不挂死）
+        QApplication::processEvents();
+        checkEqInt(tabs->count(), beforeClose - 1, "关掉一张之后剩下的页数对得上");
+    }
+
+    {
+        const int afterClose = tabs->count();
+        w->captureScreenNow();
+        QApplication::processEvents();
+        checkEqInt(tabs->count(), afterClose + 1, "关掉之后再截一张 → 又是一页");
+        checkLastPageIs(tabs, shot, nextTitle());
+    }
+
+    // ── ⑤ 抓不到屏幕：什么都不做 + 返回 false ──
+    //   ★ 这条是"静默失败"的守门人 ★
+    //     没有显示器 / 会话被锁时，正确行为是**不开空页、不换当前页**；
+    //     否则用户会看到一张 0×0 的空白标签，然后完全不知道发生了什么。
+    {
+        const int beforeNull = tabs->count();
+        Document *curBefore  = tabs->currentTab() ? tabs->currentTab()->doc : nullptr;
+
+        w->setScreenGrabber([] { return QImage(); });
+        check(!w->captureScreenNow(), "抓屏返回空图 → 返回 false");
+        checkEqInt(tabs->count(), beforeNull, "★ 没有多出任何页（不开空页）");
+        check(tabs->currentTab() && tabs->currentTab()->doc == curBefore,
+              "★ 当前页也没被换掉");
+    }
+
+    delete w;
+}
+
+// ===========================================================================
+//  [21] 从 QImage 建页（createImagePage）
+// ===========================================================================
+//
+//  这是"图 → 一页"的唯一实现，「文件 → 打开」与屏幕截图都走它。
+//  所以这一组同时也是那次重构的回归：路径、提示名、图层名、干净状态
+//  这几条规则必须仍然成立。
+
+static void testCreateImagePage()
+{
+    beginGroup("从 QImage 建页：尺寸 / 像素 / 标题 / 图层名 / 干净状态");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    DocumentTabs *tabs = tabsOf(w);
+    if (!tabs) {
+        delete w;
+        return;
+    }
+
+    const int before = tabs->count();
+    const QImage img = makeCaptureTestImage(41, 17);
+
+    MainWindow::ImagePageSpec spec;
+    spec.image     = img;
+    spec.layerName = QStringLiteral("屏幕截图");
+    spec.titleHint = QStringLiteral("屏幕截图-9");
+
+    Document *doc = w->createImagePage(spec);
+    check(doc != nullptr, "建出了一页");
+    checkEqInt(tabs->count(), before + 1, "页数 +1");
+    check(tabs->currentTab() && tabs->currentTab()->doc == doc,
+          "★ 新页就是当前页（建完要切过去）");
+
+    if (doc) {
+        checkEqInt(doc->canvasSize().width(),  41, "画布宽 == 图像宽");
+        checkEqInt(doc->canvasSize().height(), 17, "画布高 == 图像高");
+        checkEqInt(doc->layerCount(), 1, "只有一层");
+        check(doc->filePath().isEmpty(), "没有文件路径");
+
+        checkStr(doc->titleHint(), QStringLiteral("屏幕截图-9"), "带上了显示名提示");
+
+        // ★ displayName 与 tabTitle 是**两个**消费者 ★
+        //   只断言其中一个的话，另一个忘了用提示名照样绿 ——
+        //   而用户看到的恰好是后者（标签页上那一行）。
+        checkStr(doc->displayName(), QStringLiteral("屏幕截图-9"),
+                 "★ displayName 用的是提示名，不是「未命名」");
+        checkStr(tabs->tabTitle(tabs->currentIndex()), QStringLiteral("屏幕截图-9"),
+                 "★★ 标签标题用的也是提示名（无路径文档的标题来自 titleHint）");
+
+        check(!doc->isModified(), "不算已修改");
+
+        Layer *l0 = doc->layers().layer(0);
+        check(l0 != nullptr && l0->name() == QStringLiteral("屏幕截图"),
+              "图层 0 用了传进来的名字");
+        if (l0) {
+            checkEqInt(diffPixelCount(l0->image(), img), 0,
+                       "★★ 像素逐点相同（0 容差，含那格半透明）");
+            check(l0->image().format() == QImage::Format_ARGB32_Premultiplied,
+                  "图层是预乘格式（合成算法的前提）");
+        }
+    }
+
+    // ── 反向：空图必须被拒绝，且不能留下半件事 ──
+    //   建出一个 0×0 的页比"失败"更难查：它看起来像程序坏了，
+    //   而且用户没法在上面做任何事。
+    {
+        const int n = tabs->count();
+        MainWindow::ImagePageSpec bad;
+        check(w->createImagePage(bad) == nullptr, "★ 空图被拒绝");
+        checkEqInt(tabs->count(), n, "★ 拒绝之后页数没变（没留下半件事）");
+    }
+
+    // ── 不带路径也不带提示名：回落到"未命名-N" ──
+    //   ★ 这条钉的是"提示名是**可选**的" ★
+    //     它一旦变成必填，所有旧路径（新建 / 打开的空白页）都得跟着改。
+    {
+        MainWindow::ImagePageSpec plain;
+        plain.image = makeCaptureTestImage(9, 9);
+
+        Document *p = w->createImagePage(plain);
+        check(p != nullptr, "既没有路径也没有提示名 → 仍然能建页");
+        if (p) {
+            check(p->titleHint().isEmpty(), "提示名是空的");
+            checkStr(p->displayName(), QStringLiteral("未命名"),
+                     "★ displayName 回落到「未命名」");
+            check(tabs->tabTitle(tabs->currentIndex()).startsWith(QStringLiteral("未命名-")),
+                  "★ 标签标题回落到「未命名-N」");
+            Layer *l0 = p->layers().layer(0);
+            check(l0 != nullptr && l0->name() == QStringLiteral("背景"),
+                  "没给图层名时保留 Document 的默认名");
+        }
+    }
+
+    delete w;
+}
+
+// ---------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
@@ -2348,6 +2940,10 @@ int main(int argc, char **argv)
     testRulersAndGuides();
     testIcoExport();
     testCommandLineFiles();
+    testScreenCaptureMenu();
+    testGlobalHotkey();
+    testScreenCaptureFlow();
+    testCreateImagePage();
 
     std::printf("------------------------------------------------\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);
