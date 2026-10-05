@@ -359,6 +359,28 @@ needs_resources_for() {
 }
 
 # ---------------------------------------------------------------------------
+#  哪些测试需要额外的编译期宏
+# ---------------------------------------------------------------------------
+#  ★ 为什么宏要在这里补 ★
+#    真实构建里 ZLPE_HAS_EXE_ICON 由构建系统定义（.pro 的 win32 块、
+#    CMakeLists 的 target_compile_definitions）—— 自检脚本走的是自己的
+#    cl 命令行，不经过任何一个，所以必须手工补上。
+#    不补的话 mainwin_test 里"这个构建带了 exe 图标"那条断言永远红，
+#    而且红得没有意义（代码其实是对的）。
+#
+#  ★ 两边必须一致 ★
+#    定义了宏 = 宣称"exe 图标已接进构建"。本脚本不编 .rc（那是链接期的事，
+#    与这里的"离线自检"无关），所以这里定义它代表的是"真实构建里有"。
+#    这也是为什么这条断言要与 .rc 文件存在性一起判 —— 见 testAppIdentityAndIcon。
+# ---------------------------------------------------------------------------
+defines_for() {
+    case "$1" in
+        mainwin_test) echo "/DZLPE_HAS_EXE_ICON=1" ;;
+        *)            echo "" ;;
+    esac
+}
+
+# ---------------------------------------------------------------------------
 #  防假绿的通用工具：用"修改时间变新"代替"先删旧文件"
 # ---------------------------------------------------------------------------
 #  ★ 为什么不用 rm ★
@@ -501,6 +523,7 @@ build_and_run() {
 
     cl /nologo /utf-8 /std:c++17 /EHsc /MD /O2 /DNDEBUG \
        /DWIN32 /DUNICODE /D_UNICODE \
+       $(defines_for "$name") \
        /I "$ROOT_WIN/src" \
        /I "$QT_WIN/include" \
        /I "$QT_WIN/include/QtCore" \
@@ -1322,6 +1345,7 @@ run_one() {
                 src/ui/CanvasSizeDialog.cpp \
                 src/ui/RotateImageDialog.cpp \
                 src/ui/IconLibrary.cpp \
+                src/ui/AppInfo.cpp \
                 src/ui/LayerPanel.cpp \
                 src/ui/ToolOptionsBar.cpp \
                 src/ui/StatusBarWidget.cpp

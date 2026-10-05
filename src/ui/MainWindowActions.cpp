@@ -18,6 +18,7 @@
 
 #include "ui/MainWindow.h"
 #include "ui/IconLibrary.h"
+#include "ui/AppInfo.h"
 #include "compat/QtCompat.h"
 #include "compat/GlobalHotkey.h"
 #include "ui/CanvasView.h"
@@ -243,7 +244,7 @@ void MainWindow::setupActions()
     m_actionQuit->setIcon(icons::icon(QStringLiteral("file_quit")));
     m_actionQuit->setShortcut(QKeySequence::Quit);
     m_actionQuit->setMenuRole(QAction::QuitRole);
-    m_actionQuit->setStatusTip(tr("退出 ZlPhotoEdit"));
+    m_actionQuit->setStatusTip(tr("退出 %1").arg(zl::appinfo::displayName()));
     connect(m_actionQuit, &QAction::triggered, this, &QWidget::close);
 
     // ─────────────────────────────────────────────────────────────────────
@@ -681,21 +682,22 @@ void MainWindow::setupActions()
     //  帮助
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionAbout = new QAction(tr("关于 ZlPhotoEdit(&A)..."), this);
+    m_actionAbout = new QAction(tr("关于 %1(&A)...").arg(zl::appinfo::displayName()), this);
     m_actionAbout->setObjectName(QStringLiteral("actionAbout"));
     m_actionAbout->setIcon(icons::icon(QStringLiteral("help_about")));
     m_actionAbout->setMenuRole(QAction::AboutRole);
     connect(m_actionAbout, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, tr("关于 ZlPhotoEdit"),
-            tr("<h3>ZlPhotoEdit</h3>"
+        QMessageBox::about(this, tr("关于 %1").arg(zl::appinfo::displayName()),
+            tr("<h3>%1</h3>"
                "<p>一个基于 Qt 的轻量级图片编辑器。</p>"
                "<p><b>技术栈</b><br>"
-               "Qt %1（编译期版本 %2）<br>"
+               "Qt %2（编译期版本 %3）<br>"
                "纯 Qt 实现，不依赖任何第三方图像库</p>"
                "<p><b>核心特性</b><br>"
                "多图层与 22 种混合模式 · 灰度蒙版选区（支持羽化）<br>"
                "曲线 / 色阶 / 亮度对比度 · 自实现二次立方与 Lanczos 重采样<br>"
                "脏矩形与整层快照双撤销策略 · EXIF 自动旋转</p>")
+                .arg(zl::appinfo::titleSuffix())
                 .arg(zl::compat::qtVersionString())
                 .arg(QStringLiteral(QT_VERSION_STR)));
     });

@@ -3,6 +3,10 @@
 #include "compat/QtCompat.h"
 #include "compat/GlobalHotkey.h"
 
+// ★ 程序显示名（"逐鹿 图片编辑器"）与窗口图标的唯一来源 ★
+//   标题相关的一切都走它，别再往代码里写程序名字面量。
+#include "ui/AppInfo.h"
+
 #include "core/DocumentManager.h"
 #include "core/Document.h"
 #include "core/Layer.h"
@@ -123,7 +127,25 @@ namespace zl {
 MainWindow::MainWindow(QWidget *parent, const QStringList &initialFiles)
     : QMainWindow(parent)
 {
-    setWindowTitle(tr("ZlPhotoEdit"));
+    setWindowTitle(zl::appinfo::titleSuffix());
+
+    // ★ 窗口图标也在这里设一次（除了 main.cpp 里的 QApplication 那一层）★
+    //
+    //  为什么两处都设：
+    //    · QApplication::setWindowIcon 是"进程级默认值"，要有人调它 ——
+    //      调它是 main.cpp 的职责。但如果 MainWindow 被**别的宿主**创建
+    //      （自检的截图工具就是一个），那条路没人走，窗口就没图标。
+    //    · 在窗口上再设一次，语义是"这个窗口显示这个图"，与宿主无关。
+    //      代价是零（QIcon 是隐式共享的），而且**立刻**能在标题栏上看到
+    //      结果 —— 而进程级默认值要等窗口显示时才继承。
+    //
+    //  ★ 空图标不设、也不报错 ★
+    //    setWindowIcon(空) 是合法的，效果是"没有图标"。
+    //    真失败时的响亮提示在 main.cpp（那里有 qWarning）。
+    const QIcon appIcon = zl::appinfo::windowIcon();
+    if (!appIcon.isNull())
+        setWindowIcon(appIcon);
+
     setMinimumSize(900, 600);
     setAcceptDrops(true);
 
@@ -1076,31 +1098,29 @@ void MainWindow::applyDocumentToPanels(Document *doc)
 void MainWindow::updateWindowTitle()
 {
     if (!m_doc) {
-        setWindowTitle(tr("ZlPhotoEdit"));
+        setWindowTitle(zl::appinfo::titleSuffix());
         return;
     }
 
-    // 标题格式： "文件名 * [50%] - ZlPhotoEdit"
+    // 标题格式： "文件名 * [50%] - 逐鹿 图片编辑器 (ZlPhotoEdit)"
     //   · * 表示有未保存修改（这是所有编辑软件的共同约定）
     //   · 缩放比例放在方括号里，方便用户随时知道当前比例
     //     （放在标题里比放在状态栏更容易被看到）
+    //   · 后缀由 AppInfo::windowTitleFor() 统一拼 —— 拼法只有那一处，
+    //     以前在这里写死 " - ZlPhotoEdit"，改中文名时漏掉就会变成
+    //     "标题是中文、后缀是英文"的拼接怪
     QString name = m_doc->displayName();
 
-    QString title;
+    QString zoomText;
     if (m_canvas) {
         const qreal percent = m_canvas->zoom() * 100.0;
-        QString zoomText;
         if (qAbs(percent - qRound(percent)) < 0.05)
             zoomText = QStringLiteral("%1%").arg(qRound(percent));
         else
             zoomText = QStringLiteral("%1%").arg(percent, 0, 'f', 1);
-
-        title = QStringLiteral("%1 [%2] - ZlPhotoEdit").arg(name, zoomText);
-    } else {
-        title = QStringLiteral("%1 - ZlPhotoEdit").arg(name);
     }
 
-    setWindowTitle(title);
+    setWindowTitle(zl::appinfo::windowTitleFor(name, zoomText));
 }
 
 } // namespace zl

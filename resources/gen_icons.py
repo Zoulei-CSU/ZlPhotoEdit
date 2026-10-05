@@ -30,6 +30,24 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ICON_DIR = os.path.join(HERE, "icons")
 QRC_PATH = os.path.join(HERE, "resources.qrc")
 
+# ---------------------------------------------------------------------------
+#  固定资源（不由本脚本生成、但必须写进 qrc 的文件）
+# ---------------------------------------------------------------------------
+#  ★ 为什么必须在这里列出来 ★
+#
+#    resources.qrc 是**整体重写**的（下面用 open(QRC_PATH, "w") 一次写到底）。
+#    所以任何"手工往 qrc 里加一行"的做法都活不过下一次运行本脚本 ——
+#    行会凭空消失，而且是静默的：qrc 看起来正常，只是少了那一行，
+#    直到某个图标变成空白才有人发现。
+#
+#    因此：**凡是需要进 qrc 的文件，要么由本脚本生成，要么登记在这张表里。**
+#
+#  路径规则（与 prefix="/" 拼接后得到的运行时路径）：
+#    "logo.svg"  →  ":/logo.svg"        ← 应用图标（AppInfo.cpp 用它）
+FIXED_RESOURCES = [
+    "logo.svg",
+]
+
 STROKE = "#33393f"          # 主色（与浅色主题的下拉/菜单文字同色系）
 WIDTH = 1.7                 # 描边宽度
 TINT = "fill=\"%s\" fill-opacity=\"0.16\"" % STROKE   # 淡淡的"面"
@@ -618,11 +636,17 @@ def main():
         #   :/icons/icons/x.svg —— 多一层，而且 rcc --list 看不出来。
         #   用 prefix="/" 与 <file> 的 icons/ 合起来才是 :/icons/x.svg。
         f.write("<RCC>\n  <qresource prefix=\"/\">\n")
+        # ★ 固定资源写在最前面 ★（见文件头的 FIXED_RESOURCES 说明）
+        #   漏写这里的后果是"手工加的 qrc 行被抹掉"，且完全静默。
+        for name in FIXED_RESOURCES:
+            f.write('    <file>%s</file>\n' % name)
         for name in written:
             f.write('    <file>icons/%s.svg</file>\n' % name)
         f.write("  </qresource>\n</RCC>\n")
 
     print("生成 %d 个图标 → %s" % (len(written), ICON_DIR))
+    print("固定资源 %d 个：%s" % (len(FIXED_RESOURCES),
+                                 ", ".join(FIXED_RESOURCES)))
     if stale:
         print("清理 %d 个已废弃图标：%s" % (len(stale), ", ".join(stale)))
     print("资源清单 → %s" % QRC_PATH)

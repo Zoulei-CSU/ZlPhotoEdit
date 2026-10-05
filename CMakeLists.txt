@@ -71,11 +71,20 @@ file(GLOB_RECURSE ZLPE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
-# 资源文件：目前为空壳，Phase 1 暂未添加图标。
+# 资源文件：resources.qrc（图标 + logo.svg）。
 # 用 EXISTS 判断避免文件缺失时配置阶段就报错。
 set(ZLPE_RESOURCES "")
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
     set(ZLPE_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
+endif()
+
+# Windows 资源文件：exe 文件本身的图标（不是窗口图标）。
+#   .rc 不经过 Qt —— 它是 MSVC 的 rc.exe 编译的，产物直接进 PE 资源段。
+#   两条构建路径指向同一个文件（qmake 侧见 ZlPhotoEdit.pro 的 RC_FILE）。
+#   仅 WIN32：rc.exe 是 MSVC 工具链的一部分，别的平台会构建失败。
+set(ZLPE_WIN_RESOURCES "")
+if(WIN32 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.rc")
+    set(ZLPE_WIN_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/app.rc")
 endif()
 
 # ---------------------------------------------------------------------------
@@ -84,7 +93,19 @@ endif()
 add_executable(ZlPhotoEdit
     ${ZLPE_SOURCES}
     ${ZLPE_RESOURCES}
+    ${ZLPE_WIN_RESOURCES}
 )
+
+# .rc 由 MSVC 的 rc.exe 编译。CMake 对 .rc 有内置支持（enable_language(RC)
+# 由 project(... CXX) 自动带上），这里只需要把包含目录指到 resources/ ——
+# app.rc 里的 "logo.ico" 是相对路径，rc.exe 默认只看 .rc 所在目录，
+# 显式给上包含目录后无论 CMake 从哪个工作目录调用都能找到。
+if(ZLPE_WIN_RESOURCES)
+    set_source_files_properties(${ZLPE_WIN_RESOURCES} PROPERTIES
+        COMPILE_FLAGS "/I \"${CMAKE_CURRENT_SOURCE_DIR}/resources\""
+    )
+    target_compile_definitions(ZlPhotoEdit PRIVATE ZLPE_HAS_EXE_ICON=1)
+endif()
 
 target_include_directories(ZlPhotoEdit PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/src"

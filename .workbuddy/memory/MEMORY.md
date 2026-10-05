@@ -38,6 +38,20 @@ git 本地（`main`；`user.name=邹磊` / `user.email=zoulei.csu@gmail.com`；`
 - ★ **同一文件一次只做一个 Edit**（连发会基于旧内容写回、静默覆盖）；落盘后必须读回复核。
 - ★ **图标三方对账**（代码引用 ⇄ `resources/icons/*.svg` ⇄ `resources.qrc`）；`gen_icons.py` 生成、产物勿手改；
   禁用 `QIcon(":/…")`、用 `QSvgRenderer` + `isValid()`；有名菜单动作必须有图标。
+- ★★ **`resources.qrc` 是 `gen_icons.py` 整体重写的生成物** → 手加的行会被**静默抹掉**；
+  要进 qrc 的非生成文件登记在脚本的 **`FIXED_RESOURCES`** 表里（`logo.svg` 就是）。
+  ⇒ 一般化：**文件会不会被某个脚本整体重写？会，就永不许手改**，去改那个脚本的数据表。
+- ★★ **程序名 / 图标都只有一个来源：`ui/AppInfo.h`**。
+  · 显示名 = `逐鹿 图片编辑器`（中文，给人看）；英文名 = `ZlPhotoEdit`。
+  · ★ **`kApplicationName`/`kOrganizationName` 是 QSettings 的路径，一旦发布不许改** ★
+    改它 ≠ 改名，是**把用户全部设置重置**。中文名**只许**用于显示（标题/关于/退出提示）。
+  · 标题拼法只在 `appinfo::windowTitleFor()` 一处（以前手写两遍 `" - ZlPhotoEdit"`）。
+  · 图标**两层**：窗口图标（qrc + `setWindowIcon`，运行时）/ **exe 图标**（`resources/app.rc`
+    → `rc.exe` → PE 资源段，**链接期，运行时改不了**）。`.rc` 里 **ID 必须是 1**、
+    路径写裸文件名 `logo.ico`、**不加 BOM**；两条构建路径指向**同一个** `.rc`。
+  · `ZLPE_HAS_EXE_ICON=1` 在 `.pro`/`CMakeLists`/`run_tests.sh` 的 `defines_for()` **三处**都要有。
+  · ★ 图标失效是**静默**的 → 自检必须**量像素**（`opaquePixelCount`）+ 数**不同颜色数**；
+    别断言覆盖率（这张 logo 16px 覆盖 0.98 是正常的）。
 - ★★ **预览态两条事件通路**：画布按"此刻有没有按键"分派（无键 → `hoverMove`，有键 → `mouseMove`）。只在 `hoverMove`
   更新 = **按住拖动时预览不动**（用户 2026-09-21 报的）→ `mouseMove` 那句必须在**所有提前 return 之前**，
   "本帧没落笔"也要 `repaint()`。守门 `./run_tests.sh brushtool` 的 [6] 组（**量叠加层圆心**）。
@@ -126,11 +140,16 @@ git 本地（`main`；`user.name=邹磊` / `user.email=zoulei.csu@gmail.com`；`
 
 ## 现状
 `src/` = `{compat, core, engine, commands, tools, ui}` + `main.cpp`；全 UTF-8 BOM；**双构建 0 错 0 警**。
-自检 **3549 项 / 0 失败**（2026-09-23 全量：**23 个测试程序**，`perf` 728 / `mainwin` 460 / `magicwand` 125 / `ico` 317 / `icon` 29）；
+自检 **3569 项 / 0 失败**（2026-10-05 全量：**23 个测试程序**，`perf` 728 / `mainwin` 480 / `magicwand` 125 / `ico` 317 / `icon` 29）；
 `mainwin` ~2.5min、`perf` ~25s；另有不编译的 `action_check.py`。**阶段进度见 README 的阶段表**。
 ★ **防假绿**：脚本**不删旧产物**、改**比对 mtime** → ★ **还原文件时别保留 mtime**（否则静默复用旧二进制）。
 ★ 截图 `shot.exe <图> <out.png> <模式>` → `.buildlog/*.png`；输出**混编码** → **逐行**试 utf-8 再回落 gb18030。
+  （本轮又证一次：`python -c` 里直接 `.decode("utf-8")` 会因混编码抛异常 → 必须**逐行**试。）
+  ★ **Python 在 Git Bash 里不认 `/tmp`**（`open("/tmp/x")` 报 FileNotFound，而 `ls /tmp/x` 在）
+    → 先 `cp` 进工程再读。★ **`python -c` 里的反引号会被 bash 当命令替换** →
+    要写含反引号的文本（文档！）用 `python3 << 'PYEOF'` heredoc。
   ★★ **多标签后取画布不能用 `findChild<CanvasView*>()`**（返回**第一页**，工具持有的是**当前页** → 症状像工具坏了）
   → 走 `DocumentTabs::currentTab()->canvas`；★ 同理 `setActiveTool()` 必须在 `loadAllOptions()` **之后**。
+  ★ 新增模式要加进 `kReservedModes` 表（**通用兜底会把任何非空 mode 当动作名**）；本轮加了 `appicon`。
 ★ 植入脚本 `.buildlog/implant_*.py`；**长脚本一律 `run_in_background`**。
 ★ **"工具说成功了" ≠ "改动在文件里"** → 依赖的改动落盘后必须有独立复核动作（协作约定见 `~/.workbuddy/MEMORY.md`）。

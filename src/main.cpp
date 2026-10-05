@@ -4,11 +4,12 @@
 //  这里做的事情看似很少，但每一件的顺序都有讲究：
 //
 //    1. 高 DPI 属性      —— 必须在 QApplication 构造**之前**设置
-//    2. 组织名/应用名    —— 必须在读 QSettings 之前设置
-//    3. 编码设置         —— 必须在任何中文字符串比较/转换之前
-//    4. QApplication     —— 之后才能用图形相关的一切
-//    5. 样式与字体       —— 影响后续创建的所有控件
-//    6. MainWindow       —— 最后创建主窗口
+//    2. QApplication     —— 之后才能用图形相关的一切
+//    3. 应用图标         —— 必须在 QApplication 之后、建窗口之前
+//    4. 组织名/应用名    —— 必须在读 QSettings 之前设置
+//    5. 编码设置         —— 必须在任何中文字符串比较/转换之前
+//    6. 启动日志
+//    7. MainWindow       —— 最后创建主窗口
 //
 //  ★ 本文件是 Qt5/Qt6 版本判断的合法位置之一 ★
 //    另一个是 src/compat/QtCompat.h。除这两处外，
@@ -17,6 +18,11 @@
 
 #include "compat/QtCompat.h"
 #include "ui/MainWindow.h"
+// ★ 应用图标的唯一来源 ★
+//   不在这边直接写 QIcon(":/logo.svg")：那条路会在 qsvg 插件缺失时
+//   **静默**返回空图标，而且路径写错也不报错 —— 症状只是"没有图标"。
+//   AppInfo 自己用 QSvgRenderer 光栅化，失败能主动发现（见其文件头）。
+#include "ui/AppInfo.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -56,6 +62,13 @@
 //
 //  ★ 这两个字符串一旦发布就不能改 ★
 //    改了会让用户丢失全部既有设置（相当于"重置"）。
+//
+//  ★ 中文名不在这里 ★
+//    程序的**显示名**是"逐鹿 图片编辑器"（见 src/ui/AppInfo.h），
+//    但那只用于窗口标题、关于对话框等"给人看"的地方。
+//    QSettings 认的还是下面的 kOrganizationName / kApplicationName。
+//    千万别把 kApplicationName 改成中文 —— 那是重置用户设置，
+//    而且路径里的中文在某些系统上还会带来额外的编码麻烦。
 // ============================================================================
 
 namespace {
@@ -198,6 +211,42 @@ int main(int argc, char *argv[])
 
     // ── 步骤 2：QApplication ──
     QApplication app(argc, argv);
+
+    // ── 步骤 2.5：应用程序图标 ──
+    //
+    //  ★ 这里设的是"窗口/任务栏"图标，与 exe 文件图标是两码事 ★
+    //
+    //    · 本行（setWindowIcon）：运行时生效，图来自 qrc 里的 logo.svg。
+    //      窗口标题栏、任务栏、Alt+Tab 用的是它。
+    //    · exe 文件图标：链接期由 rc.exe 把 resources/logo.ico 嵌进 PE
+    //      资源段（见 resources/app.rc 与 .pro / CMakeLists.txt 里的接法）。
+    //      资源管理器里那个文件的图标是它 —— **运行时改不了**。
+    //
+    //    两者同源（都来自用户那张 logo），所以看起来是一套。
+    //
+    //  ★ 必须在 QApplication 之后、建窗口之前 ★
+    //    在 QApplication 之前设，Qt 会警告 "setWindowIcon must be called
+    //    after QApplication" 且无效；在 MainWindow 之后设，窗口已经带着
+    //    默认图标显示出来了（部分平台上不会刷新）。
+    //
+    //  ★ 失败是静默的 → 所以要有下面这条日志与自检 ★
+    //    SVG 解析失败 / 资源没打进 qrc 时，AppInfo::windowIcon() 返回空
+    //    QIcon，setWindowIcon(空) 不报任何错，只是没有图标。
+    //    用一个 qInfo 把结论打出来，排查时一眼能看到。
+    {
+        const QIcon appIcon = zl::appinfo::windowIcon();
+        QApplication::setWindowIcon(appIcon);
+        if (appIcon.isNull()) {
+            qWarning().noquote()
+                << "[ZlPhotoEdit] 应用程序图标加载失败：logo.svg 缺失或无法渲染"
+                   "（窗口与任务栏将显示系统默认图标）";
+        }
+    }
+
+    // ★ 关于图标设置顺序的一个细节 ★
+    //   setWindowIcon 只依赖 QApplication（QIcon 不需要 qrc 之外的任何东西），
+    //   所以放在这里比放在 setOrganizationName 之后更贴题 —— 顺序无实质差别，
+    //   但"图标"与"应用标识"是两件事，分开写更清楚。
 
     // ── 步骤 3：应用标识（必须在任何 QSettings 之前）──
     QCoreApplication::setOrganizationName(QString::fromLatin1(kOrganizationName));

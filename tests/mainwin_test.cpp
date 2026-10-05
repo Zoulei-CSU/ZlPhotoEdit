@@ -59,6 +59,10 @@
 #include "ui/MainWindow.h"
 #include "ui/CanvasView.h"
 #include "ui/IconLibrary.h"
+// ★ 程序显示名与图标 ★ 窗口标题、"关于"框、以及任务栏图标都从它取 ——
+//   本文件要断言"标题里的名字与 AppInfo 一致"，而不是写死字符串，
+//   否则改一次中文名就要改一次测试（然后被人随手删掉）。
+#include "ui/AppInfo.h"
 #include "ui/LayerPanel.h"
 // ★ 状态栏 ★ 用来读"缩放"那一栏显示的数字 —— 多标签下它是
 //   "切页要显式补推"的又一处（见 testDocumentTabs 的 ③b 段）。
@@ -99,9 +103,11 @@
 #include <QMenuBar>
 #include <QMouseEvent>
 #include <QPoint>
+#include <QPixmap>
 #include <QPointer>
 #include <QRectF>
 #include <QSettings>
+#include <QSet>
 #include <QString>
 #include <QStringList>
 #include <QTemporaryDir>
@@ -681,6 +687,250 @@ static void testIcons()
           "不存在的图标名返回空 QIcon");
 
     delete w;
+}
+
+// ===========================================================================
+//  [7a-2] 应用名称与图标
+// ===========================================================================
+//
+//  ★ 这一组盯的是"两类静默失效" ★
+//
+//    ① **显示名改了、某处没跟着改**
+//       程序名以前是散落的字面量。加中文名时如果只改了标题、忘了"关于"框，
+//       没有任何报错 —— 用户会在菜单里看到"关于 逐鹿 图片编辑器"、
+//       点开却是"ZlPhotoEdit"。所以这里不写死期望值，而是断言
+//       **所有显示位置与 AppInfo 的一致性**。
+//
+//    ② **图标静默变成空白**
+//       qrc 里少一行、SVG 解析失败（比如带 DOCTYPE）、路径少一个斜杠，
+//       全都表现为"没图标"，编译器与运行期都不报错。
+//       唯一抓得住的办法是**真的把图上渲染出来、量它的像素**。
+//       只断言 !icon.isNull() 还不够 —— QIcon 只要有 pixmap 就不算 null，
+//       而那张 pixmap 可能是全透明的。
+//
+//    另有一条"身份不能混"的断言：QCoreApplication::applicationName()
+//    是 **QSettings 的存储路径**，永远必须是英文的工程名。
+//    万一有人图省事把它改成中文，用户的全部设置就"消失"了（其实是换了路径）。
+
+/// 数一张位图里非透明像素的个数。用来判"图是真的画出来了"。
+static int opaquePixelCount(const QPixmap &pm)
+{
+    if (pm.isNull())
+        return 0;
+
+    const QImage img = pm.toImage().convertToFormat(QImage::Format_ARGB32);
+    int n = 0;
+    for (int y = 0; y < img.height(); ++y) {
+        const QRgb *row = reinterpret_cast<const QRgb *>(img.constScanLine(y));
+        for (int x = 0; x < img.width(); ++x) {
+            if (qAlpha(row[x]) > 8)      // >8：容忍 SVG 抗锯齿边缘的极淡像素
+                ++n;
+        }
+    }
+    return n;
+}
+
+static void testAppIdentityAndIcon()
+{
+    beginGroup("应用身份：显示名与图标");
+
+    // ── ① 名字：中文名是给人看的，英文名是存储路径 ──
+    check(!appinfo::displayNameCn().isEmpty(), "中文显示名非空");
+    check(appinfo::displayNameCn().contains(QStringLiteral("逐鹿")),
+          "★ 中文名就是用户定的那个（含「逐鹿」）");
+    check(appinfo::displayNameEn() == QStringLiteral("ZlPhotoEdit"),
+          "英文显示名 = 工程名 ZlPhotoEdit");
+
+    // ★★ 存储身份必须是英文 ★★
+    //   它决定 QSettings 落在注册表的哪个键下。改成中文 ≠ 改名，
+    //   而是"用户设置全部丢失"。
+    //
+    //   ★ 为什么这里不能断言 QCoreApplication::applicationName() ★
+    //     main() 为了解决"测试绝不写用户注册表"，在 redirectSettingsToTempDir()
+    //     里把 applicationName 改成了 "MainWindowAssemblyTest"。所以那一刻
+    //     起，QCoreApplication 上挂的就是测试自己的名字，与真实程序无关。
+    //     硬要比对只会得到一条永远红的断言（而且会诱使人"把测试的名字改成
+    //     程序名" —— 那才是真的把隔离破坏掉）。
+    //
+    //   正确的判据是**源头**：AppInfo 里的英文名常量。它同时也是
+    //   main.cpp 的 kApplicationName 的镜像 —— 两者的同步由下面这条
+    //   "displayNameEn() 是纯 ASCII 的 ZlPhotoEdit" 加上
+    //   testIconsOfExeIcon 里的源码对账一起守住。
+    checkStr(appinfo::displayNameEn(), QStringLiteral("ZlPhotoEdit"),
+             "★★ QSettings 用的应用名（AppInfo 的英文名）仍是英文工程名");
+
+    // ★ 真实程序的身份（未被测试改写时）——只在没被重定向时才成立 ★
+    //   用 organizationName 判断"是不是已经被重定向过了"。
+    if (QCoreApplication::organizationName() == QStringLiteral("ZlStudio")) {
+        checkStr(QCoreApplication::applicationName(), QStringLiteral("ZlPhotoEdit"),
+                 "★★ QSettings 的应用名 = 英文工程名（真实运行时的身份）");
+        checkStr(QCoreApplication::organizationName(), QStringLiteral("ZlStudio"),
+                 "★★ 组织名仍是 ZlStudio");
+        check(appinfo::displayNameEn() == QCoreApplication::applicationName(),
+              "★ AppInfo 的英文名与 QSettings 的应用名一致（不会各说各话）");
+    } else {
+        std::printf("       （QSettings 已被隔离重定向，跳过对 QCoreApplication 的直接比对）\n");
+    }
+
+    // 后缀：两个名字不同才拼括号，且必须两个都在
+    const QString suffix = appinfo::titleSuffix();
+    check(suffix.contains(appinfo::displayNameCn()), "标题后缀含中文名");
+    check(suffix.contains(appinfo::displayNameEn()), "标题后缀含英文名");
+    check(!suffix.contains(QStringLiteral("(%1)").arg(appinfo::displayNameEn())
+                               + QStringLiteral(" (%1)").arg(appinfo::displayNameEn())),
+          "★ 后缀没有把同一个名字拼两遍");
+
+    // 标题拼法
+    checkStr(appinfo::windowTitleFor(QString(), QString()), suffix,
+             "无文件名时标题就是后缀本身");
+    checkStr(appinfo::windowTitleFor(QStringLiteral("a.png"), QStringLiteral("50%")),
+             QStringLiteral("a.png [50%] - %1").arg(suffix),
+             "★ 有文件名 + 缩放比时的拼法");
+    checkStr(appinfo::windowTitleFor(QStringLiteral("a.png"), QString()),
+             QStringLiteral("a.png - %1").arg(suffix),
+             "没有缩放比时不留空的方括号");
+
+    // ── ② 图标：窗口图标 ──
+    //   ★ 这里必须量像素 ★
+    //     只断言 !isNull() 会漏掉"有 QIcon 但 pixmap 全透明"这一类，
+    //     而那恰好是 SVG 解析失败但资源路径存在时的表现。
+    const QIcon appIcon = appinfo::windowIcon();
+    check(!appIcon.isNull(), "★ 应用程序图标不是空 QIcon（logo.svg 打得开）");
+
+    bool allNull = true;
+    for (int px : {16, 32, 48, 128}) {
+        if (!appIcon.pixmap(px, px).isNull())
+            allNull = false;
+    }
+    check(!allNull, "★ 图标的各档位图都能取出来");
+
+    // 逐档量像素：每一档都要"画出了东西"
+    QStringList emptySizes;
+    for (int px : {16, 20, 24, 32, 48, 64, 128, 256}) {
+        const int n = opaquePixelCount(appinfo::windowIconPixmap(px));
+        if (n == 0)
+            emptySizes << QString::number(px);
+    }
+    check(emptySizes.isEmpty(),
+          "★★ 每一档图标都真的画出了像素（不是一整张透明图）");
+    if (!emptySizes.isEmpty())
+        std::printf("       全透明的档位：%s\n", qUtf8Printable(emptySizes.join(", ")));
+
+    // ── 图标：几何合理性（防止"画出来了，但是一团糊"）──
+    //
+    //  ★ 为什么不能断言"覆盖率必须小于某个值" ★
+    //    这个 logo 是一张**圆角方底 + 相机**的图 —— 方底几乎铺满整个
+    //    viewBox，16px 下覆盖率天然接近 1（实测 0.98）。硬写一个
+    //    "覆盖率 < 0.9" 之类的阈值，是在用另一张图的设计去约束这张图，
+    //    改天换 logo 就会无理由变红。
+    //
+    //    真正该钉的是**"不是简单的一整块纯色"** —— 也就是"画上去了细节"。
+    //    做法：数一下有多少种不同的颜色。纯色块只有 1 种；
+    //    这张图有灰底、深灰机身、黑镜头、白高光、黄灯 —— 至少好几种。
+    {
+        const QPixmap pm32 = appinfo::windowIconPixmap(32);
+        QSet<QRgb> colors;
+        if (!pm32.isNull()) {
+            const QImage img = pm32.toImage().convertToFormat(QImage::Format_ARGB32);
+            for (int y = 0; y < img.height(); ++y) {
+                const QRgb *row = reinterpret_cast<const QRgb *>(img.constScanLine(y));
+                for (int x = 0; x < img.width(); ++x) {
+                    if (qAlpha(row[x]) > 8)
+                        colors.insert(row[x]);
+                }
+            }
+        }
+        check(colors.size() >= 8,
+              "★★ 32px 图标有足够多的颜色（不是一整块纯色 —— 说明细节真的画上了）");
+        std::printf("       32px 不同颜色数 %d\n", int(colors.size()));
+    }
+
+    // 同一档重复渲染必须稳定（QSvgRenderer 是确定性的；若不稳定说明
+    // 渲染路径里有不该有的状态 —— 比如缓存串了名字）
+    {
+        const QPixmap a = appinfo::windowIconPixmap(48);
+        const QPixmap b = appinfo::windowIconPixmap(48);
+        check(a.toImage() == b.toImage(), "同一档重复渲染逐像素一致（渲染无隐藏状态）");
+    }
+
+    // ── ③ 图标：exe 资源 ──
+    //   运行时读不到 PE 资源段里那个图标（Windows 不通过 API 暴露给我们），
+    //   但能确认"源文件在、且构建时确实接进来了"。
+    //   源文件缺失 = 构建配置写错了（.rc 指向了一个不存在的文件）。
+    const QString icoPath = appinfo::exeIconSourcePath();
+    check(QFileInfo::exists(icoPath),
+          "★ exe 图标源文件 resources/logo.ico 存在");
+    if (!QFileInfo::exists(icoPath))
+        std::printf("       找不到：%s\n", qUtf8Printable(icoPath));
+    check(appinfo::hasExeIcon(),
+          "★ 当前构建已接入 Windows 资源图标（.rc 编进去了，不是白底窗户）");
+
+    // .rc 本身也要在 —— 它才是"接进去"这件事的实体
+    {
+        QDir d(QFileInfo(icoPath).absolutePath());     // <repo>/resources
+        check(d.exists(QStringLiteral("app.rc")),
+              "★ resources/app.rc 存在（exe 图标的载体）");
+
+        // ★★ 源码级对账：英文名与 main.cpp 的 kApplicationName 必须一致 ★★
+        //
+        //  为什么在这里做（而不是断言 QCoreApplication::applicationName()）
+        //    见上面 ① 段的说明：测试把 QCoreApplication 的身份改掉了，
+        //    运行时读不到真实值。而这两个常量一旦不同步，后果是
+        //    "关于框里写 ZlPhotoEdit、注册表路径却是别的" —— 不致命，
+        //    但会让排查问题的人抓狂。
+        //    编译器不管这件事（两个各自合法的字符串），所以只能对账源码。
+        //
+        //  ★ 解析要认准"定义那一行" ★
+        //    "kApplicationName" 这个词在 main.cpp 的**注释里也出现**（就在定义
+        //    上方几行，讲中文名不能写进这里）。简单粗暴地"找第一个 kApplicationName
+        //    再往右找第一个引号"，会一路走到上一条定义
+        //    `kOrganizationName = "ZlStudio"` 的引号上 —— 实测正是这么错的，
+        //    于是断言报 "期望 ZlPhotoEdit，实际 ZlStudio"。
+        //    所以用**正则匹配定义行**：必须同时含 `kApplicationName`、`=`、双引号。
+        {
+            const QString mainCpp =
+                QDir(QFileInfo(icoPath).absolutePath()).absoluteFilePath(
+                    QStringLiteral("../src/main.cpp"));
+            QFile f(mainCpp);
+            bool ok = false;
+            QString actual;
+            if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                const QString text = QString::fromUtf8(f.readAll());
+
+                // 逐行找：跳过注释行，只认"代码行里的 kApplicationName = "...""
+                const QStringList lines = text.split(QLatin1Char('\n'));
+                for (const QString &ln : lines) {
+                    const QString trimmed = ln.trimmed();
+                    // 注释行整行跳过（kApplicationName 在注释里出现过两次）
+                    if (trimmed.startsWith(QStringLiteral("//"))
+                        || trimmed.startsWith(QLatin1Char('*')))
+                        continue;
+                    const int at = ln.indexOf(QStringLiteral("kApplicationName"));
+                    if (at < 0)
+                        continue;
+                    const int q1 = ln.indexOf(QLatin1Char('"'), at);
+                    const int q2 = (q1 >= 0) ? ln.indexOf(QLatin1Char('"'), q1 + 1) : -1;
+                    if (q2 > q1) {
+                        actual = ln.mid(q1 + 1, q2 - q1 - 1);
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+            check(ok, "★ 能读到 src/main.cpp 并解析出 kApplicationName 的定义值");
+            if (ok) {
+                checkStr(actual, appinfo::displayNameEn(),
+                         "★★ main.cpp 的 kApplicationName == AppInfo 的英文名"
+                         "（不同步会让「关于」框与注册表路径各说各话）");
+            } else {
+                std::printf("       解析失败，路径：%s\n", qUtf8Printable(mainCpp));
+            }
+        }
+    }
+
+    delete newWindow(QStringLiteral("move"));   // 顺带把窗口建出来确保无副作用
+    // ★ 上面这一行的建窗只为确认"读取 AppInfo 不影响建窗"；
+    //   真正的窗口标题一致性断言在 testDocumentTabs 的 ① 段。
 }
 
 // ===========================================================================
@@ -1570,8 +1820,8 @@ static void testDocumentTabs()
     // ★★ 但「新建」必须仍然可用 ★★
     //   全灰 + 关不掉 = 用户只能杀进程。这是空状态唯一不能出错的地方。
     check(newAct->isEnabled(), "★★ 没有文档时「新建」仍然可用（否则用户没有出路）");
-    checkStr(w->windowTitle(), QStringLiteral("ZlPhotoEdit"),
-             "★ 没有文档时窗口标题回到程序名（不带文件名与缩放比）");
+    checkStr(w->windowTitle(), appinfo::titleSuffix(),
+             "★ 没有文档时窗口标题 = 程序名（不带文件名与缩放比）");
 
     newAct->trigger();
     QApplication::processEvents();
@@ -2930,6 +3180,7 @@ int main(int argc, char **argv)
     testCropMenuEnabledState();
     testCropToSelection();
     testIcons();
+    testAppIdentityAndIcon();
     testLayerPanelAssembly();
     testMergeVisibleKeepsHiddenLayers();
     testRenameActiveLayerAction();

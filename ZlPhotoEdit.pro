@@ -108,6 +108,7 @@ SOURCES += \
     src/ui/RulerWidget.cpp \
     src/ui/LayerPanel.cpp \
     src/ui/IconLibrary.cpp \
+    src/ui/AppInfo.cpp \
     src/ui/AdjustmentDialog.cpp \
     src/ui/BrightnessContrastDialog.cpp \
     src/ui/HueSaturationDialog.cpp \
@@ -191,7 +192,8 @@ HEADERS += \
     src/ui/ToolOptionsBar.h \
     src/ui/StatusBarWidget.h \
     src/ui/LayerPanel.h \
-    src/ui/IconLibrary.h
+    src/ui/IconLibrary.h \
+    src/ui/AppInfo.h
 
 # ---------------------------------------------------------------------------
 #  资源文件（SVG 图标）
@@ -204,6 +206,32 @@ HEADERS += \
 
 RESOURCES += \
     resources/resources.qrc
+
+# ---------------------------------------------------------------------------
+#  Windows 可执行文件图标（exe 本身的图标）
+# ---------------------------------------------------------------------------
+#  ★ 与上面的 RESOURCES 是两回事，不要合并 ★
+#    · resources.qrc → rcc.exe → 编进二进制，运行时用 ":/…" 取；
+#      管的是**窗口/任务栏**图标（QApplication::setWindowIcon）。
+#    · resources/app.rc → rc.exe → 编成资源段，**运行时不经过 Qt**；
+#      管的是**资源管理器里那个 exe 文件的图标**。
+#
+#  ★ 为什么用 RC_FILE 而不是 RC_ICONS ★
+#    RC_ICONS = xx.ico 会让 qmake 自己合成一个 .rc —— 简单，但那个 .rc
+#    的内容不受我们控制，也不能写注释解释"为什么 ID 必须是 1"。
+#    RC_FILE 指向我们自己的 .rc，两条构建路径（qmake / CMake）指向同一个
+#    文件，行为一致，改起来只有一处。
+#
+#  ★ 只在 win32 下加 ★
+#    rc.exe 是 MSVC 的工具链；非 Windows 平台加了会直接构建失败。
+win32 {
+    RC_FILE = resources/app.rc
+
+    # AppInfo::hasExeIcon() 的编译期开关。CMake 侧在同一个位置定义
+    # （见 CMakeLists.txt 的 target_compile_definitions），两边必须一致 ——
+    # 否则自检在一条构建路径上断言"有 exe 图标"、另一条上断言"没有"。
+    DEFINES += ZLPE_HAS_EXE_ICON=1
+}
 
 
 # ---------------------------------------------------------------------------
