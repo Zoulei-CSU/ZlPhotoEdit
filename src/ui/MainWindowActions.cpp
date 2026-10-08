@@ -114,6 +114,20 @@ static QString rulerUnitName(rulermetrics::Unit unit)
     return QString();
 }
 
+// ---------------------------------------------------------------------------
+//  网格间距的预设档位（只给菜单用；**单一来源**）
+// ---------------------------------------------------------------------------
+//  ★ 为什么是这几个值 ★
+//    8/16 用于像素级对齐（图标排版、像素画），32/64 是通用档，
+//    128/256 用于大图分块。这六档覆盖九成场景；其余值走「自定义…」。
+//
+//  ★ 为什么做成一张表、而不是在菜单循环里现写 ★
+//    菜单下标 → 毫米值的映射只允许有一份。与「标尺单位」同一条纪律：
+//    两处分头维护顺序，会出现"菜单写着 64、选出来是 32"——
+//    而且看起来完全正常，只是间距不对。
+static const int kGridPresets[] = { 8, 16, 32, 64, 128, 256 };
+static const int kGridPresetCount = int(sizeof(kGridPresets) / sizeof(kGridPresets[0]));
+
 void MainWindow::setupActions()
 {
     // ─────────────────────────────────────────────────────────────────────
@@ -578,6 +592,50 @@ void MainWindow::setupActions()
     connect(m_actionShowCheckerboard, &QAction::toggled,
             this, &MainWindow::toggleCheckerboard);
 
+    // ── 网格的间距与吸附（阶段七收尾）──
+    //
+    //  ★ 快捷键的取舍 ★
+    //    参考线「显示」占了 Ctrl+;、「锁定」占了 Ctrl+Alt+; ——
+    //    吸附与它俩同族，于是顺势用 **Ctrl+Shift+;**（三连）。
+    //    "显示网格"本身没给快捷键（它是纯呈现，用得没吸附频繁）。
+    m_actionSnapToGrid = new QAction(tr("对齐到网格(&S)"), this);
+    m_actionSnapToGrid->setObjectName(QStringLiteral("actionSnapToGrid"));
+    m_actionSnapToGrid->setIcon(icons::icon(QStringLiteral("view_grid_snap")));
+    m_actionSnapToGrid->setCheckable(true);
+    m_actionSnapToGrid->setChecked(false);
+    m_actionSnapToGrid->setShortcut(
+        QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Semicolon));
+    connect(m_actionSnapToGrid, &QAction::toggled, this, &MainWindow::toggleSnapToGrid);
+
+    // 「网格间距」子菜单：6 个预设 + 1 个「自定义…」
+    //
+    //  ★ 预设项**不设 objectName** ★
+    //    与本工程"有名字的菜单动作必须有图标"那条规则一致 —— 牵连进来
+    //    就得给 6 项各配一张图（纯噪音）。定位它们靠子菜单本身 + 下标。
+    {
+        auto *spacingGroup = new QActionGroup(this);
+        spacingGroup->setExclusive(true);
+
+        for (int i = 0; i < kGridPresetCount; ++i) {
+            QAction *act = new QAction(tr("%1 像素").arg(kGridPresets[i]), this);
+            act->setCheckable(true);
+            act->setChecked(kGridPresets[i] == 64);   // 与 CanvasView 的默认值一致
+            // ★ 把"这一项代表哪个间距"存进 data() ★
+            //   退出/自定义设置后要靠它把勾选态同步回来。存值而不是解析
+            //   显示文本 —— 文本是翻译过的，拿它当协议换语言就静默失效。
+            act->setData(kGridPresets[i]);
+            connect(act, &QAction::triggered, this,
+                    [this, i] { setGridSpacing(kGridPresets[i]); });
+            spacingGroup->addAction(act);
+            m_actionGridSpacing.append(act);
+        }
+    }
+
+    m_actionGridCustom = new QAction(tr("自定义(&U)..."), this);
+    m_actionGridCustom->setObjectName(QStringLiteral("actionGridCustom"));
+    m_actionGridCustom->setIcon(icons::icon(QStringLiteral("view_grid_spacing")));
+    connect(m_actionGridCustom, &QAction::triggered, this, &MainWindow::editGridSettings);
+
     // ── 标尺与参考线（阶段七：视图辅助）──
     //
     //  ★ 快捷键的取舍 ★
@@ -875,6 +933,17 @@ void MainWindow::setupMenus()
     viewMenu->addSeparator();
     viewMenu->addAction(m_actionShowGrid);
     viewMenu->addAction(m_actionShowCheckerboard);
+
+    // ── 网格的间距与吸附 ──
+    viewMenu->addAction(m_actionSnapToGrid);
+
+    QMenu *gridSpacingMenu = viewMenu->addMenu(tr("网格间距(&Z)"));
+    gridSpacingMenu->setObjectName(QStringLiteral("menuGridSpacing"));
+    gridSpacingMenu->setIcon(icons::icon(QStringLiteral("view_grid")));
+    for (QAction *act : m_actionGridSpacing)
+        gridSpacingMenu->addAction(act);
+    gridSpacingMenu->addSeparator();
+    gridSpacingMenu->addAction(m_actionGridCustom);
 
     // ── 视图辅助：标尺与参考线 ──
     viewMenu->addSeparator();
@@ -1689,6 +1758,32 @@ void MainWindow::loadSettings()
     const bool showGrid = settings.value(QStringLiteral("view/showGrid"), false).toBool();
     m_actionShowGrid->setChecked(showGrid);   // toggled 会调用 toggleGrid
 
+    // ── 网格的间距与吸附 ──
+    //
+    //  ★ 间距读回来要先夹到合法范围 ★
+    //    存档可能是旧版本写的、或被人手改过。越界值会被 CanvasView
+    //    qBound 掉（4..2000），但**菜单的勾选态**是按原值匹配的 ——
+    //    于是用户看到"菜单里一个都没勾上"，像是设置丢了。
+    //    先夹一次，让"画布的值"与"菜单的勾选"永远一致。
+    const int gridSpacing =
+        qBound(4, settings.value(QStringLiteral("view/gridSpacing"), 64).toInt(), 2000);
+    m_gridSpacing = gridSpacing;
+    for (int i = 0; i < m_actionGridSpacing.size(); ++i)
+        m_actionGridSpacing.at(i)->setChecked(
+            m_actionGridSpacing.at(i)->data().toInt() == gridSpacing);
+    if (m_canvas)
+        m_canvas->setGridSize(gridSpacing);
+
+    // 线色：存的是 QColor（QVariant 原生支持），非法/缺失则保留默认值
+    const QVariant gridColorVar = settings.value(QStringLiteral("view/gridColor"));
+    if (gridColorVar.isValid() && gridColorVar.value<QColor>().isValid())
+        m_gridColor = gridColorVar.value<QColor>();
+    if (m_canvas)
+        m_canvas->setGridColor(m_gridColor);
+
+    const bool snapToGrid = settings.value(QStringLiteral("view/snapToGrid"), false).toBool();
+    m_actionSnapToGrid->setChecked(snapToGrid);   // toggled 会调用 toggleSnapToGrid
+
     const bool showCheckerboard =
         settings.value(QStringLiteral("view/showCheckerboard"), true).toBool();
     m_actionShowCheckerboard->setChecked(showCheckerboard);
@@ -1752,6 +1847,17 @@ void MainWindow::saveSettings()
     settings.setValue(QStringLiteral("view/showGrid"), m_actionShowGrid->isChecked());
     settings.setValue(QStringLiteral("view/showCheckerboard"),
                       m_actionShowCheckerboard->isChecked());
+
+    // ── 网格的间距与吸附 ──
+    //   间距从**画布读**（它才是真正被夹到 4..2000 之后的值），
+    //   而不是从菜单勾选项推断 —— 自定义值不在预设里，菜单是无勾选态的，
+    //   那样存下去会永远写回 64。
+    settings.setValue(QStringLiteral("view/snapToGrid"),
+                      m_actionSnapToGrid->isChecked());
+    //   间距与线色从 MainWindow 的**单一来源**写（而不是读画布）——
+    //   退出路径上画布可能已经析构，读它拿不到值。
+    settings.setValue(QStringLiteral("view/gridSpacing"), m_gridSpacing);
+    settings.setValue(QStringLiteral("view/gridColor"), m_gridColor);
 
     // ── 视图辅助：标尺与参考线 ──
     settings.setValue(QStringLiteral("view/showRuler"), m_actionShowRuler->isChecked());

@@ -56,6 +56,7 @@
 #include "ui/LevelsDialog.h"
 #include "ui/ImageSizeDialog.h"
 #include "ui/CanvasSizeDialog.h"
+#include "ui/GridSettingsDialog.h"
 #include "ui/RotateImageDialog.h"
 
 #include "core/DocumentManager.h"
@@ -4134,6 +4135,67 @@ void MainWindow::toggleGrid(bool visible)
 {
     if (m_canvas)
         m_canvas->setGridVisible(visible);
+}
+
+// ============================================================================
+//  网格的间距与吸附（阶段七收尾）
+// ============================================================================
+
+void MainWindow::toggleSnapToGrid(bool enabled)
+{
+    // 与「显示网格」一样是**应用级偏好**：只记在 MainWindow 的记忆里，
+    // 由 applyDocumentToPanels() 在切页/新页时补推给每一块画布
+    // （画布是每页一份，属性不补推就不会跟着走）。
+    if (m_canvas)
+        m_canvas->setSnapToGrid(enabled);
+
+    if (m_statusBar)
+        m_statusBar->showMessage(enabled ? tr("已开启对齐到网格")
+                                         : tr("已关闭对齐到网格"));
+}
+
+void MainWindow::setGridSpacing(int pixels)
+{
+    // ★ 先更新单一来源，再推给画布 ★
+    //   反过来的话，"切页补推"会用到还没更新的旧值。
+    m_gridSpacing = qBound(4, pixels, 2000);
+
+    if (m_canvas)
+        m_canvas->setGridSize(m_gridSpacing);
+
+    // 菜单勾选态与值同步（自定义值不在预设里时 6 项全不勾）
+    for (int i = 0; i < m_actionGridSpacing.size(); ++i)
+        m_actionGridSpacing.at(i)->setChecked(
+            m_actionGridSpacing.at(i)->data().toInt() == m_gridSpacing);
+
+    // 只改间距不必开网格 —— 与「显示网格」独立。状态栏提示让用户知道生效了
+    // （否则在没开网格时改间距看起来毫无反应）。
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("网格间距：%1 像素").arg(m_gridSpacing));
+}
+
+void MainWindow::editGridSettings()
+{
+    if (!m_canvas)
+        return;
+
+    // ★ 模态对话框在无人环境会永久挂死 ★
+    //   与本工程其它对话框（图像大小/画布大小…）同一条纪律：
+    //   "干活的那半"必须是可被程序驱动的公开入口 —— 这里就是
+    //   setGridSpacing() 与画布的 setGridColor()。对话框只负责收集意愿，
+    //   真正的改动由那两个入口完成，自检因此可以绕开 exec() 直接验行为。
+    GridSettingsDialog dlg(m_gridSpacing, m_gridColor, this);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    // 走与预设项同一条路（顺带同步勾选态与状态栏提示）
+    setGridSpacing(dlg.spacing());
+
+    if (dlg.color().isValid() && dlg.color() != m_gridColor) {
+        m_gridColor = dlg.color();
+        if (m_canvas)
+            m_canvas->setGridColor(m_gridColor);
+    }
 }
 
 void MainWindow::toggleCheckerboard(bool visible)

@@ -76,6 +76,8 @@
     <file>icons/tool_zoom.svg</file>
     <file>icons/view_checkerboard.svg</file>
     <file>icons/view_grid.svg</file>
+    <file>icons/view_grid_snap.svg</file>
+    <file>icons/view_grid_spacing.svg</file>
     <file>icons/view_guides.svg</file>
     <file>icons/view_guides_clear.svg</file>
     <file>icons/view_guides_lock.svg</file>

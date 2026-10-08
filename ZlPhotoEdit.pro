@@ -76,6 +76,7 @@ SOURCES += \
     src/engine/Text.cpp \
     src/engine/ImageMeta.cpp \
     src/engine/RulerMetrics.cpp \
+    src/engine/GridMetrics.cpp \
     src/engine/Outline.cpp \
     src/engine/IcoWriter.cpp \
     src/commands/CommandStack.cpp \
@@ -119,6 +120,7 @@ SOURCES += \
     src/ui/SizeChangeDialogBase.cpp \
     src/ui/ImageSizeDialog.cpp \
     src/ui/CanvasSizeDialog.cpp \
+    src/ui/GridSettingsDialog.cpp \
     src/ui/RotateImageDialog.cpp \
     src/ui/ToolOptionsBar.cpp \
     src/ui/StatusBarWidget.cpp
@@ -149,6 +151,7 @@ HEADERS += \
     src/engine/Text.h \
     src/engine/ImageMeta.h \
     src/engine/RulerMetrics.h \
+    src/engine/GridMetrics.h \
     src/engine/Outline.h \
     src/engine/IcoWriter.h \
     src/commands/CommandStack.h \
@@ -188,6 +191,7 @@ HEADERS += \
     src/ui/SizeChangeDialogBase.h \
     src/ui/ImageSizeDialog.h \
     src/ui/CanvasSizeDialog.h \
+    src/ui/GridSettingsDialog.h \
     src/ui/RotateImageDialog.h \
     src/ui/ToolOptionsBar.h \
     src/ui/StatusBarWidget.h \

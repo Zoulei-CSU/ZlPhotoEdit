@@ -7,6 +7,7 @@
 #include "commands/ImageCommand.h"
 #include "commands/LayerCommand.h"
 #include "engine/Transform.h"
+#include "engine/GridMetrics.h"   // 网格吸附（纯函数）
 
 #include <QPainter>
 #include <QFontMetrics>
@@ -234,6 +235,29 @@ ToolResult MoveTool::mouseMove(const ToolEvent &e)
             offset = QPoint(0, qRound(delta.y()));
     } else {
         offset = QPoint(qRound(delta.x()), qRound(delta.y()));
+    }
+
+    // ── 网格吸附 ──
+    //
+    // ★ 吸的是"内容包围盒"，不是"鼠标位置"★
+    //
+    //   用户想把一个素材的**边缘**对齐到网格线，而素材边缘在图层位图里
+    //   是 m_contentBounds。若按鼠标位置吸附，用户就必须心算"鼠标离内容
+    //   边缘多远"，而且同一份内容在不同位置拖会得到不同的对齐结果。
+    //   按包围盒算，则"这条边现在离网格多近"始终是所见即所得。
+    //
+    // ★ 吸的是**平移量**，形状与大小完全不变 ★
+    //   见 gridmetrics::snapOffsetForRect：只算一个位移，不裁剪不缩放。
+    //
+    // ★ 为什么放在 Shift 约束**之后**★
+    //   Shift 已经把其中一轴归零。若先吸附再约束，被约束掉的轴会留下
+    //   一个非零位移，Shift 一松开就跳一下。顺序反过来则"Shift 锁住的轴
+    //   永远不动"，符合直觉。
+    if (e.snapToGrid && gridmetrics::isUsable(e.gridSize)) {
+        const QRect moved = m_contentBounds.translated(offset);
+        const QPoint snap = gridmetrics::snapOffsetForRect(
+            moved, e.gridSize, e.snapTolerancePx);
+        offset += snap;
     }
 
     applyDragOffset(offset, e.modifiers.shift);

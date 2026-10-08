@@ -317,6 +317,7 @@ moc_headers_for() {
                   src/ui/SizeChangeDialogBase.h \
                   src/ui/ImageSizeDialog.h \
                   src/ui/CanvasSizeDialog.h \
+                  src/ui/GridSettingsDialog.h \
                   src/ui/RotateImageDialog.h"
             ;;
         *)
@@ -715,6 +716,7 @@ run_one() {
                 src/engine/Curves.cpp \
                 src/engine/Filters.cpp \
                 src/engine/Geometry.cpp \
+                src/engine/GridMetrics.cpp \
                 src/engine/Histogram.cpp \
                 src/engine/ImageMeta.cpp \
                 src/engine/Lut.cpp \
@@ -757,6 +759,15 @@ run_one() {
             build_and_run ruler_test \
                 tests/ruler_test.cpp \
                 src/engine/RulerMetrics.cpp
+            ;;
+        grid)
+            # 网格吸附纯函数。与 ruler 同属"最轻的一档"：只链
+            # engine/GridMetrics.cpp（无 Q_OBJECT、无 Widgets）。
+            # 拖动真的吸上了、菜单真的改了间距 —— 那些在 move_tool /
+            # selection / mainwin 里验。
+            build_and_run grid_test \
+                tests/grid_test.cpp \
+                src/engine/GridMetrics.cpp
             ;;
         ico)
             # ICO 图标编码。与 ruler 一样是"最轻的一档"：只链
@@ -879,6 +890,7 @@ run_one() {
             build_and_run view_test \
                 tests/view_test.cpp \
                 src/ui/CanvasView.cpp \
+                src/engine/GridMetrics.cpp \
                 src/engine/Outline.cpp \
                 src/core/Document.cpp \
                 src/core/Layer.cpp \
@@ -1242,6 +1254,7 @@ run_one() {
                 tests/document_tabs_test.cpp \
                 src/ui/DocumentTabs.cpp \
                 src/ui/CanvasView.cpp \
+                src/engine/GridMetrics.cpp \
                 src/engine/Outline.cpp \
                 src/commands/CommandStack.cpp \
                 src/core/Document.cpp \
@@ -1303,6 +1316,7 @@ run_one() {
                 src/engine/Text.cpp \
                 src/engine/ImageMeta.cpp \
                 src/engine/RulerMetrics.cpp \
+                src/engine/GridMetrics.cpp \
                 src/engine/IcoWriter.cpp \
                 src/commands/CommandStack.cpp \
                 src/commands/DrawCommand.cpp \
@@ -1343,6 +1357,7 @@ run_one() {
                 src/ui/SizeChangeDialogBase.cpp \
                 src/ui/ImageSizeDialog.cpp \
                 src/ui/CanvasSizeDialog.cpp \
+                src/ui/GridSettingsDialog.cpp \
                 src/ui/RotateImageDialog.cpp \
                 src/ui/IconLibrary.cpp \
                 src/ui/AppInfo.cpp \
@@ -1382,6 +1397,7 @@ else
     run_one geometry
     run_one perf
     run_one ruler
+    run_one grid
     run_one ico
     run_one view
     run_one crop

@@ -116,9 +116,17 @@
 #include <QtGlobal>
 #include <utility>
 
+#include <algorithm>   // 网格像素组：对"相邻线间距"取中位数
 #include <cstdio>
 
 using namespace zl;
+
+// 前置声明：按 objectName 从窗口里找动作。
+// ★ 为什么需要它 ★
+//   它的定义在文件后半段（靠近屏幕截图那组），而「网格间距」那组
+//   用到它、位置更靠前。C++ 不允许调用后面才声明的函数，
+//   所以这里前置一次 —— 比把整组测试搬到文件末尾更不容易出错。
+static QAction *namedAction(MainWindow *w, const char *name);
 
 static int g_failed = 0;
 static int g_passed = 0;
@@ -2236,6 +2244,244 @@ static void testRulersAndGuides()
 }
 
 // ===========================================================================
+//  网格的间距与吸附
+// ===========================================================================
+//  这一组盯的是"菜单 / 单一来源 / 画布"三者的同步。吸附的**数学**已经由
+//  grid_test 钉死了，工具的**接线**由 movetool / selection 钉死 ——
+//  这里只验装配层最容易静默失效的两件事：
+//    ① 菜单项真的挂在「视图」菜单里（addAction(nullptr) 合法且静默）；
+//    ② 菜单改了之后，**当前画布**真的跟着改（属性不往下推 = 点了没反应）。
+static void testGridSpacingAndSnap()
+{
+    beginGroup("网格：间距菜单 / 对齐开关 / 与画布同步");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    CanvasView *cv = currentCanvasOf(w);
+    check(cv != nullptr, "拿得到当前画布");
+    if (!cv) {
+        delete w;
+        return;
+    }
+
+    // ── ① 子菜单与动作都在 ──
+    QMenu *spacingMenu = w->findChild<QMenu *>(QStringLiteral("menuGridSpacing"));
+    check(spacingMenu != nullptr, "★ 建出了「网格间距」子菜单");
+
+    // 它必须真的挂在「视图」菜单里，而不是个没人引用的孤儿
+    QMenu *viewMenu = nullptr;
+    for (QAction *top : w->menuBar()->actions()) {
+        if (top->menu() && top->text().startsWith(QStringLiteral("视图")))
+            viewMenu = top->menu();
+    }
+    check(viewMenu != nullptr, "拿得到「视图」菜单");
+    if (viewMenu && spacingMenu)
+        check(viewMenu->actions().contains(spacingMenu->menuAction()),
+              "★ 子菜单确实挂在「视图」里");
+    check(spacingMenu && !spacingMenu->menuAction()->icon().isNull(),
+          "子菜单自己有图标");
+
+    QAction *snapAct = namedAction(w, "actionSnapToGrid");
+    check(snapAct != nullptr, "★ 「对齐到网格」动作存在");
+    check(snapAct && snapAct->isCheckable(), "它是可勾选的");
+    check(snapAct && viewMenu && viewMenu->actions().contains(snapAct),
+          "★ 它挂在「视图」菜单里（不是孤儿动作）");
+    check(snapAct && !snapAct->icon().isNull(), "它有图标");
+    check(snapAct && !snapAct->shortcut().isEmpty(),
+          "它有快捷键（Ctrl+Shift+;）");
+
+    QAction *customAct = namedAction(w, "actionGridCustom");
+    check(customAct != nullptr, "「自定义…」动作存在");
+    check(customAct && spacingMenu
+              && spacingMenu->actions().contains(customAct),
+          "★ 「自定义…」在「网格间距」子菜单里");
+    check(customAct && !customAct->icon().isNull(), "它有图标");
+
+    // ── ② 6 个预设：逐项 trigger()，验"第 i 项 → 间距值" ──
+    //
+    //  ★ 为什么必须逐项真的 trigger() ★
+    //    直接调 setGridSpacing() 只能证明那个槽对，证明不了
+    //    "菜单下标 ⇄ 间距值"这根线接对了。而这根线正是最容易写错的地方
+    //    （菜单循环里用错数组下标、或者 setChecked 与 setData 不同步）。
+    const int expected[] = { 8, 16, 32, 64, 128, 256 };
+    if (spacingMenu) {
+        // 子菜单里：6 个预设 + 1 个分隔符 + 1 个「自定义…」
+        QList<QAction *> presets;
+        for (QAction *a : spacingMenu->actions())
+            if (!a->isSeparator() && a != customAct)
+                presets << a;
+
+        checkEqInt(presets.size(), 6, "子菜单里正好 6 个预设项");
+
+        for (int i = 0; i < presets.size() && i < 6; ++i) {
+            presets.at(i)->trigger();
+            QApplication::processEvents();
+
+            checkEqInt(cv->gridSize(), expected[i],
+                       "★ 第 i 个预设 → 画布间距 = 表里的第 i 个值");
+            checkEqInt(presets.at(i)->data().toInt(), expected[i],
+                       "★ data() 与值同源（自定义设置要靠它同步勾选态）");
+        }
+    }
+
+    // ── ③ 对齐开关必须推到画布 ──
+    //     不推的话菜单勾了、画布不知道 —— 拖动完全不吸附，而且不报错。
+    if (snapAct) {
+        check(!cv->snapToGrid(), "默认不开吸附");
+        snapAct->setChecked(true);
+        QApplication::processEvents();
+        check(cv->snapToGrid(), "★★ 勾上「对齐到网格」→ 画布真的开启了");
+
+        snapAct->setChecked(false);
+        QApplication::processEvents();
+        check(!cv->snapToGrid(), "取消勾选 → 画布也关了");
+    }
+
+    // ── ④ 切页之后三个值都要补推 ──
+    //     ★ 与"标准/参考线"同一条规律：画布每页一块，属性不补推就不跟着走。
+    //       症状是"我在旧页调好了，新页又变回默认"。
+    if (spacingMenu) {
+        // 当前页设成 32（**非默认值**，这样"新页没补推"才暴露得出来 ——
+        // 若停在默认 64 上，新页即使不补推也恰好是 64，断言会假绿）。
+        const int idx32 = 2;   // 与 kGridPresets 的 {8,16,32,64,128,256} 对应
+        QList<QAction *> presets;
+        for (QAction *a : spacingMenu->actions())
+            if (!a->isSeparator() && a != customAct)
+                presets << a;
+        if (idx32 < presets.size()) {
+            presets.at(idx32)->trigger();
+            QApplication::processEvents();
+            checkEqInt(cv->gridSize(), 32, "先把当前页间距设成 32");
+        }
+
+        auto *newAct = namedAction(w, "actionNew");
+        if (newAct) {
+            newAct->trigger();                    // 新开一页
+            QApplication::processEvents();
+            CanvasView *cv2 = currentCanvasOf(w);
+            check(cv2 && cv2 != cv, "新开了一页，换了画布");
+            checkEqInt(cv2 ? cv2->gridSize() : -1, 32,
+                       "★★ 新页的间距必须是**上一步设的 32**，不是默认 64");
+            if (snapAct) {
+                snapAct->setChecked(true);
+                QApplication::processEvents();
+            }
+
+            // 再开一页，验证吸附也跟着走
+            newAct->trigger();
+            QApplication::processEvents();
+            CanvasView *cv3 = currentCanvasOf(w);
+            check(cv3 && cv3->snapToGrid(),
+                  "★★ 新页的吸附状态也补推了");
+        }
+    }
+
+    // ── ⑤ ★ 量像素：网格线真的被画出来了，而且间距就是设的那个值 ★ ──
+    //
+    //  "数学全绿而画面不对"是自绘管线的经典失败模式（铁律第十三章）。
+    //  网格的**全部用户价值**就在画面上 —— drawGrid 里帧坐标算错、
+    //  或者条件写反导致一条线都不画，上面所有断言（间距值、开关、
+    //  补推）照样全绿。所以必须量它画出来的像素。
+    //
+    //  ★ 为什么不能只断言"有像素变了"★
+    //    那样"网格画成一条竖线"或"线间距算成 2 倍"都能通过。
+    //    这里额外量**相邻两条线的屏幕距离 ≈ 间距 × 缩放**，
+    //    于是"间距真的等于设的那个值"也被钉在像素上。
+    {
+        CanvasView *cg = currentCanvasOf(w);
+        check(cg != nullptr, "拿到量像素用的画布");
+        if (cg) {
+            cg->setCheckerboardVisible(false);   // 棋盘格会掩盖网格线
+            cg->setGridVisible(false);
+            cg->setGridSize(64);
+            QApplication::processEvents();
+            const QImage imgNo = cg->grab().toImage();
+
+            cg->setGridVisible(true);
+            QApplication::processEvents();
+            const QImage imgYes = cg->grab().toImage();
+
+            check(imgNo.size() == imgYes.size(), "两次 grab 的尺寸一致");
+
+            const QRectF vis = cg->visibleImageRect();
+            std::printf("      画布参数：控件 %dx%d  缩放 %.4f  间距 %d  屏幕间距 %.2f\n",
+                        cg->width(), cg->height(), cg->zoom(), cg->gridSize(),
+                        cg->gridSize() * cg->zoom());
+            std::printf("      画布参数：可见图像矩形 (%.1f,%.1f,%.1f,%.1f)  画布 %d×%d\n",
+                        vis.x(), vis.y(), vis.width(), vis.height(),
+                        cg->document() ? cg->document()->canvasSize().width() : -1,
+                        cg->document() ? cg->document()->canvasSize().height() : -1);
+
+            // ★ 找"竖线"不能只看"这一列有没有像素变过" ★
+            //   网格的**横线**横跨整个画布 —— 于是每一个列都会因为
+            //   "横线经过它"而变化，直接收集会得到"几乎每一列都变了"，
+            //   把竖线淹没掉（实测：680 列全中，合并后只剩 1 个中心）。
+            //   竖线的签名是"这一列从上到下几乎全是变了的像素"，
+            //   所以判据改成：**该列的变化行数 > 总行数的一半**。
+            QList<int> cols;
+            for (int x = 0; x < imgYes.width() && x < imgNo.width(); ++x) {
+                int diffRows = 0;
+                for (int y = 0; y < imgYes.height() && y < imgNo.height(); ++y) {
+                    if (imgYes.pixel(x, y) != imgNo.pixel(x, y))
+                        ++diffRows;
+                }
+                if (diffRows * 2 > imgYes.height())
+                    cols << x;
+            }
+
+            std::printf("      竖线所在列 %d 个：", int(cols.size()));
+            for (int i = 0; i < cols.size() && i < 30; ++i)
+                std::printf("%d ", cols.at(i));
+            std::printf("\n");
+
+            check(cols.size() >= 3,
+                  "★★ 网格确实被画出来了（纵向有不止一条线）");
+
+            if (cols.size() >= 3) {
+                // ★ 先把相邻的列**并成一条线**，再取各条线的中心 ★
+                //   线落在亚像素位置时会被抗锯齿摊到相邻两列 —— 不合并的话
+                //   gaps 里会混进一堆 1，中位数直接失真（实测就是这么挂的）。
+                QList<int> centers;
+                int runStart = cols.first();
+                int prev     = cols.first();
+                for (int i = 1; i < cols.size(); ++i) {
+                    if (cols.at(i) == prev + 1) {
+                        prev = cols.at(i);
+                        continue;
+                    }
+                    centers << (runStart + prev) / 2;
+                    runStart = prev = cols.at(i);
+                }
+                centers << (runStart + prev) / 2;
+
+                std::printf("      网格线列中心 %d 个：", int(centers.size()));
+                for (int i = 0; i < centers.size() && i < 12; ++i)
+                    std::printf("%d ", centers.at(i));
+                std::printf("\n");
+
+                check(centers.size() >= 3,
+                      "★★ 合并亚像素摊宽后仍有 ≥3 条独立的竖线");
+
+                if (centers.size() >= 3) {
+                    QList<int> gaps;
+                    for (int i = 1; i < centers.size(); ++i)
+                        gaps << (centers.at(i) - centers.at(i - 1));
+                    std::sort(gaps.begin(), gaps.end());
+                    const int medGap = gaps.at(gaps.size() / 2);
+
+                    const qreal expect = 64.0 * cg->zoom();
+                    std::printf("      相邻线距中位数 = %d px，期望 64×%.4f = %.1f px\n",
+                                medGap, cg->zoom(), expect);
+                    check(qAbs(qreal(medGap) - expect) <= 2.0,
+                          "★★ 相邻网格线的屏幕距离 ≈ 间距×缩放（线间距真的是 64 图像像素）");
+                }
+            }
+        }
+    }
+
+    delete w;
+}
+
+// ===========================================================================
 //  另存为 ICO 图标
 // ===========================================================================
 //  这条功能的**唯一**用户可见入口是「文件 → 另存为…」时选 .ico ——
@@ -3189,6 +3435,7 @@ int main(int argc, char **argv)
     testImportImageAsLayerPolicies();
     testDocumentTabs();
     testRulersAndGuides();
+    testGridSpacingAndSnap();
     testIcoExport();
     testCommandLineFiles();
     testScreenCaptureMenu();

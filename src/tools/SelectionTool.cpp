@@ -6,6 +6,7 @@
 #include "commands/CommandStack.h"
 #include "commands/SelectionCommand.h"
 #include "engine/Filters.h"
+#include "engine/GridMetrics.h"   // 网格吸附（把选区两个角吸到网格线上）
 
 #include <QPainter>
 #include <QPainterPath>
@@ -77,10 +78,26 @@ ToolOptions *SelectionTool::options() const
 //  几何计算
 // ===========================================================================
 
+QPointF SelectionTool::snapCorner(const ToolEvent &e, const QPointF &p)
+{
+    // 网格关闭或间距非法 → 原样返回（不吸附）。
+    // 判据收敛在 gridmetrics::isUsable() 一处，见 GridMetrics.h。
+    if (!e.snapToGrid || !gridmetrics::isUsable(e.gridSize))
+        return p;
+
+    return gridmetrics::snapPoint(p.x(), p.y(), e.gridSize, e.snapTolerancePx);
+}
+
 QRectF SelectionTool::shapeRect(const ToolEvent &e) const
 {
-    qreal dx = e.imagePos.x() - m_startPos.x();
-    qreal dy = e.imagePos.y() - m_startPos.y();
+    // ★ 当前点先吸附，再算增量 ★
+    //   顺序很重要：若先算 dx/dy 再吸附矩形，Shift/Alt 的约束就会基于
+    //   "未吸附"的量，导致松开 Shift 的一瞬间框会跳一下。
+    //   吸附后的点参与全部后续运算，行为才是自洽的。
+    const QPointF cur = snapCorner(e, e.imagePos);
+
+    qreal dx = cur.x() - m_startPos.x();
+    qreal dy = cur.y() - m_startPos.y();
 
     // ── 拖动中的 Shift：约束为正方形 / 正圆 ──
     //
@@ -183,7 +200,10 @@ ToolResult SelectionTool::mousePress(const ToolEvent &e)
     // 必须在任何修改发生之前抓，否则撤销时会还原成"已经被改过的状态"。
     m_before = document()->selection().clone();
 
-    m_startPos    = e.imagePos;
+    // ★ 起点也要吸附 ★
+    //   只吸当前点、不吸起点的话，框出来的是"网格倍数 + 手抖偏移"，
+    //   仍然对不齐 —— 而用户会以为吸附坏了（因为他看到拖动中的角在跳）。
+    m_startPos    = snapCorner(e, e.imagePos);
     m_previewRect = QRectF();
     m_dragging    = true;
     setBusy(true);

@@ -116,6 +116,21 @@ struct ToolEvent
     // 工具计算"屏幕尺寸恒定的预览"时需要（例如笔刷轮廓圈的半径）
     qreal   viewZoom = 1.0;
 
+    // ── 网格吸附（视图辅助，见 engine/GridMetrics.h）──
+    //
+    // ★ 为什么把网格参数塞进事件、而不是让工具去问画布 ★
+    //   架构铁律禁止 tools/ include ui/CanvasView.h —— 工具拿不到画布。
+    //   而"要不要吸附、间距多少、容差多大"全都要从画布来。塞进事件
+    //   与 viewZoom 是同一条路子：画布在构造事件时就问清楚了，
+    //   工具只消费结果，对视图实现依旧无感。
+    //
+    // ★ 容差已经在画布侧折算成**图像像素** ★
+    //   工具不该知道"屏幕像素 → 图像像素"这件事（那是视图的事）。
+    //   见 gridmetrics::toleranceInImage()。
+    bool    snapToGrid       = false;  // 「对齐到网格」是否开启
+    int     gridSize         = 0;      // 网格间距（图像像素）；<= 0 = 无网格
+    qreal   snapTolerancePx  = 0.0;    // 吸附容差（**图像**像素）
+
     // ── 便捷判断 ──
     bool isPress()   const { return type == ToolEventType::Press; }
     bool isMove()    const { return type == ToolEventType::Move; }

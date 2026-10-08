@@ -243,6 +243,28 @@ public:
     void setGridSize(int pixels);
     bool isGridVisible() const { return m_gridVisible; }
 
+    // 网格间距 / 颜色的只读访问（供"网格间距"菜单与自检读回当前值）
+    int    gridSize() const { return m_gridSize; }
+    QColor gridColor() const;
+
+    // 网格线颜色。默认是 (120,120,120,110) —— 与 drawGrid 里原来的硬编码一致。
+    void setGridColor(const QColor &color);
+
+    // ── 「对齐到网格」──
+    //
+    // ★ 与「显示网格」是两个独立开关 ★
+    //   显示是"我想看见它"，吸附是"我想被它约束"。两者常常一起用，
+    //   但"看着网格手工对齐"与"开着吸附看不见网格"都是合理用法，
+    //   合成一个开关会逼用户二选一。
+    bool snapToGrid() const { return m_snapToGrid; }
+    void setSnapToGrid(bool enabled);
+
+    // 吸附容差，**控件（屏幕）像素**。默认 8。
+    //   折算成图像像素这一步在 makeToolEvent() 里做（见下）。
+    static constexpr qreal kSnapToleranceScreenPx = 8.0;
+    qreal snapToleranceScreenPx() const { return m_snapToleranceScreenPx; }
+    void  setSnapToleranceScreenPx(qreal px);
+
     void setCheckerboardVisible(bool visible);
     bool isCheckerboardVisible() const { return m_checkerboardVisible; }
 
@@ -562,6 +584,9 @@ private:
 
     bool m_gridVisible          = false;
     int  m_gridSize             = 64;      // 网格间距（图像像素）
+    QColor m_gridColor          = QColor(120, 120, 120, 110);  // 网格线颜色（原来硬编码在 drawGrid 里）
+    bool m_snapToGrid           = false;   // 「对齐到网格」（与显示独立）
+    qreal m_snapToleranceScreenPx = kSnapToleranceScreenPx;   // 吸附容差（屏幕像素）
     bool m_checkerboardVisible  = true;
     int  m_checkerboardSize     = 12;      // 棋盘格边长（控件像素，屏幕尺寸恒定）
 

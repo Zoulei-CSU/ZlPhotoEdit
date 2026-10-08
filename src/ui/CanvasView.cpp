@@ -3,6 +3,7 @@
 #include "compat/QtCompat.h"
 #include "core/Document.h"
 #include "core/Layer.h"
+#include "engine/GridMetrics.h"  // 吸附容差的"屏幕像素 → 图像像素"折算
 #include "engine/Outline.h"     // maskOutline（选区轮廓的算法本体搬到了 engine）
 #include "tools/AbstractTool.h"
 #include "tools/MarchingAnts.h"
@@ -1070,6 +1071,35 @@ void CanvasView::setGridSize(int pixels)
         update();
 }
 
+QColor CanvasView::gridColor() const
+{
+    return m_gridColor;
+}
+
+void CanvasView::setGridColor(const QColor &color)
+{
+    if (!color.isValid() || m_gridColor == color)
+        return;
+    m_gridColor = color;
+    if (m_gridVisible)
+        update();
+}
+
+void CanvasView::setSnapToGrid(bool enabled)
+{
+    if (m_snapToGrid == enabled)
+        return;
+    m_snapToGrid = enabled;
+    // 吸附开关本身不改变画面（网格线是"显示"那个开关画的），
+    // 所以这里**不 update()** —— 没有像素会变。
+}
+
+void CanvasView::setSnapToleranceScreenPx(qreal px)
+{
+    // 负值按 0 处理（语义见 GridMetrics.h：容差为负 = 只在已贴合时吸附）。
+    m_snapToleranceScreenPx = (px > 0.0) ? px : 0.0;
+}
+
 void CanvasView::setCheckerboardVisible(bool visible)
 {
     if (m_checkerboardVisible == visible)
@@ -1862,7 +1892,7 @@ void CanvasView::drawGrid(QPainter &painter, const QRectF &visibleImgRect)
     // ── 网格线宽恒定于屏幕 ──
     //   网格线是"视图辅助"，不应该随缩放变粗。
     //   在图像坐标系下，需要把笔宽设为 1/zoom，画出来才是 1 个屏幕像素。
-    QPen pen(QColor(120, 120, 120, 110));
+    QPen pen(m_gridColor);
     pen.setWidthF(1.0 / qMax(0.001, m_zoom));
     pen.setCosmetic(true);   // ★ cosmetic pen 让线宽自动恒定于设备像素，无需手算倒数 ★
     painter.setPen(pen);
@@ -2036,6 +2066,16 @@ ToolEvent CanvasView::makeToolEvent(QMouseEvent *event, ToolEventType type) cons
     e.modifiers = ToolModifiers::fromQt(event->modifiers());
 
     e.viewZoom = m_zoom;
+
+    // ── 网格吸附参数 ──
+    //
+    // ★ 容差在这里折算成图像像素 ★
+    //   "离得近不近"是屏幕上的事（与标尺刻度同一条纪律），但工具只知道
+    //   图像坐标 —— 所以换算必须发生在**唯一知道 m_zoom 的地方**，也就是这里。
+    //   工具收到的是已经折算好的图像像素容差。
+    e.snapToGrid      = m_snapToGrid;
+    e.gridSize        = m_gridSize;
+    e.snapTolerancePx = gridmetrics::toleranceInImage(m_snapToleranceScreenPx, m_zoom);
 
     return e;
 }

@@ -368,6 +368,95 @@ static void testClickWithoutMove()
 }
 
 // ===========================================================================
+//  [5] 网格吸附（拖动时把内容包围盒的边吸到网格线上）
+// ===========================================================================
+//
+//  内容方块的原包围盒是 (10,10,40,40) → left=10、right=49。
+//
+//    · 拖 dx=+17 → 右边缘到 66，离网格线 64 只差 2（≤ 容差 8）
+//      → 吸附把位移改成 +15，右边缘落在 64 上
+//    · 同一拖法、关掉吸附 → 位移就是 +17（右边缘 66，不对齐）
+//
+//  ★ 这两条必须成对：只测"吸上了"证明不了"吸附是它干的" ★
+//    关掉吸附能回到 +17，才排除了"位移算法本身就算错了"。
+static ToolEvent snapMoveEvent(int x, int y, int gridSize, qreal tolPx)
+{
+    ToolEvent e = moveEvent(x, y);
+    e.snapToGrid      = true;
+    e.gridSize        = gridSize;
+    e.snapTolerancePx = tolPx;
+    return e;
+}
+
+static void testGridSnap()
+{
+    beginGroup("网格吸附：拖动时把内容边吸到网格线");
+
+    // ── ① 开吸附：位移被修正，右边缘落到 64 ──
+    {
+        Document *doc = makeDoc();
+        CommandStack stack(doc);
+        MoveTool tool(doc, &stack);
+
+        tool.mousePress(pressEvent(kPressInContent.x(), kPressInContent.y()));
+        tool.mouseMove(snapMoveEvent(kPressInContent.x() + 17,
+                                     kPressInContent.y(), 64, 8.0));
+        tool.mouseRelease(releaseEvent(kPressInContent.x() + 17,
+                                       kPressInContent.y()));
+
+        // 吸附后内容整体右移 15 → 红方块应从 (10,10) 到 (25,10)
+        const QImage &img = layerImage(doc);
+        checkClear(img.pixel(10, 20), "旧位置（10,20）已让出（内容移走了）");
+        check(img.pixel(25 + 20, 10 + 20) == kRed,
+              "★ 吸附后内容落在 (25,10)：位移是 15 而不是 17");
+
+        // 右边缘的**含端点**坐标 = 25+40-1 = 64 —— 恰好压在网格线（64 的倍数）上
+        check((25 + kContentRect.width() - 1) == 64,
+              "★ 内容右边缘（含端点）贴合 64 网格线");
+
+        delete doc;
+    }
+
+    // ── ② 关吸附：位移保持 17，右边缘不对齐 ──
+    {
+        Document *doc = makeDoc();
+        CommandStack stack(doc);
+        MoveTool tool(doc, &stack);
+
+        tool.mousePress(pressEvent(kPressInContent.x(), kPressInContent.y()));
+        tool.mouseMove(moveEvent(kPressInContent.x() + 17, kPressInContent.y()));  // 无吸附
+        tool.mouseRelease(releaseEvent(kPressInContent.x() + 17,
+                                       kPressInContent.y()));
+
+        const QImage &img = layerImage(doc);
+        check(img.pixel((10 + 17) + 20, 10 + 20) == kRed,
+              "★ 关掉吸附 → 内容落在 (27,10)：位移原样是 17");
+
+        delete doc;
+    }
+
+    // ── ③ 超出容差 → 不吸附 ──
+    {
+        Document *doc = makeDoc();
+        CommandStack stack(doc);
+        MoveTool tool(doc, &stack);
+
+        // 拖 dx=+40 → 右边缘 89，离最近的线（64 或 128）都 > 8 → 不吸
+        tool.mousePress(pressEvent(kPressInContent.x(), kPressInContent.y()));
+        tool.mouseMove(snapMoveEvent(kPressInContent.x() + 40,
+                                     kPressInContent.y(), 64, 8.0));
+        tool.mouseRelease(releaseEvent(kPressInContent.x() + 40,
+                                       kPressInContent.y()));
+
+        const QImage &img = layerImage(doc);
+        check(img.pixel((10 + 40) + 20, 10 + 20) == kRed,
+              "★ 超出容差 → 位移原样 40（不会硬拽到网格上）");
+
+        delete doc;
+    }
+}
+
+// ===========================================================================
 
 int main(int argc, char **argv)
 {
@@ -382,6 +471,7 @@ int main(int argc, char **argv)
     testIncrementalInvalidation();
     testUndoGranularity();
     testClickWithoutMove();
+    testGridSnap();
 
     std::printf("\n================================================\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);

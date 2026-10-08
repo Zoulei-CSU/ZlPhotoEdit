@@ -592,6 +592,18 @@ private:
     void toggleGrid(bool visible);
     void toggleCheckerboard(bool visible);
 
+    // ── 网格的间距与吸附（阶段七收尾）──
+
+    // 「对齐到网格」开关。应用级偏好，存 QSettings。
+    // ★ 与「显示网格」相互独立 ★ —— 见 CanvasView::setSnapToGrid 的说明。
+    void toggleSnapToGrid(bool enabled);
+
+    // 选一个预设间距（来自「网格间距」子菜单的 6 个单选项）。
+    void setGridSpacing(int pixels);
+
+    // 「自定义…」：开 GridSettingsDialog，取回间距与线色再推给当前画布。
+    void editGridSettings();
+
     // ── 视图辅助：标尺与参考线（阶段七）──
 
     // 显示/隐藏标尺（上下/左右/拐角一起）。应用级偏好，存 QSettings。
@@ -751,6 +763,24 @@ private:
     QAction *m_actionZoomActual = nullptr;
     QAction *m_actionShowGrid = nullptr;
     QAction *m_actionShowCheckerboard = nullptr;
+
+    // ── 网格的间距与吸附（阶段七收尾）──
+    QAction *m_actionSnapToGrid = nullptr;
+
+    // 「网格间距」子菜单的 6 个预设项（顺序与 kGridPresets 一致）。
+    // 与「标尺单位」同套路：靠**下标**映射到毫米值，不靠逐个 isChecked()。
+    QList<QAction *> m_actionGridSpacing;
+    QAction *m_actionGridCustom = nullptr;
+
+    // 网格间距 / 线色 / 吸附的**单一来源**。
+    //
+    // ★ 为什么放在 MainWindow、而不是只存在画布里 ★
+    //   画布是**每页一份**的：新开一页/切页时新画布拿不到旧画布的值。
+    //   而这三个是"应用级偏好"（存 QSettings、跨页一致），所以必须有一个
+    //   比画布活得久的地方存着，切页时由 applyDocumentToPanels() 往下推
+    //   （与 m_foregroundColor 完全同一条规律）。
+    int    m_gridSpacing = 64;
+    QColor m_gridColor   = QColor(120, 120, 120, 110);
 
     // ── 视图辅助：标尺与参考线 ──
     QAction *m_actionShowRuler   = nullptr;

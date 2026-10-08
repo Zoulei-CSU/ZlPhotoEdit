@@ -1016,6 +1016,20 @@ void MainWindow::applyDocumentToPanels(Document *doc)
         if (m_actionShowCheckerboard)
             m_canvas->setCheckerboardVisible(m_actionShowCheckerboard->isChecked());
 
+        // ★ 网格的间距/颜色/吸附同样要补推 ★
+        //   它们是"应用级偏好"（存 QSettings），但**载体是画布**（每页一块）。
+        //   不补的话，用户在旧页把间距调成 16，切到新页又变回 64 ——
+        //   而菜单上还勾着 16，看起来像"菜单骗人"。
+        //
+        //   ★ 单一来源在 MainWindow 的 m_gridSpacing / m_gridColor 两个成员 ★
+        //     而不是"从画布回读"——切页时旧画布已经要被换掉了，
+        //     回读拿到的正是要被丢弃的那个值。
+        if (m_actionSnapToGrid)
+            m_canvas->setSnapToGrid(m_actionSnapToGrid->isChecked());
+        m_canvas->setGridSize(m_gridSpacing);
+        if (m_gridColor.isValid())
+            m_canvas->setGridColor(m_gridColor);
+
         // 参考线的"显示 / 锁定"与网格同理：是**应用级偏好**（存 QSettings），
         // 不该因为开了一个新标签就回到默认值。不补这两行的话，
         // 用户明明勾了"锁定参考线"，新开的页上却能拖动 —— 而旧页拖不动。

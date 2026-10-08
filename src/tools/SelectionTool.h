@@ -120,6 +120,20 @@ private:
     //   从起点重算则永远等于"用户手上正在指的那个框"。
     QRectF shapeRect(const ToolEvent &e) const;
 
+    // 把事件里的网格参数应用到"起点"或"当前点"上（矩形选区专用）。
+    //
+    // ★ 为什么吸附的是**两个角**而不是整个矩形 ★
+    //   框选是"用两个角定义一个矩形"。把两个角各自吸到网格，用户就能框出
+    //   "x 从 64 到 192、y 从 128 到 256"这样的整数区间 —— 这正是排版取块
+    //   时想要的结果。若改成"整体平移"（像 MoveTool 那样），框的大小就
+    //   锚定在用户手抖出来的尺寸上，永远不是整数格。
+    //
+    //   ★ 与 GridMetrics::snapOffsetForRect 的分工 ★
+    //     那个函数服务"形状已定、只想把它挪到对齐位置"（移动图层）；
+    //     这个函数服务"正在用两个角创造形状"（框选）。
+    //     两者语义不同，不能互换。
+    static QPointF snapCorner(const ToolEvent &e, const QPointF &p);
+
     // 把当前的预览矩形正式写入文档的选区，并压入撤销栈。
     // 松手时调用一次，以及 commit() 时补一次。
     void applySelection(const QRectF &rect);
