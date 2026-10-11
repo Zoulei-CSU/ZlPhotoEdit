@@ -250,7 +250,24 @@ jobs:
                 libXi-devel libxcb-devel xcb-util-devel xcb-util-image-devel \
                 xcb-util-keysyms-devel xcb-util-renderutil-devel \
                 xcb-util-wm-devel fontconfig-devel freetype-devel \
-                xcb-util-cursor-devel xcb-util-cursor
+                xcb-util-cursor-devel xcb-util-cursor \
+                cups-libs cups-devel \
+                libSM libICE libX11-xcb glib2
+              # ↑ ★ 最后一行是"预防性"补齐：都是 xcb 平台插件的运行时依赖 ★
+              #   linuxdeploy 的 qt 插件按 soname 逐个收集，缺一个就整步失败，
+              #   而且**一次只报一个**（第 7/8 轮就是这么被遛的）。
+              #   与其一轮轮挤牙膏，不如把已知的补齐：
+              #     libSM / libICE   → 会话管理（AppStream）
+              #     libX11-xcb       → Xlib/XCB 接口（AppStream）
+              #     glib2            → 事件循环（BaseOS）
+              #   这三个仓库位置均已逐个核实过。
+              #
+              # ↑ ★ cups 也是必须的：Qt6 PrintSupport 链 libcups.so.2 ★
+              #   漏了 linuxdeploy 会报（第 8 轮就是这个）：
+              #     [qt/stdout] ERROR: Could not find dependency: libcups.so.2
+              #     ERROR: Failed to run plugin: qt (exit code: 1)
+              #   cups-libs 在 BaseOS、cups-devel 在 AppStream，Rocky 8 都有。
+              #
               # ↑ ★ xcb-util-cursor 是 QPA(xcb) 插件的**运行时**依赖 ★
               #   Qt 6.5+ 起 xcb 平台插件会链 libxcb-cursor.so.0。
               #   只装 -devel 不够，linuxdeploy 的 qt 插件要按 soname 收集，
