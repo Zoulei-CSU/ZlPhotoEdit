@@ -233,6 +233,13 @@ jobs:
               dnf install -y dnf-plugins-core
               dnf config-manager --set-enabled powertools
 
+              # ★ EPEL 也要开 ★
+              #   xcb-util-cursor 在 Rocky 8 的 BaseOS/AppStream/PowerTools/extras/devel
+              #   **全都没有**（实测逐仓库扫过），只在 EPEL 8 里：
+              #     epel/8/Everything/x86_64/Packages/x/xcb-util-cursor-0.1.3-9.el8.x86_64.rpm
+              #   epel-release 本身在 Rocky 的 extras 仓库里，直接装即可。
+              dnf install -y epel-release
+
               # ★ 刻意不装 ninja ★
               #   本工程只用默认的 Unix Makefiles 生成器，ninja 在 el8 属于 Devel 仓库，
               #   引它只会多一个失败点。cmake 默认就找 make（binutils/make 已随基础镜像）。
@@ -250,7 +257,7 @@ jobs:
               #   缺了直接报：
               #     [qt/stdout] ERROR: Could not find dependency: libxcb-cursor.so.0
               #     ERROR: Failed to run plugin: qt (exit code: 1)
-              #   （Rocky 8 自带这两个包，不用 EPEL）
+              #   这两个包来自 EPEL 8（上面已装 epel-release）。
 
               # 激活 GCC 11（Rocky 8 默认只有 8.5，编不动 Qt 6.8 的头）
               source /opt/rh/gcc-toolset-11/enable
