@@ -192,11 +192,27 @@ endif()
 #  部署（可选）
 # ---------------------------------------------------------------------------
 #  Qt6 提供了官方的部署脚本生成器，Qt5 没有（Qt5 需手动跑 windeployqt）。
+#
+#  ★ OUTPUT_SCRIPT 参数是 **Qt 6.5 才加的** ★
+#    在 6.4（Ubuntu 24.04 自带的版本）上调用会直接报：
+#      CMake Error at Qt6CoreMacros.cmake: Unexpected arguments: OUTPUT_SCRIPT;...
+#    这是 CI 上真实撞到的 —— 本地只有 Qt5，这条分支从没被编译过。
+#    所以这里按 6.5 分界：>= 6.5 用带 OUTPUT_SCRIPT 的新签名，6.0~6.4 用旧签名。
+#
+#    旧签名（Qt 6.0~6.4）会把部署脚本作为安装规则注册，不需要我们自己 install()。
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_generate_deploy_app_script(
-        TARGET ZlPhotoEdit
-        OUTPUT_SCRIPT deploy_script
-        NO_UNSUPPORTED_PLATFORM_ERROR
-    )
-    install(SCRIPT ${deploy_script})
+    if(QT_VERSION VERSION_GREATER_EQUAL 6.5)
+        qt_generate_deploy_app_script(
+            TARGET ZlPhotoEdit
+            OUTPUT_SCRIPT deploy_script
+            NO_UNSUPPORTED_PLATFORM_ERROR
+        )
+        install(SCRIPT ${deploy_script})
+    else()
+        # Qt 6.0 ~ 6.4：旧签名（无 OUTPUT_SCRIPT）
+        qt_generate_deploy_app_script(
+            TARGET ZlPhotoEdit
+            NO_UNSUPPORTED_PLATFORM_ERROR
+        )
+    endif()
 endif()

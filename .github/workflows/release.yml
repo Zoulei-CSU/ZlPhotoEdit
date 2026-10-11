@@ -90,63 +90,70 @@ jobs:
   # ────────────────────────────────────────────────────────────────────────
   appimage-qt5:
     name: Linux AppImage (Qt 5.15.2, glibc 2.17+)
-    runs-on: ubuntu-latest
-    container: ubuntu:18.04
+    runs-on: ubuntu-latest              # ★ checkout 在宿主上做，不进容器
     steps:
-      # ★ 必须是 v3 ★：v4 内部跑 Node20，而 Node20 要求 glibc >= 2.28，
-      #   18.04 的 glibc 是 2.27，v4 会当场失败。
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: 安装依赖
+      # ★★ 为什么 checkout 必须在容器外面 ★★
+      #
+      #   GitHub 现在把 checkout@v3/v4 **都**强制跑在 Node24 上
+      #   （日志里能看到 /__e/node24/bin/node）。而 Node24 要求 glibc >= 2.28，
+      #   ubuntu:18.04 是 2.27 —— 于是 **任何** 版本的 checkout 在 18.04 容器里
+      #   都会失败：
+      #     /__e/node24/bin/node: /lib/x86_64-linux-gnu/libc.so.6:
+      #       version `GLIBC_2.28' not found
+      #   降级到 v3 没用（v3 也被强制升级到 Node24）。
+      #
+      #   所以改成：宿主 runner 上 checkout，**只把编译+打包放进 18.04 容器**。
+      #   这样既拿到 18.04 的低 glibc 产物，又避开了"action 跑不动"的问题。
+      - name: 在 ubuntu:18.04 容器里构建 + 打包
         run: |
-          # 18.04 已 EOL，官方源移到了 old-releases
-          sed -i 's|archive.ubuntu.com|old-releases.ubuntu.com|g; s|security.ubuntu.com|old-releases.ubuntu.com|g' /etc/apt/sources.list
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            build-essential cmake ninja-build python3-pip python3-setuptools \
-            file wget fuse libfuse2 patchelf \
-            libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-x11-dev \
-            libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev \
-            libxcb-randr0-dev libxcb-render-util0-dev libxcb-shape0-dev \
-            libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
-            libxcb-cursor-dev libxkbcommon-dev
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -e APP_VERSION="${{ env.APP_VERSION }}" \
+            ubuntu:18.04 \
+            bash -c '
+              set -euo pipefail
+              # 18.04 已 EOL，官方源移到 old-releases
+              sed -i "s|archive.ubuntu.com|old-releases.ubuntu.com|g; s|security.ubuntu.com|old-releases.ubuntu.com|g" /etc/apt/sources.list
+              apt-get update
+              apt-get install -y --no-install-recommends \
+                build-essential cmake ninja-build python3-pip python3-setuptools \
+                file wget fuse libfuse2 patchelf \
+                libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-x11-dev \
+                libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev \
+                libxcb-randr0-dev libxcb-render-util0-dev libxcb-shape0-dev \
+                libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+                libxcb-cursor-dev libxkbcommon-dev
 
-      - name: 安装 Qt 5.15.2
-        run: |
-          # 18.04 自带 python3.6，最新版 aqtinstall 装不上 → 锁一个旧版
-          pip3 install 'aqtinstall<3.0'
-          aqt install-qt linux desktop 5.15.2 gcc_64 -O /opt/Qt
-          /opt/Qt/5.15.2/gcc_64/bin/qmake -v
+              # 18.04 自带 python3.6，新版 aqtinstall 装不上 → 锁旧版
+              pip3 install "aqtinstall<3.0"
+              aqt install-qt linux desktop 5.15.2 gcc_64 -O /opt/Qt
 
-      - name: 配置 + 构建
-        run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_PREFIX_PATH=/opt/Qt/5.15.2/gcc_64
-          cmake --build build
+              cmake -S . -B build-qt5 -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                    -DCMAKE_PREFIX_PATH=/opt/Qt/5.15.2/gcc_64
+              cmake --build build-qt5
 
-      - name: 打 AppImage
-        run: |
-          # 容器里通常没有 FUSE 权限 → 让 AppImage 自解压运行
-          export APPIMAGE_EXTRACT_AND_RUN=1
-          export QTDIR=/opt/Qt/5.15.2/gcc_64
-          export PATH="$QTDIR/bin:$PATH"
-          export VERSION="${{ env.APP_VERSION }}"
-          export OUTPUT="ZlPhotoEdit-${{ env.APP_VERSION }}-x86_64.AppImage"
+              export APPIMAGE_EXTRACT_AND_RUN=1     # 容器里没 FUSE
+              export QTDIR=/opt/Qt/5.15.2/gcc_64
+              export PATH="$QTDIR/bin:$PATH"
+              export VERSION="$APP_VERSION"
+              export OUTPUT="ZlPhotoEdit-${APP_VERSION}-x86_64.AppImage"
 
-          wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-          chmod +x linuxdeploy linuxdeploy-plugin-qt
+              wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+              wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+              chmod +x linuxdeploy linuxdeploy-plugin-qt
 
-          mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/applications
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          cp build/ZlPhotoEdit                       AppDir/usr/bin/
-          cp packaging/linux/zlphotoedit.desktop     AppDir/usr/share/applications/
-          cp packaging/linux/zlphotoedit.png         AppDir/usr/share/icons/hicolor/256x256/apps/
+              mkdir -p AppDir/usr/bin AppDir/usr/share/applications \
+                       AppDir/usr/share/icons/hicolor/256x256/apps
+              cp build-qt5/ZlPhotoEdit                    AppDir/usr/bin/
+              cp packaging/linux/zlphotoedit.desktop      AppDir/usr/share/applications/
+              cp packaging/linux/zlphotoedit.png          AppDir/usr/share/icons/hicolor/256x256/apps/
 
-          ./linuxdeploy --appdir AppDir --plugin qt --output appimage
-          mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
-          ls -lh dist/
+              ./linuxdeploy --appdir AppDir --plugin qt --output appimage
+              mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
+              ls -lh dist/
+            '
 
       - uses: actions/upload-artifact@v4
         with:

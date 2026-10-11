@@ -282,7 +282,7 @@ void MainWindow::setupActions()
     //   从其他平台迁移过来的用户会反复按它。
     //   Qt 支持一个 QAction 有多个快捷键，两个都给最省事。
     m_actionRedo->setShortcuts({ QKeySequence::Redo,
-                                 QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Z) });
+                                 QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z) });
     m_actionRedo->setStatusTip(tr("重做被撤销的操作"));
     m_actionRedo->setEnabled(false);
     connect(m_actionRedo, &QAction::triggered, this, &MainWindow::redo);
@@ -313,7 +313,7 @@ void MainWindow::setupActions()
     m_actionPasteInto = new QAction(tr("粘贴到当前图层(&I)"), this);
     m_actionPasteInto->setObjectName(QStringLiteral("actionPasteInto"));
     m_actionPasteInto->setIcon(icons::icon(QStringLiteral("edit_paste_into")));
-    m_actionPasteInto->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_V));
+    m_actionPasteInto->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_V));
     m_actionPasteInto->setStatusTip(tr("把剪贴板内容合并到当前图层"));
     connect(m_actionPasteInto, &QAction::triggered, this, &MainWindow::pasteIntoLayer);
 
@@ -341,14 +341,14 @@ void MainWindow::setupActions()
     // ★ 为什么不用 QKeySequence::Deselect ★
     //   Qt 没有提供这个标准键（SelectAll 有，Deselect 没有）。
     //   Ctrl+D 是 Photoshop 的约定，用户肌肉记忆很强，直接用。
-    m_actionDeselect->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
+    m_actionDeselect->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
     m_actionDeselect->setStatusTip(tr("取消当前选区"));
     connect(m_actionDeselect, &QAction::triggered, this, &MainWindow::deselect);
 
     m_actionInvertSelection = new QAction(tr("反选(&I)"), this);
     m_actionInvertSelection->setObjectName(QStringLiteral("actionInvertSelection"));
     m_actionInvertSelection->setIcon(icons::icon(QStringLiteral("select_invert")));
-    m_actionInvertSelection->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_I));
+    m_actionInvertSelection->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
     m_actionInvertSelection->setStatusTip(tr("选中当前选区之外的全部区域"));
     connect(m_actionInvertSelection, &QAction::triggered, this, &MainWindow::invertSelection);
 
@@ -360,14 +360,14 @@ void MainWindow::setupActions()
     m_actionGrayscale->setObjectName(QStringLiteral("actionGrayscale"));
     m_actionGrayscale->setIcon(icons::icon(QStringLiteral("adjust_grayscale")));
     // Ctrl+Shift+U 是 Photoshop 的约定
-    m_actionGrayscale->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_U));
+    m_actionGrayscale->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
     m_actionGrayscale->setStatusTip(tr("按亮度权重转换为灰度（0.299R + 0.587G + 0.114B）"));
     connect(m_actionGrayscale, &QAction::triggered, this, &MainWindow::applyGrayscale);
 
     m_actionInvert = new QAction(tr("反相(&I)"), this);
     m_actionInvert->setObjectName(QStringLiteral("actionInvert"));
     m_actionInvert->setIcon(icons::icon(QStringLiteral("adjust_invert")));
-    m_actionInvert->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_I));
+    m_actionInvert->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     m_actionInvert->setStatusTip(tr("反转所有颜色通道（如同底片）"));
     connect(m_actionInvert, &QAction::triggered, this, &MainWindow::applyInvert);
 
@@ -386,14 +386,14 @@ void MainWindow::setupActions()
     m_actionHueSaturation = new QAction(tr("色相/饱和度(&H)..."), this);
     m_actionHueSaturation->setObjectName(QStringLiteral("actionHueSaturation"));
     m_actionHueSaturation->setIcon(icons::icon(QStringLiteral("adjust_hue")));
-    m_actionHueSaturation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_U));
+    m_actionHueSaturation->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
     m_actionHueSaturation->setStatusTip(tr("调整颜色的色相、饱和度与明度"));
     connect(m_actionHueSaturation, &QAction::triggered, this, &MainWindow::openHueSaturation);
 
     m_actionCurves = new QAction(tr("曲线(&C)..."), this);
     m_actionCurves->setObjectName(QStringLiteral("actionCurves"));
     m_actionCurves->setIcon(icons::icon(QStringLiteral("adjust_curves")));
-    m_actionCurves->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_M));
+    m_actionCurves->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
     m_actionCurves->setStatusTip(tr("用控制点曲线精细调整各通道的明暗映射"));
     connect(m_actionCurves, &QAction::triggered, this, &MainWindow::openCurves);
 
@@ -401,7 +401,7 @@ void MainWindow::setupActions()
     m_actionLevels->setObjectName(QStringLiteral("actionLevels"));
     m_actionLevels->setIcon(icons::icon(QStringLiteral("adjust_levels")));
     // Ctrl+L 也是 Photoshop 的约定，且当前未被占用（已核对全部快捷键）
-    m_actionLevels->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_L));
+    m_actionLevels->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
     m_actionLevels->setStatusTip(tr("用直方图的黑白场与中间调调整明暗分布"));
     connect(m_actionLevels, &QAction::triggered, this, &MainWindow::openLevels);
 
@@ -417,14 +417,14 @@ void MainWindow::setupActions()
     m_actionImageSize = new QAction(tr("图像大小(&I)..."), this);
     m_actionImageSize->setObjectName(QStringLiteral("actionImageSize"));
     m_actionImageSize->setIcon(icons::icon(QStringLiteral("image_size")));
-    m_actionImageSize->setShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_I));
+    m_actionImageSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
     m_actionImageSize->setStatusTip(tr("缩放像素内容（需要重采样，图像会变软或变锐）"));
     connect(m_actionImageSize, &QAction::triggered, this, &MainWindow::openImageSize);
 
     m_actionCanvasSize = new QAction(tr("画布大小(&C)..."), this);
     m_actionCanvasSize->setObjectName(QStringLiteral("actionCanvasSize"));
     m_actionCanvasSize->setIcon(icons::icon(QStringLiteral("canvas_size")));
-    m_actionCanvasSize->setShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_C));
+    m_actionCanvasSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_C));
     m_actionCanvasSize->setStatusTip(tr("改变画布范围：不缩放像素，缩小时裁切、放大时补底色"));
     connect(m_actionCanvasSize, &QAction::triggered, this, &MainWindow::openCanvasSize);
 
@@ -435,13 +435,13 @@ void MainWindow::setupActions()
     m_actionRotate90CW = new QAction(tr("顺时针旋转 90°"), this);
     m_actionRotate90CW->setObjectName(QStringLiteral("actionRotate90CW"));
     m_actionRotate90CW->setIcon(icons::icon(QStringLiteral("rotate_cw")));
-    m_actionRotate90CW->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R));
+    m_actionRotate90CW->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
     connect(m_actionRotate90CW, &QAction::triggered, this, &MainWindow::rotate90CW);
 
     m_actionRotate90CCW = new QAction(tr("逆时针旋转 90°"), this);
     m_actionRotate90CCW->setObjectName(QStringLiteral("actionRotate90CCW"));
     m_actionRotate90CCW->setIcon(icons::icon(QStringLiteral("rotate_ccw")));
-    m_actionRotate90CCW->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_R));
+    m_actionRotate90CCW->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R));
     connect(m_actionRotate90CCW, &QAction::triggered, this, &MainWindow::rotate90CCW);
 
     m_actionRotate180 = new QAction(tr("旋转 180°"), this);
@@ -464,7 +464,7 @@ void MainWindow::setupActions()
     m_actionFlipH = new QAction(tr("水平翻转"), this);
     m_actionFlipH->setObjectName(QStringLiteral("actionFlipH"));
     m_actionFlipH->setIcon(icons::icon(QStringLiteral("flip_h")));
-    m_actionFlipH->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_H));
+    m_actionFlipH->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_H));
     connect(m_actionFlipH, &QAction::triggered, this, &MainWindow::flipHorizontal);
 
     m_actionFlipV = new QAction(tr("垂直翻转"), this);
@@ -492,13 +492,13 @@ void MainWindow::setupActions()
     m_actionLayerNew = new QAction(tr("新建图层(&N)"), this);
     m_actionLayerNew->setObjectName(QStringLiteral("actionLayerNew"));
     m_actionLayerNew->setIcon(icons::icon(QStringLiteral("layer_new")));
-    m_actionLayerNew->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
+    m_actionLayerNew->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
     connect(m_actionLayerNew, &QAction::triggered, this, &MainWindow::addNewLayer);
 
     m_actionLayerDuplicate = new QAction(tr("复制图层(&D)"), this);
     m_actionLayerDuplicate->setObjectName(QStringLiteral("actionLayerDuplicate"));
     m_actionLayerDuplicate->setIcon(icons::icon(QStringLiteral("layer_duplicate")));
-    m_actionLayerDuplicate->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_J));
+    m_actionLayerDuplicate->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_J));
     connect(m_actionLayerDuplicate, &QAction::triggered,
             this, &MainWindow::duplicateCurrentLayer);
 
@@ -510,19 +510,19 @@ void MainWindow::setupActions()
     m_actionLayerMoveUp = new QAction(tr("上移图层"), this);
     m_actionLayerMoveUp->setObjectName(QStringLiteral("actionLayerMoveUp"));
     m_actionLayerMoveUp->setIcon(icons::icon(QStringLiteral("layer_up")));
-    m_actionLayerMoveUp->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_BracketRight));
+    m_actionLayerMoveUp->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketRight));
     connect(m_actionLayerMoveUp, &QAction::triggered, this, &MainWindow::moveLayerUp);
 
     m_actionLayerMoveDown = new QAction(tr("下移图层"), this);
     m_actionLayerMoveDown->setObjectName(QStringLiteral("actionLayerMoveDown"));
     m_actionLayerMoveDown->setIcon(icons::icon(QStringLiteral("layer_down")));
-    m_actionLayerMoveDown->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_BracketLeft));
+    m_actionLayerMoveDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketLeft));
     connect(m_actionLayerMoveDown, &QAction::triggered, this, &MainWindow::moveLayerDown);
 
     m_actionMergeDown = new QAction(tr("向下合并(&M)"), this);
     m_actionMergeDown->setObjectName(QStringLiteral("actionMergeDown"));
     m_actionMergeDown->setIcon(icons::icon(QStringLiteral("layer_merge_down")));
-    m_actionMergeDown->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+    m_actionMergeDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     connect(m_actionMergeDown, &QAction::triggered, this, &MainWindow::mergeLayerDown);
 
     m_actionFlatten = new QAction(tr("拼合图像(&F)"), this);
@@ -534,7 +534,7 @@ void MainWindow::setupActions()
     m_actionLayerMergeVisible->setObjectName(QStringLiteral("actionLayerMergeVisible"));
     m_actionLayerMergeVisible->setIcon(icons::icon(QStringLiteral("layer_merge_visible")));
     // Ctrl+Shift+E：与"向下合并"的 Ctrl+E 成对，Shift 表示"范围更大"。
-    m_actionLayerMergeVisible->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_E));
+    m_actionLayerMergeVisible->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     connect(m_actionLayerMergeVisible, &QAction::triggered,
             this, &MainWindow::mergeVisibleLayers);
 
@@ -568,13 +568,13 @@ void MainWindow::setupActions()
     m_actionZoomFit = new QAction(tr("适合窗口(&F)"), this);
     m_actionZoomFit->setObjectName(QStringLiteral("actionZoomFit"));
     m_actionZoomFit->setIcon(icons::icon(QStringLiteral("view_zoom_fit")));
-    m_actionZoomFit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+    m_actionZoomFit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
     connect(m_actionZoomFit, &QAction::triggered, this, &MainWindow::zoomToFit);
 
     m_actionZoomActual = new QAction(tr("实际大小(&A)"), this);
     m_actionZoomActual->setObjectName(QStringLiteral("actionZoomActual"));
     m_actionZoomActual->setIcon(icons::icon(QStringLiteral("view_zoom_100")));
-    m_actionZoomActual->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    m_actionZoomActual->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     connect(m_actionZoomActual, &QAction::triggered, this, &MainWindow::zoomToActualSize);
 
     m_actionShowGrid = new QAction(tr("显示网格(&G)"), this);
@@ -604,7 +604,7 @@ void MainWindow::setupActions()
     m_actionSnapToGrid->setCheckable(true);
     m_actionSnapToGrid->setChecked(false);
     m_actionSnapToGrid->setShortcut(
-        QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Semicolon));
+        QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Semicolon));
     connect(m_actionSnapToGrid, &QAction::toggled, this, &MainWindow::toggleSnapToGrid);
 
     // 「网格间距」子菜单：6 个预设 + 1 个「自定义…」
@@ -648,7 +648,7 @@ void MainWindow::setupActions()
     m_actionShowRuler->setIcon(icons::icon(QStringLiteral("view_ruler")));
     m_actionShowRuler->setCheckable(true);
     m_actionShowRuler->setChecked(true);              // 默认显示
-    m_actionShowRuler->setShortcut(QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_R));
+    m_actionShowRuler->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_R));
     connect(m_actionShowRuler, &QAction::toggled, this, &MainWindow::toggleRuler);
 
     m_actionShowGuides = new QAction(tr("显示参考线(&G)"), this);
@@ -656,7 +656,7 @@ void MainWindow::setupActions()
     m_actionShowGuides->setIcon(icons::icon(QStringLiteral("view_guides")));
     m_actionShowGuides->setCheckable(true);
     m_actionShowGuides->setChecked(true);
-    m_actionShowGuides->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Semicolon));
+    m_actionShowGuides->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Semicolon));
     connect(m_actionShowGuides, &QAction::toggled, this, &MainWindow::toggleGuides);
 
     m_actionLockGuides = new QAction(tr("锁定参考线(&L)"), this);
@@ -665,7 +665,7 @@ void MainWindow::setupActions()
     m_actionLockGuides->setCheckable(true);
     m_actionLockGuides->setChecked(false);
     m_actionLockGuides->setShortcut(
-        QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_Semicolon));
+        QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_Semicolon));
     connect(m_actionLockGuides, &QAction::toggled,
             this, &MainWindow::toggleGuidesLocked);
 

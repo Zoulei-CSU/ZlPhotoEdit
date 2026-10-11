@@ -129,16 +129,28 @@ inline QPointF wheelEventGlobalPos(const QWheelEvent *e)
 //  图像镜像 / 翻转
 // ---------------------------------------------------------------------------
 //  Qt5：QImage::mirrored(bool horizontal, bool vertical) —— 一次给两个方向
-//  Qt6：改名为 flipped(Qt::Orientations)，一次只接受一个方向
+//  Qt6.0 ~ 6.8：mirrored() 仍然可用，只是被标记为"将在 6.13 移除"
+//  Qt6.9+：新增了 flipped(Qt::Orientations)，语义更清楚
 //
-//  注意这里的 Qt6 分支要用两次 flipped() 串联。如果只调用一次，翻转功能
-//  会"静默地只翻一半" —— 编译通过、运行不报错，但结果错误。这类 bug 最难
-//  发现，所以本工程要求对翻转功能写逐像素对比的测试。
+//  ★★ 这里有一个踩过的真坑（CI 上暴露的）★★
+//
+//    最初写成 `QT_VERSION >= QT_VERSION_CHECK(6,0,0)` 就走 flipped() ——
+//    想当然地以为"Qt6 都改名叫 flipped 了"。实际上 **flipped() 是 6.9 才
+//    引入的**：6.0~6.8 上根本没有这个成员，编译直接报
+//      error C2039: 'flipped': is not a member of 'QImage'
+//    而本地只装了 Qt5，这条分支从来没被编译过 —— 一路"绿灯"到 CI 才炸。
+//
+//    正确的分界是 **6.9**，不是 6.0；6.0~6.8 继续用 mirrored()（它还活着）。
+//
+//  ★ 为什么 6.9 分支要用两次 flipped() 串联 ★
+//    flipped() 一次只接受一个方向，水平 + 垂直要调用两次。只调一次会
+//    "静默地只翻一半" —— 编译通过、运行不报错，但结果错误。
+//    本工程对翻转功能有逐像素对比的测试钉着这件事。
 // ---------------------------------------------------------------------------
 
 inline QImage mirrorImage(const QImage &src, bool horizontal, bool vertical)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     QImage result = src;
     if (horizontal)
         result = result.flipped(Qt::Horizontal);

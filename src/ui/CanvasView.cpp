@@ -2682,10 +2682,10 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
     menu.addSeparator();
 
     QAction *fitAct = menu.addAction(tr("适合窗口"));
-    fitAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+    fitAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
 
     QAction *actualAct = menu.addAction(tr("实际大小 (100%)"));
-    actualAct->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_1));
+    actualAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
 
     menu.addSeparator();
 
