@@ -30,6 +30,16 @@ OUTDIR="${3:-dist}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
 
+# ★★ OUTDIR 必须先转成绝对路径 ★★
+#   下面为跑 dpkg-shlibdeps 会 `cd "$STAGE"`，之后再写相对路径就会落到
+#   临时目录里去 —— 而 STAGE 在脚本退出时被 trap 删掉，产物**静默消失**。
+#   症状：脚本打印"已生成 dist/xxx.deb"，但 CI 的 upload-artifact 说
+#   "No files were found with the provided path: dist/*.deb"。
+#   这是 CI 上真实撞到的。
+mkdir -p "$OUTDIR"
+OUTDIR="$(cd "$OUTDIR" && pwd)"
+BIN="$(cd "$(dirname "$BIN")" && pwd)/$(basename "$BIN")"
+
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
@@ -75,8 +85,9 @@ Description: 逐鹿 图片编辑器 —— 轻量级图片编辑器
 EOF
 
 # ── 打包 ──
-mkdir -p "$OUTDIR"
+#  ★ OUTDIR 已在开头转成绝对路径（见那段注释）★
 DEB="$OUTDIR/zlphotoedit_${VER}_amd64.deb"
 dpkg-deb --build --root-owner-group "$STAGE" "$DEB"
 echo "已生成 $DEB"
+ls -lh "$DEB"
 dpkg-deb -I "$DEB" | sed -n '1,30p'
