@@ -176,7 +176,7 @@ jobs:
               #   而真正去收集 Qt 依赖的是 **qt 插件（独立子进程）**，它自己 new 一个
               #      AppDir，只认自己收到的 --exclude-library。
               #   而 AppDir 构造函数还会读 **环境变量** LINUXDEPLOY_EXCLUDED_LIBRARIES
-              #      （src/core/appdir.cpp: splitEnv("LINUXDEPLOY_EXCLUDED_LIBRARIES", ';')），
+              #      （源码 src/core/appdir.cpp 里是 splitEnv("LINUXDEPLOY_EXCLUDED_LIBRARIES", 分号)），
               #   子进程天然继承环境 ⇒ 环境变量这条才能穿透到插件。
               #   ⇒ 命令行 + 环境变量**双写**，两条路径都排除。
               #
