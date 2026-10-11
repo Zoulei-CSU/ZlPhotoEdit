@@ -242,7 +242,15 @@ jobs:
                 libX11-devel libXext-devel libXrender-devel libXfixes-devel \
                 libXi-devel libxcb-devel xcb-util-devel xcb-util-image-devel \
                 xcb-util-keysyms-devel xcb-util-renderutil-devel \
-                xcb-util-wm-devel fontconfig-devel freetype-devel
+                xcb-util-wm-devel fontconfig-devel freetype-devel \
+                xcb-util-cursor-devel xcb-util-cursor
+              # ↑ ★ xcb-util-cursor 是 QPA(xcb) 插件的**运行时**依赖 ★
+              #   Qt 6.5+ 起 xcb 平台插件会链 libxcb-cursor.so.0。
+              #   只装 -devel 不够，linuxdeploy 的 qt 插件要按 soname 收集，
+              #   缺了直接报：
+              #     [qt/stdout] ERROR: Could not find dependency: libxcb-cursor.so.0
+              #     ERROR: Failed to run plugin: qt (exit code: 1)
+              #   （Rocky 8 自带这两个包，不用 EPEL）
 
               # 激活 GCC 11（Rocky 8 默认只有 8.5，编不动 Qt 6.8 的头）
               source /opt/rh/gcc-toolset-11/enable
