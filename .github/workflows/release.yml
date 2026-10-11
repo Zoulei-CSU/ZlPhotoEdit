@@ -207,7 +207,12 @@ jobs:
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.8.1'
-          arch: 'gcc_64'
+          # ★ 必须是 linux_gcc_64，不能写 gcc_64 ★
+          #   Qt >= 6.7 的 Linux 仓库包名已改成 qt.qt6.681.linux_gcc_64，
+          #   传 gcc_64 会让 aqt 去找不存在的包，报
+          #     "The packages ['qt_base'] were not found while parsing XML"
+          #   （Qt 5.15.2 的仓库仍是 gcc_64，所以那个 job 不受影响）
+          arch: 'linux_gcc_64'
           cache: true
 
       - name: 在 rockylinux:8 容器里编译 + 打包
