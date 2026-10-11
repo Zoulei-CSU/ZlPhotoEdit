@@ -206,6 +206,28 @@ if os.path.exists(QRC_PATH):
         errors.append(
             "resources.qrc 里引用了不存在的 resources/icons/%s.svg" % name)
 
+# ── ⑦ 【错误】"关于"框必须自己 new QMessageBox，不能用静态 about() ──
+#
+#   ★ 为什么这条值得单独钉 ★
+#
+#     QMessageBox::about() 把图标尺寸写死在平台样式的 PM_MessageBoxIconSize
+#     上（Windows 下恰好 64）。而本工程的 logo 是 512×512 的方图，
+#     被压成 64 就"显示太小、看不清细节" —— 用户报过这个（2026-10-09）。
+#
+#     修法是把 about() 换成 `QMessageBox box(this); box.setIconPixmap(大图)`。
+#     但这两者在源码里长得差不多，谁哪天"顺手改回更简洁的 about()"，
+#     图标就会**静默**变回 64 —— 双构建 0 错 0 警、离线测试也测不到
+#     （它们不真的弹这个框）。所以在这里拦一道。
+#
+#     判据：MainWindowActions.cpp 里**不许出现** `QMessageBox::about(`
+#     （`::aboutQt` 是另一回事，它由 QApplication 提供，不在本文件里调）。
+about_bad = re.findall(r'QMessageBox\s*::\s*about\s*\(', strip_comments(io_open(ACTIONS_CPP)))
+if about_bad:
+    errors.append(
+        "MainWindowActions.cpp 里出现了 QMessageBox::about( —— 图标会被压成 64px"
+        + chr(10) + "        → 请改成 QMessageBox box(this); box.setIconPixmap(大图); box.exec();"
+    )
+
 # ── 输出 ──
 print("=" * 64)
 print("  菜单动作对账：src/ui/MainWindowActions.cpp ⇄ MainWindow.h")

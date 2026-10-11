@@ -745,7 +745,37 @@ void MainWindow::setupActions()
     m_actionAbout->setIcon(icons::icon(QStringLiteral("help_about")));
     m_actionAbout->setMenuRole(QAction::AboutRole);
     connect(m_actionAbout, &QAction::triggered, this, [this]() {
-        QMessageBox::about(this, tr("关于 %1").arg(zl::appinfo::displayName()),
+        // ★ 为什么不用 QMessageBox::about ★
+        //
+        //   about() 是**静态函数**，它把父窗口的 windowIcon 按平台样式里
+        //   写死的 PM_MessageBoxIconSize 光栅化 —— Windows 上这个值是 64。
+        //   于是 512×512 的 logo 被压成 64×64 摆在左上角，而且没有任何
+        //   API 能改这个尺寸（about() 连 QMessageBox 实例都不给你）。
+        //
+        //   唯一的出路是自己 new 一个 QMessageBox，用 setIconPixmap()
+        //   指定任意大的图标 —— QMessageBox 不会去缩放它。
+        QMessageBox box(this);
+        box.setWindowTitle(tr("关于 %1").arg(zl::appinfo::displayName()));
+
+        // ★ 按设备像素比渲染，高 DPI 屏上不发糊 ★
+        //   dpr 取自**本窗口**而不是 qApp —— 多屏且缩放不同时，
+        //   qApp 给的是主屏的值，窗口在副屏上就会取错。
+        //   ★ 渲染出来的是 px×dpr 的物理像素图，必须把 dpr 设回去 ★
+        //     否则 Qt 会按 1:1 摆到界面上 —— 150% 屏上图标会显示成
+        //     192 个逻辑像素（比预期大了 1.5 倍）。设回 dpr 后，
+        //     物理像素一一对应，逻辑尺寸仍是 128。
+        const qreal dpr = devicePixelRatioF();
+        QPixmap logo = zl::appinfo::windowIconPixmap(qRound(128 * dpr));
+        if (!logo.isNull()) {
+            logo.setDevicePixelRatio(dpr);
+            box.setIconPixmap(logo);
+        }
+        // 图标渲染失败（SVG 打不开）时不设 —— 与主窗口"降级为没有图标"
+        // 一致，绝不在这里崩溃。
+
+        box.setTextFormat(Qt::RichText);
+        box.setTextInteractionFlags(Qt::TextBrowserInteraction);
+        box.setText(
             tr("<h3>%1</h3>"
                "<p>一个基于 Qt 的轻量级图片编辑器。</p>"
                "<p><b>技术栈</b><br>"
@@ -758,6 +788,20 @@ void MainWindow::setupActions()
                 .arg(zl::appinfo::titleSuffix())
                 .arg(zl::compat::qtVersionString())
                 .arg(QStringLiteral(QT_VERSION_STR)));
+        box.setStandardButtons(QMessageBox::Ok);
+
+        // ★ 撑开文字列（图标从 64 变 128 之后图标列多吃 64px）★
+        //   ★ 注意：对 QMessageBox 调 setMinimumWidth() 是**无效的** ★
+        //     它在 showEvent 里会按自己的 layout sizeHint 重新摆一次，
+        //     把外面设的最小宽度覆盖掉（实测设 560 仍是 400 宽）。
+        //     能起作用的是让**内部文字标签**变宽 —— layout 的 sizeHint
+        //     随之变大，QMessageBox 自己就会跟着变宽。
+        //   "qt_msgbox_label" 是 Qt 给文字标签定的 objectName（各版本一致），
+        //   找不到就算了（不崩、不报错，只是回到默认宽度）。
+        if (auto *lbl = box.findChild<QLabel *>(QStringLiteral("qt_msgbox_label")))
+            lbl->setMinimumWidth(340);
+
+        box.exec();
     });
 
     m_actionAboutQt = new QAction(tr("关于 Qt(&Q)..."), this);
