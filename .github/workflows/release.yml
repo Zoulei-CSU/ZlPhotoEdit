@@ -130,7 +130,7 @@ jobs:
               apt-get update
               apt-get install -y --no-install-recommends \
                 build-essential ninja-build file wget ca-certificates \
-                software-properties-common gnupg \
+                software-properties-common gnupg python3 \
                 libgl1-mesa-dev libglu1-mesa-dev \
                 libx11-dev libxext-dev libxrender-dev libxfixes-dev libxi-dev \
                 libxkbcommon-dev libxkbcommon-x11-dev \
@@ -168,24 +168,42 @@ jobs:
               cp packaging/linux/zlphotoedit.desktop      AppDir/usr/share/applications/
               cp packaging/linux/zlphotoedit.png          AppDir/usr/share/icons/hicolor/256x256/apps/
 
-              ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
-                --exclude-library "libsystemd.so.0" \
-                --exclude-library "libbsd.so.0"
-              # ★★ 为什么必须排除这两个（"低 glibc"能不能兑现的关键）★★
-              #   实证：把产物 AppImage 解包后，逐文件扫 ELF 里的 GLIBC_2.x 字符串，
-              #   排除前整个 AppImage 的最高需求 = **GLIBC_2.27**，只有两个文件超标：
-              #     usr/lib/libsystemd.so.0  → 2.27
-              #     usr/lib/libbsd.so.0      → 2.25
+              # ★★ 两个都要设：命令行参数 + 环境变量 ★★
+              #
+              # 第 10 轮实测发现：只给 linuxdeploy 传 --exclude-library **不生效** ——
+              # 产物里 libsystemd.so.0 / libbsd.so.0 依然被打包（实测仍为 2.27）。
+              #   原因：--exclude-library 只进 linuxdeploy 自己那份 AppDir 状态；
+              #   而真正去收集 Qt 依赖的是 **qt 插件（独立子进程）**，它自己 new 一个
+              #      AppDir，只认自己收到的 --exclude-library。
+              #   而 AppDir 构造函数还会读 **环境变量** LINUXDEPLOY_EXCLUDED_LIBRARIES
+              #      （src/core/appdir.cpp: splitEnv("LINUXDEPLOY_EXCLUDED_LIBRARIES", ';')），
+              #   子进程天然继承环境 ⇒ 环境变量这条才能穿透到插件。
+              #   ⇒ 命令行 + 环境变量**双写**，两条路径都排除。
+              #
+              # ★ 为什么必须排除这两个（"低 glibc"能不能兑现的关键）★
+              #   实测（解包 AppImage 后逐 ELF 扫 GLIBC_2.x 字符串）：
+              #     不排除时整个 AppImage 的最高需求 = GLIBC_2.27，只有两个文件超标：
+              #       usr/lib/libsystemd.so.0  → 2.27
+              #       usr/lib/libbsd.so.0      → 2.25
               #   依赖链（实测 DT_NEEDED）：
               #     libqxcb.so → libQt5DBus → libdbus-1 → libsystemd.so.0
               #     libXdmcp.so.6 → libbsd.so.0
-              #   这两个库在**所有现代发行版里都由系统提供**，本该由宿主提供，
-              #   从 18.04 容器拖出来只会把 glibc 下限抬到 2.27，与目标相悖。
-              #   linuxdeploy 语义（src/core/elf_file.cpp）：
-              #     命中 --exclude-library 的库**既不打包、也不因缺失而报错**
-              #     （否则会抛 "Could not find dependency: ..."）。
-              #   ⇒ 排除后最高需求回落到 **GLIBC_2.17**，才真正配得上
-              #     "glibc 2.17+"（Qt 5.15.2 二进制自身的基线）。
+              #   这两个库在所有现代发行版里都由**系统**提供，本该由宿主提供；
+              #   从 18.04 容器拖出去只会把 glibc 下限抬到 2.27，与目标相悖。
+              # ⇒ 排除后最高需求应回落到 GLIBC_2.17（Qt 5.15.2 二进制自身的基线）。
+              export LINUXDEPLOY_EXCLUDED_LIBRARIES="libsystemd.so.0;libbsd.so.0"
+              ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
+                --exclude-library "libsystemd.so.0" \
+                --exclude-library "libbsd.so.0"
+
+              # ★★ 自证：把 glibc 上限做成构建期断言，而不是"希望它是 2.17" ★★
+              #   那个 python 文件是**仓内真脚本**（不是塞在 YAML 里的多行代码）——
+              #   YAML 里嵌多行 python 极易踩缩进坑，且本地也能单独跑。
+              #   AppImage 自带 --appimage-extract；上面已设 APPIMAGE_EXTRACT_AND_RUN=1，
+              #   所以无 FUSE 的容器里也能解包。
+              ./ZlPhotoEdit-*.AppImage --appimage-extract >/dev/null
+              python3 packaging/linux/check_appimage_glibc.py squashfs-root 17
+              rm -rf squashfs-root
               mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
               ls -lh dist/
             '
