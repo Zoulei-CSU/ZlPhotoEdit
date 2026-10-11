@@ -163,6 +163,31 @@ if(WIN32)
     )
 endif()
 
+if(APPLE)
+    # ★ macOS 必须产出 .app bundle ★
+    #   macdeployqt 只接受 .app（它要把 Qt framework 塞进 Contents/Frameworks/），
+    #   裸可执行文件它直接报错退出 —— 所以 MACOSX_BUNDLE 不是可选项。
+    #
+    #   qmake 侧（.pro）默认就是 bundle，所以这里只是把 CMake 侧对齐。
+    set_target_properties(ZlPhotoEdit PROPERTIES
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_BUNDLE_NAME "ZlPhotoEdit"
+        # ★ CFBundleIdentifier 必须写成反向域名；macdeployqt / codesign 都读它。
+        MACOSX_BUNDLE_GUI_IDENTIFIER "cn.zlstudio.ZlPhotoEdit"
+        MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+        MACOSX_BUNDLE_ICON_FILE "logo.icns"
+    )
+    # 图标：把 .icns 放进 Resources/ 并挂到 Resources 属性（CMake 会写进 Info.plist）。
+    #   .icns 由 packaging/macos/ 下的脚本从 resources/logo.ico 生成（见 CI workflow）。
+    #   文件不存在时跳过 —— 不能让"没有图标"阻止整个构建。
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/logo.icns")
+        set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/logo.icns"
+            PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+        target_sources(ZlPhotoEdit PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/logo.icns")
+    endif()
+endif()
+
 # ---------------------------------------------------------------------------
 #  部署（可选）
 # ---------------------------------------------------------------------------

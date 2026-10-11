@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=逐鹿 图片编辑器
+Name[en]=ZlPhotoEdit
+GenericName=Image Editor
+GenericName[en]=Image Editor
+Comment=轻量级图片编辑器（纯 Qt 实现）
+Comment[en]=A lightweight image editor built with Qt
+Exec=ZlPhotoEdit %F
+Icon=zlphotoedit
+Terminal=false
+Categories=Graphics;2DGraphics;RasterGraphics;Photography;
+Keywords=image;photo;editor;paint;图片;编辑;
+StartupNotify=true
+StartupWMClass=ZlPhotoEdit
+MimeType=image/png;image/jpeg;image/bmp;image/gif;image/tiff;image/webp;image/x-icon;

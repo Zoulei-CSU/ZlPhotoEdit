@@ -1,0 +1,42 @@
+# ============================================================================
+#  .gitattributes —— 强制行尾与编码约定
+# ----------------------------------------------------------------------------
+#  ★ 为什么必须锁 *.sh 的 LF ★
+#
+#    本工程在 Windows 上开发，Git 默认（core.autocrlf）可能把 .sh 存成 CRLF。
+#    CRLF 的 shell 脚本在 Linux 上会**当场炸**：
+#        $ bash make-deb.sh
+#        bash: make-deb.sh: /bin/bash^M: bad interpreter: No such file or directory
+#    这个报错完全看不出"是行尾问题"，会被当成"文件没同步"排查半天。
+#    CI 里跑的正是这些 .sh，所以在这里**显式锁死 LF**，不依赖任何本地配置。
+#
+#  ★ 为什么 .yml 也要 LF ★
+#    YAML 里 CRLF 一般能读，但 workflow 文件被 diff 时显示成"整个文件重写"，
+#    且个别 action 解析器对行尾敏感。统一 LF 省事。
+# ============================================================================
+
+* text=auto eol=lf
+
+# Shell 脚本：必须是 LF（否则 Linux 上 bad interpreter）
+*.sh            text eol=lf
+*.bash          text eol=lf
+
+# CI 配置
+*.yml           text eol=lf
+*.yaml          text eol=lf
+
+# 构建与脚本类
+*.pro           text eol=lf
+Makefile        text eol=lf
+CMakeLists.txt  text eol=lf
+*.cmake         text eol=lf
+
+# 二进制：Git 不碰
+*.ico           binary
+*.icns          binary
+*.png           binary
+*.jpg           binary
+*.svg           text eol=lf
+
+# 打包脚本
+packaging/linux/zlphotoedit.spec  text eol=lf

@@ -1,0 +1,375 @@
+# ============================================================================
+#  release.yml —— 三平台自动构建 + 打包
+# ----------------------------------------------------------------------------
+#  产出七个包：
+#    1. win64.zip                      Qt 6.8   （windows-2022）
+#    2. x86_64.AppImage                Qt 5.15.2（容器 ubuntu:18.04）→ glibc 2.17+
+#    3. glibc228-x86_64.AppImage       Qt 6.8   （容器 rockylinux:8）→ glibc 2.28+
+#    4. amd64.deb                      ubuntu:24.04 系统 Qt6（依赖系统 Qt）
+#    5. x86_64.rpm                     fedora:43 系统 Qt6   （依赖系统 Qt）
+#    6. macos-x86_64.zip               Qt 5.15.2（macos-15-intel 原生）
+#    7. macos-arm64.zip                Qt 6.8   （macos-14 原生）
+#
+#  触发：推送 v*.*.* 标签，或手动 workflow_dispatch。
+#
+#  ★ 为什么 Qt 版本在各 job 里不同 ★
+#    这是刻意的，理由见 docs/CI三平台打包调研.md：
+#      · AppImage 要低 glibc → Qt 二进制自身基线要低 → Qt5(2.17) / Qt6(2.28)
+#      · deb/rpm 要"依赖系统 Qt" → 必须用**目标发行版自带的** Qt 编译
+#        （Qt 只保证同大版本内向后二进制兼容，用新 Qt 编的跑不了旧系统）
+#      · macOS x86_64 用 Qt5 能把最低版本压到 10.13；arm64 用 Qt6（下限 11.0，
+#        而 Apple Silicon 出厂就是 11+）
+#
+#  ★ 版本号 ★
+#    暂时统一用项目内的 0.1.0（src/main.cpp 的 kApplicationVer）。
+#    以后改成 git tag 只需改这一个 env。
+# ============================================================================
+
+name: Build & Package
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+
+# 同一分支的重复触发互相取消，省 CI 时间
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_VERSION: '0.1.0'          # ← 版本号唯一来源（以后可换成 ${{ github.ref_name }}）
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────
+  #  1. Windows —— Qt 6.8 + windeployqt + ZIP
+  # ────────────────────────────────────────────────────────────────────────
+  windows:
+    name: Windows (Qt 6.8, ZIP)
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Qt 6.8
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          arch: 'win64_msvc2022_64'
+          cache: true
+
+      - name: 配置
+        run: >
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: 构建
+        run: cmake --build build --config Release
+
+      - name: 收集 DLL（windeployqt）
+        shell: pwsh
+        run: |
+          $exe = "build\bin\Release\ZlPhotoEdit.exe"
+          if (!(Test-Path $exe)) { $exe = "build\bin\ZlPhotoEdit.exe" }
+          if (!(Test-Path $exe)) { throw "找不到 ZlPhotoEdit.exe" }
+          $dist = "dist\ZlPhotoEdit-win64"
+          New-Item -ItemType Directory -Force -Path $dist | Out-Null
+          Copy-Item $exe $dist
+          windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw "$dist\ZlPhotoEdit.exe"
+          Copy-Item README.md $dist
+          Compress-Archive -Path "$dist\*" -DestinationPath "dist\ZlPhotoEdit-$env:APP_VERSION-win64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win64
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  2. Linux AppImage（Qt 5）—— 低 glibc 2.17
+  #     容器用 ubuntu:18.04：Qt5 官方 gcc_64 二进制的构建基线就是它。
+  # ────────────────────────────────────────────────────────────────────────
+  appimage-qt5:
+    name: Linux AppImage (Qt 5.15.2, glibc 2.17+)
+    runs-on: ubuntu-latest
+    container: ubuntu:18.04
+    steps:
+      # ★ 必须是 v3 ★：v4 内部跑 Node20，而 Node20 要求 glibc >= 2.28，
+      #   18.04 的 glibc 是 2.27，v4 会当场失败。
+      - uses: actions/checkout@v3
+
+      - name: 安装依赖
+        run: |
+          # 18.04 已 EOL，官方源移到了 old-releases
+          sed -i 's|archive.ubuntu.com|old-releases.ubuntu.com|g; s|security.ubuntu.com|old-releases.ubuntu.com|g' /etc/apt/sources.list
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build python3-pip python3-setuptools \
+            file wget fuse libfuse2 patchelf \
+            libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-x11-dev \
+            libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev \
+            libxcb-randr0-dev libxcb-render-util0-dev libxcb-shape0-dev \
+            libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+            libxcb-cursor-dev libxkbcommon-dev
+
+      - name: 安装 Qt 5.15.2
+        run: |
+          # 18.04 自带 python3.6，最新版 aqtinstall 装不上 → 锁一个旧版
+          pip3 install 'aqtinstall<3.0'
+          aqt install-qt linux desktop 5.15.2 gcc_64 -O /opt/Qt
+          /opt/Qt/5.15.2/gcc_64/bin/qmake -v
+
+      - name: 配置 + 构建
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_PREFIX_PATH=/opt/Qt/5.15.2/gcc_64
+          cmake --build build
+
+      - name: 打 AppImage
+        run: |
+          # 容器里通常没有 FUSE 权限 → 让 AppImage 自解压运行
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          export QTDIR=/opt/Qt/5.15.2/gcc_64
+          export PATH="$QTDIR/bin:$PATH"
+          export VERSION="${{ env.APP_VERSION }}"
+          export OUTPUT="ZlPhotoEdit-${{ env.APP_VERSION }}-x86_64.AppImage"
+
+          wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/applications
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          cp build/ZlPhotoEdit                       AppDir/usr/bin/
+          cp packaging/linux/zlphotoedit.desktop     AppDir/usr/share/applications/
+          cp packaging/linux/zlphotoedit.png         AppDir/usr/share/icons/hicolor/256x256/apps/
+
+          ./linuxdeploy --appdir AppDir --plugin qt --output appimage
+          mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
+          ls -lh dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage-qt5
+          path: dist/*.AppImage
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  3. Linux AppImage（Qt 6）—— glibc 2.28
+  #     ★ 容器用 rockylinux:8：glibc 正好 2.28（Qt6 官方最低要求），
+  #       且支持到 2029-05；它的 glibc 够新，checkout@v4（Node20）能直接用。
+  # ────────────────────────────────────────────────────────────────────────
+  appimage-qt6:
+    name: Linux AppImage (Qt 6.8, glibc 2.28+)
+    runs-on: ubuntu-latest
+    container: rockylinux:8
+    steps:
+      - uses: actions/checkout@v4          # Rocky 8 的 glibc 2.28 能跑 Node20
+
+      - name: 安装依赖
+        run: |
+          dnf install -y epel-release
+          dnf install -y cmake ninja-build gcc-c++ make \
+            file wget fuse fuse-libs patchelf python3-pip \
+            mesa-libGL-devel mesa-libGLU-devel libxkbcommon-x11-devel \
+            xcb-util-icccm xcb-util-image xcb-util-keysyms xcb-util-renderutil \
+            xcb-util-wm xcb-util-cursor libxcb-devel libxkbcommon-devel
+
+      - name: 安装 Qt 6.8
+        run: |
+          pip3 install aqtinstall
+          aqt install-qt linux desktop 6.8.1 gcc_64 -O /opt/Qt
+          /opt/Qt/6.8.1/gcc_64/bin/qmake -v
+
+      - name: 配置 + 构建
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_PREFIX_PATH=/opt/Qt/6.8.1/gcc_64
+          cmake --build build
+
+      - name: 打 AppImage
+        run: |
+          export APPIMAGE_EXTRACT_AND_RUN=1
+          export QTDIR=/opt/Qt/6.8.1/gcc_64
+          export PATH="$QTDIR/bin:$PATH"
+          export VERSION="${{ env.APP_VERSION }}"
+          export OUTPUT="ZlPhotoEdit-${{ env.APP_VERSION }}-glibc228-x86_64.AppImage"
+
+          wget -q -O linuxdeploy https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q -O linuxdeploy-plugin-qt https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy linuxdeploy-plugin-qt
+
+          mkdir -p AppDir/usr/bin AppDir/usr/share/applications \
+                   AppDir/usr/share/icons/hicolor/256x256/apps
+          cp build/ZlPhotoEdit                       AppDir/usr/bin/
+          cp packaging/linux/zlphotoedit.desktop     AppDir/usr/share/applications/
+          cp packaging/linux/zlphotoedit.png         AppDir/usr/share/icons/hicolor/256x256/apps/
+
+          ./linuxdeploy --appdir AppDir --plugin qt --output appimage
+          mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
+          ls -lh dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: appimage-qt6
+          path: dist/*.AppImage
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  4 + 5. Linux deb / rpm —— 依赖系统 Qt6，包里只有自己的东西
+  # ────────────────────────────────────────────────────────────────────────
+  linux-packages:
+    name: Linux ${{ matrix.fmt }} (${{ matrix.distro }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { distro: 'ubuntu:24.04', fmt: 'deb' }   # 系统 Qt 6.4.2
+          - { distro: 'fedora:43',    fmt: 'rpm' }   # 系统 Qt 6.10.3
+    container: ${{ matrix.distro }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装系统 Qt6 + 打包工具（Deb 系）
+        if: matrix.fmt == 'deb'
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            qt6-base-dev qt6-svg-dev libgl1-mesa-dev \
+            cmake ninja-build g++ dpkg-dev fakeroot
+
+      - name: 安装系统 Qt6 + 打包工具（RPM 系）
+        if: matrix.fmt == 'rpm'
+        run: |
+          dnf install -y qt6-qtbase-devel qt6-qtsvg-devel mesa-libGL-devel \
+            cmake ninja-build gcc-c++ rpm-build
+
+      - name: 配置 + 构建（★ 链系统 Qt，不给 CMAKE_PREFIX_PATH）
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: 打 deb
+        if: matrix.fmt == 'deb'
+        run: |
+          # 提前装一份依赖，好让 dpkg-shlibdeps 能解析出包名
+          bash packaging/linux/make-deb.sh "${{ env.APP_VERSION }}" build/ZlPhotoEdit dist
+
+      - name: 打 rpm
+        if: matrix.fmt == 'rpm'
+        run: bash packaging/linux/make-rpm.sh "${{ env.APP_VERSION }}" build/ZlPhotoEdit dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.fmt }}
+          path: |
+            dist/*.deb
+            dist/**/*.rpm
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  6. macOS x86_64 —— Qt 5.15.2（最低 macOS 10.13）
+  # ────────────────────────────────────────────────────────────────────────
+  macos-x86_64:
+    name: macOS x86_64 (Qt 5.15.2, 10.13+)
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Qt 5.15.2
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          arch: 'clang_64'
+          cache: true
+
+      - name: 生成 .icns 图标
+        run: bash packaging/macos/make-icns.sh
+
+      - name: 配置 + 构建
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13
+          cmake --build build
+
+      - name: macdeployqt
+        run: |
+          macdeployqt build/ZlPhotoEdit.app -verbose=1
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/ZlPhotoEdit.app \
+            "dist/ZlPhotoEdit-${{ env.APP_VERSION }}-macos-x86_64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-x86_64
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  7. macOS arm64 —— Qt 6.8（最低 macOS 11.0）
+  # ────────────────────────────────────────────────────────────────────────
+  macos-arm64:
+    name: macOS arm64 (Qt 6.8, 11.0+)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Qt 6.8
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          arch: 'clang_64'
+          cache: true
+
+      - name: 生成 .icns 图标
+        run: bash packaging/macos/make-icns.sh
+
+      - name: 配置 + 构建
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_OSX_ARCHITECTURES=arm64 \
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+          cmake --build build
+
+      - name: macdeployqt
+        run: |
+          macdeployqt build/ZlPhotoEdit.app -verbose=1
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            build/ZlPhotoEdit.app \
+            "dist/ZlPhotoEdit-${{ env.APP_VERSION }}-macos-arm64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: dist/*.zip
+          if-no-files-found: error
+
+  # ────────────────────────────────────────────────────────────────────────
+  #  汇总：把七个产物挂到一个 GitHub Release（仅 tag 触发时）
+  # ────────────────────────────────────────────────────────────────────────
+  release:
+    name: 发布 Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, appimage-qt5, appimage-qt6, linux-packages, macos-x86_64, macos-arm64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 汇总产物
+        run: |
+          mkdir -p dist
+          find artifacts -type f \( -name '*.zip' -o -name '*.AppImage' -o -name '*.deb' -o -name '*.rpm' \) -exec cp {} dist/ \;
+          ls -lh dist/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
