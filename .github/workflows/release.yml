@@ -114,8 +114,9 @@ jobs:
             ubuntu:18.04 \
             bash -c '
               set -euo pipefail
-              # 18.04 已 EOL，官方源移到 old-releases
-              sed -i "s|archive.ubuntu.com|old-releases.ubuntu.com|g; s|security.ubuntu.com|old-releases.ubuntu.com|g" /etc/apt/sources.list
+              # ★ 不要替换 apt 源！ ★
+              #   实测旧发布版仍留在 archive.ubuntu.com 上（bionic/Release 返回 200），
+              #   而换到 old-releases.ubuntu.com 反而 404。
               apt-get update
               apt-get install -y --no-install-recommends \
                 build-essential cmake ninja-build python3-pip python3-setuptools \
@@ -163,24 +164,31 @@ jobs:
 
   # ────────────────────────────────────────────────────────────────────────
   #  3. Linux AppImage（Qt 6）—— glibc 2.28
-  #     ★ 容器用 rockylinux:8：glibc 正好 2.28（Qt6 官方最低要求），
-  #       且支持到 2029-05；它的 glibc 够新，checkout@v4（Node20）能直接用。
+  #     ★ 容器用 debian:10：glibc 正好 2.28（Qt6 官方最低要求），
+  #       且它的 glibc 够新，checkout@v4（Node20）能直接用。
+  #     （最初用 rockylinux:8，但它的 xcb / ninja 包名对不上，换 Debian 更省事）
   # ────────────────────────────────────────────────────────────────────────
   appimage-qt6:
     name: Linux AppImage (Qt 6.8, glibc 2.28+)
     runs-on: ubuntu-latest
-    container: rockylinux:8
+    container: debian:10                 # ★ glibc 2.28（Qt6 官方最低要求）
     steps:
-      - uses: actions/checkout@v4          # Rocky 8 的 glibc 2.28 能跑 Node20
+      - uses: actions/checkout@v4        # Debian 10 的 glibc 2.28 能跑 Node20
 
       - name: 安装依赖
         run: |
-          dnf install -y epel-release
-          dnf install -y cmake ninja-build gcc-c++ make \
-            file wget fuse fuse-libs patchelf python3-pip \
-            mesa-libGL-devel mesa-libGLU-devel libxkbcommon-x11-devel \
-            xcb-util-icccm xcb-util-image xcb-util-keysyms xcb-util-renderutil \
-            xcb-util-wm xcb-util-cursor libxcb-devel libxkbcommon-devel
+          # Debian 10 已归档 → 源指向 archive.debian.org
+          sed -i 's|deb.debian.org|archive.debian.org|g; s|security.debian.org|archive.debian.org|g' /etc/apt/sources.list
+          printf 'Acquire::Check-Valid-Until "false";\n' > /etc/apt/apt.conf.d/99no-check-valid
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cmake ninja-build python3-pip python3-setuptools \
+            file wget fuse libfuse2 patchelf \
+            libgl1-mesa-dev libglu1-mesa-dev libxkbcommon-x11-dev \
+            libxcb-icccm4-dev libxcb-image0-dev libxcb-keysyms1-dev \
+            libxcb-randr0-dev libxcb-render-util0-dev libxcb-shape0-dev \
+            libxcb-sync-dev libxcb-xfixes0-dev libxcb-xinerama0-dev \
+            libxcb-cursor-dev libxkbcommon-dev
 
       - name: 安装 Qt 6.8
         run: |
@@ -208,9 +216,9 @@ jobs:
 
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications \
                    AppDir/usr/share/icons/hicolor/256x256/apps
-          cp build/ZlPhotoEdit                       AppDir/usr/bin/
-          cp packaging/linux/zlphotoedit.desktop     AppDir/usr/share/applications/
-          cp packaging/linux/zlphotoedit.png         AppDir/usr/share/icons/hicolor/256x256/apps/
+          cp build/ZlPhotoEdit                          AppDir/usr/bin/
+          cp packaging/linux/zlphotoedit.desktop        AppDir/usr/share/applications/
+          cp packaging/linux/zlphotoedit.png            AppDir/usr/share/icons/hicolor/256x256/apps/
 
           ./linuxdeploy --appdir AppDir --plugin qt --output appimage
           mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
@@ -222,7 +230,6 @@ jobs:
           path: dist/*.AppImage
           if-no-files-found: error
 
-  # ────────────────────────────────────────────────────────────────────────
   #  4 + 5. Linux deb / rpm —— 依赖系统 Qt6，包里只有自己的东西
   # ────────────────────────────────────────────────────────────────────────
   linux-packages:

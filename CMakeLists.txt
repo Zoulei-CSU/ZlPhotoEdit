@@ -189,30 +189,27 @@ if(APPLE)
 endif()
 
 # ---------------------------------------------------------------------------
-#  部署（可选）
+#  部署脚本
 # ---------------------------------------------------------------------------
-#  Qt6 提供了官方的部署脚本生成器，Qt5 没有（Qt5 需手动跑 windeployqt）。
+#  ★ 这里**刻意不调用 qt_generate_deploy_app_script** ★
 #
-#  ★ OUTPUT_SCRIPT 参数是 **Qt 6.5 才加的** ★
-#    在 6.4（Ubuntu 24.04 自带的版本）上调用会直接报：
-#      CMake Error at Qt6CoreMacros.cmake: Unexpected arguments: OUTPUT_SCRIPT;...
-#    这是 CI 上真实撞到的 —— 本地只有 Qt5，这条分支从没被编译过。
-#    所以这里按 6.5 分界：>= 6.5 用带 OUTPUT_SCRIPT 的新签名，6.0~6.4 用旧签名。
+#  它的签名在 Qt6 内部变过三次，每个版本都能踩：
+#    · Qt 6.5+：qt6_generate_deploy_app_script(TARGET t OUTPUT_SCRIPT v)
+#    · Qt 6.4 ：旧签名还要 FILENAME_VARIABLE，少给就报
+#                 "FILENAME_VARIABLE must be specified"
+#    · Qt 6.0~6.2：又是另一套
+#  而 Ubuntu 24.04 自带的正是 **6.4.2** —— CI 上两次撞墙都在这里。
 #
-#    旧签名（Qt 6.0~6.4）会把部署脚本作为安装规则注册，不需要我们自己 install()。
-if(QT_VERSION_MAJOR EQUAL 6)
-    if(QT_VERSION VERSION_GREATER_EQUAL 6.5)
-        qt_generate_deploy_app_script(
-            TARGET ZlPhotoEdit
-            OUTPUT_SCRIPT deploy_script
-            NO_UNSUPPORTED_PLATFORM_ERROR
-        )
-        install(SCRIPT ${deploy_script})
-    else()
-        # Qt 6.0 ~ 6.4：旧签名（无 OUTPUT_SCRIPT）
-        qt_generate_deploy_app_script(
-            TARGET ZlPhotoEdit
-            NO_UNSUPPORTED_PLATFORM_ERROR
-        )
-    endif()
-endif()
+#  更重要的是：**我们根本不需要它**。三条构建路径各有自己的部署方式：
+#    · Windows  → `windeployqt`（workflow 里显式跑）
+#    · Linux    → `linuxdeploy --plugin qt`（打进 AppImage）或依赖系统 Qt
+#    · macOS    → `macdeployqt`（workflow 里显式跑）
+#  所以直接不生成这个脚本，既少一个版本兼容坑，也不影响任何产物。
+#
+#  唯一要保留的是下面这段：让 target 知道怎么装到 CMAKE_INSTALL_PREFIX，
+#  这样 `cmake --install` 与打包脚本能用同一套安装规则。
+# ---------------------------------------------------------------------------
+install(TARGETS ZlPhotoEdit
+    RUNTIME DESTINATION bin          # Windows / Linux
+    BUNDLE  DESTINATION .            # macOS（.app 放在前缀根目录）
+)
