@@ -224,8 +224,20 @@ jobs:
             rockylinux:8 \
             bash -c '
               set -euo pipefail
+
+              # ★ 必须先开 PowerTools ★
+              #   xcb-util-*/libxkbcommon-x11-devel/ninja-build 这些**不在 BaseOS/AppStream**，
+              #   而在 PowerTools（el8 的名字；el9 才叫 CRB）。不开就直接
+              #     "No match for argument: xcb-util-devel" → Error: Unable to find a match
+              #   这是 CI 上真实撞到的。（EPEL 只是少数包的来源，PowerTools 才是关键）
+              dnf install -y dnf-plugins-core
+              dnf config-manager --set-enabled powertools
+
+              # ★ 刻意不装 ninja ★
+              #   本工程只用默认的 Unix Makefiles 生成器，ninja 在 el8 属于 Devel 仓库，
+              #   引它只会多一个失败点。cmake 默认就找 make（binutils/make 已随基础镜像）。
               dnf install -y \
-                gcc-toolset-11-toolchain cmake ninja-build file wget which \
+                gcc-toolset-11-toolchain cmake make file wget which \
                 mesa-libGL-devel libxkbcommon-devel libxkbcommon-x11-devel \
                 libX11-devel libXext-devel libXrender-devel libXfixes-devel \
                 libXi-devel libxcb-devel xcb-util-devel xcb-util-image-devel \
@@ -237,7 +249,8 @@ jobs:
               gcc --version
               cmake --version
 
-              cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+              # ★ 不写 -G Ninja → 用默认生成器（Unix Makefiles）
+              cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
                     -DCMAKE_PREFIX_PATH=/opt/Qt
               cmake --build build
 
@@ -259,10 +272,16 @@ jobs:
 
               ./linuxdeploy --appdir AppDir --plugin qt --output appimage
 
-              # gcc-toolset-11 的 libstdc++ 比 Rocky 8 自带的(8.5)新，
-              # 目标机器上未必有 → 显式塞进 AppDir，保证 AppImage 自洽。
+              # ★ libstdc++ 要在 linuxdeploy 之后再补 ★
+              #   gcc-toolset-11 的 libstdc++ 比 Rocky 8 自带的（8.5）新，
+              #   目标机器上未必有 → 显式塞进 AppDir，保证 AppImage 自洽。
+              #   · 必须放在 linuxdeploy 之后：AppDir/usr/lib 到那时才存在；
+              #   · 用 -L 解引用符号链接，拿到真实 .so.6.
               TLS_LIBSTDCPP=$(gcc -print-file-name=libstdc++.so.6)
-              if [ -f "$TLS_LIBSTDCPP" ]; then cp -Lv "$TLS_LIBSTDCPP" AppDir/usr/lib/; fi
+              if [ -f "$TLS_LIBSTDCPP" ]; then
+                mkdir -p AppDir/usr/lib
+                cp -Lv "$TLS_LIBSTDCPP" AppDir/usr/lib/
+              fi
 
               mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
               ls -lh dist/
