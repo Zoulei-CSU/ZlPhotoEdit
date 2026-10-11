@@ -168,7 +168,24 @@ jobs:
               cp packaging/linux/zlphotoedit.desktop      AppDir/usr/share/applications/
               cp packaging/linux/zlphotoedit.png          AppDir/usr/share/icons/hicolor/256x256/apps/
 
-              ./linuxdeploy --appdir AppDir --plugin qt --output appimage
+              ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
+                --exclude-library "libsystemd.so.0" \
+                --exclude-library "libbsd.so.0"
+              # ★★ 为什么必须排除这两个（"低 glibc"能不能兑现的关键）★★
+              #   实证：把产物 AppImage 解包后，逐文件扫 ELF 里的 GLIBC_2.x 字符串，
+              #   排除前整个 AppImage 的最高需求 = **GLIBC_2.27**，只有两个文件超标：
+              #     usr/lib/libsystemd.so.0  → 2.27
+              #     usr/lib/libbsd.so.0      → 2.25
+              #   依赖链（实测 DT_NEEDED）：
+              #     libqxcb.so → libQt5DBus → libdbus-1 → libsystemd.so.0
+              #     libXdmcp.so.6 → libbsd.so.0
+              #   这两个库在**所有现代发行版里都由系统提供**，本该由宿主提供，
+              #   从 18.04 容器拖出来只会把 glibc 下限抬到 2.27，与目标相悖。
+              #   linuxdeploy 语义（src/core/elf_file.cpp）：
+              #     命中 --exclude-library 的库**既不打包、也不因缺失而报错**
+              #     （否则会抛 "Could not find dependency: ..."）。
+              #   ⇒ 排除后最高需求回落到 **GLIBC_2.17**，才真正配得上
+              #     "glibc 2.17+"（Qt 5.15.2 二进制自身的基线）。
               mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
               ls -lh dist/
             '
