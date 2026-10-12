@@ -202,7 +202,10 @@ jobs:
               #   AppImage 自带 --appimage-extract；上面已设 APPIMAGE_EXTRACT_AND_RUN=1，
               #   所以无 FUSE 的容器里也能解包。
               ./ZlPhotoEdit-*.AppImage --appimage-extract >/dev/null
-              python3 packaging/linux/check_appimage_glibc.py squashfs-root 17
+              # PYTHONIOENCODING：容器是 POSIX locale，Python 3.6 的 stdout 编码是
+              # ASCII，脚本里的中文输出会 UnicodeEncodeError（第 12 轮就是这么挂的）。
+              # 脚本自身也有编码兜底，这里是双保险。
+              PYTHONIOENCODING=utf-8 python3 packaging/linux/check_appimage_glibc.py squashfs-root 17
               rm -rf squashfs-root
               mkdir -p dist && mv ./*.AppImage dist/ 2>/dev/null || true
               ls -lh dist/

@@ -1,4 +1,4 @@
-﻿"""check_appimage_glibc.py —— 校验 AppImage 的 glibc 上限
+"""check_appimage_glibc.py —— 校验 AppImage 的 glibc 上限
 
 用途（CI 构建期断言，非交互）：
     ./ZlPhotoEdit-*.AppImage --appimage-extract
@@ -21,6 +21,24 @@
 import os
 import re
 import sys
+
+
+def _fix_stdout_encoding():
+    """POSIX locale 下（容器里几乎都是）stdout 编码是 ASCII，中文直接崩。
+
+    第 12 轮 CI 实测：AppImage 构建成功、排除也生效，却崩在下面那句
+    中文 print 上（UnicodeEncodeError），整个自证步骤变成假失败。
+    """
+    if hasattr(sys.stdout, 'reconfigure'):        # Python 3.7+
+        sys.stdout.reconfigure(errors='replace')
+        return
+    import codecs                                  # Python 3.6（ubuntu:18.04 自带）
+    buf = getattr(sys.stdout, 'buffer', None)
+    if buf is not None:
+        sys.stdout = codecs.getwriter('utf-8')(buf, 'replace')
+
+
+_fix_stdout_encoding()
 
 PAT = re.compile(rb'GLIBC_2\.(\d+)')
 
