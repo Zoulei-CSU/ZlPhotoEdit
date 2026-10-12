@@ -61,6 +61,7 @@ SOURCES += \
     src/core/Selection.cpp \
     src/core/ClipboardData.cpp \
     src/core/ImageTypes.cpp \
+    src/core/UiLanguage.cpp \
     src/engine/Blend.cpp \
     src/engine/Lut.cpp \
     src/engine/Curves.cpp \
@@ -136,6 +137,7 @@ HEADERS += \
     src/core/Selection.h \
     src/core/ClipboardData.h \
     src/core/ImageTypes.h \
+    src/core/UiLanguage.h \
     src/engine/Blend.h \
     src/engine/Lut.h \
     src/engine/Curves.h \
@@ -210,6 +212,84 @@ HEADERS += \
 
 RESOURCES += \
     resources/resources.qrc
+
+# ---------------------------------------------------------------------------
+#  多语言（i18n）
+# ---------------------------------------------------------------------------
+#  ★ 硬约束（用户明确要求）：翻译文件内嵌进可执行文件 ★
+#    不发布独立的翻译文件夹 —— 运行时从 ":/i18n/..." 读。
+#
+#  链路（lrelease 与 qrc 生成都在 qmake 解析期完成，rcc 留给 nmake）：
+#    translations/zlphotoedit_zh_CN.ts
+#      → lrelease  → build/i18n/zlphotoedit_zh_CN.qm
+#      → write_file 生成 build/i18n/i18n.qrc（列出 .qm 清单）
+#      → RESOURCES 收进来 → rcc 编进二进制 → 运行时 :/i18n/xxx.qm
+#
+#  ★ 改完 .ts 必须重跑一次 qmake ★
+#    Makefile 里没有 .ts → .qm 的依赖（在 qmake 体系里加它要动
+#    QMAKE_EXTRA_TARGETS，为一年改两次的翻译文件不值当）：
+#    编辑翻译内容后，重新 qmake + nmake。
+#
+#  ★ 新增一种语言要同步三处 ★
+#    下面的 I18N_LANG_CODES、translations/ 下的 .ts 文件、
+#    src/core/UiLanguage.cpp 的 kEmbeddedLanguages。
+#    漏一个不报编译错，只表现为"菜单里少一种语言"，靠人对账。
+#
+#  ★ CMake 侧的同一套逻辑见 CMakeLists.txt「多语言」段 ★
+#    两边同一批 .ts、同一个 prefix，否则换构建路径等于换语言集。
+# ---------------------------------------------------------------------------
+
+# 语言代码清单（.ts / .qm 文件名去掉前缀与后缀就是它）
+I18N_LANG_CODES = zh_CN
+
+I18N_DIR = $$PWD/build/i18n
+
+# .qm 文件名清单（喂给下面的 qrc 内容）
+I18N_QM_NAMES =
+for(lang, I18N_LANG_CODES) {
+    I18N_QM_NAMES += zlphotoedit_$${lang}.qm
+}
+
+# 生成 qrc。write_file 只接受**变量名**（传字面量会写出空文件），
+# 且会自动创建父目录 —— 正好替 lrelease 把 build/i18n 建好：
+# lrelease 自己不会建目录，缺目录时它直接报错退出（实测确认）。
+I18N_QRC = $$I18N_DIR/i18n.qrc
+I18N_QRC_CONTENT = "<!DOCTYPE RCC><RCC version=\"1.0\">"
+I18N_QRC_CONTENT += "<qresource prefix=\"/i18n\">"
+for(name, I18N_QM_NAMES): I18N_QRC_CONTENT += "<file>$$name</file>"
+I18N_QRC_CONTENT += "</qresource></RCC>"
+write_file($$I18N_QRC, I18N_QRC_CONTENT)
+
+# lrelease 的位置：优先 Qt 的 bin（与 qmake 同目录），找不到回落 PATH
+# （build_env.sh 已把 Qt bin 放进 PATH）。
+# ★ exists() 必须带 .exe 后缀 ★
+#   Windows 上 QFileInfo::exists 不做 PATHEXT 解析，写 "lrelease"
+#   会被判成不存在（实测踩过：于是白白走了一次 PATH 回落）。
+win32 {
+    I18N_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
+} else {
+    I18N_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+}
+!exists($$I18N_LRELEASE) {
+    win32: I18N_LRELEASE = lrelease.exe
+    else:  I18N_LRELEASE = lrelease
+}
+
+# 逐个 .ts → .qm。任何一步没产出 .qm 就整体跳过内嵌（与 CMake 侧
+# "lrelease 找不到只警告"的降级一致）：翻译是增强项，不该让一个
+# 可选的 Linguist 组件把构建挡死；界面会回落到源码文本。
+I18N_OK =
+for(lang, I18N_LANG_CODES) {
+    ts = $$PWD/translations/zlphotoedit_$${lang}.ts
+    qm = $$I18N_DIR/zlphotoedit_$${lang}.qm
+    system($$I18N_LRELEASE $$ts -qm $$qm)
+    exists($$qm): I18N_OK = true
+}
+isEmpty(I18N_OK) {
+    message("警告：lrelease 未产出 .qm，跳过翻译内嵌（界面将回落到源码文本）")
+} else {
+    RESOURCES += $$I18N_QRC
+}
 
 # ---------------------------------------------------------------------------
 #  Windows 可执行文件图标（exe 本身的图标）

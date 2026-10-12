@@ -124,6 +124,98 @@ target_link_libraries(ZlPhotoEdit PRIVATE
 )
 
 # ---------------------------------------------------------------------------
+#  多语言：.ts → lrelease → .qm → 生成 i18n.qrc → AUTORCC 内嵌
+# ---------------------------------------------------------------------------
+#  ★ 硬约束（用户明确要求）：翻译文件必须内嵌进可执行文件 ★
+#    不发布独立的 translations/ 文件夹 —— 运行时从 ":/i18n/..." 读。
+#    代价是构建期多两步（lrelease + 生成 qrc），收益是"拷贝一个 exe
+#    就能用"，且从结构上消除"忘了带翻译目录"这类部署事故。
+#
+#  链路：
+#    translations/zlphotoedit_zh_CN.ts
+#      → lrelease（构建期，逐个 .ts 跑）
+#      → build/i18n/zlphotoedit_zh_CN.qm
+#      → packaging/i18n/gen_i18n_qrc.cmake 生成 build/i18n/i18n.qrc
+#         （内容 = 真实产出的 .qm 清单，新增语言只改 ZLPE_TRANSLATIONS）
+#      → AUTORCC 把 .qm 编进 rcc 数据 → 运行时 ":/i18n/xxx.qm"
+#
+#  ★ qmake 侧的同一套逻辑见 ZlPhotoEdit.pro 的「多语言」段 ★
+#    两边必须是同一批 .ts、同一个 prefix，否则换构建路径就等于换语言集。
+#
+#  ★ lrelease 找不到时只警告、不失败 ★
+#    翻译是增强项：缺它界面回落到源码文本（见 core/UiLanguage.cpp），
+#    不该让一个可选的 Linguist 组件把整个构建挡死。CI 的四个
+#    Linux/macOS job 都自带 Qt 完整包，不会触发这条分支。
+# ---------------------------------------------------------------------------
+set(ZLPE_I18N_DIR "${CMAKE_CURRENT_BINARY_DIR}/i18n")
+set(ZLPE_TRANSLATIONS
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_CN.ts")
+set(ZLPE_I18N_QRC "${ZLPE_I18N_DIR}/i18n.qrc")
+
+# lrelease 的安装位置随发行方式漂移，三个来源都要找：
+#   · Qt 官方安装包 → bin/lrelease（与 qmake 同目录，走 IMPORTED 目标）
+#   · Debian/Ubuntu 的 Qt5 → /usr/bin/lrelease（find_program 默认路径）
+#   · Qt6 发行包 → libexec/lrelease（Qt6 起工具链从 bin 拆了出去）
+if(TARGET Qt${QT_VERSION_MAJOR}::qmake)
+    get_target_property(_zlpe_qmake_exe
+        Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
+    if(_zlpe_qmake_exe)
+        get_filename_component(_zlpe_qt_bin "${_zlpe_qmake_exe}" DIRECTORY)
+        find_program(QT_LRELEASE
+            NAMES lrelease lrelease-qt5 lrelease-qt6
+            HINTS "${_zlpe_qt_bin}" "${_zlpe_qt_bin}/../libexec")
+    endif()
+endif()
+if(NOT QT_LRELEASE)
+    # Qt6 的 cmake 目录形如 <prefix>/lib/cmake/Qt6Core，往上三级是 prefix
+    foreach(_dir IN LISTS Qt${QT_VERSION_MAJOR}Core_DIR)
+        if(_dir)
+            find_program(QT_LRELEASE
+                NAMES lrelease lrelease-qt5 lrelease-qt6
+                HINTS "${_dir}/../../../bin" "${_dir}/../../../libexec")
+        endif()
+    endforeach()
+endif()
+if(NOT QT_LRELEASE)
+    find_program(QT_LRELEASE NAMES lrelease lrelease-qt5 lrelease-qt6)
+endif()
+
+if(QT_LRELEASE)
+    message(STATUS " lrelease     : ${QT_LRELEASE}")
+
+    set(_zlpe_qm_outputs "")
+    foreach(_ts IN LISTS ZLPE_TRANSLATIONS)
+        get_filename_component(_base "${_ts}" NAME_WE)   # zlphotoedit_zh_CN
+        set(_qm "${ZLPE_I18N_DIR}/${_base}.qm")
+        add_custom_command(OUTPUT "${_qm}"
+            COMMAND "${QT_LRELEASE}" "${_ts}" -qm "${_qm}"
+            DEPENDS "${_ts}"
+            COMMENT "lrelease ${_base}.ts -> ${_base}.qm"
+            VERBATIM)
+        list(APPEND _zlpe_qm_outputs "${_qm}")
+    endforeach()
+
+    # qrc 的内容由"真实生成了哪些 .qm"决定（脚本里 glob），
+    # 且 DEPENDS 全部 .qm —— lrelease 全部跑完后才生成 qrc。
+    add_custom_command(OUTPUT "${ZLPE_I18N_QRC}"
+        COMMAND "${CMAKE_COMMAND}"
+                "-DQM_DIR=${ZLPE_I18N_DIR}"
+                "-DOUT=${ZLPE_I18N_QRC}"
+                -P "${CMAKE_CURRENT_SOURCE_DIR}/packaging/i18n/gen_i18n_qrc.cmake"
+        DEPENDS ${_zlpe_qm_outputs}
+        COMMENT "生成 i18n.qrc（内嵌翻译清单）"
+        VERBATIM)
+
+    # AUTORCC 会自动对 .qrc 跑 rcc；Makefile/Ninja 依据
+    # OUTPUT 链保证 lrelease 先于 rcc 完成。
+    target_sources(ZlPhotoEdit PRIVATE "${ZLPE_I18N_QRC}")
+else()
+    message(WARNING
+        "找不到 lrelease —— 跳过翻译内嵌，界面语言将回落到源码文本。"
+        "（不影响构建；装好 Qt Linguist 组件后重新 configure）")
+endif()
+
+# ---------------------------------------------------------------------------
 #  MSVC 专用设置
 # ---------------------------------------------------------------------------
 if(MSVC)

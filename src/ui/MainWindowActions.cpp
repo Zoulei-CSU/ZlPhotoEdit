@@ -31,6 +31,9 @@
 #include "core/Layer.h"
 #include "core/Selection.h"
 #include "core/ClipboardData.h"
+// ★ 界面语言 ★ 语言菜单的可用项 / 当前项 / 写设置都走它
+//   （"当前是什么语言"这件事只有 core/UiLanguage.cpp 一个出处）。
+#include "core/UiLanguage.h"
 
 #include "commands/CommandStack.h"
 
@@ -1011,6 +1014,49 @@ void MainWindow::setupMenus()
     QMenu *panelMenu = viewMenu->addMenu(tr("面板(&P)"));
     panelMenu->setObjectName(QStringLiteral("menuPanels"));
     panelMenu->setIcon(icons::icon(QStringLiteral("menu_panels")));
+
+    // ─────────────────────────────────────────────────────────────────────
+    //  语言
+    // ─────────────────────────────────────────────────────────────────────
+    //  ★ 只有一种可用语言时，整个菜单都不创建 ★
+    //
+    //    阶段 1 源码文本是中文、且 zh_CN 就是源码语言，此时菜单里只会
+    //    孤零零一项"简体中文"——没有信息量，反而像程序坏了。
+    //    等阶段 2 源码英文化之后，可用语言变成 {en, zh_CN}，本段代码
+    //    一行都不用改就会自动多出 "English" 一项。
+    //
+    //  ★ 切换后要重启才生效 ★
+    //    运行中切换要重翻译整个 UI：每个控件都要响应 LanguageChange 事件、
+    //    动态拼的字符串（标题、状态栏、对话框文本）要全部重新生成 ——
+    //    那是阶段 2 之后的独立课题。v1 用"保存选择 + 弹提示 + 下次启动
+    //    生效"，宁可诚实地说清楚，也不给一个"点了没反应"的死开关。
+    if (zl::uilang::availableLanguages().size() > 1) {
+        QMenu *langMenu = mb->addMenu(tr("语言(&Y)"));
+        langMenu->setObjectName(QStringLiteral("menuLanguage"));
+
+        // 与「标尺单位」同款：互斥单选组，**不给单项设 objectName** ——
+        // 对账规则是"有名字的菜单动作必须有图标"，为两个语言项各配一张
+        // 图标纯属噪音。定位它们靠菜单本身（findChild<QMenu*>("menuLanguage")）。
+        auto *langGroup = new QActionGroup(this);
+        langGroup->setExclusive(true);
+
+        const QString current = zl::uilang::currentLanguage();
+        for (const QString &code : zl::uilang::availableLanguages()) {
+            QAction *act = new QAction(zl::uilang::displayName(code), this);
+            act->setCheckable(true);
+            act->setChecked(code == current);
+            connect(act, &QAction::triggered, this, [this, code] {
+                zl::uilang::setCurrentLanguage(code);
+                QMessageBox::information(
+                    this,
+                    tr("切换界面语言"),
+                    tr("界面语言已设置为「%1」，下次启动程序时生效。")
+                        .arg(zl::uilang::displayName(code)));
+            });
+            langGroup->addAction(act);
+            langMenu->addAction(act);
+        }
+    }
 
     // ─────────────────────────────────────────────────────────────────────
     //  帮助

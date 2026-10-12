@@ -1,5 +1,10 @@
 ﻿#include "ui/AppInfo.h"
 
+// ★ 界面语言决定显示名用中文还是英文 ★
+//   中文界面 → "逐鹿 图片编辑器 (ZlPhotoEdit)"；英文界面 → "ZlPhotoEdit"。
+//   依赖方向是 ui → core（UiLanguage 在 core 层），单向，不成环。
+#include "core/UiLanguage.h"
+
 #include <QDir>
 #include <QFileInfo>
 #include <QPainter>
@@ -45,6 +50,14 @@ QString displayNameEn()
 
 QString displayName()
 {
+    // 界面语言为英文时显示英文名；其余（中文 / 未设置）显示中文名。
+    //
+    // ★ 为什么不把中文名英文化后只留一个名字 ★
+    //   "逐鹿 图片编辑器"是品牌名（用户给的名字，中间那个空格是
+    //   "品牌 + 品类"的写法）。英文界面沿用工程名 ZlPhotoEdit 是
+    //   稳妥默认；哪天要起正式的英文品牌名，只改 kDisplayNameEn 一处。
+    if (zl::uilang::currentLanguage() == QStringLiteral("en"))
+        return displayNameEn();
     return displayNameCn();
 }
 
@@ -55,6 +68,12 @@ QString titleSuffix()
     const QString en = displayNameEn();
     if (cn == en)
         return cn;
+
+    // 英文界面：标题只放英文名。再拼一遍中文（"ZlPhotoEdit (逐鹿 图片编辑器)"）
+    // 对英文用户是噪音，对中文用户又会在英文模式下露馅。
+    if (zl::uilang::currentLanguage() == QStringLiteral("en"))
+        return en;
+
     return QStringLiteral("%1 (%2)").arg(cn, en);
 }
 

@@ -7,6 +7,7 @@
 //    2. QApplication     —— 之后才能用图形相关的一切
 //    3. 应用图标         —— 必须在 QApplication 之后、建窗口之前
 //    4. 组织名/应用名    —— 必须在读 QSettings 之前设置
+//    4.5 界面语言        —— 必须在第一个窗口（第一个 tr()）之前
 //    5. 编码设置         —— 必须在任何中文字符串比较/转换之前
 //    6. 启动日志
 //    7. MainWindow       —— 最后创建主窗口
@@ -23,6 +24,9 @@
 //   **静默**返回空图标，而且路径写错也不报错 —— 症状只是"没有图标"。
 //   AppInfo 自己用 QSvgRenderer 光栅化，失败能主动发现（见其文件头）。
 #include "ui/AppInfo.h"
+// ★ 界面语言 ★ 启动时决定装不装翻译器，必须早于第一个窗口
+//   （tr() 的结果在控件构造那一刻就定下来了）。
+#include "core/UiLanguage.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -165,10 +169,59 @@ static void setupUtf8Encoding()
 }
 
 // ============================================================================
+//  界面语言
+// ============================================================================
+//
+//  ★ 为什么必须放在这里（步骤 3 之后、第一个窗口之前）★
+//
+//    1. 晚于步骤 3：currentLanguage() 要读 QSettings，而 QSettings 的
+//       存储路径由组织名/应用名决定 —— 顺序反了会读到别处的设置
+//       （或者更糟：写到一个野路径里去）。
+//    2. 早于 MainWindow：tr() 的结果在**控件构造时**就定下来了
+//       （菜单/按钮/标签的文本在构造函数里一次性生成，之后不会自动
+//       重算）。翻译器装晚了，先建好的控件永远停在源码文本 ——
+//       这正是"明明装了翻译却没效果"最常见的原因，而且它不报任何错。
+//
+//  ★ 失败不致命 ★
+//    翻译文件缺失/损坏时回落到源码文本（英文或中文，见
+//    core/UiLanguage.cpp 的 sourceLanguage()），只打一条 qWarning ——
+//    不让"少一个 .qm"把整个程序挡在启动之前。
+//
+//  ★ app 由调用方传入而不是直接用 qApp ★
+//    本文件的其它 setup 函数都是无参的静态函数，保持同一个风格；
+//    更重要的是"显式传进来"让依赖一眼可见 —— 翻译器要装到
+//    **这个** app 上，装错了对象同样是静默无效。
+static void setupUiLanguage(QCoreApplication *app)
+{
+    const QString lang = zl::uilang::currentLanguage();
+    const bool loaded = zl::uilang::installTranslator(app, lang);
+
+    // 启动日志里打出结论：用户报"界面语言不对"时，这一行能直接告诉
+    // 排查者是"没装上"还是"装错了语言"，省掉一整轮猜测。
+    //
+    // ★ 为什么用 fprintf 而不是 qInfo ★
+    //   与上面的版本行一致：qInfo() 在 MSYS/Git Bash 的重定向环境下会
+    //   **静默丢失**（实测：同一程序在 PowerShell 下 qInfo 正常、在
+    //   Git Bash 下四个日志级别全部无声，只有 fprintf 可靠）。
+    //   诊断行的全部价值就在于"出问题时能看见"—— 宁可少一个
+    //   QT_LOGGING_RULES 开关，也不能接受它时有时无。
+    std::fprintf(stderr, "[ZlPhotoEdit] 界面语言: %s（%s）\n",
+                 qPrintable(lang),
+                 loaded ? "已加载内嵌翻译" : "源码文本");
+}
+
+// ============================================================================
 //  启动日志：把本机可用的图像格式打出来
 // ============================================================================
 //
-//  ★ 为什么要在启动时打这个 ★
+//  ★ 为什么用 fprintf 而不是 qInfo/qDebug ★
+//
+//    实测（2026-10-12，Qt 5.15.16 + MSVC）：qInfo() 在 MSYS/Git Bash 的
+//    重定向环境下会**静默丢失**——同一个程序在 PowerShell 下
+//    qDebug/qInfo/qWarning/qCritical 全部正常输出，在 Git Bash 下
+//    全部无声，连重定向到文件也抓不到。诊断行的全部价值就在于
+//    "出问题时能看见"，所以这里与上面的版本行统一用 fprintf：
+//    代价是少一个 QT_LOGGING_RULES 开关，收益是它在任何环境都出现。
 //
 //    用户最常见的抱怨之一是"这张图打不开"。可能的原因有三种：
 //      ① 文件真的损坏
@@ -178,10 +231,6 @@ static void setupUtf8Encoding()
 //    把 QImageReader::supportedImageFormats() 打出来，就能一眼区分
 //    ② 和 ③ —— 如果列表里没有 "webp"，那就是插件缺失，与我们的代码无关。
 //    排查时间从"半小时"降到"一眼"。
-//
-//  ★ 用 qInfo 而不是 qDebug ★
-//    这样默认在 Release 下也会输出（qInfo 默认开启），
-//    同时能被 QT_LOGGING_RULES 关掉（不污染用户的日志）。
 static void logSupportedImageFormats()
 {
     QStringList readFormats;
@@ -196,8 +245,10 @@ static void logSupportedImageFormats()
     for (const QByteArray &f : rawWrite)
         writeFormats << QString::fromLatin1(f);
 
-    qInfo().noquote() << "[ZlPhotoEdit] 可读格式:" << readFormats.join(QStringLiteral(" "));
-    qInfo().noquote() << "[ZlPhotoEdit] 可写格式:" << writeFormats.join(QStringLiteral(" "));
+    std::fprintf(stderr, "[ZlPhotoEdit] 可读格式: %s\n",
+                 qPrintable(readFormats.join(QStringLiteral(" "))));
+    std::fprintf(stderr, "[ZlPhotoEdit] 可写格式: %s\n",
+                 qPrintable(writeFormats.join(QStringLiteral(" "))));
 }
 
 // ============================================================================
@@ -260,6 +311,9 @@ int main(int argc, char *argv[])
 
     // ── 步骤 4：编码 ──
     setupUtf8Encoding();
+
+    // ── 步骤 4.5：界面语言 ──
+    setupUiLanguage(&app);
 
     // ── 步骤 5：启动日志 ──
     //

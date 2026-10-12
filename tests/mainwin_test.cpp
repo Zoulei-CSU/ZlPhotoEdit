@@ -78,6 +78,10 @@
 #include "core/Document.h"
 #include "core/Layer.h"
 #include "core/Selection.h"
+// ★ 界面语言 ★ 语言决策/持久化/装载的唯一出处；本组钉它的全部行为。
+//   注意本组**不编 i18n.qrc**（翻译只由主程序内嵌），所以断言必须
+//   在"没有 .qm"的环境下也成立 —— 这本身就是被测性质的一部分。
+#include "core/UiLanguage.h"
 #include "engine/Geometry.h"   // 打开为图层：unionSize / centeredOffset（放置与尺寸的判据）
 // ★ 另存为 ICO ★ 512 上限的判据在引擎层，界面层只负责"把它弹给用户"；
 //   本组要同时钉住"引擎拒绝"与"界面真的调到了引擎"。
@@ -3403,6 +3407,77 @@ static void testCreateImagePage()
 }
 
 // ---------------------------------------------------------------------------
+//  界面语言（core/UiLanguage）
+// ---------------------------------------------------------------------------
+//  ★ 本组在"没有 .qm"的环境下运行 ★
+//    翻译资源只由主程序内嵌（构建期 lrelease → qrc），测试程序不编它。
+//    于是可用语言表里只会出现源码语言 —— 这正是要钉的行为：
+//    .qm 缺失时不许把"半语言"暴露给用户（语言菜单会因此整个不出现，
+//    见 MainWindowActions.cpp 的 availableLanguages().size() > 1 门槛）。
+static void testUiLanguage()
+{
+    beginGroup("界面语言：决策 / 持久化 / 装载");
+
+    const QString src = uilang::sourceLanguage();
+    const QStringList avail = uilang::availableLanguages();
+
+    check(avail.contains(src), "★ 源码语言永远在可用列表里（.qm 缺失也有兜底）");
+    check(avail.indexOf(src) == 0, "★ 源码语言排在第一位（默认项）");
+    check(!src.isEmpty(), "★ 源码语言非空");
+
+    // ── 从未选过：按 locale 推断，再被可用表钳制 ──
+    //   先清键，模拟一个新用户。不清的话断言会随执行顺序飘
+    //   （上一轮留下的值决定这一轮看到什么）。
+    {
+        QSettings s;
+        s.remove(QStringLiteral("ui/language"));
+        s.sync();
+    }
+    // 不同机器 locale 不同（中文环境给 zh_CN、其余给 en），结论可能不同；
+    // 但**一定落在可用表里** —— 这条才是与机器无关的判据。
+    check(avail.contains(uilang::currentLanguage()),
+          "★ 从未选过 → locale 推断结果一定在可用表里（钳制有效）");
+
+    // ── 显式选择：写进去的原样读出来 ──
+    uilang::setCurrentLanguage(src);
+    checkStr(uilang::currentLanguage(), src, "★ 显式选择后原样读回");
+    {
+        QSettings s;
+        checkStr(s.value(QStringLiteral("ui/language")).toString(), src,
+                 "★ 选择真的落进了 QSettings（键名 ui/language）");
+    }
+
+    // ── 拒绝不可用语言 ──
+    //   这条防的是"下次启动拿着一个不存在的语言，界面静默回落到
+    //   源码文本，用户以为切换失败了"——而且没有任何地方能查。
+    const QString bogus = QStringLiteral("xx_XX");
+    check(!avail.contains(bogus), "★ xx_XX 不在可用列表里（测试前提）");
+    uilang::setCurrentLanguage(bogus);
+    checkStr(uilang::currentLanguage(), src,
+             "★ 拒绝不可用语言：读回来仍是源码语言");
+    {
+        QSettings s;
+        checkStr(s.value(QStringLiteral("ui/language")).toString(), src,
+                 "★ 设置里没有留下 xx_XX（拒绝=不写，不是写了再钳制）");
+    }
+
+    // ── 装载 ──
+    check(!uilang::needsTranslation(src), "★ 源码语言不需要 .qm");
+    // 给源码语言"装翻译"等于卸掉任何既有翻译，返回 false。
+    // （本组没有 .qm 可装，这条同时验证"装不上也不崩、不返回 true"。）
+    check(!uilang::installTranslator(qApp, src),
+          "★ 源码语言不安装翻译器：返回 false 且不留已装的翻译");
+
+    // 恢复现场：本组写过的设置清干净，别影响后面的组
+    //（AppInfo 的标题断言会读 currentLanguage()）。
+    {
+        QSettings s;
+        s.remove(QStringLiteral("ui/language"));
+        s.sync();
+    }
+}
+
+// ---------------------------------------------------------------------------
 
 int main(int argc, char **argv)
 {
@@ -3427,6 +3502,7 @@ int main(int argc, char **argv)
     testCropToSelection();
     testIcons();
     testAppIdentityAndIcon();
+    testUiLanguage();
     testLayerPanelAssembly();
     testMergeVisibleKeepsHiddenLayers();
     testRenameActiveLayerAction();
