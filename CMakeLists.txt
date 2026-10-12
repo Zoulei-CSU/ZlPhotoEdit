@@ -187,7 +187,20 @@ if(QT_LRELEASE)
     foreach(_ts IN LISTS ZLPE_TRANSLATIONS)
         get_filename_component(_base "${_ts}" NAME_WE)   # zlphotoedit_zh_CN
         set(_qm "${ZLPE_I18N_DIR}/${_base}.qm")
+        # ★ 必须先建目录，且不能依赖生成器代劳 ★
+        #   lrelease 自己一级目录也不建（-qm 指向缺失目录即
+        #   "cannot create ...: No such file or directory"，exit 1，
+        #   本机 Qt 5.15.16 实测，缺一级/缺两级同样报错）。
+        #   而"生成器会不会建"随工具链漂移：
+        #     · Ninja 会自动建输出目录 → 本机与 CI 的 Ninja job
+        #       一直蒙混过关（2026-10-12 本机实测：输出放在缺失的
+        #       gen/deep/ 下，Ninja 建目录后 lrelease 产出 26 字节 qm）；
+        #     · Make 不建 → CI 的 AppImage-Qt6 job（rockylinux:8
+        #       基础镜像只有 make，工作流刻意不装 ninja）在第一个
+        #       自定义命令上直接失败。
+        #   显式 make_directory 是与生成器无关的正确做法。
         add_custom_command(OUTPUT "${_qm}"
+            COMMAND "${CMAKE_COMMAND}" -E make_directory "${ZLPE_I18N_DIR}"
             COMMAND "${QT_LRELEASE}" "${_ts}" -qm "${_qm}"
             DEPENDS "${_ts}"
             COMMENT "lrelease ${_base}.ts -> ${_base}.qm"
