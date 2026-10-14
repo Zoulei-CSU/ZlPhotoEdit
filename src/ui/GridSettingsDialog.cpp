@@ -29,7 +29,7 @@ GridSettingsDialog::GridSettingsDialog(int spacing, const QColor &color, QWidget
     : QDialog(parent)
     , m_color(color.isValid() ? color : QColor(120, 120, 120, 110))
 {
-    setWindowTitle(tr("网格设置"));
+    setWindowTitle(tr("Grid Settings"));
 
     m_spin = new QSpinBox(this);
     // ★ 下界与 CanvasView::setGridSize 的 qBound(4, ...) 必须一致 ★
@@ -38,22 +38,23 @@ GridSettingsDialog::GridSettingsDialog(int spacing, const QColor &color, QWidget
     //   改一处要记得另一处（已有一条自检钉住"对话框下界 == 画布夹取下界"）。
     m_spin->setRange(4, 2000);
     m_spin->setValue(qBound(4, spacing, 2000));
-    m_spin->setSuffix(tr(" 像素"));
-    m_spin->setToolTip(tr("网格间距，单位为图像像素。\n"
-                          "放大画布时网格线不会变粗 —— 线宽恒定 1 个屏幕像素。"));
+    m_spin->setSuffix(tr(" px"));
+    m_spin->setToolTip(tr("Grid spacing in image pixels.\n"
+                          "The lines stay 1 screen pixel wide even when the "
+                          "canvas is zoomed in."));
 
     m_colorButton = new QToolButton(this);
     m_colorButton->setFixedSize(48, 24);
-    m_colorButton->setToolTip(tr("网格线颜色"));
+    m_colorButton->setToolTip(tr("Grid line color"));
     connect(m_colorButton, &QToolButton::clicked, this, &GridSettingsDialog::onPickColor);
     updateColorButton();
 
     auto *form = new QFormLayout;
-    form->addRow(tr("间距(&S):"), m_spin);
-    form->addRow(tr("颜色(&C):"), m_colorButton);
+    form->addRow(tr("Spacing(&S):"), m_spin);
+    form->addRow(tr("Color(&C):"), m_colorButton);
 
     auto *hint = new QLabel(
-        tr("提示：网格线用于对齐参考，<b>不会</b>出现在导出的图片里。"), this);
+        tr("Note: grid lines are an alignment aid and will <b>not</b> appear in exported images."), this);
     hint->setWordWrap(true);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
@@ -81,7 +82,7 @@ QColor GridSettingsDialog::color() const
 void GridSettingsDialog::onPickColor()
 {
     const QColor picked = QColorDialog::getColor(
-        m_color, this, tr("选择网格线颜色"),
+        m_color, this, tr("Choose Grid Line Color"),
         QColorDialog::ShowAlphaChannel);
     if (!picked.isValid())
         return;

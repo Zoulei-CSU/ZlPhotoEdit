@@ -189,7 +189,7 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     // 让输入框所在列吸收多余宽度，标签与勾选框贴边
     grid->setColumnStretch(1, 1);
 
-    auto *widthLabel = new QLabel(tr("宽度(&W):"), this);
+    auto *widthLabel = new QLabel(tr("Width(&W):"), this);
     m_width = new QSpinBox(this);
     m_width->setObjectName(QStringLiteral("spinWidth"));
     m_width->setSuffix(tr(" px"));
@@ -197,7 +197,7 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     m_width->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     widthLabel->setBuddy(m_width);
 
-    auto *heightLabel = new QLabel(tr("高度(&H):"), this);
+    auto *heightLabel = new QLabel(tr("Height(&H):"), this);
     m_height = new QSpinBox(this);
     m_height->setObjectName(QStringLiteral("spinHeight"));
     m_height->setSuffix(tr(" px"));
@@ -217,20 +217,21 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     checkColumn->setContentsMargins(8, 0, 0, 0);
 
     if (m_allowRatioLock) {
-        m_ratio = new QCheckBox(tr("保持长宽比(&R)"), this);
+        m_ratio = new QCheckBox(tr("Keep Aspect Ratio(&R)"), this);
         m_ratio->setObjectName(QStringLiteral("checkRatio"));
         m_ratio->setChecked(false);
-        m_ratio->setToolTip(tr("勾选后修改其中一个尺寸，另一个会按原始比例自动跟随"));
+        m_ratio->setToolTip(tr("When checked, changing one size makes the other follow at the original ratio"));
         connect(m_ratio, &QCheckBox::toggled, this, &SizeChangeDialogBase::onRatioToggled);
         checkColumn->addWidget(m_ratio);
     }
 
     if (m_allowRelative) {
-        m_relative = new QCheckBox(tr("相对(&L)"), this);
+        m_relative = new QCheckBox(tr("Relative(&L)"), this);
         m_relative->setObjectName(QStringLiteral("checkRelative"));
         m_relative->setChecked(false);
-        m_relative->setToolTip(tr("勾选后输入框里的数字表示**增量**（可正可负），"
-                                  "而不是目标尺寸"));
+        m_relative->setToolTip(tr("When checked, the numbers in the boxes are "
+                                  "<b>offsets</b> (positive or negative), not "
+                                  "target sizes"));
         connect(m_relative, &QCheckBox::toggled, this, &SizeChangeDialogBase::onRelativeToggled);
         checkColumn->addWidget(m_relative);
     }
@@ -246,15 +247,15 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     //    对话框互相切换时输入框会整体左右跳动）。再往那一列里塞一个下拉框，
     //    这一行就谁都看不清了。单位单占一行、与上面的输入框左对齐，
     //    反而一眼能看出"它同时作用于宽度和高度两个数字"。
-    auto *unitLabel = new QLabel(tr("单位(&U):"), this);
+    auto *unitLabel = new QLabel(tr("Unit(&U):"), this);
 
     m_unitCombo = new QComboBox(this);
     m_unitCombo->setObjectName(QStringLiteral("comboUnit"));
     // 携带枚举值而不是靠下标 —— 与重采样下拉框同样的做法：将来往 Unit 里
     // 插一项（例如今后支持英寸/cm，见 docs/…第 6.2 节的单位规划）时，
     // 解析端不必跟着改下标。
-    m_unitCombo->addItem(tr("像素 (px)"),   int(Unit::Pixels));
-    m_unitCombo->addItem(tr("百分比 (%)"),   int(Unit::Percent));
+    m_unitCombo->addItem(tr("Pixels (px)"),   int(Unit::Pixels));
+    m_unitCombo->addItem(tr("Percent (%)"),   int(Unit::Percent));
     m_unitCombo->setCurrentIndex(0);
     m_unitCombo->setToolTip(tr(
         "输入框里数字的计量单位。\n"
@@ -305,10 +306,10 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     // ── 按钮 ──
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
     m_okButton = buttons->button(QDialogButtonBox::Ok);
-    m_okButton->setText(tr("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
+    m_okButton->setText(tr("OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 
-    auto *resetButton = buttons->addButton(tr("复位(&E)"), QDialogButtonBox::ResetRole);
+    auto *resetButton = buttons->addButton(tr("Reset(&E)"), QDialogButtonBox::ResetRole);
     // ★ 必须自己起名字 ★
     //   用 addButton(text, role) 加的自定义按钮，其 standardButton() 并没有
     //   被设成 QDialogButtonBox::Reset，于是 button(QDialogButtonBox::Reset)
@@ -516,8 +517,8 @@ void SizeChangeDialogBase::refreshInfo()
     if (m_okButton) {
         m_okButton->setEnabled(isChanged());
         m_okButton->setToolTip(isChanged()
-            ? tr("应用新的尺寸")
-            : tr("尺寸未改变，无需应用"));
+            ? tr("Apply the new size")
+            : tr("The size has not changed - nothing to apply"));
     }
 }
 

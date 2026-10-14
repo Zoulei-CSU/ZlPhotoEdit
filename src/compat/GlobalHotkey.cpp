@@ -116,7 +116,7 @@ GlobalHotkey::GlobalHotkey(QObject *parent)
     if (QCoreApplication *app = QCoreApplication::instance())
         app->installNativeEventFilter(this);
 #else
-    m_lastError = tr("本平台不支持全局快捷键（当前实现仅 Windows）。");
+    m_lastError = tr("Global hotkeys are not supported on this platform (the current implementation is Windows-only).");
 #endif
 }
 
@@ -139,11 +139,11 @@ bool GlobalHotkey::registerSequence(const QKeySequence &sequence, int id)
 #ifdef Q_OS_WIN
 
     if (!QCoreApplication::instance()) {
-        m_lastError = tr("没有 QApplication 实例，无法登记全局快捷键。");
+        m_lastError = tr("No QApplication instance - cannot register the global hotkey.");
         return false;
     }
     if (sequence.isEmpty()) {
-        m_lastError = tr("组合键为空。");
+        m_lastError = tr("The key sequence is empty.");
         return false;
     }
 
@@ -159,8 +159,9 @@ bool GlobalHotkey::registerSequence(const QKeySequence &sequence, int id)
 
     const quint32 vk = virtualKeyFor(combined & ~Qt::KeyboardModifierMask);
     if (vk == 0) {
-        m_lastError = tr("组合键 %1 的主键不在支持范围内，请换一个"
-                         "（支持字母 / 数字 / F1~F24 / 光标键等）。").arg(seqText);
+        m_lastError = tr("The main key of %1 is out of the supported "
+                         "range - try another (letters / digits / "
+                         "F1~F24 / cursor keys, etc.).").arg(seqText);
         return false;
     }
 
@@ -170,7 +171,7 @@ bool GlobalHotkey::registerSequence(const QKeySequence &sequence, int id)
         //   登记一个裸的 'S' 意味着**全系统**那个键都被本程序吃掉：
         //   用户在任何一个程序里打字都不会出 S。这不是"功能"，是事故。
         //   只有极少数专门做这个的软件才那样干，而它们要用户明确确认。
-        m_lastError = tr("全局快捷键 %1 至少要带一个修饰键（Ctrl / Alt / Shift）。")
+        m_lastError = tr("The global hotkey %1 needs at least one modifier (Ctrl / Alt / Shift).")
                           .arg(seqText);
         return false;
     }
@@ -188,11 +189,12 @@ bool GlobalHotkey::registerSequence(const QKeySequence &sequence, int id)
 
         if (err == ERROR_HOTKEY_ALREADY_REGISTERED) {
             // 实测里最常见的失败原因：被 QQ / 微信 / 截图工具 / 输入法占了
-            m_lastError = tr("快捷键 %1 已被其它程序占用"
-                             "（同一个组合键全系统只能有一个程序登记）。")
+            m_lastError = tr("The hotkey %1 is already taken by another "
+                             "program (a combination can only be "
+                             "registered by one program system-wide).")
                               .arg(seqText);
         } else {
-            m_lastError = tr("登记全局快捷键 %1 失败（系统错误码 %2）。")
+            m_lastError = tr("Failed to register the global hotkey %1 (system error code %2).")
                               .arg(seqText).arg(uint(err));
         }
         return false;
@@ -205,7 +207,7 @@ bool GlobalHotkey::registerSequence(const QKeySequence &sequence, int id)
 
     Q_UNUSED(sequence)
     Q_UNUSED(id)
-    m_lastError = tr("本平台不支持全局快捷键（当前实现仅 Windows）。");
+    m_lastError = tr("Global hotkeys are not supported on this platform (the current implementation is Windows-only).");
     return false;
 
 #endif

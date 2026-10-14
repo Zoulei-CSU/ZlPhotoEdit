@@ -54,7 +54,7 @@ QString SelectionTool::id() const
 
 QString SelectionTool::displayName() const
 {
-    return (m_kind == Kind::Rectangle) ? tr("矩形选框") : tr("椭圆选框");
+    return (m_kind == Kind::Rectangle) ? tr("Rectangle Select") : tr("Ellipse Select");
 }
 
 int SelectionTool::shortcutKey() const
@@ -353,7 +353,7 @@ void SelectionTool::applySelection(const QRectF &rect)
     // ★ 每次拖动只产生一条命令 ★
     //   这就是"拖动期间不碰 Document"换来的直接好处，
     //   否则拖一下就会产生上百条撤销记录。
-    const QString text = (m_kind == Kind::Rectangle) ? tr("矩形选区") : tr("椭圆选区");
+    const QString text = (m_kind == Kind::Rectangle) ? tr("Rectangle Selection") : tr("Ellipse Selection");
     auto *cmd = new SelectionCommand(doc, m_before, after, text);
     commandStack()->push(cmd);
 }

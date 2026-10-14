@@ -533,7 +533,7 @@ ToolResult CropTool::mouseRelease(const ToolEvent &e)
     if (m_mode == Mode::NewRect &&
         (m_rect.width() < kMinSize || m_rect.height() < kMinSize)) {
         m_rect = m_dragStartRect;
-        showStatus(tr("在画布上拖动即可框出要保留的区域"), 2500);
+        showStatus(tr("Drag on the canvas to box the area to keep"), 2500);
     }
 
     m_mode = Mode::Idle;
@@ -595,7 +595,7 @@ ToolResult CropTool::keyPress(const ToolEvent &e)
     // 框本来就等于整幅画布时，移动没有意义 —— 继续执行只会把"整幅"
     // 变成一个偏在一边的框，用户会以为自己按错了键。
     if (fullCanvas) {
-        showStatus(tr("裁剪框已经是整幅画布，无需移动"), 1500);
+        showStatus(tr("The crop box already covers the whole canvas - nothing to move"), 1500);
         return ToolResult::accepted();
     }
 
@@ -618,19 +618,19 @@ void CropTool::emitCrop()
     const QRect r      = currentRect();
 
     if (r.width() < 1 || r.height() < 1) {
-        showStatus(tr("裁剪框太小，请先拖出一个要保留的区域"), 3000);
+        showStatus(tr("The crop box is too small - drag out an area to keep first"), 3000);
         return;
     }
 
     if (!r.intersects(canvas)) {
-        showStatus(tr("裁剪框不在画布内"), 3000);
+        showStatus(tr("The crop box is outside the canvas"), 3000);
         return;
     }
 
     // 框就是整幅画布 → Document::crop() 会返回 false（等于没裁），
     // 这里提前挡住，免得压一条"什么都没改"的撤销记录。
     if (r == canvas) {
-        showStatus(tr("裁剪框就是整幅画布，无需裁剪"), 3000);
+        showStatus(tr("The crop box is the whole canvas - nothing to crop"), 3000);
         return;
     }
 
@@ -863,7 +863,7 @@ void CropTool::cancel()
     m_seeded = false;
     ensureSeeded();          // 有选区→选区包围盒；否则→整幅画布
     emit overlayChanged();
-    showStatus(tr("已复位裁剪框"), 1500);
+    showStatus(tr("Crop box reset"), 1500);
 }
 
 } // namespace zl

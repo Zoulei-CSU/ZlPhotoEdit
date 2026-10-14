@@ -600,19 +600,19 @@ static void testCurves()
         if (!allMonotone)
             std::printf("         出问题的预设：%s\n", qPrintable(badName));
 
-        // "反相"预设必须是严格递减的 —— 它是唯一一个方向朝下的预设，
+        // "Invert" 预设必须是严格递减的 —— 它是唯一一个方向朝下的预设，
         // 如果哪天它被误改成递增，画面会从负片变成一片灰。
         {
             bool found = false;
             for (int i = 0; i < presets.size(); ++i) {
-                if (presets[i].name != QObject::tr("反相"))
+                if (presets[i].name != QObject::tr("Invert"))
                     continue;
                 found = true;
                 const CurveLut lut = Curve(presets[i].points).bake(true);
                 checkEq(int(lut[0]), 255, "反相预设的黑场映射为白");
                 checkEq(int(lut[255]), 0, "反相预设的白场映射为黑");
             }
-            check(found, "内置预设里存在「反相」");
+            check(found, "内置预设里存在「Invert」");
         }
 
         // 预设名不能重复 —— 重名会让用户分不清选的是哪一个

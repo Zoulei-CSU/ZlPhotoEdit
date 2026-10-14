@@ -600,7 +600,7 @@ void CurveEditor::drawInfoBox(QPainter &p)
         return;
     }
 
-    const QString text = tr("输入 %1  输出 %2").arg(input).arg(output);
+    const QString text = tr("Input %1  Output %2").arg(input).arg(output);
 
     p.setFont(font());
     const QFontMetrics fm = p.fontMetrics();

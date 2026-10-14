@@ -17,18 +17,28 @@ namespace {
 // ---------------------------------------------------------------------------
 //  源码文本的语言
 // ---------------------------------------------------------------------------
-//  ★ 阶段 2 英文化时把这一行从 "zh_CN" 改成 "en" ★
+//  ★ 2026-10-13 起是 "en"（阶段 2 英文化第一批：菜单系统）★
 //
-//    它一改，整个决策链自动翻转，不需要动别处：
+//    从 "zh_CN" 翻到 "en" 的那一刻，整个决策链自动翻转：
 //      · "en"     从"翻译目标"变成"源码本身"（不再需要 .qm）；
 //      · "zh_CN"  从"源码"变成"唯一需要 .qm 的语言"。
-//    这正是把语言决策集中到一个文件的原因 —— 英文化是阶段 2 的
-//    一场大改（724 处 tr()），但"程序认为自己是什么语言"只有这一行。
-constexpr const char *kSourceLanguage = "zh_CN";
+//    这正是把语言决策集中到一个文件的原因 —— 英文化是一场持续多批的
+//    大改，但"程序认为自己是什么语言"只有这一行。
+//
+//    ★ 半英文化状态是安全的 ★
+//    源码里尚未英文化的字符串（中文）在两种模式下都显示中文：
+//    中文模式有 .qm 翻译的走翻译、没有的回落中文源码；英文模式全部
+//    回落源码。所以翻转这个值不会制造"一半英文一半中文"的窗口，
+//    只会让英文模式随着一批批英文化逐渐变全。
+constexpr const char *kSourceLanguage = "en";
 
 // QSettings 键名。发布后不要改（改了等于重置用户的选择）。
 //   "ui/" 分组与 tools/ 平级，装的是"应用级偏好"而非某个工具的参数。
 constexpr const char *kSettingsKey = "ui/language";
+
+// "自动（跟随系统）"的哨兵值：存进 QSettings 表示"按 locale 推断"，
+// 也是语言菜单的第一项与默认状态。它不是语言，永远不进可用列表。
+constexpr const char *kAutoLanguage = "auto";
 
 // ---------------------------------------------------------------------------
 //  构建期内嵌的翻译语言
@@ -72,6 +82,11 @@ QString sourceLanguage()
     return QString::fromLatin1(kSourceLanguage);
 }
 
+QString autoLanguage()
+{
+    return QString::fromLatin1(kAutoLanguage);
+}
+
 QStringList availableLanguages()
 {
     // 源码语言永远可用（它不需要翻译文件），且排在第一位 ——
@@ -89,21 +104,38 @@ QStringList availableLanguages()
     return result;
 }
 
+QString languagePreference()
+{
+    // 没存过 = 自动。显式存 "auto" 与"没存过"等价 —— 菜单的勾选态
+    // 因此不必区分这两者，用户选"自动"后设置里也会留下痕迹。
+    //
+    // 存了别的不认识的值（例如用户手改了设置文件）也原样返回，
+    // 由 currentLanguage() 落到"自动"分支 —— 垃圾偏好按自动处理，
+    // 好过把垃圾当成一个语言去装载。
+    QSettings settings;
+    const QString saved =
+        settings.value(QString::fromLatin1(kSettingsKey)).toString();
+    if (saved.isEmpty())
+        return QString::fromLatin1(kAutoLanguage);
+    return saved;
+}
+
 QString currentLanguage()
 {
     const QStringList avail = availableLanguages();
 
-    QSettings settings;
-    const QString saved =
-        settings.value(QString::fromLatin1(kSettingsKey)).toString();
-    if (!saved.isEmpty() && avail.contains(saved))
-        return saved;
+    // ① 显式选过的语言优先（"auto" 不参与可用表判断，走 ②）
+    const QString pref = languagePreference();
+    if (pref != QLatin1String(kAutoLanguage) && avail.contains(pref))
+        return pref;
 
-    // 没选过（或存的已不可用，例如装过测试版又卸了翻译）→ 按 locale 推断。
+    // ② 自动 → 按 locale 推断；存的已不可用（例如装过测试版又卸了
+    //    翻译）也同样落在这里，行为一致。
     const QString guessed = deriveFromLocale();
     if (avail.contains(guessed))
         return guessed;
 
+    // ③ 兜底：源码语言永远可用，不存在"没有界面语言"这种状态。
     return sourceLanguage();
 }
 
@@ -116,7 +148,10 @@ void setCurrentLanguage(const QString &code)
     // 不校验就写入，会让"下次启动拿着一个不存在的语言"——
     // 那时界面静默回落到源码文本，用户以为切换失败了（而且没有任何
     // 地方能查）。挡在这里，比在每个读取点兜底便宜。
-    if (!availableLanguages().contains(code))
+    //
+    // "auto" 是合法取值（跟随系统），与语言代码一并放行。
+    if (code != QLatin1String(kAutoLanguage)
+        && !availableLanguages().contains(code))
         return;
 
     QSettings settings;

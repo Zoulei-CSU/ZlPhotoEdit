@@ -47,7 +47,7 @@ QString MagicWandTool::id() const
 
 QString MagicWandTool::displayName() const
 {
-    return tr("魔术棒");
+    return tr("Magic Wand");
 }
 
 int MagicWandTool::shortcutKey() const
@@ -126,7 +126,7 @@ bool MagicWandTool::selectAt(const QPoint &imagePos, ToolModifiers modifiers)
     //   压一条空命令会让撤销栈里多出一条"什么都没变"的记录，
     //   用户按 Ctrl+Z 时看起来像"撤销没反应"。
     if (fill.isEmpty()) {
-        showStatus(tr("此处没有可选择的区域"));
+        showStatus(tr("There is no selectable area here"));
         return false;
     }
 
@@ -189,11 +189,11 @@ bool MagicWandTool::selectAt(const QPoint &imagePos, ToolModifiers modifiers)
     if (beforeIsAllSelected && afterIsAllSelected)
         return false;
 
-    stack->push(new SelectionCommand(doc, before, after, tr("魔术棒选区")));
+    stack->push(new SelectionCommand(doc, before, after, tr("Magic Wand Selection")));
 
     // 状态栏报尺寸：用户能立刻判断"容差是不是调大了/小了"。
     const QRect bounds = after.bounds();
-    showStatus(tr("已选择 %1 × %2 像素（容差 %3）")
+    showStatus(tr("Selected %1 × %2 pixels (tolerance %3)")
                    .arg(bounds.width()).arg(bounds.height())
                    .arg(params.tolerance));
     return true;

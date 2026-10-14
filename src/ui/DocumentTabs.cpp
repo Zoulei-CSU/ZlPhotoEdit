@@ -222,11 +222,11 @@ QString DocumentTabs::tabTitle(int index) const
         //   这里不做编号 —— 编号是创建者的事，因为它才知道"第几张"。
         base = tab->doc->titleHint();
         if (base.isEmpty())
-            base = tr("未命名-%1").arg(index + 1);
+            base = tr("Untitled-%1").arg(index + 1);
     } else {
         base = QFileInfo(tab->doc->filePath()).fileName();
         if (base.isEmpty())
-            base = tr("未命名-%1").arg(index + 1);
+            base = tr("Untitled-%1").arg(index + 1);
     }
 
     // ★ 修改标记用栈的 clean 状态，不用 Document::isModified() ★

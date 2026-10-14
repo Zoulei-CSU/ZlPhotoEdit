@@ -774,7 +774,7 @@ static void testImageSizeDialog()
     // ── 放大时的风险提示 ──
     wBox->setValue(8000);
     hBox->setValue(6000);
-    check(info->text().contains(QStringLiteral("放大")),
+    check(info->text().contains(QStringLiteral("Enlarging")),
           "放大时明确提示重采样无法凭空产生细节");
 
     // ── 复位 ──
@@ -858,8 +858,8 @@ static void testImageSizeDialog()
             //  面板写 33.0%"这种"两个数各自都对但看着像算错了"的组合。
             {
                 const QString infoStr = info->text();
-                check(infoStr.contains(QStringLiteral("宽 33.0%"))
-                      && infoStr.contains(QStringLiteral("高 25.0%")),
+                check(infoStr.contains(QStringLiteral("W 33.0%"))
+                      && infoStr.contains(QStringLiteral("H 25.0%")),
                       "★ 两轴比例不同时信息面板分维写出（不再只报最长边）");
             }
 
@@ -919,7 +919,7 @@ static void testImageSizeDialog()
     {
         ImageSizeDialog huge(QSize(20000, 20000), ResampleMethod::Bicubic, 4);
         auto *hugeInfo = huge.findChild<QLabel *>(QStringLiteral("labelInfo"));
-        check(hugeInfo && hugeInfo->text().contains(QStringLiteral("内存提醒")),
+        check(hugeInfo && hugeInfo->text().contains(QStringLiteral("Memory note")),
               "超大尺寸时给出内存提醒");
         check(!huge.grab().isNull(), "超大尺寸下对话框仍能正常绘制");
     }
@@ -1028,16 +1028,16 @@ static void testCanvasSizeDialog()
           "★★ 对话框的偏移与 Document 执行时用的是同一个函数（预览不会说谎）");
     check(dlg.contentOffset() != anchorOffset(Anchor::TopLeft, original, small),
           "对照：与纯锚点结果不同，说明智能适配确实介入了");
-    check(info->text().contains(QStringLiteral("智能适配")),
+    check(info->text().contains(QStringLiteral("Smart fit")),
           "★ 信息面板明确告知内容被自动平移了");
-    check(!info->text().contains(QStringLiteral("裁切")),
+    check(!info->text().contains(QStringLiteral("Crop")),
           "内容能救回来时不报裁切警告（狼来了会让人忽略真正的警告）");
 
     // ── 真的裁切时必须报出来 ──
     wBox->setValue(30);
     hBox->setValue(30);
     check(dlg.newSize() == QSize(30, 30), "尺寸设置为 30×30");
-    check(info->text().contains(QStringLiteral("裁切")),
+    check(info->text().contains(QStringLiteral("Crop")),
           "★ 内容装不下时明确报出裁切量");
 
     // ── 复位 ──
@@ -1115,7 +1115,7 @@ static void testCanvasSizeDialog()
     {
         CanvasSizeDialog emptyDoc(QSize(100, 100), QRect(), Anchor::Center);
         auto *emptyInfo = emptyDoc.findChild<QLabel *>(QStringLiteral("labelInfo"));
-        check(emptyInfo && emptyInfo->text().contains(QStringLiteral("没有可见内容")),
+        check(emptyInfo && emptyInfo->text().contains(QStringLiteral("no visible content")),
               "全透明画布明确说明不会有东西被裁掉");
         check(!emptyDoc.grab().isNull(), "空内容时示意图也能绘制（不崩）");
     }
@@ -1130,9 +1130,9 @@ static void testCanvasSizeDialog()
             gw->setValue(180);
             gh->setValue(140);
             check(grow.newSize() == QSize(180, 140), "放大到 180×140");
-            check(gInfo && gInfo->text().contains(QStringLiteral("扩大")),
+            check(gInfo && gInfo->text().contains(QStringLiteral("Enlarge")),
                   "信息面板报告画布扩大了");
-            check(!gInfo->text().contains(QStringLiteral("裁切")),
+            check(!gInfo->text().contains(QStringLiteral("Crop")),
                   "放大时不可能发生裁切");
             check(!grow.grab().isNull(), "放大（透明底棋盘格）时示意图能绘制");
         }
@@ -1313,9 +1313,9 @@ static void testRotateImageDialog()
     // ── 信息面板 ──
     {
         const QString info = dlg.infoLabel()->text();
-        check(info.contains(QStringLiteral("旋转后画布")),
+        check(info.contains(QStringLiteral("Canvas after rotation")),
               "信息面板报告了旋转后的画布尺寸");
-        check(info.contains(QStringLiteral("填充")),
+        check(info.contains(QStringLiteral("fill")),
               "信息面板说明了四角需要填充的面积");
     }
 

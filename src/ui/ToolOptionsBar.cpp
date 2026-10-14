@@ -98,7 +98,7 @@ void ToolOptionsBar::setTool(AbstractTool *tool)
     //   会突然变化 —— 视觉上像是"界面抖了一下"。
     //   放一句固定高度的提示文字可以保持高度稳定。
     if (!tool) {
-        auto *label = new QLabel(tr("没有活动的工具"), this);
+        auto *label = new QLabel(tr("No active tool"), this);
         label->setEnabled(false);   // 灰掉，表示这不是"可用内容"
         m_layout->addWidget(label);
         m_layout->addStretch(1);

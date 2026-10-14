@@ -18,7 +18,7 @@
 namespace zl {
 
 CurvesDialog::CurvesDialog(const QImage &source, QWidget *parent)
-    : AdjustmentDialog(source, tr("曲线"), parent)
+    : AdjustmentDialog(source, tr("Curves"), parent)
 {
     // ── 左：曲线编辑器 ──
     m_editor = new CurveEditor(this);
@@ -45,7 +45,7 @@ CurvesDialog::CurvesDialog(const QImage &source, QWidget *parent)
     m_channelBox->setCurrentIndex(int(CurveChannel::Rgb));
     connect(m_channelBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &CurvesDialog::onChannelChanged);
-    form->addRow(tr("通道"), m_channelBox);
+    form->addRow(tr("Channel"), m_channelBox);
 
     m_presetBox = new QComboBox(this);
     // 第 0 项是占位项，不是预设 —— 用户选中某个预设后我们把它拨回这里。
@@ -53,20 +53,21 @@ CurvesDialog::CurvesDialog(const QImage &source, QWidget *parent)
     //   预设一旦应用，曲线控制点就被"写死"成了那个形状，此后用户还会
     //   继续拖点微调。若下拉框仍显示"增强对比度"，用户会以为当前曲线
     //   就是标准预设，而实际已经不是了 —— 那是个会误导人的显示。
-    m_presetBox->addItem(tr("预置…"));
+    m_presetBox->addItem(tr("Presets..."));
     const QList<CurvePreset> presets = builtinPresets();
     for (int i = 0; i < presets.size(); ++i)
         m_presetBox->addItem(presets[i].name);
     connect(m_presetBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &CurvesDialog::onPresetActivated);
-    form->addRow(tr("预设"), m_presetBox);
+    form->addRow(tr("Preset"), m_presetBox);
 
     sideLayout->addLayout(form);
 
-    m_smoothCheck = new QCheckBox(tr("平滑曲线"), this);
+    m_smoothCheck = new QCheckBox(tr("Smooth Curve"), this);
     m_smoothCheck->setChecked(true);
-    m_smoothCheck->setToolTip(tr("关闭后按控制点直接连线（硬折线）。\n"
-                                 "做色阶分离这类效果时需要它。"));
+    m_smoothCheck->setToolTip(tr("When off, control points are connected by "
+                                 "straight lines (hard corners).\n"
+                                 "Needed for posterization-like effects."));
     connect(m_smoothCheck, &QCheckBox::toggled, this, &CurvesDialog::onSmoothToggled);
     sideLayout->addWidget(m_smoothCheck);
 

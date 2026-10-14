@@ -160,12 +160,12 @@ bool AbstractTool::canWriteToActiveLayer() const
     if (!layer->isVisible()) {
         // const 方法里不能调非 const 的 showStatus，所以这里用 const_cast。
         // 这是可接受的：showStatus 只是发信号，不改变对象逻辑状态。
-        const_cast<AbstractTool *>(this)->showStatus(tr("当前图层不可见，无法编辑"));
+        const_cast<AbstractTool *>(this)->showStatus(tr("The current layer is hidden and cannot be edited"));
         return false;
     }
 
     if (layer->isLocked()) {
-        const_cast<AbstractTool *>(this)->showStatus(tr("当前图层已锁定，无法编辑"));
+        const_cast<AbstractTool *>(this)->showStatus(tr("The current layer is locked and cannot be edited"));
         return false;
     }
 

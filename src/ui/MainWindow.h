@@ -278,6 +278,14 @@ private:
     void connectCanvas(CanvasView *canvas);
     void setupActions();
     void setupMenus();
+    // 语言切换的"重启生效"提示框（保存动作在 UiLanguage::setCurrentLanguage
+    // 里已落盘，这里只负责把话说清楚）。
+    // ★ 为什么是成员函数而不是 setupMenus 里的局部 lambda ★
+    //   connect 存起来的是 lambda 的闭包：局部 lambda 引用的也是局部
+    //   变量，setupMenus 一返回那些空间就失效了 —— 点击菜单时调的会是
+    //   一块已销毁的栈内存。而"点了没反应/直接崩"要等到真去点才现形，
+    //   双构建 0 错 0 警。成员函数的寿命跟对象一样长，没有这个问题。
+    void promptRestartForLanguage(const QString &displayNameText);
     void setupToolBars();
     void setupDocks();
     void setupStatusBar();

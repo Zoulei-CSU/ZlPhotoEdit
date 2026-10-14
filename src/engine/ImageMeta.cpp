@@ -241,13 +241,13 @@ QStringList writableFormatFilters()
     QStringList filters;
 
     // 顺序按日常使用频率排列，PNG 与 JPEG 放最前面
-    filters << QObject::tr("PNG 图像 (*.png)")
-            << QObject::tr("JPEG 图像 (*.jpg *.jpeg)")
-            << QObject::tr("WebP 图像 (*.webp)")
-            << QObject::tr("BMP 图像 (*.bmp)")
-            << QObject::tr("TIFF 图像 (*.tif *.tiff)")
-            << QObject::tr("TGA 图像 (*.tga)")
-            << QObject::tr("ICO 图标 (*.ico)");
+    filters << QObject::tr("PNG Images (*.png)")
+            << QObject::tr("JPEG Images (*.jpg *.jpeg)")
+            << QObject::tr("WebP Images (*.webp)")
+            << QObject::tr("BMP Images (*.bmp)")
+            << QObject::tr("TIFF Images (*.tif *.tiff)")
+            << QObject::tr("TGA Images (*.tga)")
+            << QObject::tr("ICO Icons (*.ico)");
 
     return filters;
 }

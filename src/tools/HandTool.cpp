@@ -20,7 +20,7 @@ QString HandTool::id() const
 
 QString HandTool::displayName() const
 {
-    return tr("抓手");
+    return tr("Hand");
 }
 
 int HandTool::shortcutKey() const

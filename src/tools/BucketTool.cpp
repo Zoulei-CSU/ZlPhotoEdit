@@ -30,7 +30,7 @@ QString BucketTool::id() const
 
 QString BucketTool::displayName() const
 {
-    return tr("油漆桶");
+    return tr("Paint Bucket");
 }
 
 int BucketTool::shortcutKey() const
@@ -101,7 +101,7 @@ bool BucketTool::fillAt(const QPoint &imagePos)
     //   压一条空命令会让撤销栈里多出一条"什么都没变"的记录，
     //   用户按 Ctrl+Z 时看起来像"撤销没反应"。
     if (fill.isEmpty()) {
-        showStatus(tr("此处没有可填充的区域"));
+        showStatus(tr("There is no fillable area here"));
         return false;
     }
 
@@ -143,7 +143,7 @@ bool BucketTool::fillAt(const QPoint &imagePos)
 
     // 不透明度为 0：填了等于没填，不必压命令
     if (color.alpha() == 0) {
-        showStatus(tr("填充不透明度为 0%，未产生改动"));
+        showStatus(tr("Fill opacity is 0% - nothing changed"));
         return false;
     }
 
@@ -161,9 +161,9 @@ bool BucketTool::fillAt(const QPoint &imagePos)
     //   见 DrawCommand.h 构造函数上方那段注释。
     stack->push(DrawCommand::standalone(doc, layerIndex, region,
                                         basePatch, afterPatch,
-                                        tr("油漆桶填充")));
+                                        tr("Paint Bucket Fill")));
 
-    showStatus(tr("已填充 %1 × %2 像素").arg(region.width()).arg(region.height()));
+    showStatus(tr("Filled %1 × %2 pixels").arg(region.width()).arg(region.height()));
     return true;
 }
 

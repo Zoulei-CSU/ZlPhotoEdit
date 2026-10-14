@@ -242,7 +242,7 @@ void GeometryChangeCommand::applyPackedLayers(const PackedLayers &packed)
     // ── 应用到文档 ──
     if (restored.isEmpty()) {
         // 至少保留一个图层 —— 这是 Document 的不变量
-        Layer blank(packed.canvasSize, QObject::tr("背景"));
+        Layer blank(packed.canvasSize, QObject::tr("Background"));
         restored.append(blank);
     }
 

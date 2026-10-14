@@ -302,24 +302,21 @@ static QStringList toolButtonIds(MainWindow *w)
 // 「图像」菜单 —— aboutToShow 里刷新「裁剪」的可用性，
 // 所以必须真的弹一次菜单才能读到正确状态（规格见
 // docs/画布与文件操作设计.md 6.8）。
+// ★ 按 objectName 找，不按菜单文本 ★
+//   阶段 2 英文化后菜单文本变成英文（"Image"），按中文文本查找会静默
+//   返回 nullptr —— 症状是"找得到菜单"这条断言失败，而真正的原因是
+//   查找方式过时。objectName 与界面语言无关，两种语言下都成立。
 static QMenu *imageMenuOf(MainWindow *w)
 {
-    for (QAction *top : w->menuBar()->actions()) {
-        if (top->menu() && top->text().startsWith(QStringLiteral("图像")))
-            return top->menu();
-    }
-    return nullptr;
+    return w->findChild<QMenu *>(QStringLiteral("menuImage"));
 }
 
 // 「文件」菜单 —— 用来断言「打开为图层」确实被挂进去了。
 // 理由见 testOpenAsLayerAssembly() 的说明：只断言"动作存在"是不够的。
+// （同上：按 objectName 找，中英文界面下都成立。）
 static QMenu *fileMenuOf(MainWindow *w)
 {
-    for (QAction *top : w->menuBar()->actions()) {
-        if (top->menu() && top->text().startsWith(QStringLiteral("文件")))
-            return top->menu();
-    }
-    return nullptr;
+    return w->findChild<QMenu *>(QStringLiteral("menuFile"));
 }
 
 static void popupMenu(QMenu *m)
@@ -785,9 +782,36 @@ static void testAppIdentityAndIcon()
     }
 
     // 后缀：两个名字不同才拼括号，且必须两个都在
+    //   ★ 必须先强制界面语言，不能信"自动" ★
+    //     titleSuffix() 跟着 currentLanguage() 走，而"自动"按系统 locale
+    //     推断 —— 开发机的 Git Bash 里 LANG=en_US.UTF-8（实测 Qt 真的会读
+    //     这个环境变量：带上是 en_US、清掉是 zh_CN），CI 机器更不可控。
+    //     不强制的话，这条断言会在中文系统上绿、英文系统上红，是典型的
+    //     "飘移断言"（源码英文化前它被"locale 猜不中就回落中文源码"兜底
+    //     掩盖着，kSourceLanguage 翻成 en 之后才现形）。
+    //     两种界面语言各验一遍，验完清键恢复"自动"。
+    {
+        QSettings s;
+        s.remove(QStringLiteral("ui/language"));
+        s.sync();
+    }
+    uilang::setCurrentLanguage(QStringLiteral("zh_CN"));
+    const QString suffixCn = appinfo::titleSuffix();
+    check(suffixCn.contains(appinfo::displayNameCn()), "中文界面：标题后缀含中文名");
+    check(suffixCn.contains(appinfo::displayNameEn()), "中文界面：后缀同时带英文名（括号里）");
+
+    uilang::setCurrentLanguage(QStringLiteral("en"));
+    checkStr(appinfo::titleSuffix(), appinfo::displayNameEn(),
+             "英文界面：标题只放英文名（不对英文用户拼中文）");
+
+    {
+        QSettings s;
+        s.remove(QStringLiteral("ui/language"));
+        s.sync();
+    }
+
+    // 标题拼法：不绑定具体语言，只要求"文件名 / 缩放 / 后缀"的拼接自洽
     const QString suffix = appinfo::titleSuffix();
-    check(suffix.contains(appinfo::displayNameCn()), "标题后缀含中文名");
-    check(suffix.contains(appinfo::displayNameEn()), "标题后缀含英文名");
     check(!suffix.contains(QStringLiteral("(%1)").arg(appinfo::displayNameEn())
                                + QStringLiteral(" (%1)").arg(appinfo::displayNameEn())),
           "★ 后缀没有把同一个名字拼两遍");
@@ -1024,21 +1048,21 @@ static void testLayerPanelAssembly()
                     qUtf8Printable(missing.join(QStringLiteral(" / "))));
     check(allIcons, "每个按钮都有图标（不是字母兜底）");
 
-    check(buttonWithTip(panel, QStringLiteral("新建图层")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("New Layer")) != nullptr,
           "有「新建图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("复制图层")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Duplicate Layer")) != nullptr,
           "有「复制图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("删除")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Delete")) != nullptr,
           "有「删除图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("上移图层")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Move Layer Up")) != nullptr,
           "有「上移图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("下移图层")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Move Layer Down")) != nullptr,
           "有「下移图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("向下合并")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Merge Down")) != nullptr,
           "有「向下合并」按钮");
-    check(buttonWithTip(panel, QStringLiteral("合并可见图层")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Merge Visible Layers")) != nullptr,
           "有「合并可见图层」按钮");
-    check(buttonWithTip(panel, QStringLiteral("拼合图像")) != nullptr,
+    check(buttonWithTip(panel, QStringLiteral("Flatten Image")) != nullptr,
           "有「拼合图像」按钮");
 
     // ── 属性控件挂在面板上 ──
@@ -1151,7 +1175,7 @@ static void testMergeVisibleKeepsHiddenLayers()
 
     checkEqInt(doc->layerCount(), 2,
                "两个可见层合成一个 + 隐藏层保留 = 2 层");
-    checkStr(doc->layers().layer(0)->name(), QStringLiteral("合并图层"),
+    checkStr(doc->layers().layer(0)->name(), QStringLiteral("Merged Layer"),
              "★ 合并结果落在原来「最上面那个可见层」的槽位上 —— "
              "也就是那个隐藏层的**下面**，而不是被 append 到栈顶");
     if (doc->layerCount() >= 2) {
@@ -1330,7 +1354,7 @@ static void testPasteAsNewLayerRegression()
               "★ 新图层的位图尺寸恒等于画布（图层统一尺寸模型）");
         checkEqInt(doc->activeLayerIndex(), doc->layerCount() - 1,
                    "新图层成为活动图层（后续框选 / 移动要作用在它上面）");
-        checkStr(top->name(), QStringLiteral("粘贴的图层"), "图层名是「粘贴的图层」");
+        checkStr(top->name(), QStringLiteral("Pasted Layer"), "图层名是「Pasted Layer」");
 
         // 居中放置，而且只占了中间那一小块 ——
         // 后一条挡住"整层被图像铺满"这类错误（例如 drawImage 位置算成 0,0）
@@ -1840,7 +1864,7 @@ static void testDocumentTabs()
     checkEqInt(tabs->count(), 1, "★ 空状态下「新建」真的能建出一页（不是个亮着没用的菜单项）");
     check(currentCanvasOf(w) != nullptr, "★ 新的一页有画布");
     check(saveAct->isEnabled(), "★ 新建之后「保存」又可用（动作状态被显式推回来了）");
-    check(tabs->tabTitle(0) == QStringLiteral("未命名-1"),
+    check(tabs->tabTitle(0) == QStringLiteral("Untitled-1"),
           "★ 新页的标题是未命名-1");
 
     // ── ⑦ 关窗口：逐页销毁全部撤销栈 ──
@@ -2272,11 +2296,13 @@ static void testGridSpacingAndSnap()
     check(spacingMenu != nullptr, "★ 建出了「网格间距」子菜单");
 
     // 它必须真的挂在「视图」菜单里，而不是个没人引用的孤儿
-    QMenu *viewMenu = nullptr;
-    for (QAction *top : w->menuBar()->actions()) {
-        if (top->menu() && top->text().startsWith(QStringLiteral("视图")))
-            viewMenu = top->menu();
-    }
+    //   ★ 按 objectName 找，不按菜单文本 ★
+    //     源码英文化后菜单文本变成了 "View(&V)"，按中文前缀
+    //     startsWith("视图") 查找会静默找不到（viewMenu 停在
+    //     nullptr，后面两条"挂在视图里"的断言跟着全红）。
+    //     所有顶层菜单现在都有 objectName（MainWindowActions.cpp
+    //     逐条 setObjectName），这是两种界面语言下都成立的找法。
+    QMenu *viewMenu = w->findChild<QMenu *>(QStringLiteral("menuView"));
     check(viewMenu != nullptr, "拿得到「视图」菜单");
     if (viewMenu && spacingMenu)
         check(viewMenu->actions().contains(spacingMenu->menuAction()),
@@ -2816,7 +2842,7 @@ static void testCommandLineFiles()
                    "★ 没有参数时正好一页空白文档");
         check(tabs && tabs->tabAt(0) && tabs->tabAt(0)->doc->filePath().isEmpty(),
               "空白文档没有文件路径（标签标题会是「未命名-1」）");
-        check(tabs && tabs->tabTitle(0) == QStringLiteral("未命名-1"),
+        check(tabs && tabs->tabTitle(0) == QStringLiteral("Untitled-1"),
               "★ 标题确实是未命名-1");
     }
 }
@@ -3199,14 +3225,14 @@ static void testScreenCaptureFlow()
     const int base = tabs->count();
 
     // ── 本地序号账本 ──
-    //   ★ 为什么不用字面量 "屏幕截图-3" / "-4" ★
+    //   ★ 为什么不用字面量 "Screenshot-3" / "-4" ★
     //     ③ 那一节**可能整段跑不到** —— 本机就有别的程序占着 Ctrl+Alt+S 的时候
     //     （实测遇到过：同一台机器上前后两次全量，一次登记成功、一次被占用）。
     //     写死字面量的话，后面每一处序号都会跟着错位，那是把"环境差异"
     //     伪装成"功能坏了" —— 最难查的一类假红。
     //     所以这里按"成功截了几次"记账：③ 跑不跑，后面的期望值都自洽。
     int seq = 0;
-    const auto nextTitle = [&seq] { return QStringLiteral("屏幕截图-%1").arg(++seq); };
+    const auto nextTitle = [&seq] { return QStringLiteral("Screenshot-%1").arg(++seq); };
 
     // ── ① 立即截图：走菜单动作 ──
     QAction *actNow = namedAction(w, "actionCaptureNow");
@@ -3334,8 +3360,8 @@ static void testCreateImagePage()
 
     MainWindow::ImagePageSpec spec;
     spec.image     = img;
-    spec.layerName = QStringLiteral("屏幕截图");
-    spec.titleHint = QStringLiteral("屏幕截图-9");
+    spec.layerName = QStringLiteral("Screenshot");
+    spec.titleHint = QStringLiteral("Screenshot-9");
 
     Document *doc = w->createImagePage(spec);
     check(doc != nullptr, "建出了一页");
@@ -3349,20 +3375,20 @@ static void testCreateImagePage()
         checkEqInt(doc->layerCount(), 1, "只有一层");
         check(doc->filePath().isEmpty(), "没有文件路径");
 
-        checkStr(doc->titleHint(), QStringLiteral("屏幕截图-9"), "带上了显示名提示");
+        checkStr(doc->titleHint(), QStringLiteral("Screenshot-9"), "带上了显示名提示");
 
         // ★ displayName 与 tabTitle 是**两个**消费者 ★
         //   只断言其中一个的话，另一个忘了用提示名照样绿 ——
         //   而用户看到的恰好是后者（标签页上那一行）。
-        checkStr(doc->displayName(), QStringLiteral("屏幕截图-9"),
-                 "★ displayName 用的是提示名，不是「未命名」");
-        checkStr(tabs->tabTitle(tabs->currentIndex()), QStringLiteral("屏幕截图-9"),
+        checkStr(doc->displayName(), QStringLiteral("Screenshot-9"),
+                 "★ displayName 用的是提示名，不是「Untitled」");
+        checkStr(tabs->tabTitle(tabs->currentIndex()), QStringLiteral("Screenshot-9"),
                  "★★ 标签标题用的也是提示名（无路径文档的标题来自 titleHint）");
 
         check(!doc->isModified(), "不算已修改");
 
         Layer *l0 = doc->layers().layer(0);
-        check(l0 != nullptr && l0->name() == QStringLiteral("屏幕截图"),
+        check(l0 != nullptr && l0->name() == QStringLiteral("Screenshot"),
               "图层 0 用了传进来的名字");
         if (l0) {
             checkEqInt(diffPixelCount(l0->image(), img), 0,
@@ -3393,12 +3419,12 @@ static void testCreateImagePage()
         check(p != nullptr, "既没有路径也没有提示名 → 仍然能建页");
         if (p) {
             check(p->titleHint().isEmpty(), "提示名是空的");
-            checkStr(p->displayName(), QStringLiteral("未命名"),
-                     "★ displayName 回落到「未命名」");
-            check(tabs->tabTitle(tabs->currentIndex()).startsWith(QStringLiteral("未命名-")),
-                  "★ 标签标题回落到「未命名-N」");
+            checkStr(p->displayName(), QStringLiteral("Untitled"),
+                     "★ displayName 回落到「Untitled」");
+            check(tabs->tabTitle(tabs->currentIndex()).startsWith(QStringLiteral("Untitled-")),
+                  "★ 标签标题回落到「Untitled-N」");
             Layer *l0 = p->layers().layer(0);
-            check(l0 != nullptr && l0->name() == QStringLiteral("背景"),
+            check(l0 != nullptr && l0->name() == QStringLiteral("Background"),
                   "没给图层名时保留 Document 的默认名");
         }
     }
@@ -3420,12 +3446,15 @@ static void testUiLanguage()
 
     const QString src = uilang::sourceLanguage();
     const QStringList avail = uilang::availableLanguages();
+    const QString autoCode = uilang::autoLanguage();
 
     check(avail.contains(src), "★ 源码语言永远在可用列表里（.qm 缺失也有兜底）");
     check(avail.indexOf(src) == 0, "★ 源码语言排在第一位（默认项）");
     check(!src.isEmpty(), "★ 源码语言非空");
+    check(!avail.contains(autoCode),
+          "★ auto 是哨兵值不是语言，永远不进可用列表");
 
-    // ── 从未选过：按 locale 推断，再被可用表钳制 ──
+    // ── 默认状态：没选过 = 自动 ──
     //   先清键，模拟一个新用户。不清的话断言会随执行顺序飘
     //   （上一轮留下的值决定这一轮看到什么）。
     {
@@ -3433,14 +3462,31 @@ static void testUiLanguage()
         s.remove(QStringLiteral("ui/language"));
         s.sync();
     }
+    checkStr(uilang::languagePreference(), autoCode,
+             "★ 从未选过 → 偏好是 auto（语言菜单第一项的勾选态）");
     // 不同机器 locale 不同（中文环境给 zh_CN、其余给 en），结论可能不同；
     // 但**一定落在可用表里** —— 这条才是与机器无关的判据。
     check(avail.contains(uilang::currentLanguage()),
-          "★ 从未选过 → locale 推断结果一定在可用表里（钳制有效）");
+          "★ 自动 → locale 推断结果一定在可用表里（钳制有效）");
 
-    // ── 显式选择：写进去的原样读出来 ──
+    // ── 显式选"自动"：偏好落盘，生效语言仍按 locale ──
+    //   这一条锁的是"自动"作为一个**可选状态**存在，而不是"没选过"的
+    //   另一种写法 —— 菜单里用户主动点"自动"必须留下痕迹。
+    uilang::setCurrentLanguage(autoCode);
+    checkStr(uilang::languagePreference(), autoCode,
+             "★ 显式选自动 → 偏好读回 auto");
+    check(avail.contains(uilang::currentLanguage()),
+          "★ 显式选自动 → 生效语言仍在可用表里");
+    {
+        QSettings s;
+        checkStr(s.value(QStringLiteral("ui/language")).toString(), autoCode,
+                 "★ 自动也落进 QSettings（菜单勾选态因此可重建）");
+    }
+
+    // ── 显式选具体语言：写进去的原样读出来 ──
     uilang::setCurrentLanguage(src);
-    checkStr(uilang::currentLanguage(), src, "★ 显式选择后原样读回");
+    checkStr(uilang::languagePreference(), src, "★ 显式选择后偏好原样读回");
+    checkStr(uilang::currentLanguage(), src, "★ 生效语言跟随偏好");
     {
         QSettings s;
         checkStr(s.value(QStringLiteral("ui/language")).toString(), src,
@@ -3453,23 +3499,126 @@ static void testUiLanguage()
     const QString bogus = QStringLiteral("xx_XX");
     check(!avail.contains(bogus), "★ xx_XX 不在可用列表里（测试前提）");
     uilang::setCurrentLanguage(bogus);
-    checkStr(uilang::currentLanguage(), src,
-             "★ 拒绝不可用语言：读回来仍是源码语言");
+    checkStr(uilang::languagePreference(), src,
+             "★ 拒绝不可用语言：偏好不动（不写，不是写了再钳制）");
     {
         QSettings s;
         checkStr(s.value(QStringLiteral("ui/language")).toString(), src,
-                 "★ 设置里没有留下 xx_XX（拒绝=不写，不是写了再钳制）");
+                 "★ 设置里没有留下 xx_XX");
     }
 
     // ── 装载 ──
     check(!uilang::needsTranslation(src), "★ 源码语言不需要 .qm");
-    // 给源码语言"装翻译"等于卸掉任何既有翻译，返回 false。
-    // （本组没有 .qm 可装，这条同时验证"装不上也不崩、不返回 true"。）
+    // 路线 B 翻转后：非源码语言（zh_CN）是翻译目标，需要 .qm
+    if (avail.size() > 1)
+        check(uilang::needsTranslation(avail.at(1)),
+              "★ 非源码语言需要 .qm（源码英文 + 内嵌翻译）");
     check(!uilang::installTranslator(qApp, src),
           "★ 源码语言不安装翻译器：返回 false 且不留已装的翻译");
 
     // 恢复现场：本组写过的设置清干净，别影响后面的组
     //（AppInfo 的标题断言会读 currentLanguage()）。
+    {
+        QSettings s;
+        s.remove(QStringLiteral("ui/language"));
+        s.sync();
+    }
+}
+
+// ---------------------------------------------------------------------------
+//  语言菜单装配（阶段 2 第一批后：菜单常驻，第一项是"自动"）
+// ---------------------------------------------------------------------------
+//  ★ 为什么值得单独立一组 ★
+//    阶段 1 的语言菜单被 `availableLanguages().size() > 1` 门槛挡着
+//    （当时只有一种语言，菜单不出现）。源码翻成 en 之后可用语言变成
+//    {en, zh_CN}，菜单理应常驻 —— 但"理应"二字正是静默失效的温床：
+//    门槛代码一天还在，菜单就一天可能不出现，而双构建 0 错 0 警。
+//    这里直接把菜单结构和勾选态钉死。
+//
+//  ★ 勾选态看"偏好"而不是"生效语言" ★
+//    自动项在 locale 推断出某种语言时依然勾中 —— 那正是用户选
+//    "自动"的含义。构造两个不同偏好的窗口来验证两种勾选态。
+//  ★ 不用 newWindow() ★
+//    它内部有 s.clear()，会把刚设好的 ui/language 一起擦掉 —— 而语言
+//    菜单的勾选态是在 MainWindow 构造时从 QSettings 读的，擦了就等于
+//    测到"没选过"的状态。这里直接构造，只动 ui/language 一个键。
+static MainWindow *newWindowForLanguageMenu()
+{
+    auto *w = new MainWindow;
+    w->resize(1000, 700);
+    w->show();
+    QApplication::processEvents();
+    return w;
+}
+
+static void testLanguageMenuAssembly()
+{
+    beginGroup("语言菜单：装配与勾选态");
+
+    const QString src = uilang::sourceLanguage();
+    const int expectItems = uilang::availableLanguages().size() + 1;  // + 自动项
+
+    // 偏好 = 自动 → 自动项勾中
+    {
+        QSettings s;
+        s.setValue(QStringLiteral("ui/language"), uilang::autoLanguage());
+        s.sync();
+    }
+    MainWindow *wAuto = newWindowForLanguageMenu();
+    if (QMenu *lm = wAuto->findChild<QMenu *>(QStringLiteral("menuLanguage"))) {
+        check(lm->actions().size() == expectItems,
+              "★ 菜单项数 = 1（自动）+ 可用语言数");
+        check(!lm->actions().isEmpty() && lm->actions().first()->isCheckable(),
+              "★ 第一项是「自动」，可勾选（互斥单选组）");
+        check(!lm->actions().isEmpty() && lm->actions().first()->isChecked(),
+              "★ 偏好=自动 → 自动项勾中");
+    } else {
+        check(false, "★ 语言菜单常驻显示（menuLanguage，size()>1 门槛已拆）");
+    }
+    delete wAuto;
+
+    // 偏好 = 具体语言 → 自动项不勾、对应语言项勾中
+    {
+        QSettings s;
+        s.setValue(QStringLiteral("ui/language"), src);
+        s.sync();
+    }
+    MainWindow *wSrc = newWindowForLanguageMenu();
+    if (QMenu *lm = wSrc->findChild<QMenu *>(QStringLiteral("menuLanguage"))) {
+        check(!lm->actions().isEmpty() && !lm->actions().first()->isChecked(),
+              "★ 偏好=具体语言 → 自动项不勾");
+        int checkedIdx = -1;
+        const QList<QAction *> acts = lm->actions();
+        for (int i = 1; i < acts.size(); ++i) {
+            if (acts[i]->isChecked())
+                checkedIdx = i;
+        }
+        check(checkedIdx >= 1, "★ 偏好=具体语言 → 有且仅有一项语言被勾中");
+    } else {
+        check(false, "★ 语言菜单常驻显示（menuLanguage）");
+    }
+    delete wSrc;
+
+    // 垃圾偏好（用户手改过设置文件，写了个不存在的语言代码）→ 按"自动"
+    // 兜底勾中。currentLanguage() 对垃圾偏好同样落自动分支，菜单的勾选态
+    // 必须跟这个口径一致 —— 否则出现"菜单一项都没勾、程序却说在按 locale
+    // 推断"的对不上。setCurrentLanguage 本身拒绝写垃圾（testUiLanguage 已验），
+    // 这里验的是"万一设置文件被外部改花了"的显示兜底。
+    {
+        QSettings s;
+        s.setValue(QStringLiteral("ui/language"), QStringLiteral("xx_XX"));
+        s.sync();
+    }
+    MainWindow *wBogus = newWindowForLanguageMenu();
+    if (QMenu *lm = wBogus->findChild<QMenu *>(QStringLiteral("menuLanguage"))) {
+        check(!lm->actions().isEmpty() && lm->actions().first()->isChecked(),
+              "★ 垃圾偏好 → 自动项兜底勾中（菜单不会全空）");
+    } else {
+        check(false, "★ 语言菜单常驻显示（menuLanguage）");
+    }
+    delete wBogus;
+
+    // 恢复现场
     {
         QSettings s;
         s.remove(QStringLiteral("ui/language"));
@@ -3503,6 +3652,7 @@ int main(int argc, char **argv)
     testIcons();
     testAppIdentityAndIcon();
     testUiLanguage();
+    testLanguageMenuAssembly();
     testLayerPanelAssembly();
     testMergeVisibleKeepsHiddenLayers();
     testRenameActiveLayerAction();

@@ -15,9 +15,9 @@ QString curveChannelName(CurveChannel ch)
 {
     switch (ch) {
     case CurveChannel::Rgb:   return QObject::tr("RGB");
-    case CurveChannel::Red:   return QObject::tr("红");
-    case CurveChannel::Green: return QObject::tr("绿");
-    case CurveChannel::Blue:  return QObject::tr("蓝");
+    case CurveChannel::Red:   return QObject::tr("Red");
+    case CurveChannel::Green: return QObject::tr("Green");
+    case CurveChannel::Blue:  return QObject::tr("Blue");
     case CurveChannel::Count: break;
     }
     return QObject::tr("RGB");
@@ -517,26 +517,26 @@ QList<CurvePreset> builtinPresets()
     QList<CurvePreset> presets;
 
     // ── 线性（默认）──
-    presets.append({ QObject::tr("线性"),
+    presets.append({ QObject::tr("Linear"),
                      { CurvePoint(0.0, 0.0), CurvePoint(1.0, 1.0) } });
 
     // ── 提亮 / 压暗 ──
-    presets.append({ QObject::tr("提亮"),
+    presets.append({ QObject::tr("Brighten"),
                      { CurvePoint(0.0, 0.0), CurvePoint(0.5, 0.62), CurvePoint(1.0, 1.0) } });
 
-    presets.append({ QObject::tr("压暗"),
+    presets.append({ QObject::tr("Darker"),
                      { CurvePoint(0.0, 0.0), CurvePoint(0.5, 0.38), CurvePoint(1.0, 1.0) } });
 
     // ── 对比度增强（S 形）──
     // 暗部更暗、亮部更亮，中间调基本不动。
     // 用四个点让曲线在两端更平缓，避免高光和暗部被压死成纯黑纯白。
-    presets.append({ QObject::tr("增强对比度"),
+    presets.append({ QObject::tr("Increase Contrast"),
                      { CurvePoint(0.0, 0.0),
                        CurvePoint(0.25, 0.16),
                        CurvePoint(0.75, 0.84),
                        CurvePoint(1.0, 1.0) } });
 
-    presets.append({ QObject::tr("降低对比度"),
+    presets.append({ QObject::tr("Decrease Contrast"),
                      { CurvePoint(0.0, 0.0),
                        CurvePoint(0.25, 0.35),
                        CurvePoint(0.75, 0.65),
@@ -544,20 +544,20 @@ QList<CurvePreset> builtinPresets()
 
     // ── 胶片感（轻微褪色 + 微 S）──
     // 黑场抬高到 0.06，模拟胶片的"雾化"；白场压到 0.95 避免死白。
-    presets.append({ QObject::tr("胶片感"),
+    presets.append({ QObject::tr("Filmic"),
                      { CurvePoint(0.0, 0.06),
                        CurvePoint(0.3, 0.30),
                        CurvePoint(0.7, 0.74),
                        CurvePoint(1.0, 0.95) } });
 
     // ── 褪色 / 淡化 ──
-    presets.append({ QObject::tr("褪色"),
+    presets.append({ QObject::tr("Fade"),
                      { CurvePoint(0.0, 0.12),
                        CurvePoint(0.5, 0.52),
                        CurvePoint(1.0, 0.88) } });
 
     // ── 反转（负片）──
-    presets.append({ QObject::tr("反相"),
+    presets.append({ QObject::tr("Invert"),
                      { CurvePoint(0.0, 1.0), CurvePoint(1.0, 0.0) } });
 
     return presets;

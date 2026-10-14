@@ -325,7 +325,7 @@ static void testIdentity()
     TextOptions *opts = prepareText(&tool, Qt::black);
 
     check(tool.id() == QStringLiteral("text"), "id 是 text（QSettings 键，定了不能改）");
-    check(tool.displayName() == QString::fromUtf8("文字"), "显示名是「文字」");
+    check(tool.displayName() == QString::fromUtf8("Text"), "显示名是「Text」");
     checkEqInt(tool.shortcutKey(), Qt::Key_T, "快捷键 T（与 Photoshop/GIMP 一致）");
     checkEqInt(int(tool.cursor().shape()), int(Qt::IBeamCursor),
                "光标是工字形（表达「插入点」，不是十字）");

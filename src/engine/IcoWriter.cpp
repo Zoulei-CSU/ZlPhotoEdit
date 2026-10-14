@@ -1,6 +1,7 @@
 ﻿#include "engine/IcoWriter.h"
 
 #include <QBuffer>
+#include <QCoreApplication>
 #include <QSaveFile>
 #include <QtGlobal>
 
@@ -159,15 +160,20 @@ QString rejectionMessage(const QSize &size)
         return QString();
 
     if (!size.isValid() || size.width() <= 0 || size.height() <= 0) {
-        return QStringLiteral("图像尺寸无效，无法导出为 ICO。");
+        // 这些消息最终由 UI 层显示，所以走 translate（context 显式给出，
+        // 与匿名 namespace 里的 tr() 对不上的问题同理，见
+        // docs/界面语言.md §4.3；字面量直传，lupdate 才提取）。
+        return QCoreApplication::translate("zl::ico",
+                   "The image size is invalid; cannot export as ICO.");
     }
 
     // ★ 上限值只在这一处以 QString::number 出现，界面层不重复写死 ★
-    return QStringLiteral(
-               "图像尺寸 %1 × %2 超出 ICO 格式的上限 %3 × %3。\n\n"
-               "ICO 是图标格式，边长上限为 %3 像素（Windows 官方口径是 256，"
-               "本程序放宽到 %3）。\n\n"
-               "请先用「图像 → 图像大小」把图像缩小到 %3 像素以内，再另存为 ICO。")
+    return QCoreApplication::translate("zl::ico",
+               "The image size %1 × %2 exceeds the ICO format limit of %3 × %3.\n\n"
+               "ICO is an icon format with a maximum edge of %3 pixels "
+               "(Windows officially says 256; this program allows %3).\n\n"
+               "Use Image → Image Size to reduce the image to %3 pixels or "
+               "less, then save as ICO.")
         .arg(size.width())
         .arg(size.height())
         .arg(kMaxIconEdge);

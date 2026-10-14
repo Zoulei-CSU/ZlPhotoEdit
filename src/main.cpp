@@ -193,11 +193,13 @@ static void setupUtf8Encoding()
 //    **这个** app 上，装错了对象同样是静默无效。
 static void setupUiLanguage(QCoreApplication *app)
 {
+    const QString pref = zl::uilang::languagePreference();
     const QString lang = zl::uilang::currentLanguage();
     const bool loaded = zl::uilang::installTranslator(app, lang);
 
     // 启动日志里打出结论：用户报"界面语言不对"时，这一行能直接告诉
-    // 排查者是"没装上"还是"装错了语言"，省掉一整轮猜测。
+    // 排查者是"没装上"还是"装错了语言"，还是"自动推断给了一个他没想
+    // 要的语言"（偏好=自动 时 locale 推断那一跳是看不见的，打出来才可查）。
     //
     // ★ 为什么用 fprintf 而不是 qInfo ★
     //   与上面的版本行一致：qInfo() 在 MSYS/Git Bash 的重定向环境下会
@@ -205,7 +207,8 @@ static void setupUiLanguage(QCoreApplication *app)
     //   Git Bash 下四个日志级别全部无声，只有 fprintf 可靠）。
     //   诊断行的全部价值就在于"出问题时能看见"—— 宁可少一个
     //   QT_LOGGING_RULES 开关，也不能接受它时有时无。
-    std::fprintf(stderr, "[ZlPhotoEdit] 界面语言: %s（%s）\n",
+    std::fprintf(stderr, "[ZlPhotoEdit] 界面语言: %s → %s（%s）\n",
+                 pref == zl::uilang::autoLanguage() ? "自动" : "指定",
                  qPrintable(lang),
                  loaded ? "已加载内嵌翻译" : "源码文本");
 }

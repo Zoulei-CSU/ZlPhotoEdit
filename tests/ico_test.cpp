@@ -240,7 +240,7 @@ static void testSizeRules()
     checkStr(QString::number(ico::kMaxIconEdge), QStringLiteral("512"),
              "上限常量就是 512");
 
-    check(ico::rejectionMessage(QSize(0, 0)).contains(QStringLiteral("无效")),
+    check(ico::rejectionMessage(QSize(0, 0)).contains(QStringLiteral("invalid")),
           "尺寸无效时给的是另一句话（不是【太大】）");
 }
 
@@ -550,7 +550,7 @@ static void testMessageQuality()
     check(m.contains(QStringLiteral("1024")) && m.contains(QStringLiteral("768")),
           "提示语给出用户图的**真实**尺寸");
     check(m.contains(QStringLiteral("512")), "提示语给出上限");
-    check(m.contains(QStringLiteral("图像大小")) || m.contains(QStringLiteral("缩小")),
+    check(m.contains(QStringLiteral("Image Size")) || m.contains(QStringLiteral("reduce")),
           "★ 提示语要告诉用户【怎么办】，而不只是【不行】");
     check(!m.contains(QStringLiteral("%1")) && !m.contains(QStringLiteral("%3")),
           "★★ 占位符全部被替换掉了（漏 .arg 会让用户看到【%3】）");

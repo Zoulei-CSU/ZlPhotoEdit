@@ -701,7 +701,7 @@ void MainWindow::applyActiveToolToUi(AbstractTool *tool)
     }
 
     if (m_statusBar && tool)
-        m_statusBar->showMessage(tr("当前工具：%1").arg(tool->displayName()), 1500);
+        m_statusBar->showMessage(tr("Current tool: %1").arg(tool->displayName()), 1500);
 }
 
 // ============================================================================
@@ -854,8 +854,8 @@ void MainWindow::wireCommandStack(CommandStack *stack)
                 if (stack != m_commandStack || !m_actionUndo)
                     return;
                 m_actionUndo->setText(text.isEmpty()
-                                          ? tr("撤销(&U)")
-                                          : tr("撤销 %1(&U)").arg(text));
+                                          ? tr("Undo(&U)")
+                                          : tr("Undo %1(&U)").arg(text));
             });
 
     connect(stack, &CommandStack::redoTextChanged, this,
@@ -863,8 +863,8 @@ void MainWindow::wireCommandStack(CommandStack *stack)
                 if (stack != m_commandStack || !m_actionRedo)
                     return;
                 m_actionRedo->setText(text.isEmpty()
-                                          ? tr("重做(&R)")
-                                          : tr("重做 %1(&R)").arg(text));
+                                          ? tr("Redo(&R)")
+                                          : tr("Redo %1(&R)").arg(text));
             });
 
     // ── 修改标记 → 窗口标题 ──
@@ -907,15 +907,15 @@ void MainWindow::syncUndoRedoActions(CommandStack *stack)
     if (m_actionUndo) {
         m_actionUndo->setEnabled(canUndo);
         const QString text = stack ? stack->undoText() : QString();
-        m_actionUndo->setText(text.isEmpty() ? tr("撤销(&U)")
-                                            : tr("撤销 %1(&U)").arg(text));
+        m_actionUndo->setText(text.isEmpty() ? tr("Undo(&U)")
+                                            : tr("Undo %1(&U)").arg(text));
     }
 
     if (m_actionRedo) {
         m_actionRedo->setEnabled(canRedo);
         const QString text = stack ? stack->redoText() : QString();
-        m_actionRedo->setText(text.isEmpty() ? tr("重做(&R)")
-                                            : tr("重做 %1(&R)").arg(text));
+        m_actionRedo->setText(text.isEmpty() ? tr("Redo(&R)")
+                                            : tr("Redo %1(&R)").arg(text));
     }
 }
 

@@ -80,7 +80,7 @@ void StatusBarWidget::buildUi()
     // ── 坐标 ──
     m_coordLabel = new QLabel(this);
     m_coordLabel->setMinimumWidth(100);
-    m_coordLabel->setToolTip(tr("光标在图像中的坐标（像素）"));
+    m_coordLabel->setToolTip(tr("Cursor position within the image, in pixels"));
     m_coordLabel->setText(QStringLiteral("—, —"));
     layout->addWidget(m_coordLabel);
 
@@ -97,7 +97,7 @@ void StatusBarWidget::buildUi()
 
     m_colorLabel = new QLabel(this);
     m_colorLabel->setMinimumWidth(100);
-    m_colorLabel->setToolTip(tr("光标下方合成图像的颜色（R, G, B）"));
+    m_colorLabel->setToolTip(tr("Color of the composited image under the cursor (R, G, B)"));
     m_colorLabel->setText(QStringLiteral("—"));
     layout->addWidget(m_colorLabel);
 
@@ -109,7 +109,7 @@ void StatusBarWidget::buildUi()
     // ── 内存 ──
     m_memoryLabel = new QLabel(this);
     m_memoryLabel->setMinimumWidth(180);
-    m_memoryLabel->setToolTip(tr("文档像素内存（括号内为撤销栈估算占用）"));
+    m_memoryLabel->setToolTip(tr("Document pixel memory (undo-stack estimate in parentheses)"));
     layout->addWidget(m_memoryLabel);
 
     // ── 弹簧：把消息推到右侧 ──
@@ -123,7 +123,7 @@ void StatusBarWidget::buildUi()
     layout->addStretch(1);
 
     // ── 缩放 ──
-    auto *zoomLabel = new QLabel(tr("缩放"), this);
+    auto *zoomLabel = new QLabel(tr("Zoom"), this);
     layout->addWidget(zoomLabel);
 
     m_zoomCombo = new QComboBox(this);
@@ -341,7 +341,7 @@ void StatusBarWidget::refreshDocumentInfo()
 
     // ── 尺寸 ──
     const QSize sz = m_doc->canvasSize();
-    m_sizeLabel->setText(tr("尺寸: %1 × %2").arg(sz.width()).arg(sz.height()));
+    m_sizeLabel->setText(tr("Size: %1 × %2").arg(sz.width()).arg(sz.height()));
 
     // ── 内存 ──
     //
@@ -352,7 +352,7 @@ void StatusBarWidget::refreshDocumentInfo()
     const qint64 docBytes   = m_doc->memoryUsage();
     const qint64 stackBytes = m_stack ? m_stack->estimatedMemoryUsage() : 0;
 
-    m_memoryLabel->setText(tr("内存: %1 (撤销 %2)")
+    m_memoryLabel->setText(tr("Memory: %1 (Undo %2)")
                                .arg(formatBytes(docBytes))
                                .arg(formatBytes(stackBytes)));
 }

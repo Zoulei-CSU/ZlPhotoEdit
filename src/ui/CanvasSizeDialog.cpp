@@ -7,6 +7,7 @@
 #include <QAbstractButton>
 #include <QButtonGroup>
 #include <QColorDialog>
+#include <QCoreApplication>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -48,20 +49,29 @@ public:
         setToolTip(anchorName(anchor));
     }
 
+    // ★ context 修复（2026-10-14，见 docs/界面语言.md §4.3）★
+    //   AnchorButton 在匿名 namespace 里且无 Q_OBJECT：lupdate 记 context
+    //   "zl::AnchorButton"，运行期 tr() 查 "QObject" —— 对不上。
+    //   不能加 Q_OBJECT（moc 按 zl::AnchorButton 生成符号，编译直接报
+    //   "zl": 不是类或命名空间名称）。改法：translate + 显式 context。
+    //   ★ 字面量必须直接传给 translate，不能经 QT_TRANSLATE_NOOP 中转 ★
+    //     实测 lupdate 5.15.16 不提取 static 成员函数里的 QT_TRANSLATE_NOOP
+    //     （且会连带触发 "Qualifying with unknown namespace/class" 警告，
+    //     把后面的 tr() 全记成 ::CanvasSizeDialog context）。
     static QString anchorName(Anchor a)
     {
         switch (a) {
-        case Anchor::TopLeft:      return tr("左上");
-        case Anchor::TopCenter:    return tr("上中");
-        case Anchor::TopRight:     return tr("右上");
-        case Anchor::MiddleLeft:   return tr("左中");
-        case Anchor::Center:       return tr("居中");
-        case Anchor::MiddleRight:  return tr("右中");
-        case Anchor::BottomLeft:   return tr("左下");
-        case Anchor::BottomCenter: return tr("下中");
-        case Anchor::BottomRight:  return tr("右下");
+        case Anchor::TopLeft:      return QCoreApplication::translate("zl::AnchorButton", "Top Left");
+        case Anchor::TopCenter:    return QCoreApplication::translate("zl::AnchorButton", "Top");
+        case Anchor::TopRight:     return QCoreApplication::translate("zl::AnchorButton", "Top Right");
+        case Anchor::MiddleLeft:   return QCoreApplication::translate("zl::AnchorButton", "Middle Left");
+        case Anchor::Center:       return QCoreApplication::translate("zl::AnchorButton", "Center");
+        case Anchor::MiddleRight:  return QCoreApplication::translate("zl::AnchorButton", "Middle Right");
+        case Anchor::BottomLeft:   return QCoreApplication::translate("zl::AnchorButton", "Bottom Left");
+        case Anchor::BottomCenter: return QCoreApplication::translate("zl::AnchorButton", "Bottom");
+        case Anchor::BottomRight:  return QCoreApplication::translate("zl::AnchorButton", "Bottom Right");
         }
-        return tr("居中");
+        return QCoreApplication::translate("zl::AnchorButton", "Center");
     }
 
 protected:
@@ -339,7 +349,7 @@ CanvasSizeDialog::CanvasSizeDialog(const QSize &original,
                                    const QRect &contentBounds,
                                    Anchor initialAnchor,
                                    QWidget *parent)
-    : SizeChangeDialogBase(original, tr("画布大小"),
+    : SizeChangeDialogBase(original, tr("Canvas Size"),
                            /*allowRatioLock=*/false,   // 画布大小没有"保持长宽比"的概念：
                                                        // 拉伸画布不改变内容，比例无意义
                            /*allowRelative=*/true,
@@ -354,7 +364,7 @@ CanvasSizeDialog::CanvasSizeDialog(const QSize &original,
     // ── 定位行：九宫格 + 扩展颜色 ──
     auto *row = new QHBoxLayout;
     row->setSpacing(8);
-    row->addWidget(new QLabel(tr("定位(&A):"), extra));
+    row->addWidget(new QLabel(tr("Anchor(&A):"), extra));
 
     auto *grid = new QGridLayout;
     grid->setSpacing(2);
@@ -380,15 +390,16 @@ CanvasSizeDialog::CanvasSizeDialog(const QSize &original,
     row->addLayout(grid);
     row->addSpacing(18);
 
-    row->addWidget(new QLabel(tr("扩展颜色(&C):"), extra));
+    row->addWidget(new QLabel(tr("Fill Color(&C):"), extra));
 
     m_colorButton = new QToolButton(extra);
     m_colorButton->setObjectName(QStringLiteral("buttonFillColor"));
     m_colorButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     m_colorButton->setIconSize(QSize(26, 16));
-    m_colorButton->setToolTip(tr("画布扩大时新增区域填充什么颜色。"
-                                 "默认透明 —— 导出为 PNG 时保持透明，"
-                                 "导出为 JPEG 时会变成白色。"));
+    m_colorButton->setToolTip(tr("Color used to fill the new area when the "
+                                 "canvas grows. Transparent by default - stays "
+                                 "transparent in PNG exports, becomes white in "
+                                 "JPEG exports."));
     connect(m_colorButton, &QToolButton::clicked, this, &CanvasSizeDialog::onPickColor);
     row->addWidget(m_colorButton);
 
@@ -403,10 +414,10 @@ CanvasSizeDialog::CanvasSizeDialog(const QSize &original,
     m_legend = new QLabel(extra);
     m_legend->setObjectName(QStringLiteral("labelLegend"));
     m_legend->setTextFormat(Qt::RichText);
-    m_legend->setText(tr("<span style='color:#333333'>实线</span> = 新画布　"
-                         "<span style='color:#5a5a5a'>虚线</span> = 原画布范围　"
-                         "<span style='color:#2a6eb4'>■</span> 内容　"
-                         "<span style='color:#c82828'>■</span> 将被裁掉"));
+    m_legend->setText(tr("<span style='color:#333333'>Solid</span> = new canvas　"
+                         "<span style='color:#5a5a5a'>Dashed</span> = original canvas extent　"
+                         "<span style='color:#2a6eb4'>■</span> content　"
+                         "<span style='color:#c82828'>■</span> will be cropped"));
     v->addWidget(m_legend);
 
     // ── 交给基类完成整体布局 ──
@@ -470,9 +481,9 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
     const QPoint offset = contentOffset();
 
     QString html;
-    html += tr("原画布： %1 × %2 px").arg(oldSize.width()).arg(oldSize.height());
+    html += tr("Original canvas: %1 × %2 px").arg(oldSize.width()).arg(oldSize.height());
     html += QStringLiteral("<br>");
-    html += tr("新画布： <b>%1 × %2 px</b>").arg(newSize.width()).arg(newSize.height());
+    html += tr("New canvas: <b>%1 × %2 px</b>").arg(newSize.width()).arg(newSize.height());
 
     // ── 面积变化 ──
     //
@@ -490,7 +501,7 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
                                           : QStringLiteral("#1f7a1f");
         html += QStringLiteral("　<span style='color:%1'>（面积%2 %3%）</span>")
                     .arg(color)
-                    .arg(pct > 0.0 ? tr("扩大") : tr("缩小"))
+                    .arg(pct > 0.0 ? tr("Enlarge") : tr("Shrink"))
                     .arg(QString::number(qAbs(pct), 'f', 0));
     }
 
@@ -502,8 +513,8 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
     const QPoint naive = anchorOffset(anchor(), oldSize, newSize);
     if (offset != naive) {
         html += QStringLiteral("<br><span style='color:#1f5fa9'>")
-              + tr("智能适配：内容将自动偏移 (%1, %2) 像素，"
-                   "以免超出画布的部分被裁掉。")
+              + tr("Smart fit: the content will be offset by (%1, %2) pixels "
+                   "so that nothing sticking out gets cropped.")
                     .arg(offset.x() - naive.x())
                     .arg(offset.y() - naive.y())
               + QStringLiteral("</span>");
@@ -513,21 +524,21 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
     const CropInfo crop = cropInfo(newSize, offset);
     if (crop.any()) {
         QStringList parts;
-        if (crop.left)   parts << tr("左 %1 px").arg(crop.left);
-        if (crop.right)  parts << tr("右 %1 px").arg(crop.right);
-        if (crop.top)    parts << tr("上 %1 px").arg(crop.top);
-        if (crop.bottom) parts << tr("下 %1 px").arg(crop.bottom);
+        if (crop.left)   parts << tr("Left %1 px").arg(crop.left);
+        if (crop.right)  parts << tr("Right %1 px").arg(crop.right);
+        if (crop.top)    parts << tr("Top %1 px").arg(crop.top);
+        if (crop.bottom) parts << tr("Bottom %1 px").arg(crop.bottom);
 
         html += QStringLiteral("<br><span style='color:#b00000'><b>")
-              + tr("裁切：内容将被裁掉（%1）").arg(parts.join(tr("、")))
+              + tr("Crop: content will be cropped (%1)").arg(parts.join(tr(", ")))
               + QStringLiteral("</b></span>");
     } else if (m_contentBounds.isEmpty()) {
         html += QStringLiteral("<br><span style='color:#666666'>")
-              + tr("当前画布内没有可见内容，调整画布不会裁掉任何东西。")
+              + tr("There is no visible content in the current canvas; resizing will not crop anything.")
               + QStringLiteral("</span>");
     } else {
         html += QStringLiteral("<br><span style='color:#1f7a1f'>")
-              + tr("内容完整保留。")
+              + tr("The content is fully preserved.")
               + QStringLiteral("</span>");
     }
 
@@ -552,7 +563,7 @@ void CanvasSizeDialog::onAnchorClicked(int /*id*/)
 void CanvasSizeDialog::onPickColor()
 {
     QColorDialog dlg(this);
-    dlg.setWindowTitle(tr("选择画布扩展颜色"));
+    dlg.setWindowTitle(tr("Choose Canvas Fill Color"));
     dlg.setCurrentColor(m_fillColor);
     // 必须开放 alpha 通道：默认的"透明"就是 alpha = 0，
     // 不给 alpha 滑块的话用户选不回透明。
@@ -576,7 +587,7 @@ void CanvasSizeDialog::updateColorButton()
     m_colorButton->setIconSize(iconSize);
 
     if (m_fillColor.alpha() == 0) {
-        m_colorButton->setText(tr("透明"));
+        m_colorButton->setText(tr("Transparent"));
     } else if (m_fillColor.alpha() == 255) {
         m_colorButton->setText(m_fillColor.name().toUpper());
     } else {

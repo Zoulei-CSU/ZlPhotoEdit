@@ -13,7 +13,7 @@
 namespace zl {
 
 HueSaturationDialog::HueSaturationDialog(const QImage &source, QWidget *parent)
-    : AdjustmentDialog(source, tr("色相/饱和度"), parent)
+    : AdjustmentDialog(source, tr("Hue/Saturation"), parent)
 {
     auto *params = new QWidget(this);
     auto *grid = new QGridLayout(params);
@@ -24,9 +24,9 @@ HueSaturationDialog::HueSaturationDialog(const QImage &source, QWidget *parent)
     // 色相绕色环转，一圈 360°，所以取值范围是 [-180, 180]（双向对称）。
     // 饱和度与明度的 [-100, 100] 与"亮度/对比度"保持一致，-100 分别
     // 表示完全去色与完全变黑。
-    m_hue        = addSliderRow(grid, 0, tr("色相"),   -180, 180, 0, tr("°"));
-    m_saturation = addSliderRow(grid, 1, tr("饱和度"), -100, 100, 0);
-    m_lightness  = addSliderRow(grid, 2, tr("明度"),   -100, 100, 0);
+    m_hue        = addSliderRow(grid, 0, tr("Hue"),   -180, 180, 0, tr("°"));
+    m_saturation = addSliderRow(grid, 1, tr("Saturation"), -100, 100, 0);
+    m_lightness  = addSliderRow(grid, 2, tr("Luminosity"),   -100, 100, 0);
 
     grid->setColumnStretch(1, 1);
 

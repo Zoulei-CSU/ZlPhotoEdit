@@ -48,17 +48,18 @@ void AdjustmentDialog::buildLayout(QWidget *paramArea)
     auto *main = new QVBoxLayout(this);
     main->addWidget(paramArea, 1);
 
-    m_previewCheck = new QCheckBox(tr("预览(&P)"), this);
+    m_previewCheck = new QCheckBox(tr("Preview(&P)"), this);
     m_previewCheck->setChecked(true);
-    m_previewCheck->setToolTip(tr("取消勾选可以临时看到未调整前的画面，"
-                                  "便于对比（不会丢失当前参数）"));
+    m_previewCheck->setToolTip(tr("Unchecking temporarily shows the unadjusted "
+                                  "image for comparison (current settings are "
+                                  "kept)"));
     connect(m_previewCheck, &QCheckBox::toggled, this, &AdjustmentDialog::onPreviewToggled);
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    buttons->button(QDialogButtonBox::Ok)->setText(tr("确定"));
-    buttons->button(QDialogButtonBox::Cancel)->setText(tr("取消"));
+    buttons->button(QDialogButtonBox::Ok)->setText(tr("OK"));
+    buttons->button(QDialogButtonBox::Cancel)->setText(tr("Cancel"));
 
-    m_resetButton = buttons->addButton(tr("复位(&R)"), QDialogButtonBox::ResetRole);
+    m_resetButton = buttons->addButton(tr("Reset(&R)"), QDialogButtonBox::ResetRole);
     connect(m_resetButton, &QPushButton::clicked, this, &AdjustmentDialog::onResetClicked);
 
     connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);

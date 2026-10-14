@@ -507,7 +507,7 @@ void LayerPanel::setupUi()
 
     auto *blendRow = new QHBoxLayout;
     blendRow->setSpacing(5);
-    blendRow->addWidget(makeLabel(QStringLiteral("layer_blend"), tr("混合模式")));
+    blendRow->addWidget(makeLabel(QStringLiteral("layer_blend"), tr("Blend Mode")));
 
     m_blendCombo = new QComboBox(this);
     m_blendCombo->setObjectName(QStringLiteral("layerBlendCombo"));
@@ -520,7 +520,7 @@ void LayerPanel::setupUi()
 
     auto *opacityRow = new QHBoxLayout;
     opacityRow->setSpacing(5);
-    opacityRow->addWidget(makeLabel(QStringLiteral("layer_opacity"), tr("不透明度")));
+    opacityRow->addWidget(makeLabel(QStringLiteral("layer_opacity"), tr("Opacity")));
 
     m_opacitySlider = new QSlider(Qt::Horizontal, this);
     m_opacitySlider->setObjectName(QStringLiteral("layerOpacitySlider"));
@@ -573,10 +573,10 @@ void LayerPanel::setupUi()
         return btn;
     };
 
-    addButton(QStringLiteral("layer_new"), tr("新建图层 (Ctrl+Shift+N)"),
+    addButton(QStringLiteral("layer_new"), tr("New Layer (Ctrl+Shift+N)"),
               [this]() { emit addLayerRequested(); });
 
-    addButton(QStringLiteral("layer_duplicate"), tr("复制图层 (Ctrl+J)"),
+    addButton(QStringLiteral("layer_duplicate"), tr("Duplicate Layer (Ctrl+J)"),
               [this]() {
         // 有选中就用选中的（支持多选批量复制）；没有就退回活动图层。
         QList<int> sel = selectedLayerIndices();
@@ -585,7 +585,7 @@ void LayerPanel::setupUi()
         emit duplicateRequested(sel);
     });
 
-    addButton(QStringLiteral("layer_delete"), tr("删除选中的图层"),
+    addButton(QStringLiteral("layer_delete"), tr("Delete Selected Layers"),
               [this]() {
         QList<int> sel = selectedLayerIndices();
         if (sel.isEmpty() && m_doc)
@@ -593,22 +593,22 @@ void LayerPanel::setupUi()
         emit deleteRequested(sel);
     });
 
-    addButton(QStringLiteral("layer_up"), tr("上移图层 (Ctrl+])"),
+    addButton(QStringLiteral("layer_up"), tr("Move Layer Up (Ctrl+])"),
               [this]() { emit moveUpRequested(); });
 
-    addButton(QStringLiteral("layer_down"), tr("下移图层 (Ctrl+[)"),
+    addButton(QStringLiteral("layer_down"), tr("Move Layer Down (Ctrl+[)"),
               [this]() { emit moveDownRequested(); });
 
-    addButton(QStringLiteral("layer_merge_down"), tr("向下合并 (Ctrl+E)"),
+    addButton(QStringLiteral("layer_merge_down"), tr("Merge Down (Ctrl+E)"),
               [this]() {
         if (m_doc)
             emit mergeDownRequested(m_doc->activeLayerIndex());
     });
 
-    addButton(QStringLiteral("layer_merge_visible"), tr("合并可见图层"),
+    addButton(QStringLiteral("layer_merge_visible"), tr("Merge Visible Layers"),
               [this]() { emit mergeVisibleRequested(); });
 
-    addButton(QStringLiteral("layer_flatten"), tr("拼合图像"),
+    addButton(QStringLiteral("layer_flatten"), tr("Flatten Image"),
               [this]() { emit flattenRequested(); });
 
     btnRow->addStretch(1);
@@ -896,9 +896,9 @@ void LayerPanel::updateCountLabel()
     const int count = m_list ? m_list->count() : 0;
     const int selected = m_list ? m_list->selectedItems().size() : 0;
 
-    QString text = tr("共 %1 个图层").arg(count);
+    QString text = tr("Total %1 layers").arg(count);
     if (selected > 1)
-        text += tr(" · 选中 %1 个").arg(selected);
+        text += tr(" · %1 selected").arg(selected);
     m_countLabel->setText(text);
 }
 

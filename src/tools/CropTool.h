@@ -72,7 +72,7 @@ public:
 
     // ── 身份 ──
     QString id() const override { return QStringLiteral("crop"); }
-    QString displayName() const override { return tr("裁剪"); }
+    QString displayName() const override { return tr("Crop"); }
     int     shortcutKey() const override { return Qt::Key_C; }
 
     ToolOptions *options() const override;

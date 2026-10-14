@@ -137,18 +137,18 @@ void MainWindow::setupActions()
     //  文件
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionNew = new QAction(tr("新建(&N)..."), this);
+    m_actionNew = new QAction(tr("New(&N)..."), this);
     m_actionNew->setObjectName(QStringLiteral("actionNew"));
     m_actionNew->setIcon(icons::icon(QStringLiteral("file_new")));
     m_actionNew->setShortcut(QKeySequence::New);
-    m_actionNew->setStatusTip(tr("创建一个新的空白图像"));
+    m_actionNew->setStatusTip(tr("Create a new blank image"));
     connect(m_actionNew, &QAction::triggered, this, &MainWindow::newDocument);
 
-    m_actionOpen = new QAction(tr("打开(&O)..."), this);
+    m_actionOpen = new QAction(tr("Open(&O)..."), this);
     m_actionOpen->setObjectName(QStringLiteral("actionOpen"));
     m_actionOpen->setIcon(icons::icon(QStringLiteral("file_open")));
     m_actionOpen->setShortcut(QKeySequence::Open);
-    m_actionOpen->setStatusTip(tr("打开一个已存在的图像文件"));
+    m_actionOpen->setStatusTip(tr("Open an existing image file"));
     connect(m_actionOpen, &QAction::triggered, this, &MainWindow::openDocument);
 
     // ★ 与「打开」并列，但语义完全不同 ★
@@ -160,11 +160,11 @@ void MainWindow::setupActions()
     //   它是个不常用的"重度操作"，而合适的组合键都已名花有主
     //   （Ctrl+O 是打开、Ctrl+Shift+V 是粘贴到当前层）。
     //   硬塞一个进去只会在键盘上误触，进而悄悄改掉画布尺寸。
-    m_actionOpenAsLayer = new QAction(tr("打开为图层(&L)..."), this);
+    m_actionOpenAsLayer = new QAction(tr("Open as Layer(&L)..."), this);
     m_actionOpenAsLayer->setObjectName(QStringLiteral("actionOpenAsLayer"));
     m_actionOpenAsLayer->setIcon(icons::icon(QStringLiteral("file_open_as_layer")));
     m_actionOpenAsLayer->setStatusTip(
-        tr("把另一张图片作为新图层加入当前图像（不切换文档）"));
+        tr("Add another image as a new layer in the current document (without switching documents)"));
     connect(m_actionOpenAsLayer, &QAction::triggered, this, &MainWindow::openAsLayer);
 
     // ── 屏幕截图：四个动作（子菜单在 setupMenus 里挂到「文件」下）──
@@ -201,7 +201,7 @@ void MainWindow::setupActions()
     //   完全看不出根因在初始化写法上。
     const QKeySequence captureSeq{QLatin1String(kCaptureHotkey)};
 
-    m_actionCaptureNow = new QAction(tr("立即截图"), this);
+    m_actionCaptureNow = new QAction(tr("Capture Now"), this);
     m_actionCaptureNow->setObjectName(QStringLiteral("actionCaptureNow"));
     m_actionCaptureNow->setIcon(icons::icon(QStringLiteral("action_screen_capture")));
     applyCaptureHotkey(captureSeq);
@@ -211,72 +211,72 @@ void MainWindow::setupActions()
     // 延迟三项：同一件事的三个档。
     // ★ 菜单上写"秒"、代码里给"毫秒" —— 换算只发生在这三个 lambda 里 ★
     //   散出去就会有人把 3000 写成 3。
-    m_actionCaptureDelay3 = new QAction(tr("延迟 3 秒"), this);
+    m_actionCaptureDelay3 = new QAction(tr("Delay 3 Seconds"), this);
     m_actionCaptureDelay3->setObjectName(QStringLiteral("actionCaptureDelay3"));
     m_actionCaptureDelay3->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
     m_actionCaptureDelay3->setStatusTip(
-        tr("3 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+        tr("Capture after 3 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay3, &QAction::triggered, this,
             [this] { scheduleScreenCapture(3000); });
 
-    m_actionCaptureDelay5 = new QAction(tr("延迟 5 秒"), this);
+    m_actionCaptureDelay5 = new QAction(tr("Delay 5 Seconds"), this);
     m_actionCaptureDelay5->setObjectName(QStringLiteral("actionCaptureDelay5"));
     m_actionCaptureDelay5->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
     m_actionCaptureDelay5->setStatusTip(
-        tr("5 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+        tr("Capture after 5 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay5, &QAction::triggered, this,
             [this] { scheduleScreenCapture(5000); });
 
-    m_actionCaptureDelay10 = new QAction(tr("延迟 10 秒"), this);
+    m_actionCaptureDelay10 = new QAction(tr("Delay 10 Seconds"), this);
     m_actionCaptureDelay10->setObjectName(QStringLiteral("actionCaptureDelay10"));
     m_actionCaptureDelay10->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
     m_actionCaptureDelay10->setStatusTip(
-        tr("10 秒后截图：本窗口会先最小化，请切到要截取的画面"));
+        tr("Capture after 10 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay10, &QAction::triggered, this,
             [this] { scheduleScreenCapture(10000); });
 
-    m_actionSave = new QAction(tr("保存(&S)"), this);
+    m_actionSave = new QAction(tr("Save(&S)"), this);
     m_actionSave->setObjectName(QStringLiteral("actionSave"));
     m_actionSave->setIcon(icons::icon(QStringLiteral("file_save")));
     m_actionSave->setShortcut(QKeySequence::Save);
-    m_actionSave->setStatusTip(tr("保存到当前文件（未命名时会先询问路径）"));
+    m_actionSave->setStatusTip(tr("Save to the current file (asks for a path if untitled)"));
     connect(m_actionSave, &QAction::triggered, this, &MainWindow::saveDocument);
 
-    m_actionSaveAs = new QAction(tr("另存为(&A)..."), this);
+    m_actionSaveAs = new QAction(tr("Save As(&A)..."), this);
     m_actionSaveAs->setObjectName(QStringLiteral("actionSaveAs"));
     m_actionSaveAs->setIcon(icons::icon(QStringLiteral("file_save_as")));
     m_actionSaveAs->setShortcut(QKeySequence::SaveAs);
-    m_actionSaveAs->setStatusTip(tr("保存到新文件，格式由扩展名决定"));
+    m_actionSaveAs->setStatusTip(tr("Save to a new file; the format is decided by the extension"));
     connect(m_actionSaveAs, &QAction::triggered, this, &MainWindow::saveDocumentAs);
 
-    m_actionClose = new QAction(tr("关闭(&W)"), this);
+    m_actionClose = new QAction(tr("Close(&W)"), this);
     m_actionClose->setObjectName(QStringLiteral("actionClose"));
     m_actionClose->setIcon(icons::icon(QStringLiteral("file_close")));
     m_actionClose->setShortcut(QKeySequence::Close);
-    m_actionClose->setStatusTip(tr("关闭当前图像"));
+    m_actionClose->setStatusTip(tr("Close the current image"));
     connect(m_actionClose, &QAction::triggered, this, &MainWindow::closeCurrentDocument);
 
-    m_actionQuit = new QAction(tr("退出(&Q)"), this);
+    m_actionQuit = new QAction(tr("Quit(&Q)"), this);
     m_actionQuit->setObjectName(QStringLiteral("actionQuit"));
     m_actionQuit->setIcon(icons::icon(QStringLiteral("file_quit")));
     m_actionQuit->setShortcut(QKeySequence::Quit);
     m_actionQuit->setMenuRole(QAction::QuitRole);
-    m_actionQuit->setStatusTip(tr("退出 %1").arg(zl::appinfo::displayName()));
+    m_actionQuit->setStatusTip(tr("Quit %1").arg(zl::appinfo::displayName()));
     connect(m_actionQuit, &QAction::triggered, this, &QWidget::close);
 
     // ─────────────────────────────────────────────────────────────────────
     //  编辑
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionUndo = new QAction(tr("撤销(&U)"), this);
+    m_actionUndo = new QAction(tr("Undo(&U)"), this);
     m_actionUndo->setObjectName(QStringLiteral("actionUndo"));
     m_actionUndo->setIcon(icons::icon(QStringLiteral("edit_undo")));
     m_actionUndo->setShortcut(QKeySequence::Undo);
-    m_actionUndo->setStatusTip(tr("撤销上一步操作"));
+    m_actionUndo->setStatusTip(tr("Undo the last operation"));
     m_actionUndo->setEnabled(false);
     connect(m_actionUndo, &QAction::triggered, this, &MainWindow::undo);
 
-    m_actionRedo = new QAction(tr("重做(&R)"), this);
+    m_actionRedo = new QAction(tr("Redo(&R)"), this);
     m_actionRedo->setObjectName(QStringLiteral("actionRedo"));
     m_actionRedo->setIcon(icons::icon(QStringLiteral("edit_redo")));
     // ★ 重做给两个快捷键 ★
@@ -286,92 +286,92 @@ void MainWindow::setupActions()
     //   Qt 支持一个 QAction 有多个快捷键，两个都给最省事。
     m_actionRedo->setShortcuts({ QKeySequence::Redo,
                                  QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z) });
-    m_actionRedo->setStatusTip(tr("重做被撤销的操作"));
+    m_actionRedo->setStatusTip(tr("Redo the undone operation"));
     m_actionRedo->setEnabled(false);
     connect(m_actionRedo, &QAction::triggered, this, &MainWindow::redo);
 
-    m_actionCut = new QAction(tr("剪切(&T)"), this);
+    m_actionCut = new QAction(tr("Cut(&T)"), this);
     m_actionCut->setObjectName(QStringLiteral("actionCut"));
     m_actionCut->setIcon(icons::icon(QStringLiteral("edit_cut")));
     m_actionCut->setShortcut(QKeySequence::Cut);
-    m_actionCut->setStatusTip(tr("剪切选区内容到剪贴板"));
+    m_actionCut->setStatusTip(tr("Cut the selection to the clipboard"));
     m_actionCut->setEnabled(false);
     connect(m_actionCut, &QAction::triggered, this, &MainWindow::cutSelection);
 
-    m_actionCopy = new QAction(tr("复制(&C)"), this);
+    m_actionCopy = new QAction(tr("Copy(&C)"), this);
     m_actionCopy->setObjectName(QStringLiteral("actionCopy"));
     m_actionCopy->setIcon(icons::icon(QStringLiteral("edit_copy")));
     m_actionCopy->setShortcut(QKeySequence::Copy);
-    m_actionCopy->setStatusTip(tr("复制选区内容到剪贴板（无选区时复制整个图层）"));
+    m_actionCopy->setStatusTip(tr("Copy the selection to the clipboard (copies the whole layer when there is no selection)"));
     m_actionCopy->setEnabled(false);
     connect(m_actionCopy, &QAction::triggered, this, &MainWindow::copySelection);
 
-    m_actionPaste = new QAction(tr("粘贴为新图层(&P)"), this);
+    m_actionPaste = new QAction(tr("Paste as New Layer(&P)"), this);
     m_actionPaste->setObjectName(QStringLiteral("actionPaste"));
     m_actionPaste->setIcon(icons::icon(QStringLiteral("edit_paste")));
     m_actionPaste->setShortcut(QKeySequence::Paste);
-    m_actionPaste->setStatusTip(tr("把剪贴板内容粘贴为一个新图层"));
+    m_actionPaste->setStatusTip(tr("Paste the clipboard content as a new layer"));
     connect(m_actionPaste, &QAction::triggered, this, &MainWindow::pasteAsNewLayer);
 
-    m_actionPasteInto = new QAction(tr("粘贴到当前图层(&I)"), this);
+    m_actionPasteInto = new QAction(tr("Paste into Current Layer(&I)"), this);
     m_actionPasteInto->setObjectName(QStringLiteral("actionPasteInto"));
     m_actionPasteInto->setIcon(icons::icon(QStringLiteral("edit_paste_into")));
     m_actionPasteInto->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_V));
-    m_actionPasteInto->setStatusTip(tr("把剪贴板内容合并到当前图层"));
+    m_actionPasteInto->setStatusTip(tr("Merge the clipboard content into the current layer"));
     connect(m_actionPasteInto, &QAction::triggered, this, &MainWindow::pasteIntoLayer);
 
-    m_actionDelete = new QAction(tr("删除(&D)"), this);
+    m_actionDelete = new QAction(tr("Delete(&D)"), this);
     m_actionDelete->setObjectName(QStringLiteral("actionDelete"));
     m_actionDelete->setIcon(icons::icon(QStringLiteral("edit_delete")));
     m_actionDelete->setShortcut(QKeySequence::Delete);
-    m_actionDelete->setStatusTip(tr("删除选区内的内容（无选区时清空整个图层）"));
+    m_actionDelete->setStatusTip(tr("Delete the content inside the selection (clears the whole layer when there is no selection)"));
     connect(m_actionDelete, &QAction::triggered, this, &MainWindow::onDeleteSelection);
 
     // ─────────────────────────────────────────────────────────────────────
     //  选择
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionSelectAll = new QAction(tr("全选(&A)"), this);
+    m_actionSelectAll = new QAction(tr("Select All(&A)"), this);
     m_actionSelectAll->setObjectName(QStringLiteral("actionSelectAll"));
     m_actionSelectAll->setIcon(icons::icon(QStringLiteral("select_all")));
     m_actionSelectAll->setShortcut(QKeySequence::SelectAll);
-    m_actionSelectAll->setStatusTip(tr("选中整个画布"));
+    m_actionSelectAll->setStatusTip(tr("Select the whole canvas"));
     connect(m_actionSelectAll, &QAction::triggered, this, &MainWindow::selectAll);
 
-    m_actionDeselect = new QAction(tr("取消选择(&D)"), this);
+    m_actionDeselect = new QAction(tr("Deselect(&D)"), this);
     m_actionDeselect->setObjectName(QStringLiteral("actionDeselect"));
     m_actionDeselect->setIcon(icons::icon(QStringLiteral("select_none")));
     // ★ 为什么不用 QKeySequence::Deselect ★
     //   Qt 没有提供这个标准键（SelectAll 有，Deselect 没有）。
     //   Ctrl+D 是 Photoshop 的约定，用户肌肉记忆很强，直接用。
     m_actionDeselect->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_D));
-    m_actionDeselect->setStatusTip(tr("取消当前选区"));
+    m_actionDeselect->setStatusTip(tr("Cancel the current selection"));
     connect(m_actionDeselect, &QAction::triggered, this, &MainWindow::deselect);
 
-    m_actionInvertSelection = new QAction(tr("反选(&I)"), this);
+    m_actionInvertSelection = new QAction(tr("Invert Selection(&I)"), this);
     m_actionInvertSelection->setObjectName(QStringLiteral("actionInvertSelection"));
     m_actionInvertSelection->setIcon(icons::icon(QStringLiteral("select_invert")));
     m_actionInvertSelection->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
-    m_actionInvertSelection->setStatusTip(tr("选中当前选区之外的全部区域"));
+    m_actionInvertSelection->setStatusTip(tr("Select everything outside the current selection"));
     connect(m_actionInvertSelection, &QAction::triggered, this, &MainWindow::invertSelection);
 
     // ─────────────────────────────────────────────────────────────────────
     //  调整（Phase 1 只接不需要参数对话框的那些）
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionGrayscale = new QAction(tr("去色(&G)"), this);
+    m_actionGrayscale = new QAction(tr("Desaturate(&G)"), this);
     m_actionGrayscale->setObjectName(QStringLiteral("actionGrayscale"));
     m_actionGrayscale->setIcon(icons::icon(QStringLiteral("adjust_grayscale")));
     // Ctrl+Shift+U 是 Photoshop 的约定
     m_actionGrayscale->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
-    m_actionGrayscale->setStatusTip(tr("按亮度权重转换为灰度（0.299R + 0.587G + 0.114B）"));
+    m_actionGrayscale->setStatusTip(tr("Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)"));
     connect(m_actionGrayscale, &QAction::triggered, this, &MainWindow::applyGrayscale);
 
-    m_actionInvert = new QAction(tr("反相(&I)"), this);
+    m_actionInvert = new QAction(tr("Invert(&I)"), this);
     m_actionInvert->setObjectName(QStringLiteral("actionInvert"));
     m_actionInvert->setIcon(icons::icon(QStringLiteral("adjust_invert")));
     m_actionInvert->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
-    m_actionInvert->setStatusTip(tr("反转所有颜色通道（如同底片）"));
+    m_actionInvert->setStatusTip(tr("Invert all color channels (like a negative)"));
     connect(m_actionInvert, &QAction::triggered, this, &MainWindow::applyInvert);
 
     // ── 需要参数对话框的调整（Phase 4）──
@@ -379,33 +379,33 @@ void MainWindow::setupActions()
     // 快捷键沿用 Photoshop 的约定：色相/饱和度 Ctrl+U、曲线 Ctrl+M。
     // 亮度/对比度在 PS 里没有快捷键，这里也不设 —— 与其硬塞一个
     // 容易和别的功能冲突的组合键，不如保持"无快捷键"。
-    m_actionBrightnessContrast = new QAction(tr("亮度/对比度(&B)..."), this);
+    m_actionBrightnessContrast = new QAction(tr("Brightness/Contrast(&B)..."), this);
     m_actionBrightnessContrast->setObjectName(QStringLiteral("actionBrightnessContrast"));
     m_actionBrightnessContrast->setIcon(icons::icon(QStringLiteral("adjust_brightness")));
-    m_actionBrightnessContrast->setStatusTip(tr("调整图像的明暗与反差"));
+    m_actionBrightnessContrast->setStatusTip(tr("Adjust the brightness and contrast of the image"));
     connect(m_actionBrightnessContrast, &QAction::triggered,
             this, &MainWindow::openBrightnessContrast);
 
-    m_actionHueSaturation = new QAction(tr("色相/饱和度(&H)..."), this);
+    m_actionHueSaturation = new QAction(tr("Hue/Saturation(&H)..."), this);
     m_actionHueSaturation->setObjectName(QStringLiteral("actionHueSaturation"));
     m_actionHueSaturation->setIcon(icons::icon(QStringLiteral("adjust_hue")));
     m_actionHueSaturation->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
-    m_actionHueSaturation->setStatusTip(tr("调整颜色的色相、饱和度与明度"));
+    m_actionHueSaturation->setStatusTip(tr("Adjust the hue, saturation and lightness of colors"));
     connect(m_actionHueSaturation, &QAction::triggered, this, &MainWindow::openHueSaturation);
 
-    m_actionCurves = new QAction(tr("曲线(&C)..."), this);
+    m_actionCurves = new QAction(tr("Curves(&C)..."), this);
     m_actionCurves->setObjectName(QStringLiteral("actionCurves"));
     m_actionCurves->setIcon(icons::icon(QStringLiteral("adjust_curves")));
     m_actionCurves->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
-    m_actionCurves->setStatusTip(tr("用控制点曲线精细调整各通道的明暗映射"));
+    m_actionCurves->setStatusTip(tr("Finely adjust the per-channel tonal mapping with a control-point curve"));
     connect(m_actionCurves, &QAction::triggered, this, &MainWindow::openCurves);
 
-    m_actionLevels = new QAction(tr("色阶(&L)..."), this);
+    m_actionLevels = new QAction(tr("Levels(&L)..."), this);
     m_actionLevels->setObjectName(QStringLiteral("actionLevels"));
     m_actionLevels->setIcon(icons::icon(QStringLiteral("adjust_levels")));
     // Ctrl+L 也是 Photoshop 的约定，且当前未被占用（已核对全部快捷键）
     m_actionLevels->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
-    m_actionLevels->setStatusTip(tr("用直方图的黑白场与中间调调整明暗分布"));
+    m_actionLevels->setStatusTip(tr("Adjust the tonal distribution with the histogram black/white points and midtones"));
     connect(m_actionLevels, &QAction::triggered, this, &MainWindow::openLevels);
 
     // ─────────────────────────────────────────────────────────────────────
@@ -417,37 +417,37 @@ void MainWindow::setupActions()
     //   Ctrl+Alt+C —— Canvas Size
     //   这两个组合在 PS 用户手里是肌肉记忆，换掉会持续制造误操作。
     //   （已核对本工程其余快捷键，无冲突。）
-    m_actionImageSize = new QAction(tr("图像大小(&I)..."), this);
+    m_actionImageSize = new QAction(tr("Image Size(&I)..."), this);
     m_actionImageSize->setObjectName(QStringLiteral("actionImageSize"));
     m_actionImageSize->setIcon(icons::icon(QStringLiteral("image_size")));
     m_actionImageSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
-    m_actionImageSize->setStatusTip(tr("缩放像素内容（需要重采样，图像会变软或变锐）"));
+    m_actionImageSize->setStatusTip(tr("Resample the pixel content (the image becomes softer or sharper)"));
     connect(m_actionImageSize, &QAction::triggered, this, &MainWindow::openImageSize);
 
-    m_actionCanvasSize = new QAction(tr("画布大小(&C)..."), this);
+    m_actionCanvasSize = new QAction(tr("Canvas Size(&C)..."), this);
     m_actionCanvasSize->setObjectName(QStringLiteral("actionCanvasSize"));
     m_actionCanvasSize->setIcon(icons::icon(QStringLiteral("canvas_size")));
     m_actionCanvasSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_C));
-    m_actionCanvasSize->setStatusTip(tr("改变画布范围：不缩放像素，缩小时裁切、放大时补底色"));
+    m_actionCanvasSize->setStatusTip(tr("Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger"));
     connect(m_actionCanvasSize, &QAction::triggered, this, &MainWindow::openCanvasSize);
 
     // ─────────────────────────────────────────────────────────────────────
     //  图像旋转 / 翻转
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionRotate90CW = new QAction(tr("顺时针旋转 90°"), this);
+    m_actionRotate90CW = new QAction(tr("Rotate 90° Clockwise"), this);
     m_actionRotate90CW->setObjectName(QStringLiteral("actionRotate90CW"));
     m_actionRotate90CW->setIcon(icons::icon(QStringLiteral("rotate_cw")));
     m_actionRotate90CW->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
     connect(m_actionRotate90CW, &QAction::triggered, this, &MainWindow::rotate90CW);
 
-    m_actionRotate90CCW = new QAction(tr("逆时针旋转 90°"), this);
+    m_actionRotate90CCW = new QAction(tr("Rotate 90° Counterclockwise"), this);
     m_actionRotate90CCW->setObjectName(QStringLiteral("actionRotate90CCW"));
     m_actionRotate90CCW->setIcon(icons::icon(QStringLiteral("rotate_ccw")));
     m_actionRotate90CCW->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R));
     connect(m_actionRotate90CCW, &QAction::triggered, this, &MainWindow::rotate90CCW);
 
-    m_actionRotate180 = new QAction(tr("旋转 180°"), this);
+    m_actionRotate180 = new QAction(tr("Rotate 180°"), this);
     m_actionRotate180->setObjectName(QStringLiteral("actionRotate180"));
     m_actionRotate180->setIcon(icons::icon(QStringLiteral("rotate_180")));
     connect(m_actionRotate180, &QAction::triggered, this, &MainWindow::rotate180);
@@ -458,19 +458,19 @@ void MainWindow::setupActions()
     //   编译器不报错（nullptr 是合法实参）、离线自检也测不到（自检不建菜单），
     //   只有真正跑起来看菜单才暴露。改动作定义时务必"new + objectName + connect +
     //   addAction"四处齐全。
-    m_actionRotateArbitrary = new QAction(tr("任意角度旋转(&A)…"), this);
+    m_actionRotateArbitrary = new QAction(tr("Rotate Arbitrary(&A)..."), this);
     m_actionRotateArbitrary->setObjectName(QStringLiteral("actionRotateArbitrary"));
     m_actionRotateArbitrary->setIcon(icons::icon(QStringLiteral("rotate_arbitrary")));
     connect(m_actionRotateArbitrary, &QAction::triggered,
             this, &MainWindow::openRotateArbitrary);
 
-    m_actionFlipH = new QAction(tr("水平翻转"), this);
+    m_actionFlipH = new QAction(tr("Flip Horizontal"), this);
     m_actionFlipH->setObjectName(QStringLiteral("actionFlipH"));
     m_actionFlipH->setIcon(icons::icon(QStringLiteral("flip_h")));
     m_actionFlipH->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_H));
     connect(m_actionFlipH, &QAction::triggered, this, &MainWindow::flipHorizontal);
 
-    m_actionFlipV = new QAction(tr("垂直翻转"), this);
+    m_actionFlipV = new QAction(tr("Flip Vertical"), this);
     m_actionFlipV->setObjectName(QStringLiteral("actionFlipV"));
     m_actionFlipV->setIcon(icons::icon(QStringLiteral("flip_v")));
     connect(m_actionFlipV, &QAction::triggered, this, &MainWindow::flipVertical);
@@ -482,58 +482,58 @@ void MainWindow::setupActions()
     //   选框表达过"我要这一块"，再让他拿裁剪工具重框一遍是重复劳动。
     //   没有选区时置灰（不用内容包围盒兜底，那是「裁切到内容」的语义）。
     //   完整理由见 docs/画布与文件操作设计.md 6.8。
-    m_actionCrop = new QAction(tr("裁剪"), this);
+    m_actionCrop = new QAction(tr("Crop"), this);
     m_actionCrop->setObjectName(QStringLiteral("actionCrop"));
     m_actionCrop->setIcon(icons::icon(QStringLiteral("tool_crop")));
-    m_actionCrop->setStatusTip(tr("把画布裁剪到当前选区的包围盒"));
+    m_actionCrop->setStatusTip(tr("Crop the canvas to the bounding box of the current selection"));
     connect(m_actionCrop, &QAction::triggered, this, &MainWindow::cropToSelection);
 
     // ─────────────────────────────────────────────────────────────────────
     //  图层
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionLayerNew = new QAction(tr("新建图层(&N)"), this);
+    m_actionLayerNew = new QAction(tr("New Layer(&N)"), this);
     m_actionLayerNew->setObjectName(QStringLiteral("actionLayerNew"));
     m_actionLayerNew->setIcon(icons::icon(QStringLiteral("layer_new")));
     m_actionLayerNew->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
     connect(m_actionLayerNew, &QAction::triggered, this, &MainWindow::addNewLayer);
 
-    m_actionLayerDuplicate = new QAction(tr("复制图层(&D)"), this);
+    m_actionLayerDuplicate = new QAction(tr("Duplicate Layer(&D)"), this);
     m_actionLayerDuplicate->setObjectName(QStringLiteral("actionLayerDuplicate"));
     m_actionLayerDuplicate->setIcon(icons::icon(QStringLiteral("layer_duplicate")));
     m_actionLayerDuplicate->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_J));
     connect(m_actionLayerDuplicate, &QAction::triggered,
             this, &MainWindow::duplicateCurrentLayer);
 
-    m_actionLayerDelete = new QAction(tr("删除图层"), this);
+    m_actionLayerDelete = new QAction(tr("Delete Layer"), this);
     m_actionLayerDelete->setObjectName(QStringLiteral("actionLayerDelete"));
     m_actionLayerDelete->setIcon(icons::icon(QStringLiteral("layer_delete")));
     connect(m_actionLayerDelete, &QAction::triggered, this, &MainWindow::deleteCurrentLayer);
 
-    m_actionLayerMoveUp = new QAction(tr("上移图层"), this);
+    m_actionLayerMoveUp = new QAction(tr("Move Layer Up"), this);
     m_actionLayerMoveUp->setObjectName(QStringLiteral("actionLayerMoveUp"));
     m_actionLayerMoveUp->setIcon(icons::icon(QStringLiteral("layer_up")));
     m_actionLayerMoveUp->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketRight));
     connect(m_actionLayerMoveUp, &QAction::triggered, this, &MainWindow::moveLayerUp);
 
-    m_actionLayerMoveDown = new QAction(tr("下移图层"), this);
+    m_actionLayerMoveDown = new QAction(tr("Move Layer Down"), this);
     m_actionLayerMoveDown->setObjectName(QStringLiteral("actionLayerMoveDown"));
     m_actionLayerMoveDown->setIcon(icons::icon(QStringLiteral("layer_down")));
     m_actionLayerMoveDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketLeft));
     connect(m_actionLayerMoveDown, &QAction::triggered, this, &MainWindow::moveLayerDown);
 
-    m_actionMergeDown = new QAction(tr("向下合并(&M)"), this);
+    m_actionMergeDown = new QAction(tr("Merge Down(&M)"), this);
     m_actionMergeDown->setObjectName(QStringLiteral("actionMergeDown"));
     m_actionMergeDown->setIcon(icons::icon(QStringLiteral("layer_merge_down")));
     m_actionMergeDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     connect(m_actionMergeDown, &QAction::triggered, this, &MainWindow::mergeLayerDown);
 
-    m_actionFlatten = new QAction(tr("拼合图像(&F)"), this);
+    m_actionFlatten = new QAction(tr("Flatten Image(&F)"), this);
     m_actionFlatten->setObjectName(QStringLiteral("actionFlatten"));
     m_actionFlatten->setIcon(icons::icon(QStringLiteral("layer_flatten")));
     connect(m_actionFlatten, &QAction::triggered, this, &MainWindow::flattenImage);
 
-    m_actionLayerMergeVisible = new QAction(tr("合并可见图层(&V)"), this);
+    m_actionLayerMergeVisible = new QAction(tr("Merge Visible Layers(&V)"), this);
     m_actionLayerMergeVisible->setObjectName(QStringLiteral("actionLayerMergeVisible"));
     m_actionLayerMergeVisible->setIcon(icons::icon(QStringLiteral("layer_merge_visible")));
     // Ctrl+Shift+E：与"向下合并"的 Ctrl+E 成对，Shift 表示"范围更大"。
@@ -541,7 +541,7 @@ void MainWindow::setupActions()
     connect(m_actionLayerMergeVisible, &QAction::triggered,
             this, &MainWindow::mergeVisibleLayers);
 
-    m_actionLayerRename = new QAction(tr("重命名图层(&R)"), this);
+    m_actionLayerRename = new QAction(tr("Rename Layer(&R)"), this);
     m_actionLayerRename->setObjectName(QStringLiteral("actionLayerRename"));
     m_actionLayerRename->setIcon(icons::icon(QStringLiteral("layer_rename")));
     // ★ 用 F2 而不是回车 ★
@@ -555,39 +555,39 @@ void MainWindow::setupActions()
     //  视图
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionZoomIn = new QAction(tr("放大(&I)"), this);
+    m_actionZoomIn = new QAction(tr("Zoom In(&I)"), this);
     m_actionZoomIn->setObjectName(QStringLiteral("actionZoomIn"));
     m_actionZoomIn->setIcon(icons::icon(QStringLiteral("view_zoom_in")));
     // QKeySequence::ZoomIn 会解析成 Ctrl++（同时接受 Ctrl+= 的变体）
     m_actionZoomIn->setShortcut(QKeySequence::ZoomIn);
     connect(m_actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
 
-    m_actionZoomOut = new QAction(tr("缩小(&O)"), this);
+    m_actionZoomOut = new QAction(tr("Zoom Out(&O)"), this);
     m_actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
     m_actionZoomOut->setIcon(icons::icon(QStringLiteral("view_zoom_out")));
     m_actionZoomOut->setShortcut(QKeySequence::ZoomOut);
     connect(m_actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
 
-    m_actionZoomFit = new QAction(tr("适合窗口(&F)"), this);
+    m_actionZoomFit = new QAction(tr("Fit to Window(&F)"), this);
     m_actionZoomFit->setObjectName(QStringLiteral("actionZoomFit"));
     m_actionZoomFit->setIcon(icons::icon(QStringLiteral("view_zoom_fit")));
     m_actionZoomFit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
     connect(m_actionZoomFit, &QAction::triggered, this, &MainWindow::zoomToFit);
 
-    m_actionZoomActual = new QAction(tr("实际大小(&A)"), this);
+    m_actionZoomActual = new QAction(tr("Actual Size(&A)"), this);
     m_actionZoomActual->setObjectName(QStringLiteral("actionZoomActual"));
     m_actionZoomActual->setIcon(icons::icon(QStringLiteral("view_zoom_100")));
     m_actionZoomActual->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     connect(m_actionZoomActual, &QAction::triggered, this, &MainWindow::zoomToActualSize);
 
-    m_actionShowGrid = new QAction(tr("显示网格(&G)"), this);
+    m_actionShowGrid = new QAction(tr("Show Grid(&G)"), this);
     m_actionShowGrid->setObjectName(QStringLiteral("actionShowGrid"));
     m_actionShowGrid->setIcon(icons::icon(QStringLiteral("view_grid")));
     m_actionShowGrid->setCheckable(true);
     m_actionShowGrid->setChecked(false);
     connect(m_actionShowGrid, &QAction::toggled, this, &MainWindow::toggleGrid);
 
-    m_actionShowCheckerboard = new QAction(tr("显示透明背景"), this);
+    m_actionShowCheckerboard = new QAction(tr("Show Transparent Background"), this);
     m_actionShowCheckerboard->setObjectName(QStringLiteral("actionShowCheckerboard"));
     m_actionShowCheckerboard->setIcon(icons::icon(QStringLiteral("view_checkerboard")));
     m_actionShowCheckerboard->setCheckable(true);
@@ -601,7 +601,7 @@ void MainWindow::setupActions()
     //    参考线「显示」占了 Ctrl+;、「锁定」占了 Ctrl+Alt+; ——
     //    吸附与它俩同族，于是顺势用 **Ctrl+Shift+;**（三连）。
     //    "显示网格"本身没给快捷键（它是纯呈现，用得没吸附频繁）。
-    m_actionSnapToGrid = new QAction(tr("对齐到网格(&S)"), this);
+    m_actionSnapToGrid = new QAction(tr("Snap to Grid(&S)"), this);
     m_actionSnapToGrid->setObjectName(QStringLiteral("actionSnapToGrid"));
     m_actionSnapToGrid->setIcon(icons::icon(QStringLiteral("view_grid_snap")));
     m_actionSnapToGrid->setCheckable(true);
@@ -620,7 +620,7 @@ void MainWindow::setupActions()
         spacingGroup->setExclusive(true);
 
         for (int i = 0; i < kGridPresetCount; ++i) {
-            QAction *act = new QAction(tr("%1 像素").arg(kGridPresets[i]), this);
+            QAction *act = new QAction(tr("%1 px").arg(kGridPresets[i]), this);
             act->setCheckable(true);
             act->setChecked(kGridPresets[i] == 64);   // 与 CanvasView 的默认值一致
             // ★ 把"这一项代表哪个间距"存进 data() ★
@@ -634,7 +634,7 @@ void MainWindow::setupActions()
         }
     }
 
-    m_actionGridCustom = new QAction(tr("自定义(&U)..."), this);
+    m_actionGridCustom = new QAction(tr("Custom(&U)..."), this);
     m_actionGridCustom->setObjectName(QStringLiteral("actionGridCustom"));
     m_actionGridCustom->setIcon(icons::icon(QStringLiteral("view_grid_spacing")));
     connect(m_actionGridCustom, &QAction::triggered, this, &MainWindow::editGridSettings);
@@ -646,7 +646,7 @@ void MainWindow::setupActions()
     //    「顺时针旋转 90°」—— 那更常用，而且是**破坏性操作**（会改像素），
     //    不该给一个纯视图开关让位。于是标尺挪到 Ctrl+Alt+R。
     //    参考线的 Ctrl+; / Ctrl+Alt+; 在本工程没有占用，按惯例直接用。
-    m_actionShowRuler = new QAction(tr("显示标尺(&R)"), this);
+    m_actionShowRuler = new QAction(tr("Show Ruler(&R)"), this);
     m_actionShowRuler->setObjectName(QStringLiteral("actionShowRuler"));
     m_actionShowRuler->setIcon(icons::icon(QStringLiteral("view_ruler")));
     m_actionShowRuler->setCheckable(true);
@@ -654,7 +654,7 @@ void MainWindow::setupActions()
     m_actionShowRuler->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_R));
     connect(m_actionShowRuler, &QAction::toggled, this, &MainWindow::toggleRuler);
 
-    m_actionShowGuides = new QAction(tr("显示参考线(&G)"), this);
+    m_actionShowGuides = new QAction(tr("Show Guides(&G)"), this);
     m_actionShowGuides->setObjectName(QStringLiteral("actionShowGuides"));
     m_actionShowGuides->setIcon(icons::icon(QStringLiteral("view_guides")));
     m_actionShowGuides->setCheckable(true);
@@ -662,7 +662,7 @@ void MainWindow::setupActions()
     m_actionShowGuides->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Semicolon));
     connect(m_actionShowGuides, &QAction::toggled, this, &MainWindow::toggleGuides);
 
-    m_actionLockGuides = new QAction(tr("锁定参考线(&L)"), this);
+    m_actionLockGuides = new QAction(tr("Lock Guides(&L)"), this);
     m_actionLockGuides->setObjectName(QStringLiteral("actionLockGuides"));
     m_actionLockGuides->setIcon(icons::icon(QStringLiteral("view_guides_lock")));
     m_actionLockGuides->setCheckable(true);
@@ -672,7 +672,7 @@ void MainWindow::setupActions()
     connect(m_actionLockGuides, &QAction::toggled,
             this, &MainWindow::toggleGuidesLocked);
 
-    m_actionClearGuides = new QAction(tr("清除参考线(&C)"), this);
+    m_actionClearGuides = new QAction(tr("Clear Guides(&C)"), this);
     m_actionClearGuides->setObjectName(QStringLiteral("actionClearGuides"));
     m_actionClearGuides->setIcon(icons::icon(QStringLiteral("view_guides_clear")));
     connect(m_actionClearGuides, &QAction::triggered, this, &MainWindow::clearGuides);
@@ -708,13 +708,13 @@ void MainWindow::setupActions()
     //  颜色
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionForegroundColor = new QAction(tr("设置前景色..."), this);
+    m_actionForegroundColor = new QAction(tr("Set Foreground Color..."), this);
     m_actionForegroundColor->setObjectName(QStringLiteral("actionForegroundColor"));
     m_actionForegroundColor->setIcon(icons::icon(QStringLiteral("color_foreground")));
     connect(m_actionForegroundColor, &QAction::triggered,
             this, &MainWindow::chooseForegroundColor);
 
-    m_actionBackgroundColor = new QAction(tr("设置背景色..."), this);
+    m_actionBackgroundColor = new QAction(tr("Set Background Color..."), this);
     m_actionBackgroundColor->setObjectName(QStringLiteral("actionBackgroundColor"));
     m_actionBackgroundColor->setIcon(icons::icon(QStringLiteral("color_background")));
     connect(m_actionBackgroundColor, &QAction::triggered,
@@ -729,12 +729,12 @@ void MainWindow::setupActions()
     // 无法排除文本框场景），而是在 MainWindow::keyPressEvent 里
     // 手动判断 —— 只有焦点不在输入控件上时才处理。
     // 见 MainWindowCommands.cpp 的 keyPressEvent。
-    m_actionSwapColors = new QAction(tr("交换前景/背景色"), this);
+    m_actionSwapColors = new QAction(tr("Swap Foreground/Background Color"), this);
     m_actionSwapColors->setObjectName(QStringLiteral("actionSwapColors"));
     m_actionSwapColors->setIcon(icons::icon(QStringLiteral("color_swap")));
     connect(m_actionSwapColors, &QAction::triggered, this, &MainWindow::swapColors);
 
-    m_actionResetColors = new QAction(tr("恢复默认颜色"), this);
+    m_actionResetColors = new QAction(tr("Restore Default Colors"), this);
     m_actionResetColors->setObjectName(QStringLiteral("actionResetColors"));
     m_actionResetColors->setIcon(icons::icon(QStringLiteral("color_reset")));
     connect(m_actionResetColors, &QAction::triggered, this, &MainWindow::resetColors);
@@ -743,7 +743,7 @@ void MainWindow::setupActions()
     //  帮助
     // ─────────────────────────────────────────────────────────────────────
 
-    m_actionAbout = new QAction(tr("关于 %1(&A)...").arg(zl::appinfo::displayName()), this);
+    m_actionAbout = new QAction(tr("About %1(&A)...").arg(zl::appinfo::displayName()), this);
     m_actionAbout->setObjectName(QStringLiteral("actionAbout"));
     m_actionAbout->setIcon(icons::icon(QStringLiteral("help_about")));
     m_actionAbout->setMenuRole(QAction::AboutRole);
@@ -758,7 +758,7 @@ void MainWindow::setupActions()
         //   唯一的出路是自己 new 一个 QMessageBox，用 setIconPixmap()
         //   指定任意大的图标 —— QMessageBox 不会去缩放它。
         QMessageBox box(this);
-        box.setWindowTitle(tr("关于 %1").arg(zl::appinfo::displayName()));
+        box.setWindowTitle(tr("About %1").arg(zl::appinfo::displayName()));
 
         // ★ 按设备像素比渲染，高 DPI 屏上不发糊 ★
         //   dpr 取自**本窗口**而不是 qApp —— 多屏且缩放不同时，
@@ -779,15 +779,15 @@ void MainWindow::setupActions()
         box.setTextFormat(Qt::RichText);
         box.setTextInteractionFlags(Qt::TextBrowserInteraction);
         box.setText(
-            tr("<h3>%1</h3>"
-               "<p>一个基于 Qt 的轻量级图片编辑器。</p>"
-               "<p><b>技术栈</b><br>"
-               "Qt %2（编译期版本 %3）<br>"
-               "纯 Qt 实现，不依赖任何第三方图像库</p>"
-               "<p><b>核心特性</b><br>"
-               "多图层与 22 种混合模式 · 灰度蒙版选区（支持羽化）<br>"
-               "曲线 / 色阶 / 亮度对比度 · 自实现二次立方与 Lanczos 重采样<br>"
-               "脏矩形与整层快照双撤销策略 · EXIF 自动旋转</p>")
+        tr("<h3>%1</h3>"
+           "<p>A lightweight image editor built with Qt.</p>"
+           "<p><b>Tech Stack</b><br>"
+           "Qt %2 (built against %3)<br>"
+           "Pure Qt implementation, no third-party image libraries</p>"
+           "<p><b>Key Features</b><br>"
+           "Multiple layers with 22 blend modes · grayscale mask selection (with feathering)<br>"
+           "Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling<br>"
+           "Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation</p>")
                 .arg(zl::appinfo::titleSuffix())
                 .arg(zl::compat::qtVersionString())
                 .arg(QStringLiteral(QT_VERSION_STR)));
@@ -807,11 +807,27 @@ void MainWindow::setupActions()
         box.exec();
     });
 
-    m_actionAboutQt = new QAction(tr("关于 Qt(&Q)..."), this);
+    m_actionAboutQt = new QAction(tr("About Qt(&Q)..."), this);
     m_actionAboutQt->setObjectName(QStringLiteral("actionAboutQt"));
     m_actionAboutQt->setIcon(icons::icon(QStringLiteral("help_qt")));
     m_actionAboutQt->setMenuRole(QAction::AboutQtRole);
     connect(m_actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+}
+
+// ============================================================================
+//  promptRestartForLanguage —— 语言切换的"重启生效"提示
+// ============================================================================
+
+void MainWindow::promptRestartForLanguage(const QString &displayNameText)
+{
+    // 保存动作在 setCurrentLanguage 里已经落盘（含 sync()），这里只负责
+    // 把"重启生效"说清楚。文本本身也走 tr() —— 英文界面下提示也是英文
+    // （显示的是切换**前**的当前语言，因为翻译器要重启后才换）。
+    QMessageBox::information(
+        this,
+        tr("Switch UI Language"),
+        tr("The UI language has been set to %1. It takes effect the next "
+           "time the program starts.").arg(displayNameText));
 }
 
 // ============================================================================
@@ -825,7 +841,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  文件
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *fileMenu = mb->addMenu(tr("文件(&F)"));
+    QMenu *fileMenu = mb->addMenu(tr("File(&F)"));
+    fileMenu->setObjectName(QStringLiteral("menuFile"));
     fileMenu->addAction(m_actionNew);
     fileMenu->addAction(m_actionOpen);
     // ★ 紧跟「打开」之后 ★
@@ -844,7 +861,7 @@ void MainWindow::setupMenus()
     //   addMenu() 返回的 QMenu 自带一个 menuAction()，它就是菜单里那一行
     //   （与普通菜单项走同一套绘制），所以不挂图标的话它会在
     //   "一栏都有图标"的菜单里明显掉队。
-    QMenu *captureMenu = fileMenu->addMenu(tr("屏幕截图(&C)"));
+    QMenu *captureMenu = fileMenu->addMenu(tr("Screen Capture(&C)"));
     captureMenu->setObjectName(QStringLiteral("menuScreenCapture"));
     captureMenu->setIcon(icons::icon(QStringLiteral("menu_screen_capture")));
     captureMenu->addAction(m_actionCaptureNow);
@@ -855,7 +872,7 @@ void MainWindow::setupMenus()
     captureMenu->addAction(m_actionCaptureDelay10);
 
     // 最近打开（内容由 updateRecentFileActions 动态填充）
-    QMenu *recentMenu = fileMenu->addMenu(tr("最近打开(&R)"));
+    QMenu *recentMenu = fileMenu->addMenu(tr("Recent Files(&R)"));
     recentMenu->setObjectName(QStringLiteral("menuRecentFiles"));
     // ★ 子菜单也要图标 ★
     //   QMenu::addMenu() 返回的 QMenu 自带一个 menuAction()，
@@ -877,7 +894,7 @@ void MainWindow::setupMenus()
         recentMenu->addAction(action);
     }
     recentMenu->addSeparator();
-    auto *clearRecentAction = recentMenu->addAction(tr("清空列表"));
+    auto *clearRecentAction = recentMenu->addAction(tr("Clear List"));
     connect(clearRecentAction, &QAction::triggered, this, [this]() {
         QSettings settings;
         settings.remove(QStringLiteral("files/recent"));
@@ -894,7 +911,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  编辑
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *editMenu = mb->addMenu(tr("编辑(&E)"));
+    QMenu *editMenu = mb->addMenu(tr("Edit(&E)"));
+    editMenu->setObjectName(QStringLiteral("menuEdit"));
     editMenu->addAction(m_actionUndo);
     editMenu->addAction(m_actionRedo);
     editMenu->addSeparator();
@@ -908,7 +926,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  选择
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *selectMenu = mb->addMenu(tr("选择(&S)"));
+    QMenu *selectMenu = mb->addMenu(tr("Select(&S)"));
+    selectMenu->setObjectName(QStringLiteral("menuSelect"));
     selectMenu->addAction(m_actionSelectAll);
     selectMenu->addAction(m_actionDeselect);
     selectMenu->addAction(m_actionInvertSelection);
@@ -916,7 +935,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  调整
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *adjustMenu = mb->addMenu(tr("调整(&A)"));
+    QMenu *adjustMenu = mb->addMenu(tr("Adjust(&A)"));
+    adjustMenu->setObjectName(QStringLiteral("menuAdjust"));
     adjustMenu->addAction(m_actionBrightnessContrast);
     adjustMenu->addAction(m_actionHueSaturation);
     adjustMenu->addSeparator();
@@ -929,7 +949,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  图像
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *imageMenu = mb->addMenu(tr("图像(&I)"));
+    QMenu *imageMenu = mb->addMenu(tr("Image(&I)"));
+    imageMenu->setObjectName(QStringLiteral("menuImage"));
     imageMenu->addAction(m_actionImageSize);
     imageMenu->addAction(m_actionCanvasSize);
     imageMenu->addSeparator();
@@ -955,7 +976,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  图层
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *layerMenu = mb->addMenu(tr("图层(&L)"));
+    QMenu *layerMenu = mb->addMenu(tr("Layer(&L)"));
+    layerMenu->setObjectName(QStringLiteral("menuLayer"));
     layerMenu->addAction(m_actionLayerNew);
     layerMenu->addAction(m_actionLayerDuplicate);
     layerMenu->addAction(m_actionLayerDelete);
@@ -972,7 +994,8 @@ void MainWindow::setupMenus()
     // ─────────────────────────────────────────────────────────────────────
     //  视图
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *viewMenu = mb->addMenu(tr("视图(&V)"));
+    QMenu *viewMenu = mb->addMenu(tr("View(&V)"));
+    viewMenu->setObjectName(QStringLiteral("menuView"));
     viewMenu->addAction(m_actionZoomIn);
     viewMenu->addAction(m_actionZoomOut);
     viewMenu->addAction(m_actionZoomFit);
@@ -984,7 +1007,7 @@ void MainWindow::setupMenus()
     // ── 网格的间距与吸附 ──
     viewMenu->addAction(m_actionSnapToGrid);
 
-    QMenu *gridSpacingMenu = viewMenu->addMenu(tr("网格间距(&Z)"));
+    QMenu *gridSpacingMenu = viewMenu->addMenu(tr("Grid Spacing(&Z)"));
     gridSpacingMenu->setObjectName(QStringLiteral("menuGridSpacing"));
     gridSpacingMenu->setIcon(icons::icon(QStringLiteral("view_grid")));
     for (QAction *act : m_actionGridSpacing)
@@ -997,7 +1020,7 @@ void MainWindow::setupMenus()
     viewMenu->addAction(m_actionShowRuler);
 
     // 「标尺单位」子菜单。★ 它自己带图标，5 个单选项不带 ★
-    QMenu *unitMenu = viewMenu->addMenu(tr("标尺单位(&N)"));
+    QMenu *unitMenu = viewMenu->addMenu(tr("Ruler Units(&N)"));
     unitMenu->setObjectName(QStringLiteral("menuRulerUnit"));
     unitMenu->setIcon(icons::icon(QStringLiteral("view_ruler")));
     for (QAction *act : m_actionRulerUnit)
@@ -1011,57 +1034,80 @@ void MainWindow::setupMenus()
 
     // 面板显隐菜单。内容在 setupDocks 里填充
     // （因为那时 QDockWidget 才存在）。
-    QMenu *panelMenu = viewMenu->addMenu(tr("面板(&P)"));
-    panelMenu->setObjectName(QStringLiteral("menuPanels"));
+    QMenu *panelMenu = viewMenu->addMenu(tr("Panels(&P)"));
+    panelMenu->setObjectName(QStringLiteral("menuPanel"));
     panelMenu->setIcon(icons::icon(QStringLiteral("menu_panels")));
 
     // ─────────────────────────────────────────────────────────────────────
     //  语言
     // ─────────────────────────────────────────────────────────────────────
-    //  ★ 只有一种可用语言时，整个菜单都不创建 ★
+    //  ★ 菜单结构：第一项"自动（跟随系统）"，其后是每种可用语言 ★
     //
-    //    阶段 1 源码文本是中文、且 zh_CN 就是源码语言，此时菜单里只会
-    //    孤零零一项"简体中文"——没有信息量，反而像程序坏了。
-    //    等阶段 2 源码英文化之后，可用语言变成 {en, zh_CN}，本段代码
-    //    一行都不用改就会自动多出 "English" 一项。
+    //    "自动"是默认状态（QSettings 没存过值就等于它）：按系统 locale
+    //    推断，中文环境 → 简体中文，其余 → English。用户显式选过之后，
+    //    locale 不再参与 —— 经常带着笔记本中英文环境来回跑的用户，
+    //    不会某天早上发现界面语言跟着系统漂移了。
     //
     //  ★ 切换后要重启才生效 ★
     //    运行中切换要重翻译整个 UI：每个控件都要响应 LanguageChange 事件、
     //    动态拼的字符串（标题、状态栏、对话框文本）要全部重新生成 ——
-    //    那是阶段 2 之后的独立课题。v1 用"保存选择 + 弹提示 + 下次启动
-    //    生效"，宁可诚实地说清楚，也不给一个"点了没反应"的死开关。
-    if (zl::uilang::availableLanguages().size() > 1) {
-        QMenu *langMenu = mb->addMenu(tr("语言(&Y)"));
-        langMenu->setObjectName(QStringLiteral("menuLanguage"));
+    //    那是后续课题。v1 用"保存选择 + 弹提示 + 下次启动生效"，
+    //    宁可诚实地说清楚，也不给一个"点了没反应"的死开关。
+    //
+    //  ★ 菜单总是显示 ★
+    //    哪怕当前只有一种可用语言也显示：用户得知道"语言设置"在哪、
+    //    默认行为是什么。没有可选语言时它孤零零两项，也好过一个
+    //    找不到的菜单。
+    QMenu *langMenu = mb->addMenu(tr("Language(&Y)"));
+    langMenu->setObjectName(QStringLiteral("menuLanguage"));
 
-        // 与「标尺单位」同款：互斥单选组，**不给单项设 objectName** ——
-        // 对账规则是"有名字的菜单动作必须有图标"，为两个语言项各配一张
-        // 图标纯属噪音。定位它们靠菜单本身（findChild<QMenu*>("menuLanguage")）。
-        auto *langGroup = new QActionGroup(this);
-        langGroup->setExclusive(true);
+    // 与「标尺单位」同款：互斥单选组，**不给单项设 objectName** ——
+    // 对账规则是"有名字的菜单动作必须有图标"，为几个语言项各配一张
+    // 图标纯属噪音。定位它们靠菜单本身（findChild<QMenu*>("menuLanguage")）。
+    auto *langGroup = new QActionGroup(this);
+    langGroup->setExclusive(true);
 
-        const QString current = zl::uilang::currentLanguage();
-        for (const QString &code : zl::uilang::availableLanguages()) {
-            QAction *act = new QAction(zl::uilang::displayName(code), this);
-            act->setCheckable(true);
-            act->setChecked(code == current);
-            connect(act, &QAction::triggered, this, [this, code] {
-                zl::uilang::setCurrentLanguage(code);
-                QMessageBox::information(
-                    this,
-                    tr("切换界面语言"),
-                    tr("界面语言已设置为「%1」，下次启动程序时生效。")
-                        .arg(zl::uilang::displayName(code)));
-            });
-            langGroup->addAction(act);
-            langMenu->addAction(act);
-        }
+    // 勾选态看"偏好"而不是"生效语言"：自动项在 locale 推断出某种语言时
+    // 依然保持勾选 —— 那正是用户选"自动"的含义。
+    // 垃圾偏好（用户手改过设置文件）按"自动"显示：与 currentLanguage()
+    // 的解析口径一致（那里同样落到自动分支），否则菜单会一项都没勾，
+    // 而 currentLanguage() 却说"在用 locale 推断的语言"—— 对不上。
+    QString langPref = zl::uilang::languagePreference();
+    if (langPref != zl::uilang::autoLanguage()
+        && !zl::uilang::availableLanguages().contains(langPref))
+        langPref = zl::uilang::autoLanguage();
+
+    // "重启生效"提示是成员函数 promptRestartForLanguage()（声明处说明了
+    // 为什么不能是局部 lambda：connect 存闭包，局部量出了作用域就失效）。
+
+    QAction *autoLangAct = new QAction(tr("Auto (Follow System)"), this);
+    autoLangAct->setCheckable(true);
+    autoLangAct->setChecked(langPref == zl::uilang::autoLanguage());
+    connect(autoLangAct, &QAction::triggered, this, [this] {
+        zl::uilang::setCurrentLanguage(zl::uilang::autoLanguage());
+        promptRestartForLanguage(
+            zl::uilang::displayName(zl::uilang::currentLanguage()));
+    });
+    langGroup->addAction(autoLangAct);
+    langMenu->addAction(autoLangAct);
+
+    for (const QString &code : zl::uilang::availableLanguages()) {
+        QAction *act = new QAction(zl::uilang::displayName(code), this);
+        act->setCheckable(true);
+        act->setChecked(langPref == code);
+        connect(act, &QAction::triggered, this, [this, code] {
+            zl::uilang::setCurrentLanguage(code);
+            promptRestartForLanguage(zl::uilang::displayName(code));
+        });
+        langGroup->addAction(act);
+        langMenu->addAction(act);
     }
 
     // ─────────────────────────────────────────────────────────────────────
     //  帮助
     // ─────────────────────────────────────────────────────────────────────
-    QMenu *helpMenu = mb->addMenu(tr("帮助(&H)"));
+    QMenu *helpMenu = mb->addMenu(tr("Help(&H)"));
+    helpMenu->setObjectName(QStringLiteral("menuHelp"));
     helpMenu->addAction(m_actionAbout);
     helpMenu->addAction(m_actionAboutQt);
 }
@@ -1075,7 +1121,7 @@ void MainWindow::setupToolBars()
     // ─────────────────────────────────────────────────────────────────────
     //  第一行：主工具栏（文件 + 编辑 + 视图）
     // ─────────────────────────────────────────────────────────────────────
-    m_mainToolBar = addToolBar(tr("主工具栏"));
+    m_mainToolBar = addToolBar(tr("Main Toolbar"));
     m_mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
     // ★ 不可移动 ★
     //   允许移动的话，用户很容易不小心把工具栏拖成浮动窗口，
@@ -1104,7 +1150,7 @@ void MainWindow::setupToolBars()
     //   选项条会被压得很窄，控件挤在一起。
     addToolBarBreak();
 
-    QToolBar *optionsToolBar = addToolBar(tr("工具选项"));
+    QToolBar *optionsToolBar = addToolBar(tr("Tool Options"));
     optionsToolBar->setObjectName(QStringLiteral("toolOptionsToolBar"));
     optionsToolBar->setMovable(false);
     optionsToolBar->setFloatable(false);
@@ -1124,7 +1170,7 @@ void MainWindow::setupToolBars()
     //   工具箱需要"窄、固定宽、不能浮动、不能关闭"，这正是工具栏的行为。
     //   放在左侧工具栏区域视觉上与 Dock 无异，
     //   但不需要处理 Dock 的浮动/关闭/嵌套逻辑。
-    m_toolsToolBar = new QToolBar(tr("工具箱"), this);
+    m_toolsToolBar = new QToolBar(tr("Toolbox"), this);
     m_toolsToolBar->setObjectName(QStringLiteral("toolsToolBar"));
     m_toolsToolBar->setOrientation(Qt::Vertical);
     m_toolsToolBar->setMovable(false);
@@ -1195,7 +1241,7 @@ void MainWindow::buildToolBox()
                        .arg(QKeySequence(key).toString(QKeySequence::NativeText));
         }
         action->setToolTip(tip);
-        action->setStatusTip(tr("切换到%1工具").arg(tool->displayName()));
+        action->setStatusTip(tr("Switch to the %1 tool").arg(tool->displayName()));
 
         // ★ 点击 → 切换工具 ★
         //   用 QAction::triggered 而不是 toggled：
@@ -1222,7 +1268,7 @@ void MainWindow::buildToolBox()
     auto *colorIndicator = new QToolButton(this);
     colorIndicator->setObjectName(QStringLiteral("toolBoxColorIndicator"));
     colorIndicator->setFixedSize(28, 28);
-    colorIndicator->setToolTip(tr("前景色（点击修改）"));
+    colorIndicator->setToolTip(tr("Foreground color (click to change)"));
     connect(colorIndicator, &QToolButton::clicked,
             this, &MainWindow::chooseForegroundColor);
     m_toolsToolBar->addWidget(colorIndicator);
@@ -1327,12 +1373,12 @@ void MainWindow::setupDocks()
     //    QUndoView 自动显示撤销栈的全部条目、自动高亮当前位置、
     //    点击任意条目自动跳转到那个状态（内部调 QUndoStack::setIndex）。
     //    自己写这套逻辑至少 300 行，而 QUndoView 只需要两行。
-    m_historyDock = new QDockWidget(tr("历史记录"), this);
+    m_historyDock = new QDockWidget(tr("History"), this);
     m_historyDock->setObjectName(QStringLiteral("historyDock"));
     m_historyDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     m_undoView = new QUndoView(this);
-    m_undoView->setEmptyLabel(tr("（已经是初始状态）"));
+    m_undoView->setEmptyLabel(tr("(Already at the initial state)"));
     // 不在这里 setStack —— applyDocumentToPanels 会在文档建立后绑定
     m_historyDock->setWidget(m_undoView);
 
@@ -1341,7 +1387,7 @@ void MainWindow::setupDocks()
     // ─────────────────────────────────────────────────────────────────────
     //  颜色面板
     // ─────────────────────────────────────────────────────────────────────
-    m_colorDock = new QDockWidget(tr("颜色"), this);
+    m_colorDock = new QDockWidget(tr("Color"), this);
     m_colorDock->setObjectName(QStringLiteral("colorDock"));
     m_colorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
@@ -1360,13 +1406,13 @@ void MainWindow::setupDocks()
         auto *fgButton = new QPushButton(page);
         fgButton->setObjectName(QStringLiteral("foregroundSwatch"));
         fgButton->setFixedSize(48, 48);
-        fgButton->setToolTip(tr("前景色（点击修改）"));
+        fgButton->setToolTip(tr("Foreground color (click to change)"));
         fgButton->setCursor(Qt::PointingHandCursor);
 
         auto *bgButton = new QPushButton(page);
         bgButton->setObjectName(QStringLiteral("backgroundSwatch"));
         bgButton->setFixedSize(48, 48);
-        bgButton->setToolTip(tr("背景色（点击修改）"));
+        bgButton->setToolTip(tr("Background color (click to change)"));
         bgButton->setCursor(Qt::PointingHandCursor);
 
         swatchRow->addWidget(fgButton);
@@ -1378,13 +1424,13 @@ void MainWindow::setupDocks()
 
         auto *swapBtn = new QToolButton(page);
         swapBtn->setText(QStringLiteral("⇄"));
-        swapBtn->setToolTip(tr("交换前景色与背景色 (X)"));
+        swapBtn->setToolTip(tr("Swap foreground and background colors (X)"));
         swapBtn->setAutoRaise(true);
         connect(swapBtn, &QToolButton::clicked, this, &MainWindow::swapColors);
 
         auto *resetBtn = new QToolButton(page);
         resetBtn->setText(QStringLiteral("◧"));
-        resetBtn->setToolTip(tr("恢复默认颜色：黑 / 白 (D)"));
+        resetBtn->setToolTip(tr("Restore default colors: black / white (D)"));
         resetBtn->setAutoRaise(true);
         connect(resetBtn, &QToolButton::clicked, this, &MainWindow::resetColors);
 
@@ -1410,10 +1456,10 @@ void MainWindow::setupDocks()
         auto *hint = new QLabel(page);
         hint->setWordWrap(true);
         hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
-        hint->setText(tr("快捷键\n"
-                         "  X    交换前景 / 背景色\n"
-                         "  D    恢复默认颜色（黑 / 白）\n\n"
-                         "吸管工具取到的颜色会进入前景色。"));
+        hint->setText(tr("Hotkeys\n"
+                         "  X    Swap foreground / background color\n"
+                         "  D    Restore default colors (black / white)\n\n"
+                         "Colors picked with the eyedropper become the foreground color."));
         layout->addWidget(hint);
         layout->addStretch(1);
 
@@ -1435,7 +1481,7 @@ void MainWindow::setupDocks()
     //    撤销/重做因此只有一条路径，不可能漏。
     //    反过来，如果让面板自己去改 Document，就会出现
     //    "点了眼睛图标能隐藏、但 Ctrl+Z 没反应"这类静默漏网。
-    m_layerDock = new QDockWidget(tr("图层"), this);
+    m_layerDock = new QDockWidget(tr("Layers"), this);
     m_layerDock->setObjectName(QStringLiteral("layerDock"));
     m_layerDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
@@ -1531,7 +1577,7 @@ void MainWindow::setupStatusBar()
     connect(m_statusBar, &StatusBarWidget::zoomLevelRequested,
             this, &MainWindow::setZoomLevel);
 
-    m_statusBar->showMessage(tr("就绪"), 3000);
+    m_statusBar->showMessage(tr("Ready"), 3000);
 }
 
 // ============================================================================
@@ -1565,7 +1611,7 @@ void MainWindow::applyCaptureHotkey(const QKeySequence &sequence)
 
     m_actionCaptureNow->setShortcut(sequence);
     m_actionCaptureNow->setStatusTip(
-        tr("抓取当前屏幕并开为新标签页（%1；程序最小化时也有效）")
+        tr("Capture the current screen into a new tab (%1; works even while the program is minimized)")
             .arg(sequence.toString(QKeySequence::NativeText)));
 }
 
@@ -1619,7 +1665,7 @@ void MainWindow::setupScreenCapture()
             effective = seq;
             break;
         }
-        tried << tr("%1（%2）").arg(text, m_hotkey->lastError());
+        tried << tr("%1 (%2)").arg(text, m_hotkey->lastError());
     }
 
     if (!effective.isEmpty()) {
@@ -1634,7 +1680,7 @@ void MainWindow::setupScreenCapture()
             // 只会怀疑程序。状态栏 + 日志两处都留。
             if (m_statusBar) {
                 m_statusBar->showMessage(
-                    tr("首选快捷键 %1 已被其它程序占用，本次改用 %2（程序最小化时也有效）")
+                    tr("The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)")
                         .arg(QString::fromLatin1(kCaptureHotkey),
                              effective.toString(QKeySequence::NativeText)),
                     15000);
@@ -1654,8 +1700,9 @@ void MainWindow::setupScreenCapture()
     //   说清，否则用户会以为整个截图功能都坏了。
     if (m_statusBar) {
         m_statusBar->showMessage(
-            tr("全局快捷键不可用（%1）。程序最小化时按不了，"
-               "但前台仍可用 %2，或走「文件 → 屏幕截图 → 立即截图」")
+            tr("Global hotkey unavailable (%1). It will not work while "
+               "the program is minimized, but %2 still works in the "
+               "foreground, or use File → Screen Capture → Capture Now")
                 .arg(tried.join(QStringLiteral("；")),
                      QString::fromLatin1(kCaptureHotkey)),
             20000);

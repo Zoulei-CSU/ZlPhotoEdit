@@ -64,7 +64,7 @@ QString BrushTool::id() const
 
 QString BrushTool::displayName() const
 {
-    return m_kind == Kind::Brush ? tr("画笔") : tr("橡皮");
+    return m_kind == Kind::Brush ? tr("Brush") : tr("Eraser");
 }
 
 int BrushTool::shortcutKey() const
@@ -381,7 +381,7 @@ void BrushTool::finishStroke()
                 //   用户画了两笔，Ctrl+Z 一次两笔全没了。
                 stack->push(DrawCommand::standalone(
                     doc, layerIndex, bounds, before, after,
-                    m_kind == Kind::Eraser ? tr("橡皮擦除") : tr("画笔描边")));
+                    m_kind == Kind::Eraser ? tr("Erase") : tr("Brush Stroke")));
             }
         }
     }

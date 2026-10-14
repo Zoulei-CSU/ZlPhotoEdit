@@ -32,7 +32,7 @@ QString TextTool::id() const
 
 QString TextTool::displayName() const
 {
-    return tr("文字");
+    return tr("Text");
 }
 
 int TextTool::shortcutKey() const
@@ -95,7 +95,7 @@ bool TextTool::beginEditAt(const QPointF &imagePos, bool notifyUi)
     //   否则用户敲完确认，图层上多了一块**永远撤不掉**的痕迹。
     //   油漆桶与形状工具是同一条纪律。
     if (!commandStack()) {
-        showStatus(tr("没有可用的撤销栈，已取消输入"));
+        showStatus(tr("No undo stack available - input cancelled"));
         return false;
     }
 
@@ -207,7 +207,7 @@ bool TextTool::renderText(const QString &text, const QPointF &anchor)
 
     CommandStack *stack = commandStack();
     if (!stack) {
-        showStatus(tr("没有可用的撤销栈，文字未写入"));
+        showStatus(tr("No undo stack available - text not written"));
         return false;
     }
 
@@ -218,7 +218,7 @@ bool TextTool::renderText(const QString &text, const QPointF &anchor)
         // 两种情况：文字全是空白行（没有墨），或整块都在画布外。
         // 后者要给提示 —— 否则用户会以为"确认按钮坏了"。
         if (!text.trimmed().isEmpty())
-            showStatus(tr("文字在画布之外，未产生改动"));
+            showStatus(tr("The text is outside the canvas - nothing changed"));
         return false;
     }
 
@@ -280,7 +280,7 @@ bool TextTool::renderText(const QString &text, const QPointF &anchor)
     //   它取一个新的描边编号，所以"写一段、再写一段"一定是两条记录。
     //   自己 new 并传固定编号的话，连续两段文字会被 QUndoStack 静默合并成一步。
     stack->push(DrawCommand::standalone(doc, index, region, before, after,
-                                        tr("文字")));
+                                        tr("Text")));
 
     // ★ 这里**故意没有** doc->markDirty() ★
     //

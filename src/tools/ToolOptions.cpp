@@ -30,6 +30,7 @@
 #include <QSlider>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QCoreApplication>
 #include <QToolButton>
 #include <QDoubleSpinBox>
 #include <QFontComboBox>
@@ -49,9 +50,9 @@ namespace zl {
 QString pickRadiusName(PickRadius r)
 {
     switch (r) {
-    case PickRadius::Point:     return QObject::tr("取样点");
-    case PickRadius::Average3x3:return QObject::tr("3×3 平均");
-    case PickRadius::Average5x5:return QObject::tr("5×5 平均");
+    case PickRadius::Point:     return QObject::tr("Sample Point");
+    case PickRadius::Average3x3:return QObject::tr("3×3 Average");
+    case PickRadius::Average5x5:return QObject::tr("5×5 Average");
     }
     return QString();
 }
@@ -69,9 +70,9 @@ int pickRadiusSize(PickRadius r)
 QString shapeModeName(ShapeMode m)
 {
     switch (m) {
-    case ShapeMode::Stroke: return QObject::tr("描边");
-    case ShapeMode::Fill:   return QObject::tr("填充");
-    case ShapeMode::Both:   return QObject::tr("描边+填充");
+    case ShapeMode::Stroke: return QObject::tr("Stroke");
+    case ShapeMode::Fill:   return QObject::tr("Fill");
+    case ShapeMode::Both:   return QObject::tr("Stroke+Fill");
     }
     return QString();
 }
@@ -79,9 +80,9 @@ QString shapeModeName(ShapeMode m)
 QString textAlignName(TextAlign a)
 {
     switch (a) {
-    case TextAlign::Left:   return QObject::tr("左对齐");
-    case TextAlign::Center: return QObject::tr("居中");
-    case TextAlign::Right:  return QObject::tr("右对齐");
+    case TextAlign::Left:   return QObject::tr("Left");
+    case TextAlign::Center: return QObject::tr("Center");
+    case TextAlign::Right:  return QObject::tr("Right");
     }
     return QString();
 }
@@ -89,10 +90,10 @@ QString textAlignName(TextAlign a)
 QString selectionModeName(SelectionMode m)
 {
     switch (m) {
-    case SelectionMode::Replace:   return QObject::tr("新建选区");
-    case SelectionMode::Add:       return QObject::tr("添加到选区");
-    case SelectionMode::Subtract:  return QObject::tr("从选区减去");
-    case SelectionMode::Intersect: return QObject::tr("与选区交叉");
+    case SelectionMode::Replace:   return QObject::tr("New Selection");
+    case SelectionMode::Add:       return QObject::tr("Add to Selection");
+    case SelectionMode::Subtract:  return QObject::tr("Subtract from Selection");
+    case SelectionMode::Intersect: return QObject::tr("Intersect with Selection");
     }
     return QString();
 }
@@ -100,7 +101,7 @@ QString selectionModeName(SelectionMode m)
 QString aspectPresetName(AspectPreset p)
 {
     switch (p) {
-    case AspectPreset::Free:        return QObject::tr("自由");
+    case AspectPreset::Free:        return QObject::tr("Free");
     case AspectPreset::Square:      return QObject::tr("1 : 1");
     case AspectPreset::FourThree:   return QObject::tr("4 : 3");
     case AspectPreset::ThreeTwo:    return QObject::tr("3 : 2");
@@ -108,7 +109,7 @@ QString aspectPresetName(AspectPreset p)
     case AspectPreset::NineSixteen: return QObject::tr("9 : 16");
     case AspectPreset::TwoThree:    return QObject::tr("2 : 3");
     case AspectPreset::ThreeFour:   return QObject::tr("3 : 4");
-    case AspectPreset::Custom:      return QObject::tr("自定义");
+    case AspectPreset::Custom:      return QObject::tr("Custom");
     }
     return QString();
 }
@@ -116,11 +117,11 @@ QString aspectPresetName(AspectPreset p)
 QString cropGridName(CropGrid g)
 {
     switch (g) {
-    case CropGrid::None:        return QObject::tr("无");
-    case CropGrid::Thirds:      return QObject::tr("三分法");
-    case CropGrid::Grid:        return QObject::tr("网格");
-    case CropGrid::Diagonal:    return QObject::tr("对角线");
-    case CropGrid::GoldenRatio: return QObject::tr("黄金比例");
+    case CropGrid::None:        return QObject::tr("None");
+    case CropGrid::Thirds:      return QObject::tr("Thirds");
+    case CropGrid::Grid:        return QObject::tr("Grid");
+    case CropGrid::Diagonal:    return QObject::tr("Diagonal");
+    case CropGrid::GoldenRatio: return QObject::tr("Golden Ratio");
     }
     return QString();
 }
@@ -182,20 +183,36 @@ void addModeButtons(QWidget *bar, QHBoxLayout *layout,
 {
     struct Entry {
         SelectionMode mode;
-        const char   *text;
-        const char   *tip;
+        QString       text;
+        QString       tip;
     };
+    // ★ context 修复（2026-10-14，见 docs/界面语言.md §4.3）★
+    //   这些串在 zl 命名空间的函数里，lupdate 记 context "zl"，而运行期
+    //   QObject::tr() 查的是 "QObject" —— 对不上，翻译永远不命中。
+    //   改法：QCoreApplication::translate("zl", 字面量)。
+    //   ★ 字面量必须直接传给 translate，不能经 QT_TRANSLATE_NOOP 中转 ★
+    //     实测 lupdate 5.15.16 不提取函数内的 QT_TRANSLATE_NOOP（匿名
+    //     namespace / static 局部都不提取），只有 translate("ctx", "字面量")
+    //     这一种形式稳定进 .ts。
     static const Entry entries[] = {
-        { SelectionMode::Replace,   QT_TR_NOOP("新建"), QT_TR_NOOP("替换现有选区") },
-        { SelectionMode::Add,       QT_TR_NOOP("添加"), QT_TR_NOOP("把新选区并入现有选区（也可按住 Shift）") },
-        { SelectionMode::Subtract,  QT_TR_NOOP("减去"), QT_TR_NOOP("从现有选区中挖掉新选区（也可按住 Alt）") },
-        { SelectionMode::Intersect, QT_TR_NOOP("交叉"), QT_TR_NOOP("只保留两者的重叠部分（Shift+Alt）") },
+        { SelectionMode::Replace,
+          QCoreApplication::translate("zl", "New"),
+          QCoreApplication::translate("zl", "Replace existing selection") },
+        { SelectionMode::Add,
+          QCoreApplication::translate("zl", "Add"),
+          QCoreApplication::translate("zl", "Merge the new selection into the existing one (or hold Shift)") },
+        { SelectionMode::Subtract,
+          QCoreApplication::translate("zl", "Subtract"),
+          QCoreApplication::translate("zl", "Carve the new selection out of the existing one (or hold Alt)") },
+        { SelectionMode::Intersect,
+          QCoreApplication::translate("zl", "Intersect"),
+          QCoreApplication::translate("zl", "Keep only the overlap of both (Shift+Alt)") },
     };
 
     for (const Entry &entry : entries) {
         auto *btn = new QToolButton(bar);
-        btn->setText(QObject::tr(entry.text));
-        btn->setToolTip(QObject::tr(entry.tip));
+        btn->setText(entry.text);
+        btn->setToolTip(entry.tip);
         btn->setCheckable(true);
         // ★ 互斥交给 QToolButton 自己 ★
         //   手写"点了 B 就取消 A"在通过快捷键切工具时会漏掉同步。
@@ -302,7 +319,7 @@ QWidget *BrushOptions::createWidget(QWidget *parent)
     sizeSlider->setValue(m_size);
     sizeSlider->setFixedWidth(110);
 
-    addLabeled(layout, tr("大小"), sizeSlider);
+    addLabeled(layout, tr("Size"), sizeSlider);
     layout->addWidget(sizeSpin);
 
     // 滑块与数字框双向同步。
@@ -322,8 +339,8 @@ QWidget *BrushOptions::createWidget(QWidget *parent)
     hardness->setRange(0, 100);
     hardness->setValue(m_hardness);
     hardness->setFixedWidth(90);
-    hardness->setToolTip(tr("0% 为完全柔和的边缘，100% 为硬边（无抗锯齿过渡）"));
-    addLabeled(layout, tr("硬度"), hardness);
+    hardness->setToolTip(tr("0% is a fully soft edge; 100% is a hard edge (no anti-aliased transition)"));
+    addLabeled(layout, tr("Hardness"), hardness);
 
     auto *hardnessValue = new QLabel(QString::number(m_hardness) + QStringLiteral("%"), bar);
     hardnessValue->setMinimumWidth(34);
@@ -344,8 +361,8 @@ QWidget *BrushOptions::createWidget(QWidget *parent)
     opacity->setRange(0, 100);
     opacity->setValue(m_opacity);
     opacity->setFixedWidth(90);
-    opacity->setToolTip(tr("整笔的最高不透明度，反复涂抹不会叠加超过该值"));
-    addLabeled(layout, tr("不透明度"), opacity);
+    opacity->setToolTip(tr("Maximum opacity of the whole stroke; repeated painting will not build up beyond this value"));
+    addLabeled(layout, tr("Opacity"), opacity);
 
     auto *opacityValue = new QLabel(QString::number(m_opacity) + QStringLiteral("%"), bar);
     opacityValue->setMinimumWidth(34);
@@ -363,8 +380,8 @@ QWidget *BrushOptions::createWidget(QWidget *parent)
     flow->setRange(1, 100);   // 下限 1 而非 0：流量 0 等于画不出来
     flow->setValue(m_flow);
     flow->setFixedWidth(90);
-    flow->setToolTip(tr("单个笔刷点的落笔量，反复涂抹会累积"));
-    addLabeled(layout, tr("流量"), flow);
+    flow->setToolTip(tr("How much paint a single dab lays down; repeated dabs build up"));
+    addLabeled(layout, tr("Flow"), flow);
 
     auto *flowValue = new QLabel(QString::number(m_flow) + QStringLiteral("%"), bar);
     flowValue->setMinimumWidth(34);
@@ -489,9 +506,11 @@ QWidget *BucketOptions::createWidget(QWidget *parent)
     tol->setRange(0, 255);
     tol->setValue(m_tolerance);
     tol->setFixedWidth(110);
-    tol->setToolTip(tr("颜色差异小于容差的相邻像素会被一起填充。\n"
-                       "采用三通道欧氏距离，容差 30 大致相当于肉眼刚能看出的差异。"));
-    addLabeled(layout, tr("容差"), tol);
+    tol->setToolTip(tr("Neighboring pixels whose color differs by less than the "
+                       "tolerance are filled together.\n"
+                       "Uses three-channel Euclidean distance; a tolerance of "
+                       "30 is roughly the smallest difference the eye can tell."));
+    addLabeled(layout, tr("Tolerance"), tol);
 
     auto *tolSpin = new QSpinBox(bar);
     tolSpin->setRange(0, 255);
@@ -506,19 +525,21 @@ QWidget *BucketOptions::createWidget(QWidget *parent)
 
     // ── 连续 / 非连续 ──
     // 连续模式：只填充与起点连通（四邻域可达）的像素 —— 这是"点一下填一整块"
-    auto *contiguous = new QCheckBox(tr("连续"), bar);
+    auto *contiguous = new QCheckBox(tr("Contiguous"), bar);
     contiguous->setChecked(m_contiguous);
-    contiguous->setToolTip(tr("勾选：只填充与点击处连通的区域（常规行为）\n"
-                              "取消：填充整张图中所有在容差内的像素，不管是否连通"));
+    contiguous->setToolTip(tr("Checked: fill only the region connected to the "
+                              "click point (the usual behavior)\n"
+                              "Unchecked: fill every pixel within tolerance "
+                              "in the whole image, connected or not"));
     layout->addWidget(contiguous);
     connect(contiguous, &QCheckBox::toggled, this, &BucketOptions::setContiguous);
 
     layout->addSpacing(6);
 
     // ── 抗锯齿 ──
-    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    auto *aa = new QCheckBox(tr("Anti-aliasing"), bar);
     aa->setChecked(m_antialias);
-    aa->setToolTip(tr("在填充区域的边缘生成一层半透明的过渡带，避免锯齿"));
+    aa->setToolTip(tr("Draw a semi-transparent transition band along the fill edge to avoid jaggies"));
     layout->addWidget(aa);
     connect(aa, &QCheckBox::toggled, this, &BucketOptions::setAntialias);
 
@@ -529,7 +550,7 @@ QWidget *BucketOptions::createWidget(QWidget *parent)
     opacity->setRange(1, 100);
     opacity->setValue(m_opacity);
     opacity->setFixedWidth(90);
-    addLabeled(layout, tr("不透明度"), opacity);
+    addLabeled(layout, tr("Opacity"), opacity);
 
     auto *opacityValue = new QLabel(QString::number(m_opacity) + QStringLiteral("%"), bar);
     opacityValue->setMinimumWidth(34);
@@ -600,8 +621,8 @@ QWidget *PickerOptions::createWidget(QWidget *parent)
     combo->addItem(pickRadiusName(PickRadius::Average3x3), int(PickRadius::Average3x3));
     combo->addItem(pickRadiusName(PickRadius::Average5x5), int(PickRadius::Average5x5));
     combo->setCurrentIndex(int(m_radius));
-    combo->setToolTip(tr("取样范围。图像有明显噪点时用平均值更稳定。"));
-    addLabeled(layout, tr("取样范围"), combo);
+    combo->setToolTip(tr("Sampling range. Averages are more stable when the image has visible noise"));
+    addLabeled(layout, tr("Sample Range"), combo);
 
     connect(combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this](int index) {
@@ -609,7 +630,7 @@ QWidget *PickerOptions::createWidget(QWidget *parent)
     });
 
     // 吸管没有颜色选择控件 —— 它把取到的颜色送到 ColorPanel 的前景色。
-    auto *hint = new QLabel(tr("按住 Alt 可临时切换到吸管"), bar);
+    auto *hint = new QLabel(tr("Hold Alt to temporarily switch to the eyedropper"), bar);
     hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addSpacing(12);
     layout->addWidget(hint);
@@ -687,19 +708,19 @@ QWidget *LineOptions::createWidget(QWidget *parent)
     width->setRange(1, 200);
     width->setValue(m_width);
     width->setSuffix(tr(" px"));
-    addLabeled(layout, tr("线宽"), width);
+    addLabeled(layout, tr("Line Width"), width);
     connect(width, QOverload<int>::of(&QSpinBox::valueChanged), this, &LineOptions::setWidth);
 
     layout->addSpacing(10);
 
     auto *styleCombo = new QComboBox(bar);
-    styleCombo->addItem(tr("实线"),     int(Qt::SolidLine));
-    styleCombo->addItem(tr("虚线"),     int(Qt::DashLine));
-    styleCombo->addItem(tr("点线"),     int(Qt::DotLine));
-    styleCombo->addItem(tr("点划线"),   int(Qt::DashDotLine));
-    styleCombo->addItem(tr("双点划线"), int(Qt::DashDotDotLine));
+    styleCombo->addItem(tr("Solid"),     int(Qt::SolidLine));
+    styleCombo->addItem(tr("Dashed"),     int(Qt::DashLine));
+    styleCombo->addItem(tr("Dotted"),     int(Qt::DotLine));
+    styleCombo->addItem(tr("Dash-Dot"),   int(Qt::DashDotLine));
+    styleCombo->addItem(tr("Dash-Dot-Dot"), int(Qt::DashDotDotLine));
     styleCombo->setCurrentIndex(styleCombo->findData(int(m_style)));
-    addLabeled(layout, tr("线型"), styleCombo);
+    addLabeled(layout, tr("Line Style"), styleCombo);
     connect(styleCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this, styleCombo](int idx) {
         setStyle(static_cast<Qt::PenStyle>(styleCombo->itemData(idx).toInt()));
@@ -707,7 +728,7 @@ QWidget *LineOptions::createWidget(QWidget *parent)
 
     layout->addSpacing(10);
 
-    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    auto *aa = new QCheckBox(tr("Anti-aliasing"), bar);
     aa->setChecked(m_antialias);
     layout->addWidget(aa);
     connect(aa, &QCheckBox::toggled, this, &LineOptions::setAntialias);
@@ -837,7 +858,7 @@ QWidget *ShapeOptions::createWidget(QWidget *parent)
     modeCombo->addItem(shapeModeName(ShapeMode::Fill),   int(ShapeMode::Fill));
     modeCombo->addItem(shapeModeName(ShapeMode::Both),   int(ShapeMode::Both));
     modeCombo->setCurrentIndex(int(m_mode));
-    addLabeled(layout, tr("模式"), modeCombo);
+    addLabeled(layout, tr("Mode"), modeCombo);
     connect(modeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this, modeCombo](int idx) {
         setMode(static_cast<ShapeMode>(modeCombo->itemData(idx).toInt()));
@@ -849,7 +870,7 @@ QWidget *ShapeOptions::createWidget(QWidget *parent)
     width->setRange(1, 200);
     width->setValue(m_width);
     width->setSuffix(tr(" px"));
-    addLabeled(layout, tr("线宽"), width);
+    addLabeled(layout, tr("Line Width"), width);
     connect(width, QOverload<int>::of(&QSpinBox::valueChanged), this, &ShapeOptions::setWidth);
 
     // 只有矩形才有圆角参数
@@ -860,15 +881,15 @@ QWidget *ShapeOptions::createWidget(QWidget *parent)
         radius->setRange(0, 500);
         radius->setValue(m_cornerRadius);
         radius->setSuffix(tr(" px"));
-        radius->setToolTip(tr("0 为直角；数值大于短边一半时会自动收敛为胶囊形"));
-        addLabeled(layout, tr("圆角"), radius);
+        radius->setToolTip(tr("0 means square corners; values above half of the shorter side taper into a capsule"));
+        addLabeled(layout, tr("Corner Radius"), radius);
         connect(radius, QOverload<int>::of(&QSpinBox::valueChanged),
                 this, &ShapeOptions::setCornerRadius);
     }
 
     layout->addSpacing(10);
 
-    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    auto *aa = new QCheckBox(tr("Anti-aliasing"), bar);
     aa->setChecked(m_antialias);
     layout->addWidget(aa);
     connect(aa, &QCheckBox::toggled, this, &ShapeOptions::setAntialias);
@@ -877,7 +898,7 @@ QWidget *ShapeOptions::createWidget(QWidget *parent)
     //   描边色取当前前景色（由 ColorPanel 控制），
     //   填充色为选项条内的独立设置 —— 因为"描边黑、填充白"是常见需求，
     //   如果两者都绑前景色就没法同时用两个颜色。
-    auto *hint = new QLabel(tr("描边使用前景色"), bar);
+    auto *hint = new QLabel(tr("Strokes use the foreground color"), bar);
     hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addSpacing(12);
     layout->addWidget(hint);
@@ -1071,7 +1092,7 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     auto *fontCombo = new QFontComboBox(bar);
     fontCombo->setCurrentFont(QFont(m_family));
     fontCombo->setFixedWidth(180);
-    addLabeled(layout, tr("字体"), fontCombo);
+    addLabeled(layout, tr("Font"), fontCombo);
     connect(fontCombo, &QFontComboBox::currentFontChanged, this, [this](const QFont &f) {
         setFamily(f.family());
     });
@@ -1083,8 +1104,8 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     size->setRange(1, 2000);
     size->setValue(m_pointSize);
     size->setSuffix(tr(" pt"));
-    size->setToolTip(tr("文字大小（磅）。文档 DPI 为 72 时 1pt = 1px。"));
-    addLabeled(layout, tr("字号"), size);
+    size->setToolTip(tr("Text size in points. When the document DPI is 72, 1 pt = 1 px"));
+    addLabeled(layout, tr("Font Size"), size);
     connect(size, QOverload<int>::of(&QSpinBox::valueChanged),
             this, &TextOptions::setPointSize);
 
@@ -1096,7 +1117,7 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     bold->setText(tr("B"));
     bold->setCheckable(true);
     bold->setChecked(m_bold);
-    bold->setToolTip(tr("粗体"));
+    bold->setToolTip(tr("Bold"));
     {
         QFont f = bold->font();
         f.setBold(true);
@@ -1109,7 +1130,7 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     italic->setText(tr("I"));
     italic->setCheckable(true);
     italic->setChecked(m_italic);
-    italic->setToolTip(tr("斜体"));
+    italic->setToolTip(tr("Italic"));
     {
         QFont f = italic->font();
         f.setItalic(true);
@@ -1122,7 +1143,7 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     underline->setText(tr("U"));
     underline->setCheckable(true);
     underline->setChecked(m_underline);
-    underline->setToolTip(tr("下划线"));
+    underline->setToolTip(tr("Underline"));
     {
         QFont f = underline->font();
         f.setUnderline(true);
@@ -1139,7 +1160,7 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     alignCombo->addItem(textAlignName(TextAlign::Center), int(TextAlign::Center));
     alignCombo->addItem(textAlignName(TextAlign::Right),  int(TextAlign::Right));
     alignCombo->setCurrentIndex(int(m_align));
-    addLabeled(layout, tr("对齐"), alignCombo);
+    addLabeled(layout, tr("Alignment"), alignCombo);
     connect(alignCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this, alignCombo](int idx) {
         setAlign(static_cast<TextAlign>(alignCombo->itemData(idx).toInt()));
@@ -1153,9 +1174,9 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     lineHeight->setSingleStep(0.1);
     lineHeight->setDecimals(1);
     lineHeight->setValue(m_lineHeight);
-    lineHeight->setSuffix(tr(" 倍"));
-    lineHeight->setToolTip(tr("行距倍数（1.0 表示与字号等高）"));
-    addLabeled(layout, tr("行距"), lineHeight);
+    lineHeight->setSuffix(tr("×"));
+    lineHeight->setToolTip(tr("Line spacing multiple (1.0 matches the font size)"));
+    addLabeled(layout, tr("Line Spacing"), lineHeight);
     connect(lineHeight, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &TextOptions::setLineHeight);
 
@@ -1168,8 +1189,8 @@ QWidget *TextOptions::createWidget(QWidget *parent)
     letterSpacing->setDecimals(1);
     letterSpacing->setValue(m_letterSpacing);
     letterSpacing->setSuffix(tr(" px"));
-    letterSpacing->setToolTip(tr("字间距（像素）。负值使文字更紧凑。"));
-    addLabeled(layout, tr("字间距"), letterSpacing);
+    letterSpacing->setToolTip(tr("Letter spacing in pixels. Negative values tighten the text"));
+    addLabeled(layout, tr("Letter Spacing"), letterSpacing);
     connect(letterSpacing, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &TextOptions::setLetterSpacing);
 
@@ -1306,18 +1327,19 @@ QWidget *SelectionOptions::createWidget(QWidget *parent)
     feather->setDecimals(1);
     feather->setValue(m_featherRadius);
     feather->setSuffix(tr(" px"));
-    feather->setToolTip(tr("羽化半径。0 表示边缘清晰；\n"
-                           "数值越大，选区边缘的过渡越柔和。"));
-    addLabeled(layout, tr("羽化"), feather);
+    feather->setToolTip(tr("Feather radius. 0 means a crisp edge;\n"
+                           "larger values soften the transition along the "
+                           "selection edge."));
+    addLabeled(layout, tr("Feather"), feather);
     connect(feather, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &SelectionOptions::setFeatherRadius);
 
     layout->addSpacing(12);
 
     // ── 抗锯齿 ──
-    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    auto *aa = new QCheckBox(tr("Anti-aliasing"), bar);
     aa->setChecked(m_antialias);
-    aa->setToolTip(tr("在选区边缘生成 1~254 的过渡值，避免锯齿"));
+    aa->setToolTip(tr("Generate 1-254 transition values along the selection edge to avoid jaggies"));
     layout->addWidget(aa);
     connect(aa, &QCheckBox::toggled, this, &SelectionOptions::setAntialias);
 
@@ -1428,9 +1450,11 @@ QWidget *MagicWandOptions::createWidget(QWidget *parent)
     tol->setRange(0, 255);
     tol->setValue(m_tolerance);
     tol->setFixedWidth(110);
-    tol->setToolTip(tr("与落点颜色差异小于容差的像素会被一起选中。\n"
-                       "采用三通道欧氏距离，容差 30 大致相当于肉眼刚能看出的差异。"));
-    addLabeled(layout, tr("容差"), tol);
+    tol->setToolTip(tr("Pixels whose color differs from the click point by less "
+                       "than the tolerance are selected together.\n"
+                       "Uses three-channel Euclidean distance; a tolerance of "
+                       "30 is roughly the smallest difference the eye can tell."));
+    addLabeled(layout, tr("Tolerance"), tol);
 
     auto *tolSpin = new QSpinBox(bar);
     tolSpin->setRange(0, 255);
@@ -1445,19 +1469,21 @@ QWidget *MagicWandOptions::createWidget(QWidget *parent)
     layout->addSpacing(10);
 
     // ── 连续 ──
-    auto *contiguous = new QCheckBox(tr("连续"), bar);
+    auto *contiguous = new QCheckBox(tr("Contiguous"), bar);
     contiguous->setChecked(m_contiguous);
-    contiguous->setToolTip(tr("勾选：只选中与落点连通的那一片（常规行为）\n"
-                              "取消：选中整张图中所有在容差内的像素，不管是否连通"));
+    contiguous->setToolTip(tr("Checked: select only the region connected to "
+                              "the click point (the usual behavior)\n"
+                              "Unchecked: select every pixel within tolerance "
+                              "in the whole image, connected or not"));
     layout->addWidget(contiguous);
     connect(contiguous, &QCheckBox::toggled, this, &MagicWandOptions::setContiguous);
 
     layout->addSpacing(6);
 
     // ── 抗锯齿 ──
-    auto *aa = new QCheckBox(tr("抗锯齿"), bar);
+    auto *aa = new QCheckBox(tr("Anti-aliasing"), bar);
     aa->setChecked(m_antialias);
-    aa->setToolTip(tr("在选区边缘生成 1~254 的过渡值，避免硬台阶"));
+    aa->setToolTip(tr("Generate 1-254 transition values along the selection edge to avoid a hard step"));
     layout->addWidget(aa);
     connect(aa, &QCheckBox::toggled, this, &MagicWandOptions::setAntialias);
 
@@ -1466,12 +1492,15 @@ QWidget *MagicWandOptions::createWidget(QWidget *parent)
     // ── 判据取哪张图 ──
     // ★ 勾选状态与 Photoshop **相反**，提示里必须说清楚 ★
     //   否则用户会以为程序错了（"我明明没勾对所有图层，怎么取的是合成图"）。
-    auto *allLayers = new QCheckBox(tr("对所有图层取样"), bar);
+    auto *allLayers = new QCheckBox(tr("Sample All Layers"), bar);
     allLayers->setChecked(m_sampleAllLayers);
-    allLayers->setToolTip(tr("勾选（默认）：按**合成图**判定颜色 —— 所见即所得，\n"
-                             "透明处可透过下层看到颜色（与吸管一致）\n"
-                             "取消：只按**当前图层**判定 —— 该层透明处会判成"
-                             "整片同色，适合严格按层选取"));
+    allLayers->setToolTip(tr("Checked (the default): colors are judged on the "
+                             "composited image - what you see is what you get, "
+                             "and transparent spots show the layers below "
+                             "(same as the eyedropper)\n"
+                             "Unchecked: judged on the current layer only - "
+                             "its transparent spots count as one flat color, "
+                             "for strictly per-layer selection"));
     layout->addWidget(allLayers);
     connect(allLayers, &QCheckBox::toggled, this, &MagicWandOptions::setSampleAllLayers);
 
@@ -1488,9 +1517,10 @@ QWidget *MagicWandOptions::createWidget(QWidget *parent)
     feather->setDecimals(1);
     feather->setValue(m_featherRadius);
     feather->setSuffix(tr(" px"));
-    feather->setToolTip(tr("羽化半径。0（默认）表示边缘清晰。\n"
-                           "数值越大，选区边缘的过渡越柔和。"));
-    addLabeled(layout, tr("羽化"), feather);
+    feather->setToolTip(tr("Feather radius. 0 (the default) means a crisp edge.\n"
+                           "Larger values soften the transition along the "
+                           "selection edge."));
+    addLabeled(layout, tr("Feather"), feather);
     connect(feather, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this, &MagicWandOptions::setFeatherRadius);
 
@@ -1558,22 +1588,24 @@ QWidget *MoveOptions::createWidget(QWidget *parent)
     auto *bar = new QWidget(parent);
     auto *layout = makeBarLayout(bar);
 
-    auto *autoSelect = new QCheckBox(tr("自动选择图层"), bar);
+    auto *autoSelect = new QCheckBox(tr("Auto-Select Layer"), bar);
     autoSelect->setChecked(m_autoSelectLayer);
-    autoSelect->setToolTip(tr("勾选：点击画布时，自动切换到鼠标下方像素非空的图层\n"
-                              "取消：始终移动当前活动图层的内容"));
+    autoSelect->setToolTip(tr("Checked: clicking the canvas switches to the "
+                               "topmost layer with a pixel under the cursor\n"
+                               "Unchecked: always move the content of the "
+                               "active layer"));
     layout->addWidget(autoSelect);
     connect(autoSelect, &QCheckBox::toggled, this, &MoveOptions::setAutoSelectLayer);
 
     layout->addSpacing(12);
 
-    auto *transformBox = new QCheckBox(tr("显示变换框"), bar);
+    auto *transformBox = new QCheckBox(tr("Show Transform Box"), bar);
     transformBox->setChecked(m_showTransformBox);
-    transformBox->setToolTip(tr("在图层内容周围绘制一个虚线包围框"));
+    transformBox->setToolTip(tr("Draw a dashed bounding box around the layer content"));
     layout->addWidget(transformBox);
     connect(transformBox, &QCheckBox::toggled, this, &MoveOptions::setShowTransformBox);
 
-    auto *hint = new QLabel(tr("Shift 约束水平/垂直，Alt 拖动复制"), bar);
+    auto *hint = new QLabel(tr("Shift constrains horizontally/vertically; Alt-drag duplicates"), bar);
     hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addSpacing(12);
     layout->addWidget(hint);
@@ -1660,8 +1692,8 @@ QWidget *CropOptions::createWidget(QWidget *parent)
         presetCombo->addItem(aspectPresetName(p), i);
     }
     presetCombo->setCurrentIndex(presetCombo->findData(int(m_preset)));
-    presetCombo->setToolTip(tr("裁剪框的宽高比约束"));
-    addLabeled(layout, tr("比例"), presetCombo);
+    presetCombo->setToolTip(tr("Aspect-ratio constraint for the crop box"));
+    addLabeled(layout, tr("Aspect Ratio"), presetCombo);
     connect(presetCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this, presetCombo](int idx) {
         setPreset(static_cast<AspectPreset>(presetCombo->itemData(idx).toInt()));
@@ -1677,8 +1709,8 @@ QWidget *CropOptions::createWidget(QWidget *parent)
     gridCombo->addItem(cropGridName(CropGrid::Diagonal),    int(CropGrid::Diagonal));
     gridCombo->addItem(cropGridName(CropGrid::GoldenRatio), int(CropGrid::GoldenRatio));
     gridCombo->setCurrentIndex(int(m_grid));
-    gridCombo->setToolTip(tr("裁剪框内的构图辅助线（只影响显示，不影响结果）"));
-    addLabeled(layout, tr("网格"), gridCombo);
+    gridCombo->setToolTip(tr("Composition guides inside the crop box (display only, no effect on the result)"));
+    addLabeled(layout, tr("Grid"), gridCombo);
     connect(gridCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [this, gridCombo](int idx) {
         setGrid(static_cast<CropGrid>(gridCombo->itemData(idx).toInt()));
@@ -1701,11 +1733,11 @@ QWidget *CropOptions::createWidget(QWidget *parent)
     //   CropOptions::deleteOutside 字段与其 QSettings 键都保留不动
     //   （键名变了会让用户的配置漂移），等"允许图层大于画布"这件事
     //   真做的时候再把它放出来。
-    auto *note = new QLabel(tr("在画布上拖动即可框出要保留的区域；拖动时按住 Shift 约束为正方形"), bar);
+    auto *note = new QLabel(tr("Drag on the canvas to box the area to keep; hold Shift while dragging for a square"), bar);
     note->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addWidget(note);
 
-    auto *hint = new QLabel(tr("Enter 或双击框内确认，Esc 复位"), bar);
+    auto *hint = new QLabel(tr("Press Enter or double-click inside the box to confirm; Esc resets"), bar);
     hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addSpacing(12);
     layout->addWidget(hint);
@@ -1765,12 +1797,12 @@ QWidget *ZoomOptions::createWidget(QWidget *parent)
     auto *inBtn  = new QToolButton(bar);
     auto *outBtn = new QToolButton(bar);
 
-    inBtn->setText(tr("放大"));
+    inBtn->setText(tr("Zoom In"));
     inBtn->setCheckable(true);
     inBtn->setAutoExclusive(true);
     inBtn->setChecked(m_zoomIn);
 
-    outBtn->setText(tr("缩小"));
+    outBtn->setText(tr("Zoom Out"));
     outBtn->setCheckable(true);
     outBtn->setAutoExclusive(true);
     outBtn->setChecked(!m_zoomIn);
@@ -1786,7 +1818,7 @@ QWidget *ZoomOptions::createWidget(QWidget *parent)
     // 补充说明：缩放工具的实际行为由 CanvasView 执行
     // （工具通过 requestZoom 信号请求，视图层决定如何实现），
     // 因此这里只需要把"方向"这个参数暴露出来。
-    auto *hint = new QLabel(tr("按住 Alt 可临时切换到相反方向"), bar);
+    auto *hint = new QLabel(tr("Hold Alt to temporarily switch to the opposite direction"), bar);
     hint->setStyleSheet(QStringLiteral("color: palette(mid);"));
     layout->addWidget(hint);
 

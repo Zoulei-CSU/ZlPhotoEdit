@@ -14,7 +14,7 @@
 namespace zl {
 
 BrightnessContrastDialog::BrightnessContrastDialog(const QImage &source, QWidget *parent)
-    : AdjustmentDialog(source, tr("亮度/对比度"), parent)
+    : AdjustmentDialog(source, tr("Brightness/Contrast"), parent)
 {
     auto *params = new QWidget(this);
     auto *grid = new QGridLayout(params);
@@ -24,8 +24,8 @@ BrightnessContrastDialog::BrightnessContrastDialog(const QImage &source, QWidget
 
     // 范围取 [-100, 100]，0 为不变 —— 这是 Photoshop 的区间，
     // 用户对"亮度 +30"该有多亮有直觉，换成 0..200 反而要重新适应。
-    m_brightness = addSliderRow(grid, 0, tr("亮度"), -100, 100, 0);
-    m_contrast   = addSliderRow(grid, 1, tr("对比度"), -100, 100, 0);
+    m_brightness = addSliderRow(grid, 0, tr("Brightness"), -100, 100, 0);
+    m_contrast   = addSliderRow(grid, 1, tr("Contrast"), -100, 100, 0);
 
     grid->setColumnStretch(1, 1);
 

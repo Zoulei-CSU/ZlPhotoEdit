@@ -209,7 +209,7 @@ bool MainWindow::requireDocument()
     // 没有文档时给出明确提示，而不是静默失败。
     // 静默失败会让用户以为"这个菜单项坏了"。
     if (m_statusBar)
-        m_statusBar->showMessage(tr("请先新建或打开一个图像"), 3000);
+        m_statusBar->showMessage(tr("Create or open an image first"), 3000);
 
     return false;
 }
@@ -283,8 +283,8 @@ void MainWindow::newDocument()
         Qt::transparent);
 
     if (!doc) {
-        QMessageBox::warning(this, tr("新建失败"),
-                             tr("无法创建文档：%1").arg(m_docManager->lastError()));
+        QMessageBox::warning(this, tr("New Failed"),
+                             tr("Cannot create the document: %1").arg(m_docManager->lastError()));
         return;
     }
 
@@ -302,7 +302,7 @@ void MainWindow::newDocument()
         m_canvas->zoomToFit();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已新建 %1 × %2 的空白图像")
+        m_statusBar->showMessage(tr("Created a blank %1 × %2 image")
                                      .arg(kDefaultNewWidth)
                                      .arg(kDefaultNewHeight), 3000);
 }
@@ -323,16 +323,16 @@ void MainWindow::openDocument()
     //   包括用户系统上额外安装的图片格式插件（如 WebP、HEIF）。
     //   写死的话，用户装了 WebP 插件却打不开 WebP，会以为程序有问题。
     QStringList filters;
-    filters << tr("所有支持的图像 (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)");
-    filters << tr("PNG 图像 (*.png)");
-    filters << tr("JPEG 图像 (*.jpg *.jpeg)");
-    filters << tr("位图 (*.bmp)");
-    filters << tr("TIFF 图像 (*.tif *.tiff)");
-    filters << tr("WebP 图像 (*.webp)");
-    filters << tr("所有文件 (*)");
+    filters << tr("All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)");
+    filters << tr("PNG Images (*.png)");
+    filters << tr("JPEG Images (*.jpg *.jpeg)");
+    filters << tr("Bitmaps (*.bmp)");
+    filters << tr("TIFF Images (*.tif *.tiff)");
+    filters << tr("WebP Images (*.webp)");
+    filters << tr("All Files (*)");
 
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("打开图像"), lastDir, filters.join(QStringLiteral(";;")));
+        this, tr("Open Image"), lastDir, filters.join(QStringLiteral(";;")));
 
     if (path.isEmpty())
         return;
@@ -388,7 +388,7 @@ bool MainWindow::openDocumentFromPath(const QString &path)
 
             if (m_statusBar) {
                 m_statusBar->showMessage(
-                    tr("%1 已经打开，已切换到该标签页")
+                    tr("%1 is already open - switched to its tab")
                         .arg(QFileInfo(path).fileName()), 3000);
             }
             return true;
@@ -404,9 +404,10 @@ bool MainWindow::openDocumentFromPath(const QString &path)
     //    先检查再加载，能把"崩溃"变成"一句明确的拒绝"。
     ImageMetadata meta = readMetadata(path);
     if (meta.size.isEmpty()) {
-        QMessageBox::warning(this, tr("打开失败"),
-            tr("无法读取图像信息：\n%1\n\n"
-               "可能原因：文件损坏、格式不受支持，或没有读取权限。").arg(path));
+        QMessageBox::warning(this, tr("Open Failed"),
+            tr("Cannot read the image info:\n%1\n\n"
+               "Possible causes: the file is corrupted, the format is "
+               "unsupported, or there is no read permission.").arg(path));
         return false;
     }
 
@@ -414,11 +415,11 @@ bool MainWindow::openDocumentFromPath(const QString &path)
     if (pixelCount > kMaxPixelCount) {
         const double mp = pixelCount / 1000000.0;
         const QMessageBox::StandardButton answer = QMessageBox::warning(
-            this, tr("图像过大"),
-            tr("这张图像有 %1 × %2（约 %3 百万像素），\n"
-               "超过了本程序建议的上限（%4 百万像素）。\n\n"
-               "继续打开可能导致内存不足，操作会非常缓慢。\n\n"
-               "是否仍要尝试打开？")
+            this, tr("Image Too Large"),
+            tr("This image is %1 × %2 (about %3 megapixels),\n"
+               "above the recommended limit (%4 megapixels).\n\n"
+               "Opening it may run out of memory and become very slow.\n\n"
+               "Try to open it anyway?")
                 .arg(meta.size.width()).arg(meta.size.height())
                 .arg(mp, 0, 'f', 1)
                 .arg(kMaxPixelCount / 1000000),
@@ -434,9 +435,10 @@ bool MainWindow::openDocumentFromPath(const QString &path)
     const QImage image = loadImageWithMetadata(path, &loadedMeta);
 
     if (image.isNull()) {
-        QMessageBox::warning(this, tr("打开失败"),
-            tr("无法加载图像数据：\n%1\n\n"
-               "文件可能已损坏，或图像数据使用了不受支持的编码。").arg(path));
+        QMessageBox::warning(this, tr("Open Failed"),
+            tr("Cannot load the image data:\n%1\n\n"
+               "The file may be corrupted, or the image data uses an "
+               "unsupported encoding.").arg(path));
         return false;
     }
 
@@ -463,8 +465,8 @@ bool MainWindow::openDocumentFromPath(const QString &path)
 
     Document *doc = createImagePage(spec);
     if (!doc) {
-        QMessageBox::warning(this, tr("打开失败"),
-            tr("无法创建文档：%1").arg(m_docManager->lastError()));
+        QMessageBox::warning(this, tr("Open Failed"),
+            tr("Cannot create the document: %1").arg(m_docManager->lastError()));
         return false;
     }
 
@@ -476,11 +478,11 @@ bool MainWindow::openDocumentFromPath(const QString &path)
 
     if (m_statusBar) {
         m_statusBar->showMessage(
-            tr("已打开 %1（%2 × %3，%4）")
+            tr("Opened %1 (%2 × %3, %4)")
                 .arg(QFileInfo(path).fileName())
                 .arg(image.width())
                 .arg(image.height())
-                .arg(loadedMeta.formatName.isEmpty() ? tr("未知格式") : loadedMeta.formatName),
+                .arg(loadedMeta.formatName.isEmpty() ? tr("Unknown Format") : loadedMeta.formatName),
             4000);
     }
 
@@ -572,16 +574,16 @@ bool MainWindow::captureScreenNow()
         // 契约③（空图 = 抓不到）在这里翻译成人话
         if (m_statusBar)
             m_statusBar->showMessage(
-                tr("截图失败：抓不到屏幕内容（可能没有可用的显示器）"), 6000);
+                tr("Screenshot failed: no screen content captured (no display may be available)"), 6000);
         return false;
     }
 
     // ── ② 名字：序号只增不减（见 m_screenshotSeq 的说明）──
-    const QString hint = tr("屏幕截图-%1").arg(++m_screenshotSeq);
+    const QString hint = tr("Screenshot-%1").arg(++m_screenshotSeq);
 
     ImagePageSpec spec;
     spec.image     = shot;
-    spec.layerName = tr("屏幕截图");
+    spec.layerName = tr("Screenshot");
     spec.titleHint = hint;
 
     // ★ dpi 取主屏的**逻辑** DPI ★
@@ -601,7 +603,7 @@ bool MainWindow::captureScreenNow()
     if (!doc) {
         if (m_statusBar)
             m_statusBar->showMessage(
-                tr("截图失败：无法创建文档（%1）")
+                tr("Screenshot failed: cannot create the document (%1)")
                     .arg(m_docManager ? m_docManager->lastError() : QString()),
                 6000);
         return false;
@@ -612,7 +614,7 @@ bool MainWindow::captureScreenNow()
         m_canvas->zoomToFit();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已截取屏幕 %1 × %2，已开为新标签页")
+        m_statusBar->showMessage(tr("Captured the screen at %1 × %2 and opened it as a new tab")
                                      .arg(shot.width()).arg(shot.height()),
                                  4000);
     return true;
@@ -656,7 +658,7 @@ void MainWindow::scheduleScreenCapture(int delayMs)
 
     if (m_statusBar)
         m_statusBar->showMessage(
-            tr("%1 秒后截图：本窗口已最小化，请切到要截取的画面")
+            tr("Screenshot in %1 seconds: this window is minimized, switch to the target screen")
                 .arg(delayMs / 1000.0, 0, 'g', 3),
             delayMs + 1000);
 }
@@ -755,16 +757,16 @@ void MainWindow::openAsLayer()
                                 .toString();
 
     QStringList filters;
-    filters << tr("所有支持的图像 (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)");
-    filters << tr("PNG 图像 (*.png)");
-    filters << tr("JPEG 图像 (*.jpg *.jpeg)");
-    filters << tr("位图 (*.bmp)");
-    filters << tr("TIFF 图像 (*.tif *.tiff)");
-    filters << tr("WebP 图像 (*.webp)");
-    filters << tr("所有文件 (*)");
+    filters << tr("All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)");
+    filters << tr("PNG Images (*.png)");
+    filters << tr("JPEG Images (*.jpg *.jpeg)");
+    filters << tr("Bitmaps (*.bmp)");
+    filters << tr("TIFF Images (*.tif *.tiff)");
+    filters << tr("WebP Images (*.webp)");
+    filters << tr("All Files (*)");
 
     const QString path = QFileDialog::getOpenFileName(
-        this, tr("打开为图层"), lastDir, filters.join(QStringLiteral(";;")));
+        this, tr("Open as Layer"), lastDir, filters.join(QStringLiteral(";;")));
 
     if (path.isEmpty())
         return;
@@ -829,9 +831,10 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
     //   把"崩溃"变成"一句明确的拒绝"的成本只有一次函数调用。
     ImageMetadata meta = readMetadata(path);
     if (meta.size.isEmpty()) {
-        reportFailure(tr("导入失败"),
-            tr("无法读取图像信息：\n%1\n\n"
-               "可能原因：文件损坏、格式不受支持，或没有读取权限。").arg(path));
+        reportFailure(tr("Import Failed"),
+            tr("Cannot read the image info:\n%1\n\n"
+               "Possible causes: the file is corrupted, the format is "
+               "unsupported, or there is no read permission.").arg(path));
         return false;
     }
 
@@ -844,18 +847,19 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
         //   第二个人来点那个"确定"，弹框等于把脚本挂死。宁可让脚本
         //   拿到 false 去报错，也不要让脚本把机器的内存撑爆。
         if (policy != GrowPolicy::Ask) {
-            reportFailure(tr("图像过大"),
-                tr("导入已拒绝：图像约 %1 百万像素，超过上限（%2 百万像素）")
+            reportFailure(tr("Image Too Large"),
+                tr("Import rejected: the image is about %1 megapixels, above the limit (%2 megapixels)")
                     .arg(mp, 0, 'f', 1).arg(kMaxPixelCount / 1000000));
             return false;
         }
 
         const QMessageBox::StandardButton answer = QMessageBox::warning(
-            this, tr("图像过大"),
-            tr("这张图像有 %1 × %2（约 %3 百万像素），\n"
-               "超过了本程序建议的上限（%4 百万像素）。\n\n"
-               "继续导入可能导致内存不足，操作会非常缓慢。\n\n"
-               "是否仍要尝试导入？")
+            this, tr("Image Too Large"),
+            tr("This image is %1 × %2 (about %3 megapixels),\n"
+               "above the recommended limit (%4 megapixels).\n\n"
+               "Importing it may run out of memory and become very "
+               "slow.\n\n"
+               "Try to import it anyway?")
                 .arg(meta.size.width()).arg(meta.size.height())
                 .arg(mp, 0, 'f', 1)
                 .arg(kMaxPixelCount / 1000000),
@@ -871,9 +875,10 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
     const QImage image = loadImageWithMetadata(path, &loadedMeta);
 
     if (image.isNull()) {
-        reportFailure(tr("导入失败"),
-            tr("无法加载图像数据：\n%1\n\n"
-               "文件可能已损坏，或图像数据使用了不受支持的编码。").arg(path));
+        reportFailure(tr("Import Failed"),
+            tr("Cannot load the image data:\n%1\n\n"
+               "The file may be corrupted, or the image data uses an "
+               "unsupported encoding.").arg(path));
         return false;
     }
 
@@ -902,18 +907,21 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
         if (policy == GrowPolicy::Ask) {
             QMessageBox box(this);
             box.setIcon(QMessageBox::Question);
-            box.setWindowTitle(tr("图像比画布大"));
-            box.setText(tr("导入的图像（%1 × %2）比当前画布（%3 × %4）大。")
+            box.setWindowTitle(tr("Image Is Larger Than the Canvas"));
+            box.setText(tr("The imported image (%1 × %2) is larger than the current canvas (%3 × %4).")
                             .arg(imageSize.width()).arg(imageSize.height())
                             .arg(canvasSize.width()).arg(canvasSize.height()));
             box.setInformativeText(
-                tr("「扩大画布以容纳」把画布扩到 %1 × %2，原有内容与新图像都居中；\n"
-                   "「裁剪到画布」保持画布尺寸不变，新图像居中放置，超出画布的部分会被裁掉。")
+                tr("'Grow Canvas to Fit' grows the canvas to %1 × %2, "
+                   "centering both the existing content and the new "
+                   "image;\n"
+                   "'Crop to Canvas' keeps the canvas size, centers "
+                   "the new image, and crops whatever sticks out.")
                     .arg(unionCanvas.width()).arg(unionCanvas.height()));
 
-            QPushButton *growBtn   = box.addButton(tr("扩大画布以容纳"), QMessageBox::AcceptRole);
-            QPushButton *cropBtn   = box.addButton(tr("裁剪到画布"),     QMessageBox::DestructiveRole);
-            QPushButton *cancelBtn = box.addButton(tr("取消"),           QMessageBox::RejectRole);
+            QPushButton *growBtn   = box.addButton(tr("Grow Canvas to Fit"), QMessageBox::AcceptRole);
+            QPushButton *cropBtn   = box.addButton(tr("Crop to Canvas"),     QMessageBox::DestructiveRole);
+            QPushButton *cancelBtn = box.addButton(tr("Cancel"),           QMessageBox::RejectRole);
             box.setDefaultButton(growBtn);
             box.exec();
 
@@ -945,7 +953,7 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
             if (l && l->isLocked()) {
                 if (m_statusBar)
                     m_statusBar->showMessage(
-                        tr("图层“%1”已锁定，无法扩大画布。请先解锁再导入。")
+                        tr("Layer \"%1\" is locked; the canvas cannot grow. Unlock it before importing.")
                             .arg(l->name()), 4000);
                 return false;
             }
@@ -972,7 +980,7 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
     //   若先加图层再扩画布，快照里就会带上那个新图层，
     //   撤销"扩画布"时会连图层一起动 —— 两层命令的职责就串了。
     //   先扩画布（此时图层列表还是原样），再压 LayerCommand，职责清晰。
-    m_commandStack->beginMacro(tr("打开为图层"));
+    m_commandStack->beginMacro(tr("Open as Layer"));
 
     if (growCanvas) {
         const GeometryChangeCommand::Snapshot before =
@@ -993,17 +1001,17 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
             m_commandStack->endMacro();
 
             if (m_statusBar)
-                m_statusBar->showMessage(tr("扩大画布失败，已取消导入"), 3000);
+                m_statusBar->showMessage(tr("Failed to grow the canvas - import cancelled"), 3000);
             return false;
         }
 
         commitGeometryChange(before, GeometryChangeCommand::Kind::ResizeCanvas,
-                             tr("扩大画布"));
+                             tr("Grow Canvas"));
     }
 
     // 图层名用文件名 —— 图层面板里显示 "photo.jpg" 比 "粘贴的图层" 有用得多
     addImageAsNewLayer(image, placePos, QFileInfo(path).fileName(),
-                       tr("新建图层"));
+                       tr("New Layer"));
 
     m_commandStack->endMacro();
 
@@ -1012,12 +1020,12 @@ bool MainWindow::importImageAsLayer(const QString &path, GrowPolicy policy)
     if (m_statusBar) {
         m_statusBar->showMessage(
             growCanvas
-                ? tr("已导入 %1（%2 × %3），画布已扩大至 %4 × %5")
+                ? tr("Imported %1 (%2 × %3); the canvas grew to %4 × %5")
                       .arg(QFileInfo(path).fileName())
                       .arg(imageSize.width()).arg(imageSize.height())
                       .arg(m_doc->canvasSize().width())
                       .arg(m_doc->canvasSize().height())
-                : tr("已导入 %1（%2 × %3）为新图层")
+                : tr("Imported %1 (%2 × %3) as a new layer")
                       .arg(QFileInfo(path).fileName())
                       .arg(imageSize.width()).arg(imageSize.height()),
             4000);
@@ -1071,7 +1079,7 @@ bool MainWindow::saveDocument()
     updateWindowTitle();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已保存到 %1").arg(QFileInfo(path).fileName()), 3000);
+        m_statusBar->showMessage(tr("Saved to %1").arg(QFileInfo(path).fileName()), 3000);
 
     return true;
 }
@@ -1100,7 +1108,7 @@ bool MainWindow::saveDocumentAs()
 
     QString selectedFilter;
     QString path = QFileDialog::getSaveFileName(
-        this, tr("另存为"), QDir(lastDir).filePath(defaultName),
+        this, tr("Save As"), QDir(lastDir).filePath(defaultName),
         filters.join(QStringLiteral(";;")), &selectedFilter);
 
     if (path.isEmpty())
@@ -1167,11 +1175,13 @@ bool MainWindow::saveDocumentAs()
 
         if (hasTransparency) {
             const QMessageBox::StandardButton answer = QMessageBox::warning(
-                this, tr("格式不支持透明"),
-                tr("%1 格式不支持透明通道。\n\n"
-                   "图像中的半透明区域将被填充为白色。\n\n"
-                   "建议改用 PNG 保存以保留透明效果。\n\n"
-                   "是否继续保存？").arg(format.toUpper()),
+                this, tr("Format Does Not Support Transparency"),
+                tr("The %1 format does not support a transparency "
+                   "channel.\n\n"
+                   "Semi-transparent areas will be filled with "
+                   "white.\n\n"
+                   "Save as PNG instead to keep transparency.\n\n"
+                   "Save anyway?").arg(format.toUpper()),
                 QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::No);
 
@@ -1204,7 +1214,7 @@ bool MainWindow::saveDocumentAs()
     addRecentFile(path);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已另存为 %1").arg(QFileInfo(path).fileName()), 3000);
+        m_statusBar->showMessage(tr("Saved as %1").arg(QFileInfo(path).fileName()), 3000);
 
     return true;
 }
@@ -1253,7 +1263,7 @@ bool MainWindow::exportIcon(const QString &path, QString *errorOut)
 {
     if (!m_doc) {
         if (errorOut)
-            *errorOut = tr("没有打开的图像。");
+            *errorOut = tr("No image is open.");
         return false;
     }
 
@@ -1274,7 +1284,7 @@ bool MainWindow::exportIcon(const QString &path, QString *errorOut)
     QImage image = m_doc->composite();
     if (image.isNull()) {
         if (errorOut)
-            *errorOut = tr("无法生成图像数据（合成结果为空）。");
+            *errorOut = tr("Cannot generate the image data (the composite is empty).");
         return false;
     }
 
@@ -1323,8 +1333,8 @@ bool MainWindow::writeImage(const QString &path, const QString &format,
         // ★ 尺寸超限是"用户必须知道原因"的失败 ★
         //   只说"保存失败"的话，用户会反复重试、或者以为程序坏了。
         QMessageBox::warning(this,
-                             tr("无法保存为 ICO"),
-                             err.isEmpty() ? tr("导出 ICO 图标失败。") : err);
+                             tr("Cannot Save as ICO"),
+                             err.isEmpty() ? tr("Failed to export the ICO icon.") : err);
         return false;
     }
 
@@ -1336,8 +1346,8 @@ bool MainWindow::writeImage(const QString &path, const QString &format,
     QImage image = m_doc->composite();
 
     if (image.isNull()) {
-        QMessageBox::warning(this, tr("保存失败"),
-                             tr("无法生成图像数据（合成结果为空）。"));
+        QMessageBox::warning(this, tr("Save Failed"),
+                             tr("Cannot generate the image data (the composite is empty)."));
         return false;
     }
 
@@ -1397,13 +1407,13 @@ bool MainWindow::writeImage(const QString &path, const QString &format,
     writer.setProgressiveScanWrite(false);
 
     if (!writer.write(image)) {
-        QMessageBox::warning(this, tr("保存失败"),
-            tr("无法写入文件：\n%1\n\n"
-               "原因：%2\n\n"
-               "请检查：\n"
-               "  · 目标目录是否存在且有写入权限\n"
-               "  · 磁盘空间是否充足\n"
-               "  · 文件是否被其他程序占用")
+        QMessageBox::warning(this, tr("Save Failed"),
+            tr("Cannot write the file:\n%1\n\n"
+               "Reason: %2\n\n"
+               "Please check:\n"
+               "  · whether the target directory exists and is writable\n"
+               "  · whether there is enough disk space\n"
+               "  · whether the file is occupied by another program")
                 .arg(path)
                 .arg(writer.errorString()));
         return false;
@@ -1502,8 +1512,8 @@ void MainWindow::closeDocumentTab(int index)
     if (m_statusBar) {
         m_statusBar->showMessage(
             m_tabs->count() == 0
-                ? tr("文档已关闭")
-                : tr("已关闭一个文档（还有 %1 个）").arg(m_tabs->count()),
+                ? tr("Document Closed")
+                : tr("Closed a document (%1 left)").arg(m_tabs->count()),
             3000);
     }
 }
@@ -1538,8 +1548,8 @@ bool MainWindow::maybeSave()
                              : QFileInfo(m_doc->filePath()).fileName();
 
     const QMessageBox::StandardButton answer = QMessageBox::warning(
-        this, tr("未保存的修改"),
-        tr("“%1”有未保存的修改。\n\n是否保存？").arg(name),
+        this, tr("Unsaved Changes"),
+        tr("\"%1\" has unsaved changes.\n\nSave them?").arg(name),
         QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
         QMessageBox::Save);
 
@@ -2071,7 +2081,7 @@ void MainWindow::copySelection()
     ClipboardData data = buildClipboardData();
     if (!data.isValid()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可复制的内容"), 2500);
+            m_statusBar->showMessage(tr("Nothing to copy"), 2500);
         return;
     }
 
@@ -2124,7 +2134,7 @@ void MainWindow::copySelection()
 
     if (m_statusBar) {
         m_statusBar->showMessage(
-            tr("已复制 %1 × %2 的内容").arg(data.size().width()).arg(data.size().height()),
+            tr("Copied %1 × %2 of content").arg(data.size().width()).arg(data.size().height()),
             2500);
     }
 }
@@ -2217,10 +2227,10 @@ void MainWindow::cutSelection()
         }
     }
 
-    pushActiveLayerImageCommand(before, after, tr("剪切"));
+    pushActiveLayerImageCommand(before, after, tr("Cut"));
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已剪切到剪贴板"), 2500);
+        m_statusBar->showMessage(tr("Cut to the clipboard"), 2500);
 }
 
 // ---------------------------------------------------------------------------
@@ -2239,7 +2249,7 @@ bool MainWindow::pasteFromClipboard(bool asNewLayer)
     const QMimeData *mime = QApplication::clipboard()->mimeData();
     if (!mime) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("剪贴板为空"), 2500);
+            m_statusBar->showMessage(tr("The clipboard is empty"), 2500);
         return false;
     }
 
@@ -2266,7 +2276,7 @@ bool MainWindow::pasteFromClipboard(bool asNewLayer)
 
     if (!data.isValid()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("剪贴板中没有可用的图像数据"), 2500);
+            m_statusBar->showMessage(tr("The clipboard has no usable image data"), 2500);
         return false;
     }
 
@@ -2310,18 +2320,18 @@ bool MainWindow::pasteFromClipboard(bool asNewLayer)
         //   （原先的注释说"用宏把新建图层+写入像素合并成一次撤销"，
         //    那是早期两条命令时的说法，现在这条理由已经不成立了 ——
         //    但行为保持不变，只有注释被纠正。）
-        m_commandStack->beginMacro(tr("粘贴为新图层"));
+        m_commandStack->beginMacro(tr("Paste as New Layer"));
 
         // ★ 建图层的活全部交给唯一实现 ★
         //   与「打开为图层」共用同一份代码，见 addImageAsNewLayer()。
         addImageAsNewLayer(data.pixels, pastePos,
-                           tr("粘贴的图层"), tr("新建图层"));
+                           tr("Pasted Layer"), tr("New Layer"));
 
         m_commandStack->endMacro();
 
         if (m_statusBar) {
             m_statusBar->showMessage(
-                tr("已粘贴为新图层（%1 × %2）")
+                tr("Pasted as a new layer (%1 × %2)")
                     .arg(data.size().width()).arg(data.size().height()), 2500);
         }
 
@@ -2332,13 +2342,13 @@ bool MainWindow::pasteFromClipboard(bool asNewLayer)
     Layer *layer = m_doc->activeLayer();
     if (!layer) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可用的活动图层"), 2500);
+            m_statusBar->showMessage(tr("No active layer available"), 2500);
         return false;
     }
 
     if (layer->isLocked()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层已锁定，无法粘贴"), 2500);
+            m_statusBar->showMessage(tr("The current layer is locked - cannot paste"), 2500);
         return false;
     }
 
@@ -2407,10 +2417,10 @@ bool MainWindow::pasteFromClipboard(bool asNewLayer)
         p.end();
     }
 
-    pushActiveLayerImageCommand(before, after, tr("粘贴"));
+    pushActiveLayerImageCommand(before, after, tr("Paste"));
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已粘贴到当前图层"), 2500);
+        m_statusBar->showMessage(tr("Pasted into the current layer"), 2500);
 
     return true;
 }
@@ -2507,7 +2517,7 @@ void MainWindow::onDeleteSelection()
     Layer *layer = m_doc->activeLayer();
     if (!layer || layer->isLocked()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层不可编辑"), 2500);
+            m_statusBar->showMessage(tr("The current layer is not editable"), 2500);
         return;
     }
 
@@ -2556,13 +2566,13 @@ void MainWindow::onDeleteSelection()
             }
         }
 
-        pushActiveLayerImageCommand(before, after, tr("删除选区内容"));
+        pushActiveLayerImageCommand(before, after, tr("Delete Selection Content"));
     } else {
         // 无选区：清空整个图层的内容（保留图层本身）
         QImage cleared(after.size(), QImage::Format_ARGB32_Premultiplied);
         cleared.fill(Qt::transparent);
 
-        pushActiveLayerImageCommand(before, cleared, tr("清空图层"));
+        pushActiveLayerImageCommand(before, cleared, tr("Clear Layer"));
     }
 }
 
@@ -2581,7 +2591,7 @@ void MainWindow::selectAll()
     //   这个设计让"最常见的场景（无选区）"变成零成本。
     if (!m_doc->selection().isActive()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("已经处于全选状态"), 2000);
+            m_statusBar->showMessage(tr("Already in the select-all state"), 2000);
         return;
     }
 
@@ -2592,7 +2602,7 @@ void MainWindow::selectAll()
 
     const Selection after = m_doc->selection().clone();
 
-    auto *cmd = new SelectionCommand(m_doc, before, after, tr("全选"));
+    auto *cmd = new SelectionCommand(m_doc, before, after, tr("Select All"));
     m_commandStack->push(cmd);
 
     if (m_canvas)
@@ -2617,14 +2627,14 @@ void MainWindow::deselect()
 
     const Selection after = m_doc->selection().clone();
 
-    auto *cmd = new SelectionCommand(m_doc, before, after, tr("取消选择"));
+    auto *cmd = new SelectionCommand(m_doc, before, after, tr("Deselect"));
     m_commandStack->push(cmd);
 
     if (m_canvas)
         m_canvas->update();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已取消选择"), 2000);
+        m_statusBar->showMessage(tr("Selection cancelled"), 2000);
 }
 
 void MainWindow::invertSelection()
@@ -2644,7 +2654,7 @@ void MainWindow::invertSelection()
     //   这种"无效果却占一条历史"的记录很招人烦。
     if (!m_doc->selection().isActive()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有选区可以反选"), 2000);
+            m_statusBar->showMessage(tr("No selection to invert"), 2000);
         return;
     }
 
@@ -2655,14 +2665,14 @@ void MainWindow::invertSelection()
 
     const Selection after = m_doc->selection().clone();
 
-    auto *cmd = new SelectionCommand(m_doc, before, after, tr("反选"));
+    auto *cmd = new SelectionCommand(m_doc, before, after, tr("Invert Selection"));
     m_commandStack->push(cmd);
 
     if (m_canvas)
         m_canvas->update();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已反选"), 2000);
+        m_statusBar->showMessage(tr("Selection inverted"), 2000);
 }
 
 // ============================================================================
@@ -2678,7 +2688,7 @@ void MainWindow::applyGrayscale()
     Layer *layer = m_doc->activeLayer();
     if (!layer || layer->isLocked()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层不可编辑"), 2500);
+            m_statusBar->showMessage(tr("The current layer is not editable"), 2500);
         return;
     }
 
@@ -2713,10 +2723,10 @@ void MainWindow::applyGrayscale()
     }
 
     // ── 提交 ──
-    pushActiveLayerImageCommand(before, result, tr("去色"));
+    pushActiveLayerImageCommand(before, result, tr("Desaturate"));
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已应用去色"), 2000);
+        m_statusBar->showMessage(tr("Desaturate applied"), 2000);
 }
 
 void MainWindow::applyInvert()
@@ -2727,7 +2737,7 @@ void MainWindow::applyInvert()
     Layer *layer = m_doc->activeLayer();
     if (!layer || layer->isLocked()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层不可编辑"), 2500);
+            m_statusBar->showMessage(tr("The current layer is not editable"), 2500);
         return;
     }
 
@@ -2739,10 +2749,10 @@ void MainWindow::applyInvert()
     if (selection.isActive())
         result = blendWithSelection(before, result, selection);
 
-    pushActiveLayerImageCommand(before, result, tr("反相"));
+    pushActiveLayerImageCommand(before, result, tr("Invert"));
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已应用反相"), 2000);
+        m_statusBar->showMessage(tr("Invert applied"), 2000);
 }
 
 // ============================================================================
@@ -2861,7 +2871,7 @@ bool MainWindow::performGeometryOp(GeoOp op)
     // ── 前置检查 ──
     if (m_doc->layerCount() == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可操作的图层"), 2500);
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
         return false;
     }
 
@@ -2878,7 +2888,7 @@ bool MainWindow::performGeometryOp(GeoOp op)
     const Layer *activeLayer = m_doc->activeLayer();
     if (activeLayer && activeLayer->isLocked()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层已锁定，无法执行几何操作"), 3000);
+            m_statusBar->showMessage(tr("The current layer is locked - geometry operations are not allowed"), 3000);
         return false;
     }
 
@@ -2899,13 +2909,13 @@ bool MainWindow::performGeometryOp(GeoOp op)
     case GeoOp::Rotate90CW:
         ok = m_doc->rotateImage90(true);
         kind = GeometryChangeCommand::Kind::Rotate90;
-        text = tr("顺时针旋转 90°");
+        text = tr("Rotate 90° Clockwise");
         break;
 
     case GeoOp::Rotate90CCW:
         ok = m_doc->rotateImage90(false);
         kind = GeometryChangeCommand::Kind::Rotate90;
-        text = tr("逆时针旋转 90°");
+        text = tr("Rotate 90° Counterclockwise");
         break;
 
     case GeoOp::Rotate180:
@@ -2919,25 +2929,25 @@ bool MainWindow::performGeometryOp(GeoOp op)
         if (ok)
             ok = m_doc->rotateImage90(true);
         kind = GeometryChangeCommand::Kind::Rotate90;
-        text = tr("旋转 180°");
+        text = tr("Rotate 180°");
         break;
 
     case GeoOp::FlipH:
         ok = m_doc->flipImage(FlipDirection::Horizontal);
         kind = GeometryChangeCommand::Kind::Flip;
-        text = tr("水平翻转");
+        text = tr("Flip Horizontal");
         break;
 
     case GeoOp::FlipV:
         ok = m_doc->flipImage(FlipDirection::Vertical);
         kind = GeometryChangeCommand::Kind::Flip;
-        text = tr("垂直翻转");
+        text = tr("Flip Vertical");
         break;
     }
 
     if (!ok) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("几何操作失败"), 3000);
+            m_statusBar->showMessage(tr("Geometry operation failed"), 3000);
         return false;
     }
 
@@ -2978,10 +2988,12 @@ bool MainWindow::commitGeometryChange(const GeometryChangeCommand::Snapshot &bef
         if (m_canvas)
             m_canvas->invalidateComposite();
 
-        QMessageBox::information(this, tr("未记录撤销"),
-            tr("这次“%1”操作的数据量过大，超过撤销记录的内存上限，\n"
-               "因此**无法撤销**。\n\n"
-               "图像已经被修改。如果需要保留原图，请勿保存并重新打开文件。").arg(text));
+        QMessageBox::information(this, tr("Undo Not Recorded"),
+            tr("The \"%1\" operation moved too much data, above the "
+               "undo memory limit,\n"
+               "so it <b>cannot be undone</b>.\n\n"
+               "The image has been modified. To keep the original, do "
+               "not save - reopen the file instead.").arg(text));
 
         return true;
     }
@@ -3008,7 +3020,7 @@ bool MainWindow::commitGeometryChange(const GeometryChangeCommand::Snapshot &bef
 
     if (m_statusBar) {
         m_statusBar->showMessage(
-            tr("已%1（画布 %2 × %3）")
+            tr("%1 applied (canvas %2 × %3)")
                 .arg(text).arg(m_doc->canvasSize().width()).arg(m_doc->canvasSize().height()),
             3000);
     }
@@ -3042,7 +3054,7 @@ void MainWindow::openImageSize()
 
     if (m_doc->layerCount() == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可操作的图层"), 2500);
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
         return;
     }
 
@@ -3057,7 +3069,7 @@ void MainWindow::openImageSize()
         if (l && l->isLocked()) {
             if (m_statusBar)
                 m_statusBar->showMessage(
-                    tr("图层“%1”已锁定，请先解锁再调整图像大小").arg(l->name()), 3500);
+                    tr("Layer \"%1\" is locked - unlock it before resizing the image").arg(l->name()), 3500);
             return;
         }
     }
@@ -3083,12 +3095,12 @@ void MainWindow::openImageSize()
 
     if (!m_doc->scaleImage(dlg.newSize(), dlg.method())) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("图像大小调整失败（新尺寸可能过大）"), 3000);
+            m_statusBar->showMessage(tr("Failed to resize the image (the new size may be too large)"), 3000);
         return;
     }
 
     commitGeometryChange(before, GeometryChangeCommand::Kind::ScaleImage,
-                         tr("图像大小"));
+                         tr("Image Size"));
 }
 
 void MainWindow::openCanvasSize()
@@ -3098,7 +3110,7 @@ void MainWindow::openCanvasSize()
 
     if (m_doc->layerCount() == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可操作的图层"), 2500);
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
         return;
     }
 
@@ -3107,7 +3119,7 @@ void MainWindow::openCanvasSize()
         if (l && l->isLocked()) {
             if (m_statusBar)
                 m_statusBar->showMessage(
-                    tr("图层“%1”已锁定，请先解锁再调整画布大小").arg(l->name()), 3500);
+                    tr("Layer \"%1\" is locked - unlock it before resizing the canvas").arg(l->name()), 3500);
             return;
         }
     }
@@ -3134,12 +3146,12 @@ void MainWindow::openCanvasSize()
     if (!m_doc->resizeCanvas(dlg.newSize(), dlg.anchor(),
                              dlg.fillColor(), /*smart=*/true)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("画布大小调整失败"), 3000);
+            m_statusBar->showMessage(tr("Failed to resize the canvas"), 3000);
         return;
     }
 
     commitGeometryChange(before, GeometryChangeCommand::Kind::ResizeCanvas,
-                         tr("画布大小"));
+                         tr("Canvas Size"));
 }
 
 // ============================================================================
@@ -3176,7 +3188,7 @@ void MainWindow::openRotateArbitrary()
 
     if (m_doc->layerCount() == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可操作的图层"), 2500);
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
         return;
     }
 
@@ -3189,7 +3201,7 @@ void MainWindow::openRotateArbitrary()
         if (l && l->isLocked()) {
             if (m_statusBar)
                 m_statusBar->showMessage(
-                    tr("图层“%1”已锁定，请先解锁再旋转图像").arg(l->name()), 3500);
+                    tr("Layer \"%1\" is locked - unlock it before rotating the image").arg(l->name()), 3500);
             return;
         }
     }
@@ -3198,7 +3210,7 @@ void MainWindow::openRotateArbitrary()
     const QImage composite = m_doc->composite();
     if (composite.isNull()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("无法生成预览：图像内容为空"), 3000);
+            m_statusBar->showMessage(tr("Cannot generate a preview: the image content is empty"), 3000);
         return;
     }
 
@@ -3259,13 +3271,13 @@ void MainWindow::openRotateArbitrary()
 
         if (!ok) {
             if (m_statusBar)
-                m_statusBar->showMessage(tr("旋转失败"), 3000);
+                m_statusBar->showMessage(tr("Rotation failed"), 3000);
             // 预览已清、文档没变，把视图拉回可用状态（预览期把它 fit 过了）
             m_canvas->setZoomLevel(savedZoom);
             m_canvas->setOffset(savedOffset);
         } else {
             commitGeometryChange(before, GeometryChangeCommand::Kind::RotateArbitrary,
-                                 tr("旋转图像"));
+                                 tr("Rotate Image"));
         }
     } else {
         // 取消 / 角度仍为 0：文档从头到尾没被碰过，不需要任何还原 ——
@@ -3350,7 +3362,7 @@ void MainWindow::applyCropFromTool(const QRect &rect)
 
     if (m_doc->layerCount() == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("没有可操作的图层"), 2500);
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
         return;
     }
 
@@ -3363,7 +3375,7 @@ void MainWindow::applyCropFromTool(const QRect &rect)
         if (l && l->isLocked()) {
             if (m_statusBar)
                 m_statusBar->showMessage(
-                    tr("图层“%1”已锁定，请先解锁再裁剪").arg(l->name()), 3500);
+                    tr("Layer \"%1\" is locked - unlock it before cropping").arg(l->name()), 3500);
             return;
         }
     }
@@ -3373,7 +3385,7 @@ void MainWindow::applyCropFromTool(const QRect &rect)
 
     if (target.width() < 1 || target.height() < 1) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("裁剪区域为空"), 3000);
+            m_statusBar->showMessage(tr("The crop area is empty"), 3000);
         return;
     }
 
@@ -3381,7 +3393,7 @@ void MainWindow::applyCropFromTool(const QRect &rect)
     // 在这里提前挡住，免得在历史面板里留一条"什么都没改"的记录。
     if (target == canvas) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("裁剪区域就是整幅画布，无需裁剪"), 3000);
+            m_statusBar->showMessage(tr("The crop area is the whole canvas - nothing to crop"), 3000);
         return;
     }
 
@@ -3391,11 +3403,11 @@ void MainWindow::applyCropFromTool(const QRect &rect)
 
     if (!m_doc->crop(target)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("裁剪失败"), 3000);
+            m_statusBar->showMessage(tr("Crop failed"), 3000);
         return;
     }
 
-    commitGeometryChange(before, GeometryChangeCommand::Kind::Crop, tr("裁剪"));
+    commitGeometryChange(before, GeometryChangeCommand::Kind::Crop, tr("Crop"));
 }
 
 void MainWindow::cropToSelection()
@@ -3405,7 +3417,7 @@ void MainWindow::cropToSelection()
 
     if (!m_doc->selection().isActive()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("请先用选框工具选中要保留的区域"), 3000);
+            m_statusBar->showMessage(tr("Select the area to keep with a selection tool first"), 3000);
         return;
     }
 
@@ -3451,7 +3463,7 @@ void MainWindow::addNewLayer()
 
     if (newIndex < 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("新建图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to create a layer"), 2500);
         return;
     }
 
@@ -3460,11 +3472,11 @@ void MainWindow::addNewLayer()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Add,
                                  beforeLayers, afterLayers,
                                  activeBefore, newIndex,
-                                 tr("新建图层"));
+                                 tr("New Layer"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已新建图层"), 2000);
+        m_statusBar->showMessage(tr("Layer created"), 2000);
 }
 
 void MainWindow::duplicateCurrentLayer()
@@ -3479,7 +3491,7 @@ void MainWindow::duplicateCurrentLayer()
 
     if (!m_doc->duplicateLayer(index)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("复制图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to duplicate the layer"), 2500);
         return;
     }
 
@@ -3488,11 +3500,11 @@ void MainWindow::duplicateCurrentLayer()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Duplicate,
                                  beforeLayers, afterLayers,
                                  activeBefore, index + 1,   // 副本在原始之上
-                                 tr("复制图层"));
+                                 tr("Duplicate Layer"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已复制图层"), 2000);
+        m_statusBar->showMessage(tr("Layer duplicated"), 2000);
 }
 
 void MainWindow::deleteCurrentLayer()
@@ -3506,9 +3518,9 @@ void MainWindow::deleteCurrentLayer()
     //  "活动图层"变成空指针，之后画笔、滤镜全部崩溃。
     //  这里明确拒绝，并告诉用户该怎么做。
     if (m_doc->layerCount() <= 1) {
-        QMessageBox::information(this, tr("无法删除图层"),
-            tr("文档必须至少保留一个图层。\n\n"
-               "如果要清空这个图层的内容，请使用“编辑 → 删除”。"));
+        QMessageBox::information(this, tr("Cannot Delete the Layer"),
+            tr("A document must keep at least one layer.\n\n"
+               "To clear this layer's content, use \"Edit → Delete\"."));
         return;
     }
 
@@ -3519,7 +3531,7 @@ void MainWindow::deleteCurrentLayer()
 
     if (!m_doc->removeLayer(index)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("删除图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to delete the layer"), 2500);
         return;
     }
 
@@ -3532,7 +3544,7 @@ void MainWindow::deleteCurrentLayer()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Remove,
                                  beforeLayers, afterLayers,
                                  activeBefore, activeAfter,
-                                 tr("删除图层"));
+                                 tr("Delete Layer"));
     m_commandStack->push(cmd);
 
     // ★ 显式设置活动图层 ★
@@ -3542,7 +3554,7 @@ void MainWindow::deleteCurrentLayer()
     m_doc->setActiveLayerIndex(activeAfter);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已删除图层"), 2000);
+        m_statusBar->showMessage(tr("Layer deleted"), 2000);
 }
 
 void MainWindow::moveLayerUp()
@@ -3559,7 +3571,7 @@ void MainWindow::moveLayerUp()
 
     if (to >= m_doc->layerCount()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("已经是最上面的图层"), 2000);
+            m_statusBar->showMessage(tr("Already the topmost layer"), 2000);
         return;
     }
 
@@ -3567,7 +3579,7 @@ void MainWindow::moveLayerUp()
 
     if (!m_doc->moveLayer(from, to)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("移动图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to move the layer"), 2500);
         return;
     }
 
@@ -3576,7 +3588,7 @@ void MainWindow::moveLayerUp()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Move,
                                  beforeLayers, afterLayers,
                                  from, to,
-                                 tr("上移图层"));
+                                 tr("Move Layer Up"));
     m_commandStack->push(cmd);
 }
 
@@ -3590,7 +3602,7 @@ void MainWindow::moveLayerDown()
 
     if (to < 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("已经是最下面的图层"), 2000);
+            m_statusBar->showMessage(tr("Already the bottommost layer"), 2000);
         return;
     }
 
@@ -3598,7 +3610,7 @@ void MainWindow::moveLayerDown()
 
     if (!m_doc->moveLayer(from, to)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("移动图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to move the layer"), 2500);
         return;
     }
 
@@ -3607,7 +3619,7 @@ void MainWindow::moveLayerDown()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Move,
                                  beforeLayers, afterLayers,
                                  from, to,
-                                 tr("下移图层"));
+                                 tr("Move Layer Down"));
     m_commandStack->push(cmd);
 }
 
@@ -3632,7 +3644,7 @@ void MainWindow::mergeLayerDownAt(int layerIndex)
 
     if (m_doc->layerCount() < 2) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("至少需要两个图层才能合并"), 2500);
+            m_statusBar->showMessage(tr("At least two layers are required to merge"), 2500);
         return;
     }
 
@@ -3645,7 +3657,7 @@ void MainWindow::mergeLayerDownAt(int layerIndex)
     const int index = layerIndex;
     if (index <= 0 || index >= m_doc->layerCount()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("最底部的图层无法向下合并"), 2500);
+            m_statusBar->showMessage(tr("The bottommost layer cannot be merged down"), 2500);
         return;
     }
 
@@ -3654,7 +3666,7 @@ void MainWindow::mergeLayerDownAt(int layerIndex)
 
     if (!m_doc->mergeLayerDown(index)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("向下合并失败"), 2500);
+            m_statusBar->showMessage(tr("Merge down failed"), 2500);
         return;
     }
 
@@ -3663,11 +3675,11 @@ void MainWindow::mergeLayerDownAt(int layerIndex)
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::MergeDown,
                                  beforeLayers, afterLayers,
                                  activeBefore, index - 1,   // 合并结果在下方图层的位置
-                                 tr("向下合并"));
+                                 tr("Merge Down"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已向下合并"), 2000);
+        m_statusBar->showMessage(tr("Merged down"), 2000);
 }
 
 void MainWindow::flattenImage()
@@ -3677,7 +3689,7 @@ void MainWindow::flattenImage()
 
     if (m_doc->layerCount() < 2) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("只有一个图层，无需拼合"), 2000);
+            m_statusBar->showMessage(tr("Only one layer - nothing to flatten"), 2000);
         return;
     }
 
@@ -3692,13 +3704,13 @@ void MainWindow::flattenImage()
             ++hiddenCount;
     }
 
-    QString message = tr("拼合图像会把所有可见图层合并为一个图层。");
+    QString message = tr("Flatten Image merges all visible layers into one.");
     if (hiddenCount > 0) {
-        message += tr("\n\n注意：有 %1 个隐藏图层，它们的内容将被丢弃。").arg(hiddenCount);
+        message += tr("\n\nNote: %1 hidden layers exist and their content will be discarded.").arg(hiddenCount);
     }
-    message += tr("\n\n是否继续？");
+    message += tr("\n\nContinue?");
 
-    if (QMessageBox::question(this, tr("拼合图像"), message,
+    if (QMessageBox::question(this, tr("Flatten Image"), message,
                               QMessageBox::Yes | QMessageBox::No,
                               QMessageBox::No) != QMessageBox::Yes) {
         return;
@@ -3709,7 +3721,7 @@ void MainWindow::flattenImage()
 
     if (!m_doc->flattenImage()) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("拼合失败"), 2500);
+            m_statusBar->showMessage(tr("Flatten failed"), 2500);
         return;
     }
 
@@ -3718,11 +3730,11 @@ void MainWindow::flattenImage()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Flatten,
                                  beforeLayers, afterLayers,
                                  activeBefore, 0,
-                                 tr("拼合图像"));
+                                 tr("Flatten Image"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已拼合图像"), 2000);
+        m_statusBar->showMessage(tr("Image flattened"), 2000);
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -3775,9 +3787,9 @@ void MainWindow::deleteLayersFromPanel(const QList<int> &layerIndices)
     //   这里拒绝，并给出与菜单版本**完全相同**的提示文案
     //   （同一件事不该有两种说法，否则用户会以为是两个不同的限制）。
     if (targets.count() >= m_doc->layerCount()) {
-        QMessageBox::information(this, tr("无法删除图层"),
-            tr("文档必须至少保留一个图层。\n\n"
-               "如果要清空这个图层的内容，请使用“编辑 → 删除”。"));
+        QMessageBox::information(this, tr("Cannot Delete the Layer"),
+            tr("A document must keep at least one layer.\n\n"
+               "To clear this layer's content, use \"Edit → Delete\"."));
         return;
     }
 
@@ -3803,8 +3815,8 @@ void MainWindow::deleteLayersFromPanel(const QList<int> &layerIndices)
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Remove,
                                  beforeLayers, afterLayers,
                                  activeBefore, activeAfter,
-                                 targets.count() > 1 ? tr("删除多个图层")
-                                                     : tr("删除图层"));
+                                 targets.count() > 1 ? tr("Delete Multiple Layers")
+                                                     : tr("Delete Layer"));
     m_commandStack->push(cmd);
 
     // ★ 显式设置活动图层 ★
@@ -3814,7 +3826,7 @@ void MainWindow::deleteLayersFromPanel(const QList<int> &layerIndices)
     m_doc->setActiveLayerIndex(activeAfter);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已删除 %1 个图层").arg(targets.count()), 2000);
+        m_statusBar->showMessage(tr("Deleted %1 layers").arg(targets.count()), 2000);
 }
 
 void MainWindow::duplicateLayersFromPanel(const QList<int> &layerIndices)
@@ -3853,7 +3865,7 @@ void MainWindow::duplicateLayersFromPanel(const QList<int> &layerIndices)
 
     if (inserted == 0) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("复制图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to duplicate the layer"), 2500);
         return;
     }
 
@@ -3868,12 +3880,12 @@ void MainWindow::duplicateLayersFromPanel(const QList<int> &layerIndices)
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Duplicate,
                                  beforeLayers, afterLayers,
                                  activeBefore, activeAfter,
-                                 inserted > 1 ? tr("复制多个图层")
-                                              : tr("复制图层"));
+                                 inserted > 1 ? tr("Duplicate Multiple Layers")
+                                              : tr("Duplicate Layer"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已复制 %1 个图层").arg(inserted), 2000);
+        m_statusBar->showMessage(tr("Duplicated %1 layers").arg(inserted), 2000);
 }
 
 void MainWindow::reorderLayer(int fromIndex, int toIndex)
@@ -3895,7 +3907,7 @@ void MainWindow::reorderLayer(int fromIndex, int toIndex)
 
     if (!m_doc->moveLayer(fromIndex, toIndex)) {
         if (m_statusBar)
-            m_statusBar->showMessage(tr("移动图层失败"), 2500);
+            m_statusBar->showMessage(tr("Failed to move the layer"), 2500);
         return;
     }
 
@@ -3904,7 +3916,7 @@ void MainWindow::reorderLayer(int fromIndex, int toIndex)
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::Move,
                                  beforeLayers, afterLayers,
                                  fromIndex, toIndex,
-                                 tr("调整图层顺序"));
+                                 tr("Reorder Layers"));
     m_commandStack->push(cmd);
 }
 
@@ -3920,7 +3932,7 @@ void MainWindow::mergeVisibleLayers()
         // 可见图层不足两个时 Document 返回 false。这不是"出错"，
         // 而是一种有意义的现状 —— 所以给可执行的提示，而不是"失败"。
         if (m_statusBar)
-            m_statusBar->showMessage(tr("至少需要两个可见图层才能合并"), 2500);
+            m_statusBar->showMessage(tr("At least two visible layers are required to merge"), 2500);
         return;
     }
 
@@ -3931,11 +3943,11 @@ void MainWindow::mergeVisibleLayers()
     auto *cmd = new LayerCommand(m_doc, LayerCommand::Op::MergeVisible,
                                  beforeLayers, afterLayers,
                                  activeBefore, activeAfter,
-                                 tr("合并可见图层"));
+                                 tr("Merge Visible Layers"));
     m_commandStack->push(cmd);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已合并可见图层"), 2000);
+        m_statusBar->showMessage(tr("Visible layers merged"), 2000);
 }
 
 void MainWindow::renameActiveLayer()
@@ -3971,7 +3983,7 @@ void MainWindow::setLayerVisible(int layerIndex, bool visible)
     auto *cmd = LayerCommand::createPropertyCommand(
                 m_doc, layerIndex, LayerCommand::Op::SetVisible,
                 QVariant(layer->isVisible()), QVariant(visible),
-                visible ? tr("显示图层") : tr("隐藏图层"));
+                visible ? tr("Show Layer") : tr("Hide Layer"));
     m_commandStack->push(cmd);
 }
 
@@ -3990,7 +4002,7 @@ void MainWindow::setLayerLocked(int layerIndex, bool locked)
     auto *cmd = LayerCommand::createPropertyCommand(
                 m_doc, layerIndex, LayerCommand::Op::SetLocked,
                 QVariant(layer->isLocked()), QVariant(locked),
-                locked ? tr("锁定图层") : tr("解锁图层"));
+                locked ? tr("Lock Layer") : tr("Unlock Layer"));
     m_commandStack->push(cmd);
 }
 
@@ -4013,7 +4025,7 @@ void MainWindow::setLayerName(int layerIndex, const QString &name)
     auto *cmd = LayerCommand::createPropertyCommand(
                 m_doc, layerIndex, LayerCommand::Op::Rename,
                 QVariant(layer->name()), QVariant(trimmed),
-                tr("重命名图层"));
+                tr("Rename Layer"));
     m_commandStack->push(cmd);
 }
 
@@ -4036,7 +4048,7 @@ void MainWindow::setLayerBlendMode(int layerIndex, int blendBefore, int blendAft
     auto *cmd = LayerCommand::createPropertyCommand(
                 m_doc, layerIndex, LayerCommand::Op::SetBlendMode,
                 QVariant(before), QVariant(blendAfter),
-                tr("更改混合模式"));
+                tr("Change Blend Mode"));
     m_commandStack->push(cmd);
 
     Q_UNUSED(blendBefore);
@@ -4093,7 +4105,7 @@ void MainWindow::commitLayerOpacity(int layerIndex, int before, int after)
     auto *cmd = LayerCommand::createPropertyCommand(
                 m_doc, layerIndex, LayerCommand::Op::SetOpacity,
                 QVariant(from), QVariant(to),
-                tr("更改不透明度"));
+                tr("Change Opacity"));
     m_commandStack->push(cmd);
 }
 
@@ -4150,8 +4162,8 @@ void MainWindow::toggleSnapToGrid(bool enabled)
         m_canvas->setSnapToGrid(enabled);
 
     if (m_statusBar)
-        m_statusBar->showMessage(enabled ? tr("已开启对齐到网格")
-                                         : tr("已关闭对齐到网格"));
+        m_statusBar->showMessage(enabled ? tr("Snap to grid on")
+                                         : tr("Snap to grid off"));
 }
 
 void MainWindow::setGridSpacing(int pixels)
@@ -4171,7 +4183,7 @@ void MainWindow::setGridSpacing(int pixels)
     // 只改间距不必开网格 —— 与「显示网格」独立。状态栏提示让用户知道生效了
     // （否则在没开网格时改间距看起来毫无反应）。
     if (m_statusBar)
-        m_statusBar->showMessage(tr("网格间距：%1 像素").arg(m_gridSpacing));
+        m_statusBar->showMessage(tr("Grid spacing: %1 px").arg(m_gridSpacing));
 }
 
 void MainWindow::editGridSettings()
@@ -4255,7 +4267,7 @@ void MainWindow::clearGuides()
         return;
     m_canvas->clearGuides();
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已清除本页参考线"));
+        m_statusBar->showMessage(tr("Cleared the guides on this page"));
 }
 
 // ============================================================================
@@ -4300,7 +4312,7 @@ void MainWindow::chooseForegroundColor()
     //   QColorDialog::ShowAlphaChannel 让用户能选半透明色 ——
     //   这对图像编辑很重要（画笔要能画半透明的颜色）。
     const QColor color = QColorDialog::getColor(
-        m_foregroundColor, this, tr("选择前景色"),
+        m_foregroundColor, this, tr("Choose Foreground Color"),
         QColorDialog::ShowAlphaChannel);
 
     if (color.isValid())
@@ -4310,7 +4322,7 @@ void MainWindow::chooseForegroundColor()
 void MainWindow::chooseBackgroundColor()
 {
     const QColor color = QColorDialog::getColor(
-        m_backgroundColor, this, tr("选择背景色"),
+        m_backgroundColor, this, tr("Choose Background Color"),
         QColorDialog::ShowAlphaChannel);
 
     if (color.isValid())
@@ -4332,7 +4344,7 @@ void MainWindow::swapColors()
     updateColorIndicators();
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已交换前景色与背景色"), 1500);
+        m_statusBar->showMessage(tr("Swapped the foreground and background colors"), 1500);
 }
 
 void MainWindow::resetColors()
@@ -4345,7 +4357,7 @@ void MainWindow::resetColors()
     setBackgroundColor(Qt::white);
 
     if (m_statusBar)
-        m_statusBar->showMessage(tr("已恢复默认颜色（黑 / 白）"), 1500);
+        m_statusBar->showMessage(tr("Restored the default colors (black / white)"), 1500);
 }
 
 // ============================================================================
@@ -4379,7 +4391,7 @@ QImage MainWindow::prepareAdjustmentSource()
         // 锁定图层不允许改像素。这里必须给出提示而不是静默返回 ——
         // 静默返回会让用户以为"这个菜单项坏了"。
         if (m_statusBar)
-            m_statusBar->showMessage(tr("当前图层不可编辑"), 2500);
+            m_statusBar->showMessage(tr("The current layer is not editable"), 2500);
         return QImage();
     }
 
@@ -4398,7 +4410,7 @@ void MainWindow::openBrightnessContrast()
     if (base.isNull())
         return;
 
-    runAdjustment(new BrightnessContrastDialog(base, this), base, tr("亮度/对比度"));
+    runAdjustment(new BrightnessContrastDialog(base, this), base, tr("Brightness/Contrast"));
 }
 
 void MainWindow::openHueSaturation()
@@ -4407,7 +4419,7 @@ void MainWindow::openHueSaturation()
     if (base.isNull())
         return;
 
-    runAdjustment(new HueSaturationDialog(base, this), base, tr("色相/饱和度"));
+    runAdjustment(new HueSaturationDialog(base, this), base, tr("Hue/Saturation"));
 }
 
 void MainWindow::openCurves()
@@ -4419,7 +4431,7 @@ void MainWindow::openCurves()
     // 曲线对话框的构造里会算一次亮度直方图（约 30ms，1200 万像素）。
     // 放在构造里而不是每帧，是因为直方图完全不变 —— 它在对话框整个
     // 生命周期内是常量。
-    runAdjustment(new CurvesDialog(base, this), base, tr("曲线"));
+    runAdjustment(new CurvesDialog(base, this), base, tr("Curves"));
 }
 
 void MainWindow::openLevels()
@@ -4432,7 +4444,7 @@ void MainWindow::openLevels()
     // （对整层遍历一遍约 30ms，放在对话框构造里而非每帧）。
     // 两者共用 histogram::luminance()，统计口径一致 ——
     // 否则用户会在曲线里看到的峰值位置与色阶对不上。
-    runAdjustment(new LevelsDialog(base, this), base, tr("色阶"));
+    runAdjustment(new LevelsDialog(base, this), base, tr("Levels"));
 }
 
 // ---------------------------------------------------------------------------
@@ -4532,7 +4544,7 @@ bool MainWindow::runAdjustment(AdjustmentDialog *dialog, const QImage &base,
 
         if (after.isNull()) {
             if (m_statusBar)
-                m_statusBar->showMessage(tr("调整失败：未能生成结果"), 3000);
+                m_statusBar->showMessage(tr("Adjustment failed: no result generated"), 3000);
         } else {
             // 有选区时只处理选区内的像素（与去色/反相完全一致）
             if (m_doc->selection().isActive())
@@ -4542,7 +4554,7 @@ bool MainWindow::runAdjustment(AdjustmentDialog *dialog, const QImage &base,
             applied = true;
 
             if (m_statusBar)
-                m_statusBar->showMessage(tr("已应用%1").arg(m_adjustText), 2500);
+                m_statusBar->showMessage(tr("Applied %1").arg(m_adjustText), 2500);
         }
     } else {
         // 取消 / 参数没变：文档从头到尾没被碰过，不需要"还原"，只需

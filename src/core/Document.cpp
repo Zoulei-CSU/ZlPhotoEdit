@@ -35,7 +35,7 @@ Document::~Document() = default;
 
 void Document::createInitialLayer(const QColor &fillColor)
 {
-    Layer layer(m_canvasSize, tr("背景"));
+    Layer layer(m_canvasSize, tr("Background"));
 
     // fillColor 为透明时不需要额外操作（Layer 构造已填透明）；
     // 其他颜色需要显式填充。
@@ -91,7 +91,7 @@ int Document::addLayer(const QString &name)
     // N 取当前图层数+1，不追求绝对唯一（用户重命名后可能重复，
     // 那是用户的自由，不必强制）。
     const QString layerName = name.isEmpty()
-                                  ? tr("图层 %1").arg(m_layers.count() + 1)
+                                  ? tr("Layer %1").arg(m_layers.count() + 1)
                                   : name;
 
     Layer layer(m_canvasSize, layerName);
@@ -180,7 +180,7 @@ bool Document::duplicateLayer(int index)
 
     // clone() 会做 QImage::copy()，是真正的深拷贝
     Layer copy = src->clone();
-    copy.setName(tr("%1 副本").arg(src->name()));
+    copy.setName(tr("%1 Copy").arg(src->name()));
 
     // 副本放在原图层上方
     const int newIndex = m_layers.insert(index + 1, copy);
@@ -356,7 +356,7 @@ bool Document::mergeVisibleLayers()
     if (insertAt < 0)
         return false;
 
-    Layer mergedLayer(m_canvasSize, tr("合并图层"));
+    Layer mergedLayer(m_canvasSize, tr("Merged Layer"));
     mergedLayer.setImage(merged);
 
     // ★ 插入位置：留在原"最上面那个可见图层"的槽位上 ★
@@ -438,7 +438,7 @@ bool Document::flattenImage()
     // 用户可能还想用它做别的操作。
     m_layers.clear();
 
-    Layer flat(m_canvasSize, tr("背景"));
+    Layer flat(m_canvasSize, tr("Background"));
     flat.setImage(merged);
     m_layers.append(flat);
 
@@ -966,11 +966,11 @@ QString Document::displayName() const
         // ★ 没有文件路径时优先用"提示名"（屏幕截图这类无磁盘来源的页）★
         //   都没有才落到"未命名"。两种情况都仍然只是**显示**，
         //   保存路径的判断只认 m_filePath。
-        base = m_titleHint.isEmpty() ? tr("未命名") : m_titleHint;
+        base = m_titleHint.isEmpty() ? tr("Untitled") : m_titleHint;
     } else {
         base = QFileInfo(m_filePath).fileName();
         if (base.isEmpty())
-            base = tr("未命名");
+            base = tr("Untitled");
     }
 
     return m_modified ? QStringLiteral("*") + base : base;

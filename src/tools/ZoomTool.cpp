@@ -30,7 +30,7 @@ QString ZoomTool::id() const
 
 QString ZoomTool::displayName() const
 {
-    return tr("缩放");
+    return tr("Zoom");
 }
 
 int ZoomTool::shortcutKey() const

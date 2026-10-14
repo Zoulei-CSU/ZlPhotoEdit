@@ -159,7 +159,7 @@ void MoveTool::beginDrag(const ToolEvent &e, const QPoint & /*startImagePos*/, b
         // 多出一个重合的图层"。
         CommandStack *stack = commandStack();
         if (stack) {
-            stack->beginMacro(tr("复制并移动图层"));
+            stack->beginMacro(tr("Duplicate and Move Layer"));
 
             // 用 LayerCommand 记录图层结构变化。
             // 这里的 before/after 是图层列表的浅拷贝（像素共享），成本很低。
@@ -171,7 +171,7 @@ void MoveTool::beginDrag(const ToolEvent &e, const QPoint & /*startImagePos*/, b
             //   没有"接受 QImage"的重载，所以这里要先把位图包成 Layer。
             //   这个重载集在写代码时很容易记混（三个参数看起来都"应该"有），
             //   编译器会报 "没有重载函数可以转换所有参数类型"。
-            Layer duplicate(m_originalImage, layer->name() + tr(" 副本"));
+            Layer duplicate(m_originalImage, layer->name() + tr(" Copy"));
             duplicate.setOpacity(layer->opacity());
             duplicate.setBlendMode(layer->blendMode());
             duplicate.setVisible(layer->isVisible());
@@ -183,7 +183,7 @@ void MoveTool::beginDrag(const ToolEvent &e, const QPoint & /*startImagePos*/, b
             auto *cmd = new LayerCommand(doc, LayerCommand::Op::Duplicate,
                                          beforeLayers, afterLayers,
                                          index, newIndex,
-                                         tr("复制图层"));
+                                         tr("Duplicate Layer"));
             stack->push(cmd);
 
             // 现在活动图层应该是新副本 —— 后续的移动作用在它上面
@@ -430,8 +430,8 @@ ToolResult MoveTool::mouseRelease(const ToolEvent &e)
                 //   都只重算那两块。
                 auto *cmd = new ImageCommand(doc, m_dragLayerIndex,
                                              m_originalImage, afterImage,
-                                             m_duplicated ? tr("复制并移动图层")
-                                                          : tr("移动图层"),
+                                             m_duplicated ? tr("Duplicate and Move Layer")
+                                                          : tr("Move Layer"),
                                              movedRegion(QPoint(), m_currentOffset));
                 stack->push(cmd);
 
@@ -514,7 +514,7 @@ ToolResult MoveTool::keyPress(const ToolEvent &e)
         //   留 5 条撤销记录不会造成困扰；而错误地合并会把
         //   "上一次的移动"和"这一次的移动"粘在一起，反而更难用。
         auto *cmd = new ImageCommand(doc, doc->activeLayerIndex(),
-                                     before, after, tr("移动图层"), region);
+                                     before, after, tr("Move Layer"), region);
         stack->push(cmd);
     } else {
         // 没有撤销栈时降级：自己失效（区域同样有效，空 → 全量）
@@ -546,8 +546,8 @@ void MoveTool::commit()
         if (layer) {
             auto *cmd = new ImageCommand(doc, m_dragLayerIndex,
                                          m_originalImage, layer->image().copy(),
-                                         m_duplicated ? tr("复制并移动图层")
-                                                      : tr("移动图层"),
+                                         m_duplicated ? tr("Duplicate and Move Layer")
+                                                      : tr("Move Layer"),
                                          movedRegion(QPoint(), m_currentOffset));
             stack->push(cmd);
             if (m_duplicated)

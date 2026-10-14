@@ -49,11 +49,11 @@ QString ShapeTool::id() const
 QString ShapeTool::displayName() const
 {
     switch (m_kind) {
-    case Kind::Line:      return tr("直线");
-    case Kind::Rectangle: return tr("矩形");
-    case Kind::Ellipse:   return tr("椭圆");
+    case Kind::Line:      return tr("Line");
+    case Kind::Rectangle: return tr("Rectangle");
+    case Kind::Ellipse:   return tr("Ellipse");
     }
-    return tr("直线");
+    return tr("Line");
 }
 
 int ShapeTool::shortcutKey() const
@@ -130,7 +130,7 @@ bool ShapeTool::beginShapeAt(const QPointF &imagePos)
     //   用户拖完就会发现图层上多了一块**永远撤不掉**的痕迹 ——
     //   比"工具不动"严重得多。油漆桶那边是同一条纪律（BucketTool.cpp）。
     if (!commandStack()) {
-        showStatus(tr("没有可用的撤销栈，已取消绘制"));
+        showStatus(tr("No undo stack available - drawing cancelled"));
         return false;
     }
 
@@ -363,9 +363,9 @@ void ShapeTool::finishShape()
                 //   一定是两条记录。自己 new 并传固定编号的话，
                 //   连续两个形状会被 QUndoStack 静默合并成一步
                 //   （这个坑在阶段六首批刚踩过，见 DrawCommand.h 的说明）。
-                const QString text = (m_kind == Kind::Line)      ? tr("直线")
-                                     : (m_kind == Kind::Rectangle) ? tr("矩形")
-                                                                   : tr("椭圆");
+                const QString text = (m_kind == Kind::Line)      ? tr("Line")
+                                     : (m_kind == Kind::Rectangle) ? tr("Rectangle")
+                                                                   : tr("Ellipse");
                 stack->push(DrawCommand::standalone(doc, layerIndex, bounds,
                                                     before, after, text));
             }
@@ -373,7 +373,7 @@ void ShapeTool::finishShape()
     } else if (dragged && !hasChange) {
         // 拖过，但一点像素都没落到画布上（整个形状在画布外）。
         // 这时**不提示"什么都没有"**会让人以为工具坏了 —— 提示一次。
-        showStatus(tr("形状在画布之外，未产生改动"));
+        showStatus(tr("The shape is outside the canvas - nothing changed"));
     }
 
     m_originalImage = QImage();

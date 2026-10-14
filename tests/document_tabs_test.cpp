@@ -26,7 +26,7 @@
 //       容器若自己就把页摘了，MainWindow 的未保存确认就永远没有机会跑。
 //
 //    ⑤ 标题：空文档必须带序号，修改必须带 *
-//       不编号的话"未命名-1"和"未命名-2"会长得一模一样，
+//       不编号的话"Untitled-1"和"Untitled-2"会长得一模一样，
 //       并排开两个标签就分不清谁是谁 —— 而分不清的后果是关错页。
 //
 //  ★ 运行方式 ★
@@ -294,14 +294,14 @@ static void testTitles()
     tabs.addDocumentTab(d2);
 
     // ★ 空文档必须带序号 ★
-    //   Document::displayName() 对它们一律返回"未命名" ——
+    //   Document::displayName() 对它们一律返回"Untitled" ——
     //   并排开三个标签就分不清谁是谁了。而分不清的后果是关错页。
-    checkEqStr(tabs.tabTitle(0), QStringLiteral("未命名-1"),
-               "空文档的标题带序号：未命名-1");
-    checkEqStr(tabs.tabTitle(1), QStringLiteral("未命名-2"),
-               "空文档的标题带序号：未命名-2");
-    checkEqStr(tabs.tabTitle(2), QStringLiteral("未命名-3"),
-               "空文档的标题带序号：未命名-3");
+    checkEqStr(tabs.tabTitle(0), QStringLiteral("Untitled-1"),
+               "空文档的标题带序号：Untitled-1");
+    checkEqStr(tabs.tabTitle(1), QStringLiteral("Untitled-2"),
+               "空文档的标题带序号：Untitled-2");
+    checkEqStr(tabs.tabTitle(2), QStringLiteral("Untitled-3"),
+               "空文档的标题带序号：Untitled-3");
 
     // ── 有路径的用文件名 ──
     d1->setFilePath(QStringLiteral("C:/some/dir/photo.jpg"));
@@ -312,16 +312,16 @@ static void testTitles()
     // ── 修改标记 ──
     int counter = 0;
     tabs.tabAt(0)->stack->push(new CountCommand(&counter, 1, QStringLiteral("改一下")));
-    checkEqStr(tabs.tabTitle(0), QStringLiteral("*未命名-1"),
+    checkEqStr(tabs.tabTitle(0), QStringLiteral("*Untitled-1"),
                "★ 改过之后标题前面出现 *（脏的那一页）");
     checkEqStr(tabs.tabTitle(1), QStringLiteral("photo.jpg"),
                "★ 没改的那一页不带 *（* 是按页算的，不是全局的）");
-    checkEqStr(tabs.tabTitle(2), QStringLiteral("未命名-3"),
+    checkEqStr(tabs.tabTitle(2), QStringLiteral("Untitled-3"),
                "第 2 页也不带 *");
 
     // 撤销回去 → * 应该消失（clean 状态是自动跟踪的）
     tabs.tabAt(0)->stack->undo();
-    checkEqStr(tabs.tabTitle(0), QStringLiteral("未命名-1"),
+    checkEqStr(tabs.tabTitle(0), QStringLiteral("Untitled-1"),
                "★ 撤销回原点后 * 自动消失（用的是栈的 clean 状态）");
 
     // ── 悬停提示给完整路径 ──
@@ -398,9 +398,9 @@ static void testRemove()
     }
 
     // ── 序号重排 ──
-    checkEqStr(tabs.tabTitle(0), QStringLiteral("未命名-1"), "重排后第 0 页仍是未命名-1");
-    checkEqStr(tabs.tabTitle(1), QStringLiteral("未命名-2"),
-               "★ 重排后第 1 页变成未命名-2（原来是 -3，不能留着旧序号）");
+    checkEqStr(tabs.tabTitle(0), QStringLiteral("Untitled-1"), "重排后第 0 页仍是 Untitled-1");
+    checkEqStr(tabs.tabTitle(1), QStringLiteral("Untitled-2"),
+               "★ 重排后第 1 页变成 Untitled-2（原来是 -3，不能留着旧序号）");
 
     // ── 越界摘页不许崩 ──
     tabs.removeDocumentTab(-1);

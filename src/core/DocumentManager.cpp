@@ -37,8 +37,9 @@ Document *DocumentManager::createDocument(const QSize &size, const QColor &fillC
     constexpr qint64 kMaxPixels = 200'000'000LL;   // 2 亿像素
 
     if (pixels > kMaxPixels) {
-        m_lastError = tr("图像尺寸过大（%1 × %2，约 %3 亿像素），"
-                         "超出内存承受范围。请减小尺寸后重试。")
+        m_lastError = tr("The image size is too large (%1 × %2, about %3 "
+                         "hundred million pixels), beyond what memory can "
+                         "take. Reduce the size and try again.")
                           .arg(size.width())
                           .arg(size.height())
                           .arg(pixels / 100'000'000.0, 0, 'f', 1);
@@ -54,7 +55,7 @@ Document *DocumentManager::createDocument(const QSize &size, const QColor &fillC
 Document *DocumentManager::openDocument(const QString &filePath)
 {
     if (filePath.isEmpty()) {
-        m_lastError = tr("文件路径为空。");
+        m_lastError = tr("The file path is empty.");
         return nullptr;
     }
 
@@ -69,11 +70,11 @@ Document *DocumentManager::openDocument(const QString &filePath)
 
     QFileInfo info(filePath);
     if (!info.exists()) {
-        m_lastError = tr("文件不存在：\n%1").arg(filePath);
+        m_lastError = tr("The file does not exist:\n%1").arg(filePath);
         return nullptr;
     }
     if (!info.isReadable()) {
-        m_lastError = tr("没有读取权限：\n%1").arg(filePath);
+        m_lastError = tr("No read permission:\n%1").arg(filePath);
         return nullptr;
     }
 
@@ -88,9 +89,9 @@ Document *DocumentManager::openDocument(const QString &filePath)
         constexpr qint64 kMaxPixels = 200'000'000LL;
 
         if (pixels > kMaxPixels) {
-            m_lastError = tr("图像过大，无法打开：\n%1\n\n"
-                             "尺寸 %2 × %3（约 %4 亿像素），"
-                             "超出内存承受范围。")
+            m_lastError = tr("The image is too large to open:\n%1\n\n"
+                             "Size %2 × %3 (about %4 hundred million "
+                             "pixels), beyond what memory can take.")
                               .arg(info.fileName())
                               .arg(meta.size.width())
                               .arg(meta.size.height())
@@ -108,9 +109,10 @@ Document *DocumentManager::openDocument(const QString &filePath)
     if (image.isNull()) {
         // 解码失败。给出可读的错误描述而不是只说"打开失败" ——
         // 用户需要知道是"格式不支持"还是"文件损坏"，才能决定下一步。
-        m_lastError = tr("无法打开图像：\n%1\n\n"
-                         "可能的原因：文件已损坏、格式不受支持，"
-                         "或文件不是有效的图像。")
+        m_lastError = tr("Cannot open the image:\n%1\n\n"
+                         "Possible causes: the file is corrupted, the "
+                         "format is unsupported, or the file is not a "
+                         "valid image.")
                           .arg(info.fileName());
         return nullptr;
     }
@@ -124,7 +126,7 @@ Document *DocumentManager::openDocument(const QString &filePath)
     if (Layer *layer = doc->layers().layer(0)) {
         layer->setImage(image);
         layer->setName(info.completeBaseName().isEmpty()
-                           ? tr("背景")
+                           ? tr("Background")
                            : info.completeBaseName());
     }
 
@@ -319,7 +321,7 @@ QStringList DocumentManager::unsavedDocumentNames() const
             continue;
 
         if (doc->filePath().isEmpty()) {
-            names << tr("未命名 %1").arg(untitledCounter++);
+            names << tr("Untitled %1").arg(untitledCounter++);
         } else {
             names << QFileInfo(doc->filePath()).fileName();
         }

@@ -34,7 +34,7 @@ QString ColorPickerTool::id() const
 
 QString ColorPickerTool::displayName() const
 {
-    return tr("吸管");
+    return tr("Eyedropper");
 }
 
 int ColorPickerTool::shortcutKey() const
@@ -143,7 +143,7 @@ void ColorPickerTool::doPick(const ToolEvent &e)
     else
         emit requestForegroundColor(c);
 
-    showStatus(tr("已取样 %1  (%2, %3, %4)  α%5")
+    showStatus(tr("Sampled %1  (%2, %3, %4)  a%5")
                    .arg(c.name(QColor::HexRgb))
                    .arg(c.red()).arg(c.green()).arg(c.blue())
                    .arg(c.alpha()));

@@ -42,7 +42,7 @@ RotateImageDialog::RotateImageDialog(const QSize &canvasSize,
                                      ResampleMethod method,
                                      const QColor &backgroundColor,
                                      QWidget *parent)
-    : AdjustmentDialog(previewSource, tr("旋转图像"), parent)
+    : AdjustmentDialog(previewSource, tr("Rotate Image"), parent)
     , m_canvasSize(canvasSize)
     , m_method(method)
     , m_backgroundColor(backgroundColor.isValid() ? backgroundColor : QColor(Qt::white))
@@ -53,7 +53,7 @@ RotateImageDialog::RotateImageDialog(const QSize &canvasSize,
     grid->setHorizontalSpacing(8);
 
     // ── 第 1 行：角度 ──
-    auto *angleLabel = new QLabel(tr("角度(&A)："), paramArea);
+    auto *angleLabel = new QLabel(tr("Angle(&A):"), paramArea);
 
     m_angleSlider = new QSlider(Qt::Horizontal, paramArea);
     m_angleSlider->setObjectName(QStringLiteral("sliderAngle"));
@@ -61,7 +61,7 @@ RotateImageDialog::RotateImageDialog(const QSize &canvasSize,
     m_angleSlider->setValue(0);
     m_angleSlider->setMinimumWidth(240);
     m_angleSlider->setPageStep(5 * kSliderPerDegree);   // PageUp/PageDown 走 5°
-    m_angleSlider->setToolTip(tr("顺时针为正；拖动一格是 0.1°"));
+    m_angleSlider->setToolTip(tr("Clockwise is positive; one drag step is 0.1°"));
 
     m_angleBox = new QDoubleSpinBox(paramArea);
     m_angleBox->setObjectName(QStringLiteral("spinAngle"));
@@ -70,7 +70,7 @@ RotateImageDialog::RotateImageDialog(const QSize &canvasSize,
     m_angleBox->setSingleStep(0.1);
     m_angleBox->setSuffix(tr(" °"));
     m_angleBox->setValue(0.0);
-    m_angleBox->setToolTip(tr("顺时针为正。90 / 180 / -90 等整数倍走无损路径"));
+    m_angleBox->setToolTip(tr("Clockwise is positive. Multiples of 90 (90 / 180 / -90) take the lossless path"));
 
     grid->addWidget(angleLabel,    0, 0);
     grid->addWidget(m_angleSlider, 0, 1);
@@ -92,16 +92,16 @@ RotateImageDialog::RotateImageDialog(const QSize &canvasSize,
     grid->addWidget(m_infoLabel, 1, 0, 1, 3);
 
     // ── 第 3 行：扩展区域填充色 ──
-    auto *fillLabel = new QLabel(tr("扩展区域(&E)："), paramArea);
+    auto *fillLabel = new QLabel(tr("Fill Area(&E):"), paramArea);
 
     m_fillCombo = new QComboBox(paramArea);
     m_fillCombo->setObjectName(QStringLiteral("comboFill"));
-    m_fillCombo->addItem(tr("透明（往下能看到背景）"));
+    m_fillCombo->addItem(tr("Transparent (the background shows through)"));
     // 把实际颜色写进项文字 —— 只写"背景色"的话，用户得先猜背景色是什么，
     // 而这个对话框是模态的、没法同时去看工具栏上的色块。
-    m_fillCombo->addItem(tr("背景色（%1）").arg(m_backgroundColor.name()));
-    m_fillCombo->addItem(tr("白色（#ffffff）"));
-    m_fillCombo->addItem(tr("黑色（#000000）"));
+    m_fillCombo->addItem(tr("Background color (%1)").arg(m_backgroundColor.name()));
+    m_fillCombo->addItem(tr("White (#ffffff)"));
+    m_fillCombo->addItem(tr("Black (#000000)"));
     m_fillCombo->setCurrentIndex(FillTransparent);
 
     grid->addWidget(fillLabel,   2, 0);
@@ -209,8 +209,8 @@ void RotateImageDialog::onAngleChanged()
     const bool lossless = isRightAngle(m_angle, &turns);
     m_fillCombo->setEnabled(!lossless);
     m_fillCombo->setToolTip(lossless
-        ? tr("90° 的整数倍是无损旋转，画布与内容等大，没有需要填充的区域")
-        : tr("旋转后四角空出来的区域填充什么颜色"));
+        ? tr("Multiples of 90° rotate losslessly; the canvas matches the content, so there is nothing to fill")
+        : tr("Color used to fill the corners left empty after rotation"));
 
     notifyChanged();
 }
@@ -230,24 +230,26 @@ QString RotateImageDialog::infoText() const
     const QSize newSize = newCanvasSize();
 
     QString html;
-    html += tr("当前画布： %1 × %2 px").arg(oldSize.width()).arg(oldSize.height());
+    html += tr("Current canvas: %1 × %2 px").arg(oldSize.width()).arg(oldSize.height());
     html += QStringLiteral("<br>");
 
     if (qFuzzyIsNull(m_angle)) {
-        html += tr("<b>未旋转</b>：画布与内容都不变。");
+        html += tr("<b>Not rotated</b>: neither the canvas nor the content changes.");
         html += QStringLiteral("<br>");
-        html += tr("<span style='color:#666666'>输入角度后画布会自动扩大，"
-                   "内容不会被裁切。</span>");
+        html += tr("<span style='color:#666666'>Once you enter an angle the "
+                   "canvas grows automatically, and the content is not "
+                   "cropped.</span>");
         return html;
     }
 
     int turns = 0;
     if (isRightAngle(m_angle, &turns)) {
-        html += tr("<b>旋转后画布： %1 × %2 px</b>")
+        html += tr("<b>Canvas after rotation: %1 × %2 px</b>")
                     .arg(newSize.width()).arg(newSize.height());
         html += QStringLiteral("<br>");
-        html += tr("<span style='color:#1f7a1f'>%1° 是 90° 的整数倍："
-                   "整数坐标重排，<b>像素无损</b>，也没有需要填充的区域。</span>")
+        html += tr("<span style='color:#1f7a1f'>%1° is a multiple of 90°: "
+                   "integer coordinates are rearranged, <b>pixels are "
+                   "lossless</b>, and there is nothing to fill.</span>")
                     .arg(QString::number(m_angle, 'f', 1));
         return html;
     }
@@ -260,15 +262,17 @@ QString RotateImageDialog::infoText() const
                              ? 100.0 * (1.0 - oldArea / newArea)
                              : 0.0;
 
-    html += tr("<b>旋转后画布： %1 × %2 px</b>")
+    html += tr("<b>Canvas after rotation: %1 × %2 px</b>")
                 .arg(newSize.width()).arg(newSize.height());
     html += QStringLiteral("<br>");
-    html += tr("<span style='color:#c86400'>画布自动扩大到能容纳旋转结果，"
-               "内容不会被裁切；四角约 <b>%1%</b> 的面积需要填充。</span>")
+    html += tr("<span style='color:#c86400'>The canvas grows automatically to "
+               "hold the rotated result, and the content is not cropped; "
+               "about <b>%1%</b> of the area in the corners needs filling.</span>")
                 .arg(QString::number(fillPercent, 'f', 1));
     html += QStringLiteral("<br>");
-    html += tr("<span style='color:#666666'>任意角度会重采样，<b>不可逆</b>："
-               "转过去再转回来，像素回不到原样。</span>");
+    html += tr("<span style='color:#666666'>Arbitrary angles resample and are "
+               "<b>irreversible</b>: rotate back and the pixels will not "
+               "match the original.</span>");
     return html;
 }
 

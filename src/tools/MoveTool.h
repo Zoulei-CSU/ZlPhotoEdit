@@ -77,7 +77,7 @@ public:
 
     // ── 身份 ──
     QString id() const override { return QStringLiteral("move"); }
-    QString displayName() const override { return tr("移动"); }
+    QString displayName() const override { return tr("Move"); }
     int     shortcutKey() const override { return Qt::Key_V; }
 
     ToolOptions *options() const override;

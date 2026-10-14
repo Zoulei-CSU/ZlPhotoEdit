@@ -1537,7 +1537,7 @@ void CanvasView::paintEvent(QPaintEvent *event)
     if (effectiveCanvasSize().isEmpty()) {
         // 没有文档时画一句提示，比一片空白友好
         painter.setPen(QColor(150, 150, 150));
-        painter.drawText(rect(), Qt::AlignCenter, tr("没有打开的文档"));
+        painter.drawText(rect(), Qt::AlignCenter, tr("No document open"));
         return;
     }
 
@@ -2673,39 +2673,39 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
     QMenu menu(this);
 
     // ── 视图类 ──
-    QAction *zoomInAct = menu.addAction(tr("放大"));
+    QAction *zoomInAct = menu.addAction(tr("Zoom In"));
     zoomInAct->setShortcut(QKeySequence::ZoomIn);
 
-    QAction *zoomOutAct = menu.addAction(tr("缩小"));
+    QAction *zoomOutAct = menu.addAction(tr("Zoom Out"));
     zoomOutAct->setShortcut(QKeySequence::ZoomOut);
 
     menu.addSeparator();
 
-    QAction *fitAct = menu.addAction(tr("适合窗口"));
+    QAction *fitAct = menu.addAction(tr("Fit to Window"));
     fitAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
 
-    QAction *actualAct = menu.addAction(tr("实际大小 (100%)"));
+    QAction *actualAct = menu.addAction(tr("Actual Size (100%)"));
     actualAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
 
     menu.addSeparator();
 
     // ── 显示辅助 ──
-    QAction *gridAct = menu.addAction(tr("显示网格"));
+    QAction *gridAct = menu.addAction(tr("Show Grid"));
     gridAct->setCheckable(true);
     gridAct->setChecked(m_gridVisible);
 
-    QAction *checkerAct = menu.addAction(tr("显示透明背景棋盘格"));
+    QAction *checkerAct = menu.addAction(tr("Show Transparency Checkerboard"));
     checkerAct->setCheckable(true);
     checkerAct->setChecked(m_checkerboardVisible);
 
     menu.addSeparator();
 
     // ── 视图旋转 ──
-    QMenu *rotateMenu = menu.addMenu(tr("视图旋转"));
-    QAction *rot0   = rotateMenu->addAction(tr("不旋转"));
-    QAction *rot90  = rotateMenu->addAction(tr("顺时针 90°"));
+    QMenu *rotateMenu = menu.addMenu(tr("View Rotation"));
+    QAction *rot0   = rotateMenu->addAction(tr("No Rotation"));
+    QAction *rot90  = rotateMenu->addAction(tr("Rotate 90° CW"));
     QAction *rot180 = rotateMenu->addAction(tr("180°"));
-    QAction *rot270 = rotateMenu->addAction(tr("逆时针 90°"));
+    QAction *rot270 = rotateMenu->addAction(tr("Rotate 90° CCW"));
 
     menu.addSeparator();
 

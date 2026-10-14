@@ -43,7 +43,7 @@ ImageSizeDialog::ImageSizeDialog(const QSize &original,
                                  ResampleMethod initialMethod,
                                  int layerCount,
                                  QWidget *parent)
-    : SizeChangeDialogBase(original, tr("图像大小"),
+    : SizeChangeDialogBase(original, tr("Image Size"),
                            /*allowRatioLock=*/true,
                            /*allowRelative=*/false,
                            parent)
@@ -60,7 +60,7 @@ ImageSizeDialog::ImageSizeDialog(const QSize &original,
     auto *row = new QHBoxLayout(resampleArea);
     row->setContentsMargins(0, 0, 0, 0);
 
-    auto *label = new QLabel(tr("重采样(&S):"), resampleArea);
+    auto *label = new QLabel(tr("Resampling(&S):"), resampleArea);
 
     m_methodCombo = new QComboBox(resampleArea);
     m_methodCombo->setObjectName(QStringLiteral("comboResample"));
@@ -68,15 +68,17 @@ ImageSizeDialog::ImageSizeDialog(const QSize &original,
     struct Entry { ResampleMethod method; const char *tip; };
     const Entry entries[] = {
         { ResampleMethod::Nearest,
-          QT_TR_NOOP("最快，但放大后是明显的方块。只有像素画、"
-                     "需要保留硬边缘的图标才应该用它。") },
+          QT_TR_NOOP("Fastest, but enlarging shows obvious blocks. Only use "
+                     "it for pixel art and icons that must keep hard "
+                     "edges.") },
         { ResampleMethod::Bilinear,
-          QT_TR_NOOP("速度快，缩小照片时会有锯齿。一般只作为实时预览的算法。") },
+          QT_TR_NOOP("Fast, but downscaling photos introduces jaggies. Generally a preview-only algorithm.") },
         { ResampleMethod::Bicubic,
-          QT_TR_NOOP("质量与速度的平衡点，适合绝大多数照片。默认选项。") },
+          QT_TR_NOOP("The balance of quality and speed; suits most photos. The default.") },
         { ResampleMethod::Lanczos,
-          QT_TR_NOOP("最锐利，但高对比边缘附近可能出现轻微振铃（波纹）。"
-                     "适合需要保留细节的首次缩小。") },
+          QT_TR_NOOP("The sharpest, but slight ringing may appear near "
+                     "high-contrast edges. Suited to the first downscale "
+                     "when detail matters.") },
     };
 
     int defaultIndex = 0;
@@ -95,7 +97,7 @@ ImageSizeDialog::ImageSizeDialog(const QSize &original,
     row->addWidget(label);
     row->addWidget(m_methodCombo, 1);
 
-    auto *hint = new QLabel(tr("（只在点「确定」时生效）"), resampleArea);
+    auto *hint = new QLabel(tr("(takes effect only when you click OK)"), resampleArea);
     hint->setEnabled(false);
     row->addWidget(hint);
 
@@ -145,12 +147,12 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
     const double percent = qMax(pw, ph);
 
     QString html;
-    html += tr("当前： %1 × %2 px　（%3 MP）")
+    html += tr("Current: %1 × %2 px (%3 MP)")
                 .arg(oldSize.width()).arg(oldSize.height()).arg(megaPixels(oldSize));
     html += QStringLiteral("<br>");
 
     // 新尺寸用加粗：这是"将要发生什么"的答案，值得在视觉上压过当前值。
-    html += tr("新尺寸： <b>%1 × %2 px</b>　（%3 MP）")
+    html += tr("New size: <b>%1 × %2 px</b> (%3 MP)")
                 .arg(newSize.width()).arg(newSize.height()).arg(megaPixels(newSize));
 
     // 百分比上色：放大红、缩小绿。
@@ -168,7 +170,7 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
     } else {
         html += QStringLiteral("　<span style='color:%1'><b>%2</b></span>")
                     .arg(percentColor)
-                    .arg(tr("宽 %1%　高 %2%")
+                    .arg(tr("W %1%  H %2%")
                              .arg(QString::number(pw, 'f', 1))
                              .arg(QString::number(ph, 'f', 1)));
     }
@@ -180,8 +182,9 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
         //   这是最需要主动说明的一条：大量用户认为把图放大 200% 会让它
         //   更清楚。重采样只能插值，无法凭空造出细节。
         html += QStringLiteral("<br><span style='color:#c86400'>")
-              + tr("放大：重采样无法凭空产生细节，画面会变软。"
-                   "需要更高分辨率时，请优先找原始素材。")
+              + tr("Enlarging: resampling cannot invent detail; the image "
+                   "will soften. When you need more resolution, look for "
+                   "the original source material.")
               + QStringLiteral("</span>");
     }
 
@@ -190,8 +193,9 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
 
     if (totalBytes >= kMemoryWarnBytes) {
         html += QStringLiteral("<br><span style='color:#b00000'>")
-              + tr("内存提醒：%1 个图层共需约 %2，"
-                   "撤销记录还会再存一份前后的压缩快照，操作可能明显变慢。")
+              + tr("Memory note: %1 layers need about %2 in total, and "
+                   "undo will store another compressed snapshot before "
+                   "and after, so operations may slow noticeably.")
                     .arg(m_layerCount).arg(humanBytes(totalBytes))
               + QStringLiteral("</span>");
     }

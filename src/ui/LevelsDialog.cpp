@@ -32,7 +32,7 @@ constexpr int kBoxW = 64;
 } // namespace
 
 LevelsDialog::LevelsDialog(const QImage &source, QWidget *parent)
-    : AdjustmentDialog(source, tr("色阶"), parent)
+    : AdjustmentDialog(source, tr("Levels"), parent)
 {
     auto *params = new QWidget(this);
     auto *outer = new QVBoxLayout(params);
@@ -100,9 +100,9 @@ LevelsDialog::LevelsDialog(const QImage &source, QWidget *parent)
     // 黑场上限 254、白场下限 1：这样"黑场顶到白场 +1"永远有解，
     // 不需要再反向处理"白场已到 255 而黑场还要往右"的情形。
     m_inBlack = makeSpin(QStringLiteral("spinInBlack"), 0, 254, 0,
-        tr("输入黑场：低于此值的输入像素被压成纯黑"));
+        tr("Input black point: input pixels below this value are crushed to pure black"));
     m_inWhite = makeSpin(QStringLiteral("spinInWhite"), 1, 255, 255,
-        tr("输入白场：高于此值的输入像素被拉成纯白"));
+        tr("Input white point: input pixels above this value are pulled to pure white"));
 
     m_gamma = new QDoubleSpinBox(this);
     m_gamma->setObjectName(QStringLiteral("spinGamma"));
@@ -113,20 +113,22 @@ LevelsDialog::LevelsDialog(const QImage &source, QWidget *parent)
     m_gamma->setFixedWidth(kBoxW);
     m_gamma->setAlignment(Qt::AlignCenter);
     m_gamma->setKeyboardTracking(false);
-    m_gamma->setToolTip(tr("灰度系数（中间调）：大于 1 变亮，小于 1 变暗。\n"
-                           "也可以直接拖动直方图下的中灰手柄。"));
+    m_gamma->setToolTip(tr("Gamma (midtones): above 1 brightens, below 1 "
+                           "darkens.\n"
+                           "You can also drag the mid-gray handle under the "
+                           "histogram."));
 
     m_outBlack = makeSpin(QStringLiteral("spinOutBlack"), 0, 254, 0,
-        tr("输出黑场：结果中最暗处对应的灰阶"));
+        tr("Output black point: the gray level the darkest result maps to"));
     m_outWhite = makeSpin(QStringLiteral("spinOutWhite"), 1, 255, 255,
-        tr("输出白场：结果中最亮处对应的灰阶"));
+        tr("Output white point: the gray level the brightest result maps to"));
 
-    grid->addWidget(makeCaption(tr("黑场")),     0, 1);
-    grid->addWidget(makeCaption(tr("灰度系数")), 0, 2);
-    grid->addWidget(makeCaption(tr("白场")),     0, 3);
+    grid->addWidget(makeCaption(tr("Black")),     0, 1);
+    grid->addWidget(makeCaption(tr("Gamma")), 0, 2);
+    grid->addWidget(makeCaption(tr("White")),     0, 3);
 
-    auto *inLabel  = new QLabel(tr("输入色阶"), this);
-    auto *outLabel = new QLabel(tr("输出色阶"), this);
+    auto *inLabel  = new QLabel(tr("Input Levels"), this);
+    auto *outLabel = new QLabel(tr("Output Levels"), this);
 
     grid->addWidget(inLabel,   1, 0);
     grid->addWidget(m_inBlack, 1, 1);
@@ -145,10 +147,13 @@ LevelsDialog::LevelsDialog(const QImage &source, QWidget *parent)
     auto *autoRow = new QHBoxLayout;
     autoRow->addStretch(1);
 
-    m_autoButton = new QPushButton(tr("自动(&A)"), this);
+    m_autoButton = new QPushButton(tr("Auto(&A)"), this);
     m_autoButton->setObjectName(QStringLiteral("buttonAuto"));
-    m_autoButton->setToolTip(tr("按直方图的两端各截掉 0.1%%，自动设置输入黑白场。\n"
-                                "不会改动灰度系数与输出范围。"));
+    m_autoButton->setToolTip(tr("Clips 0.1%% off each end of the histogram to "
+                                "set the input black/white points "
+                                "automatically.\n"
+                                "Gamma and the output range are left "
+                                "untouched."));
     connect(m_autoButton, &QPushButton::clicked, this, &LevelsDialog::onAutoClicked);
     autoRow->addWidget(m_autoButton);
 

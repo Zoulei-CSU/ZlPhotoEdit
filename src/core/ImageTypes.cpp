@@ -15,30 +15,30 @@ namespace zl {
 QString blendModeName(BlendMode mode)
 {
     switch (mode) {
-    case BlendMode::Normal:      return QObject::tr("正常");
-    case BlendMode::Dissolve:    return QObject::tr("溶解");
-    case BlendMode::Darken:      return QObject::tr("变暗");
-    case BlendMode::Multiply:    return QObject::tr("正片叠底");
-    case BlendMode::ColorBurn:   return QObject::tr("颜色加深");
-    case BlendMode::LinearBurn:  return QObject::tr("线性加深");
-    case BlendMode::Lighten:     return QObject::tr("变亮");
-    case BlendMode::Screen:      return QObject::tr("滤色");
-    case BlendMode::ColorDodge:  return QObject::tr("颜色减淡");
-    case BlendMode::LinearDodge: return QObject::tr("线性减淡");
-    case BlendMode::Overlay:     return QObject::tr("叠加");
-    case BlendMode::SoftLight:   return QObject::tr("柔光");
-    case BlendMode::HardLight:   return QObject::tr("强光");
-    case BlendMode::VividLight:  return QObject::tr("亮光");
-    case BlendMode::LinearLight: return QObject::tr("线性光");
-    case BlendMode::PinLight:    return QObject::tr("点光");
-    case BlendMode::Difference:  return QObject::tr("差值");
-    case BlendMode::Exclusion:   return QObject::tr("排除");
-    case BlendMode::Hue:         return QObject::tr("色相");
-    case BlendMode::Saturation:  return QObject::tr("饱和度");
-    case BlendMode::Color:       return QObject::tr("颜色");
-    case BlendMode::Luminosity:  return QObject::tr("明度");
+    case BlendMode::Normal:      return QObject::tr("Normal");
+    case BlendMode::Dissolve:    return QObject::tr("Dissolve");
+    case BlendMode::Darken:      return QObject::tr("Darken");
+    case BlendMode::Multiply:    return QObject::tr("Multiply");
+    case BlendMode::ColorBurn:   return QObject::tr("Color Burn");
+    case BlendMode::LinearBurn:  return QObject::tr("Linear Burn");
+    case BlendMode::Lighten:     return QObject::tr("Lighten");
+    case BlendMode::Screen:      return QObject::tr("Screen");
+    case BlendMode::ColorDodge:  return QObject::tr("Color Dodge");
+    case BlendMode::LinearDodge: return QObject::tr("Linear Dodge (Add)");
+    case BlendMode::Overlay:     return QObject::tr("Overlay");
+    case BlendMode::SoftLight:   return QObject::tr("Soft Light");
+    case BlendMode::HardLight:   return QObject::tr("Hard Light");
+    case BlendMode::VividLight:  return QObject::tr("Vivid Light");
+    case BlendMode::LinearLight: return QObject::tr("Linear Light");
+    case BlendMode::PinLight:    return QObject::tr("Pin Light");
+    case BlendMode::Difference:  return QObject::tr("Difference");
+    case BlendMode::Exclusion:   return QObject::tr("Exclusion");
+    case BlendMode::Hue:         return QObject::tr("Hue");
+    case BlendMode::Saturation:  return QObject::tr("Saturation");
+    case BlendMode::Color:       return QObject::tr("Color");
+    case BlendMode::Luminosity:  return QObject::tr("Luminosity");
     }
-    return QObject::tr("正常");
+    return QObject::tr("Normal");
 }
 
 QList<BlendMode> allBlendModes()
@@ -80,12 +80,12 @@ QList<BlendMode> allBlendModes()
 QString resampleMethodName(ResampleMethod method)
 {
     switch (method) {
-    case ResampleMethod::Nearest:  return QObject::tr("邻近（硬边缘）");
-    case ResampleMethod::Bilinear: return QObject::tr("两次线性");
-    case ResampleMethod::Bicubic:  return QObject::tr("两次立方（平滑，推荐）");
-    case ResampleMethod::Lanczos:  return QObject::tr("Lanczos（最锐利）");
+    case ResampleMethod::Nearest:  return QObject::tr("Nearest (Hard Edges)");
+    case ResampleMethod::Bilinear: return QObject::tr("Bilinear");
+    case ResampleMethod::Bicubic:  return QObject::tr("Bicubic (Smooth, Recommended)");
+    case ResampleMethod::Lanczos:  return QObject::tr("Lanczos (Sharpest)");
     }
-    return QObject::tr("两次立方（平滑，推荐）");
+    return QObject::tr("Bicubic (Smooth, Recommended)");
 }
 
 } // namespace zl
