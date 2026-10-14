@@ -1,5 +1,7 @@
 ﻿# ZlPhotoEdit（逐鹿 图片编辑器）
 
+[English](README_en.md) | 中文
+
 一个基于 Qt 的自用轻量级图片编辑器。**纯 Qt 实现，零第三方依赖。**
 
 ## 为什么写它
