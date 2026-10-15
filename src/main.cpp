@@ -78,7 +78,7 @@
 namespace {
 constexpr const char *kOrganizationName = "ZlStudio";
 constexpr const char *kApplicationName  = "ZlPhotoEdit";
-constexpr const char *kApplicationVer   = "0.1.0";
+constexpr const char *kApplicationVer   = "1.0.0";
 } // anonymous namespace
 
 // ============================================================================

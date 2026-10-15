@@ -773,7 +773,7 @@ void MainWindow::setupActions()
             logo.setDevicePixelRatio(dpr);
             box.setIconPixmap(logo);
         }
-        // 图标渲染失败（SVG 打不开）时不设 —— 与主窗口"降级为没有图标"
+        // 图标渲染失败（PNG 解码失败）时不设 —— 与主窗口"降级为没有图标"
         // 一致，绝不在这里崩溃。
 
         box.setTextFormat(Qt::RichText);
@@ -781,16 +781,20 @@ void MainWindow::setupActions()
         box.setText(
         tr("<h3>%1</h3>"
            "<p>A lightweight image editor built with Qt.</p>"
+           "<p><b>Version</b> %4</p>"
            "<p><b>Tech Stack</b><br>"
            "Qt %2 (built against %3)<br>"
            "Pure Qt implementation, no third-party image libraries</p>"
            "<p><b>Key Features</b><br>"
            "Multiple layers with 22 blend modes · grayscale mask selection (with feathering)<br>"
            "Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling<br>"
-           "Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation</p>")
+           "Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation</p>"
+           "<p><b>Project Home</b><br>"
+           "<a href=\"https://github.com/Zoulei-CSU/ZlPhotoEdit\">github.com/Zoulei-CSU/ZlPhotoEdit</a></p>")
                 .arg(zl::appinfo::titleSuffix())
                 .arg(zl::compat::qtVersionString())
-                .arg(QStringLiteral(QT_VERSION_STR)));
+                .arg(QStringLiteral(QT_VERSION_STR))
+                .arg(QCoreApplication::applicationVersion()));
         box.setStandardButtons(QMessageBox::Ok);
 
         // ★ 撑开文字列（图标从 64 变 128 之后图标列多吃 64px）★
@@ -801,8 +805,14 @@ void MainWindow::setupActions()
         //     随之变大，QMessageBox 自己就会跟着变宽。
         //   "qt_msgbox_label" 是 Qt 给文字标签定的 objectName（各版本一致），
         //   找不到就算了（不崩、不报错，只是回到默认宽度）。
-        if (auto *lbl = box.findChild<QLabel *>(QStringLiteral("qt_msgbox_label")))
+        if (auto *lbl = box.findChild<QLabel *>(QStringLiteral("qt_msgbox_label"))) {
             lbl->setMinimumWidth(340);
+            // ★ 链接要真的能点开 ★
+            //   TextBrowserInteraction 只让链接"可点"，真正唤起默认浏览器
+            //   要靠 openExternalLinks。找不到这个标签就算了（见上面的
+            //   宽度注释）—— 链接仍在，只是不跳转，不崩不报错。
+            lbl->setOpenExternalLinks(true);
+        }
 
         box.exec();
     });
