@@ -14,6 +14,14 @@ The goal is plain: **fast to open, enough features, small footprint**. The main 
 (excluding the Qt libraries) is **under 2 MB**: double-click and it opens — no installer,
 no background services, no network access.
 
+## Interface language
+
+7 built-in UI languages: **简体中文 / 繁體中文 / English / Français / Español / 日本語 / Русский**.
+Follows the system language automatically (Chinese locales are split by simplified/traditional
+script), or pick one manually from the Language menu and restart to apply. Any other system
+language falls back to English. Untranslated strings also fall back to the English source —
+never a mix.
+
 ## Interface preview
 
 ![Main interface](docs/images/图片编辑主界面演示.jpg)
