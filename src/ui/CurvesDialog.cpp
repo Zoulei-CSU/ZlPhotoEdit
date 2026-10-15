@@ -72,11 +72,11 @@ CurvesDialog::CurvesDialog(const QImage &source, QWidget *parent)
     sideLayout->addWidget(m_smoothCheck);
 
     m_hintLabel = new QLabel(tr(
-        "左键空白处：新增控制点并拖动\n"
-        "拖动控制点：改变映射\n"
-        "右键控制点：删除（端点不可删）\n"
-        "方向键：微调选中点（按住 Shift 步长 10）\n"
-        "Delete：删除选中点"), this);
+        "Left-click blank space: add a control point and drag it\n"
+        "Drag a control point: change the mapping\n"
+        "Right-click a control point: delete it (endpoints cannot be deleted)\n"
+        "Arrow keys: fine-tune the selected point (hold Shift for a step of 10)\n"
+        "Delete: delete the selected point"), this);
     m_hintLabel->setStyleSheet(QStringLiteral("color: #666666;"));
     sideLayout->addWidget(m_hintLabel);
 

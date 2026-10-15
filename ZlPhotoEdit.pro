@@ -248,14 +248,19 @@ RESOURCES += \
 # ---------------------------------------------------------------------------
 
 # 语言代码清单（.ts / .qm 文件名去掉前缀与后缀就是它）
-I18N_LANG_CODES = zh_CN
+I18N_LANG_CODES = zh_CN zh_TW fr es ja ru
 
 # lupdate/lrelease 的正规入口（Qt 约定变量）.加上它之后：
 #   · lupdate ZlPhotoEdit.pro     扫 SOURCES/HEADERS 刷新 .ts（源码英文化后必跑）
 #   · lrelease ZlPhotoEdit.pro    重新产出 .qm（qmake 解析期也已自动做过一遍）
 # 它只生成 Makefile 靶子，不参与编译；内嵌仍靠下面的 i18n.qrc.
 TRANSLATIONS = \
-    translations/zlphotoedit_zh_CN.ts
+    translations/zlphotoedit_zh_CN.ts \
+    translations/zlphotoedit_zh_TW.ts \
+    translations/zlphotoedit_fr.ts \
+    translations/zlphotoedit_es.ts \
+    translations/zlphotoedit_ja.ts \
+    translations/zlphotoedit_ru.ts
 
 I18N_DIR = $$PWD/build/i18n
 

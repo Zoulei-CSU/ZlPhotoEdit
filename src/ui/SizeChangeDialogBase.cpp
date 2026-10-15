@@ -258,12 +258,12 @@ void SizeChangeDialogBase::buildLayout(QWidget *extraBelowSize,
     m_unitCombo->addItem(tr("Percent (%)"),   int(Unit::Percent));
     m_unitCombo->setCurrentIndex(0);
     m_unitCombo->setToolTip(tr(
-        "输入框里数字的计量单位。\n"
-        "· 像素：直接写像素数，精确到 1 像素（默认）。\n"
-        "· 百分比：相对**原尺寸**的比例，100% 表示保持原大小。\n"
-        "  勾选「相对」时表示增量百分比（50% = 在原有基础上加大五成）。\n"
-        "百分比是整数，在很小的尺寸上分辨不出 1 像素的差别，\n"
-        "需要精确控制时请用像素。"));
+        "Unit for the numbers in the input boxes.\n"
+        "· Pixels: enter a pixel count directly, precise to 1 pixel (default).\n"
+        "· Percent: a ratio relative to the **original size**; 100% keeps the original size.\n"
+        "  When \"Relative\" is checked it means an incremental percentage (50% = grow by half).\n"
+        "Percentages are integers, and on very small sizes a 1-pixel difference is indistinguishable;\n"
+        "use pixels when you need precise control."));
     unitLabel->setBuddy(m_unitCombo);
 
     grid->addWidget(unitLabel,  2, 0);

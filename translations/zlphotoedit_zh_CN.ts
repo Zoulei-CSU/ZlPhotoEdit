@@ -228,7 +228,7 @@
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="20"/>
         <source>Darken</source>
-        <translation type="unfinished"></translation>
+        <translation>变暗</translation>
     </message>
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="21"/>
@@ -323,7 +323,7 @@
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="39"/>
         <source>Luminosity</source>
-        <translation>Lightness</translation>
+        <translation>明度</translation>
     </message>
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="83"/>
@@ -333,13 +333,13 @@
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="84"/>
         <source>Bilinear</source>
-        <translation>两次线性</translation>
+        <translation>双线性</translation>
     </message>
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="85"/>
         <location filename="../src/core/ImageTypes.cpp" line="88"/>
         <source>Bicubic (Smooth, Recommended)</source>
-        <translation>两次立方（平滑，推荐）</translation>
+        <translation>二次立方（平滑，推荐）</translation>
     </message>
     <message>
         <location filename="../src/core/ImageTypes.cpp" line="86"/>
@@ -694,7 +694,7 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="417"/>
         <source>&lt;span style=&apos;color:#333333&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; will be cropped</source>
-        <translation>&lt;span style='color:#333333'&gt;实线&lt;/span&gt; = 新画布　&lt;span style='color:#5a5a5a'&gt;虚线&lt;/span&gt; = 原画布范围　&lt;span style='color:#2a6eb4'&gt;■&lt;/span&gt; 内容　&lt;span style='color:#c82828'&gt;■&lt;/span&gt; 将被裁掉</translation>
+        <translation>&lt;span style=&apos;color:#333333&apos;&gt;实线&lt;/span&gt; = 新画布&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;虚线&lt;/span&gt; = 原画布范围&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; 内容&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; 将被裁掉</translation>
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="484"/>
@@ -968,12 +968,16 @@ Needed for posterization-like effects.</source>
     </message>
     <message>
         <location filename="../src/ui/CurvesDialog.cpp" line="74"/>
-        <source>左键空白处：新增控制点并拖动
+        <source>Left-click blank space: add a control point and drag it
+Drag a control point: change the mapping
+Right-click a control point: delete it (endpoints cannot be deleted)
+Arrow keys: fine-tune the selected point (hold Shift for a step of 10)
+Delete: delete the selected point</source>
+        <translation>左键空白处：新增控制点并拖动
 拖动控制点：改变映射
 右键控制点：删除（端点不可删）
 方向键：微调选中点（按住 Shift 步长 10）
-Delete：删除选中点</source>
-        <translation type="unfinished"></translation>
+Delete：删除选中点</translation>
     </message>
 </context>
 <context>
@@ -1078,7 +1082,7 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
     <name>zl::GlobalHotkey</name>
     <message>
         <location filename="../src/compat/GlobalHotkey.cpp" line="119"/>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="211"/>
+        <location filename="../src/compat/GlobalHotkey.cpp" line="210"/>
         <source>Global hotkeys are not supported on this platform (the current implementation is Windows-only).</source>
         <translation>本平台不支持全局快捷键（当前实现仅 Windows）。</translation>
     </message>
@@ -1108,7 +1112,7 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
         <translation>快捷键 %1 已被其它程序占用（同一个组合键全系统只能有一个程序登记）。</translation>
     </message>
     <message>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="198"/>
+        <location filename="../src/compat/GlobalHotkey.cpp" line="197"/>
         <source>Failed to register the global hotkey %1 (system error code %2).</source>
         <translation>登记全局快捷键 %1 失败（系统错误码 %2）。</translation>
     </message>
@@ -1191,7 +1195,7 @@ The lines stay 1 screen pixel wide even when the canvas is zoomed in.</source>
     <message>
         <location filename="../src/ui/HueSaturationDialog.cpp" line="29"/>
         <source>Luminosity</source>
-        <translation>Lightness</translation>
+        <translation>明度</translation>
     </message>
 </context>
 <context>
@@ -1234,17 +1238,17 @@ The lines stay 1 screen pixel wide even when the canvas is zoomed in.</source>
     <message>
         <location filename="../src/ui/ImageSizeDialog.cpp" line="150"/>
         <source>Current: %1 × %2 px (%3 MP)</source>
-        <translation>当前： %1 × %2 px　（%3 MP）</translation>
+        <translation>当前： %1 × %2 px&#x3000;（%3 MP）</translation>
     </message>
     <message>
         <location filename="../src/ui/ImageSizeDialog.cpp" line="155"/>
         <source>New size: &lt;b&gt;%1 × %2 px&lt;/b&gt; (%3 MP)</source>
-        <translation>新尺寸： &lt;b&gt;%1 × %2 px&lt;/b&gt;　（%3 MP）</translation>
+        <translation>新尺寸： &lt;b&gt;%1 × %2 px&lt;/b&gt;&#x3000;（%3 MP）</translation>
     </message>
     <message>
         <location filename="../src/ui/ImageSizeDialog.cpp" line="173"/>
         <source>W %1%  H %2%</source>
-        <translation>宽 %1%　高 %2%</translation>
+        <translation>宽 %1%&#x3000;高 %2%</translation>
     </message>
     <message>
         <location filename="../src/ui/ImageSizeDialog.cpp" line="185"/>
@@ -3296,28 +3300,28 @@ Unchecked: always move the content of the active layer</source>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="239"/>
         <source>&lt;span style=&apos;color:#666666&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
-        <translation>&lt;span style='color:#666666'&gt;输入角度后画布会自动扩大，内容不会被裁切。&lt;/span&gt;</translation>
+        <translation>&lt;span style=&apos;color:#666666&apos;&gt;输入角度后画布会自动扩大，内容不会被裁切。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="247"/>
-        <location filename="../src/ui/RotateImageDialog.cpp" line="266"/>
+        <location filename="../src/ui/RotateImageDialog.cpp" line="265"/>
         <source>&lt;b&gt;Canvas after rotation: %1 × %2 px&lt;/b&gt;</source>
         <translation>&lt;b&gt;旋转后画布： %1 × %2 px&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="250"/>
         <source>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
-        <translation>&lt;span style='color:#1f7a1f'&gt;%1° 是 90° 的整数倍：整数坐标重排，&lt;b&gt;像素无损&lt;/b&gt;，也没有需要填充的区域。&lt;/span&gt;</translation>
+        <translation>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° 是 90° 的整数倍：整数坐标重排，&lt;b&gt;像素无损&lt;/b&gt;，也没有需要填充的区域。&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/RotateImageDialog.cpp" line="269"/>
+        <location filename="../src/ui/RotateImageDialog.cpp" line="268"/>
         <source>&lt;span style=&apos;color:#c86400&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%1%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
-        <translation>&lt;span style='color:#c86400'&gt;画布自动扩大到能容纳旋转结果，内容不会被裁切；四角约 &lt;b&gt;%1%&lt;/b&gt; 的面积需要填充。&lt;/span&gt;</translation>
+        <translation>&lt;span style=&apos;color:#c86400&apos;&gt;画布自动扩大到能容纳旋转结果，内容不会被裁切；四角约 &lt;b&gt;%1%&lt;/b&gt; 的面积需要填充。&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/RotateImageDialog.cpp" line="275"/>
+        <location filename="../src/ui/RotateImageDialog.cpp" line="273"/>
         <source>&lt;span style=&apos;color:#666666&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
-        <translation>&lt;span style='color:#666666'&gt;任意角度会重采样，&lt;b&gt;不可逆&lt;/b&gt;：转过去再转回来，像素回不到原样。&lt;/span&gt;</translation>
+        <translation>&lt;span style=&apos;color:#666666&apos;&gt;任意角度会重采样，&lt;b&gt;不可逆&lt;/b&gt;：转过去再转回来，像素回不到原样。&lt;/span&gt;</translation>
     </message>
 </context>
 <context>
@@ -3530,13 +3534,18 @@ larger values soften the transition along the selection edge.</source>
     </message>
     <message>
         <location filename="../src/ui/SizeChangeDialogBase.cpp" line="260"/>
-        <source>输入框里数字的计量单位。
+        <source>Unit for the numbers in the input boxes.
+· Pixels: enter a pixel count directly, precise to 1 pixel (default).
+· Percent: a ratio relative to the **original size**; 100% keeps the original size.
+  When &quot;Relative&quot; is checked it means an incremental percentage (50% = grow by half).
+Percentages are integers, and on very small sizes a 1-pixel difference is indistinguishable;
+use pixels when you need precise control.</source>
+        <translation>输入框里数字的计量单位。
 · 像素：直接写像素数，精确到 1 像素（默认）。
 · 百分比：相对**原尺寸**的比例，100% 表示保持原大小。
   勾选「相对」时表示增量百分比（50% = 在原有基础上加大五成）。
 百分比是整数，在很小的尺寸上分辨不出 1 像素的差别，
-需要精确控制时请用像素。</source>
-        <translation type="unfinished"></translation>
+需要精确控制时请用像素。</translation>
     </message>
 </context>
 <context>

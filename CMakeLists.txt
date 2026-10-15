@@ -149,7 +149,12 @@ target_link_libraries(ZlPhotoEdit PRIVATE
 # ---------------------------------------------------------------------------
 set(ZLPE_I18N_DIR "${CMAKE_CURRENT_BINARY_DIR}/i18n")
 set(ZLPE_TRANSLATIONS
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_CN.ts")
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_CN.ts"
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_TW.ts"
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_fr.ts"
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_es.ts"
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_ja.ts"
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_ru.ts")
 set(ZLPE_I18N_QRC "${ZLPE_I18N_DIR}/i18n.qrc")
 
 # lrelease 的安装位置随发行方式漂移，三个来源都要找：

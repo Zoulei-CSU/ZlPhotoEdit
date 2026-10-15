@@ -59,15 +59,34 @@ constexpr const char *kAutoLanguage = "auto";
 //    真正的 .qm 缺失由装载失败 + qWarning 兜底（见 installTranslator）。
 const QStringList kEmbeddedLanguages = {
     QStringLiteral("zh_CN"),
+    QStringLiteral("zh_TW"),
+    QStringLiteral("fr"),
+    QStringLiteral("es"),
+    QStringLiteral("ja"),
+    QStringLiteral("ru"),
 };
 
 QString deriveFromLocale()
 {
-    // 简体中文环境 → zh_CN；其余一律先按英文猜，再由可用列表钳制。
-    // （zh_TW / zh_HK 目前没有翻译文件，落回英文是合理默认；
-    //   真出了繁体翻译，在这里加一支即可。）
-    if (QLocale::system().language() == QLocale::Chinese)
+    // 中文环境按字形分流：繁体（台/港/澳）→ zh_TW，其余（简体）→ zh_CN。
+    // （用 script 而非 language 判：zh_HK / zh_MO 的 language 都是 Chinese，
+    //   只有字形是繁体；2026-10-14 加 zh_TW 翻译时补的这一支。）
+    if (QLocale::system().language() == QLocale::Chinese) {
+        if (QLocale::system().script() == QLocale::TraditionalChineseScript)
+            return QString::fromLatin1("zh_TW");
         return QString::fromLatin1("zh_CN");
+    }
+    // 法 / 西 / 日 / 俄环境 → 各自语言（2026-10-15 加翻译时补）
+    if (QLocale::system().language() == QLocale::French)
+        return QString::fromLatin1("fr");
+    if (QLocale::system().language() == QLocale::Spanish)
+        return QString::fromLatin1("es");
+    if (QLocale::system().language() == QLocale::Japanese)
+        return QString::fromLatin1("ja");
+    if (QLocale::system().language() == QLocale::Russian)
+        return QString::fromLatin1("ru");
+    // 其余语言（德语/意大利语/...）没有翻译 —— 英文兜底，
+    // 与 currentLanguage() 第 ③ 步同一个来源（kSourceLanguage）。
     return QString::fromLatin1("en");
 }
 
@@ -210,6 +229,16 @@ QString displayName(const QString &code)
 {
     if (code == QLatin1String("zh_CN"))
         return QString::fromUtf8("简体中文");
+    if (code == QLatin1String("zh_TW"))
+        return QString::fromUtf8("繁體中文");
+    if (code == QLatin1String("fr"))
+        return QString::fromUtf8("Français");
+    if (code == QLatin1String("es"))
+        return QString::fromUtf8("Español");
+    if (code == QLatin1String("ja"))
+        return QString::fromUtf8("日本語");
+    if (code == QLatin1String("ru"))
+        return QString::fromUtf8("Русский");
     if (code == QLatin1String("en"))
         return QStringLiteral("English");
     // 未知语言：把代码本身摆出来，胜过给一个空菜单项
