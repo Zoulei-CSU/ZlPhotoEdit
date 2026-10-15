@@ -213,7 +213,7 @@ constexpr int qtMajorVersion()
 // 人类可读的 Qt 版本字符串，例如 "5.15.16"
 inline QString qtVersionString()
 {
-    return QString::fromLatin1(qVersion());
+    return QString::fromUtf8(qVersion());
 }
 
 } // namespace compat

@@ -153,10 +153,27 @@ void RulerWidget::paintEvent(QPaintEvent *event)
     QPainter p(this);
     const bool horiz = (m_orientation == Qt::Horizontal);
 
-    p.fillRect(rect(), QColor(238, 238, 238));
+    // ★ 深色主题适配（2026-10-15）★
+    //   Qt6 会跟随系统深色主题把 QPalette 整体变暗，而这里原来是四处
+    //   硬编码浅灰（背景 238 / 分界 178 / 次刻度 160 / 主刻度 90）——
+    //   深色环境下标尺就是"一块白"，非常突兀。
+    //   改为从 palette 派生，深浅两主题都自适应：
+    //     背景         Window      （浅 ~240 / 深 ~53）
+    //     分界线       Midlight    （浅 ~178）
+    //     次刻度       Mid         （浅 ~160）
+    //     主刻度+数字  WindowText  （浅 ~0 / 深 ~230）
+    //   光标指示器的橙色保留 —— 它是"临时状态"色，两种主题下都醒目，
+    //   而且要与刻度的灰、参考线的蓝区分开（设计意图，见下方注释）。
+    const QPalette pal = palette();
+    const QColor cBackground = pal.color(QPalette::Window);
+    const QColor cDivider    = pal.color(QPalette::Midlight);
+    const QColor cMinor      = pal.color(QPalette::Mid);
+    const QColor cMajor      = pal.color(QPalette::WindowText);
+
+    p.fillRect(rect(), cBackground);
 
     // 与画布之间的分界线（靠画布那一侧）
-    p.setPen(QColor(178, 178, 178));
+    p.setPen(cDivider);
     if (horiz)
         p.drawLine(0, height() - 1, width() - 1, height() - 1);
     else
@@ -209,7 +226,7 @@ void RulerWidget::paintEvent(QPaintEvent *event)
         // ── 次刻度（短）──
         //   屏幕上细到 3px 以下就不画了：那是"一片灰"，不是刻度。
         if (minorImg * zoom >= 3.0) {
-            p.setPen(QColor(160, 160, 160));
+            p.setPen(cMinor);
             const qreal i0 = std::floor(lo / minorImg);
             const qreal i1 = std::ceil(hi / minorImg);
             for (qreal i = i0; i <= i1; i += 1.0) {
@@ -222,7 +239,7 @@ void RulerWidget::paintEvent(QPaintEvent *event)
         }
 
         // ── 主刻度（长）+ 数字 ──
-        p.setPen(QColor(90, 90, 90));
+        p.setPen(cMajor);
         const qreal j0 = std::floor(lo / majorImg);
         const qreal j1 = std::ceil(hi / majorImg);
         for (qreal j = j0; j <= j1; j += 1.0) {

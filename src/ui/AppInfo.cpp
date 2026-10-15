@@ -45,7 +45,7 @@ QString displayNameCn()
 
 QString displayNameEn()
 {
-    return QString::fromLatin1(kDisplayNameEn);
+    return QLatin1String(kDisplayNameEn);
 }
 
 QString displayName()
@@ -111,7 +111,11 @@ const char *kIconResourcePath = ":/logo.svg";
 
 QPixmap renderLogo(int px, qreal dpr)
 {
-    QSvgRenderer renderer(QString::fromLatin1(kIconResourcePath));
+    // ★ 不能写成 QSvgRenderer renderer(QLatin1String(...)) ★
+    //   那是"最令人烦恼的解析"：QLatin1String(x) 被当成变量声明，
+    //   renderer 变成函数声明（与 MainWindowActions.cpp 的注释同坑）。
+    //   变量路径用 fromUtf8（字面量才可以用 QStringLiteral）。
+    QSvgRenderer renderer(QString::fromUtf8(kIconResourcePath));
     if (!renderer.isValid())
         return QPixmap();          // 资源缺失 / SVG 解析失败
 
@@ -123,7 +127,10 @@ QPixmap renderLogo(int px, qreal dpr)
     QPainter p(&pm);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    renderer.render(&p);
+    // ★ 必须显式传 bounds（与 IconLibrary.cpp 同一实测结论）★
+    //   render(&p) 不传 bounds 时 dpr>1 只画左上角一小块（Qt5/Qt6 同罪），
+    //   窗口/任务栏图标在高 DPI 屏上会缺一角。bounds 用逻辑尺寸 px×px。
+    renderer.render(&p, QRectF(0, 0, px, px));
     p.end();
 
     return pm;

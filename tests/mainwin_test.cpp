@@ -3005,7 +3005,7 @@ static void testScreenCaptureMenu()
 
     const QStringList hotkeyCandidates = MainWindow::captureHotkeyCandidates();
     check(!hotkeyCandidates.isEmpty()
-              && hotkeyCandidates.first() == QString::fromLatin1(MainWindow::kCaptureHotkey),
+              && hotkeyCandidates.first() == QLatin1String(MainWindow::kCaptureHotkey),
           "★ 候选表第一项就是 kCaptureHotkey（产品定的那一个）");
 
     const QString shownShortcut =
@@ -3057,7 +3057,7 @@ static void testScreenCaptureMenu()
 
         if (reg) {
             const bool primary = (effective.toString(QKeySequence::PortableText)
-                                  == QString::fromLatin1(MainWindow::kCaptureHotkey));
+                                  == QLatin1String(MainWindow::kCaptureHotkey));
             std::printf("       全局快捷键：%s（登记成功%s）\n",
                         qUtf8Printable(effective.toString(QKeySequence::NativeText)),
                         primary ? "" : "；首选键被别的程序占用，已回落到它");
@@ -3101,7 +3101,7 @@ static void testGlobalHotkey()
     bool reg = false;
     QString why;
     for (const char *c : candidates) {
-        if (hk.registerSequence(QKeySequence(QString::fromLatin1(c)), kId)) {
+        if (hk.registerSequence(QKeySequence(QLatin1String(c)), kId)) {
             reg = true;
             break;
         }

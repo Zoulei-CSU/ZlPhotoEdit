@@ -27,6 +27,34 @@ constexpr int kMargin = 12;
 // 命中半径（控件像素）
 constexpr int kHitTolerance = 7;
 
+// ★ 深色主题适配（2026-10-15）★
+//   Qt6 跟随系统深色主题把 QPalette 变暗后，本控件原来大面积硬编码
+//   浅色（背景 252 / 网格 228 / 信息框 255）会变成"白块"。
+//   这里把浅色装饰统一改为 palette 派生：
+//     底色 / 信息框底   Window
+//     绘图区底         Base（比 Window 更"内容向"，保留原来的分层）
+//     网格 / 虚线 / 轴线 mix(Window, Mid, t) —— 背景与 Mid 按比例混，
+//       浅色主题下与原来的 228/186/160 几乎一致，深色主题下自动变暗，
+//       不需要为两套主题各写一份硬编码。
+//     直方图柱 / 文字    Text / WindowText（半透明柱用 Text 派生 alpha）
+//   曲线色 m_curveColor 是高饱和通道色，两种主题下都清晰，不动。
+QColor mixWithMid(const QPalette &pal, qreal t)
+{
+    const QColor a = pal.color(QPalette::Window);
+    const QColor b = pal.color(QPalette::Mid);
+    return QColor(qRound(a.red()   * (1.0 - t) + b.red()   * t),
+                  qRound(a.green() * (1.0 - t) + b.green() * t),
+                  qRound(a.blue()  * (1.0 - t) + b.blue()  * t));
+}
+
+// 把 palette 里的某个角色色加上透明度返回（直方图柱这类"背景信息"用）
+QColor withAlpha(const QColor &c, int alpha)
+{
+    QColor r = c;
+    r.setAlpha(alpha);
+    return r;
+}
+
 } // namespace
 
 CurveEditor::CurveEditor(QWidget *parent)
@@ -458,7 +486,8 @@ void CurveEditor::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
 
     QPainter p(this);
-    p.fillRect(rect(), QColor(252, 252, 252));
+    // 深色主题适配：底色从 palette 取（见匿名 namespace 的 mixWithMid 注释）
+    p.fillRect(rect(), palette().color(QPalette::Window));
 
     drawGrid(p);
     drawHistogram(p);
@@ -474,7 +503,10 @@ void CurveEditor::drawGrid(QPainter &p)
         return;
 
     // 4×4 等分网格：让 1/4、1/2、3/4 这三个用户最常对的位置可读
-    p.setPen(QPen(QColor(228, 228, 228), 1.0));
+    // 深色主题适配：网格/虚线/外框从 palette 混色派生（浅色下与原来的
+    // 228/186/160 几乎一致，深色下自动变暗）
+    const QPalette pal = palette();
+    p.setPen(QPen(mixWithMid(pal, 0.20), 1.0));
     for (int i = 1; i < 4; ++i) {
         const int x = r.left() + r.width()  * i / 4;
         const int y = r.top()  + r.height() * i / 4;
@@ -485,11 +517,11 @@ void CurveEditor::drawGrid(QPainter &p)
     // 对角参考线 = 恒等线（输出 ≡ 输入）
     // 控件坐标里左下角是 (0,0)、右上角是 (255,255)，所以这条线从
     // 左下走到右上。有了它，用户一眼就能看出曲线是被整体抬高还是压低了。
-    p.setPen(QPen(QColor(186, 186, 186), 1.0, Qt::DashLine));
+    p.setPen(QPen(mixWithMid(pal, 0.35), 1.0, Qt::DashLine));
     p.drawLine(r.bottomLeft(), r.topRight());
 
     // 外框
-    p.setPen(QPen(QColor(160, 160, 160), 1.0));
+    p.setPen(QPen(mixWithMid(pal, 0.65), 1.0));
     p.drawRect(r.adjusted(0, 0, -1, -1));
 }
 
@@ -519,7 +551,9 @@ void CurveEditor::drawHistogram(QPainter &p)
     path.closeSubpath();
 
     // 半透明灰填充：作为"背景信息"，绝不能盖过曲线本身
-    p.fillPath(path, QColor(0, 0, 0, 26));
+    // 深色主题适配：从 Text 角色派生 alpha（浅色下近似原来的黑@26，
+    // 深色下变成亮灰，柱子不会消失）
+    p.fillPath(path, withAlpha(palette().color(QPalette::Text), 26));
 }
 
 void CurveEditor::drawCurve(QPainter &p)
@@ -615,10 +649,12 @@ void CurveEditor::drawInfoBox(QPainter &p)
     topLeft.setY(qBound(0, topLeft.y(), qMax(0, height() - boxSize.height())));
 
     const QRect box(topLeft, boxSize);
-    p.fillRect(box, QColor(255, 255, 255, 235));
-    p.setPen(QPen(QColor(150, 150, 150), 1.0));
+    // 深色主题适配：信息框底/描边/文字全部 palette 派生
+    const QPalette pal = palette();
+    p.fillRect(box, withAlpha(pal.color(QPalette::Window), 235));
+    p.setPen(QPen(pal.color(QPalette::Mid), 1.0));
     p.drawRect(box.adjusted(0, 0, -1, -1));
-    p.setPen(QColor(60, 60, 60));
+    p.setPen(pal.color(QPalette::WindowText));
     p.drawText(box, Qt::AlignCenter, text);
 }
 

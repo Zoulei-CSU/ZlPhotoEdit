@@ -64,6 +64,37 @@ RowMetrics metricsFor(int widgetHeight)
     return m;
 }
 
+// ★ 深色主题适配（2026-10-15）★ 与 CurveEditor 同一理由、同一手法：
+//   控件底 Window / 绘图区底 Base / 网格与描边 mix(Window, Mid, t) /
+//   直方图柱 Text 派生 alpha。浅色主题下混色结果与原来的硬编码
+//   （250/255/236/150/90@130）几乎一致，深色下自动变暗。
+//   手柄的黑/白填充与输出渐变条是**内容语义色**（黑场手柄就该是黑的），
+//   保留不动。
+QColor mixWithMid(const QPalette &pal, qreal t)
+{
+    const QColor a = pal.color(QPalette::Window);
+    const QColor b = pal.color(QPalette::Mid);
+    return QColor(qRound(a.red()   * (1.0 - t) + b.red()   * t),
+                  qRound(a.green() * (1.0 - t) + b.green() * t),
+                  qRound(a.blue()  * (1.0 - t) + b.blue()  * t));
+}
+
+QColor withAlpha(const QColor &c, int alpha)
+{
+    QColor r = c;
+    r.setAlpha(alpha);
+    return r;
+}
+
+// 两个任意色按比例混合（手柄描边用：与 WindowText 混一半，
+// 背景亮时得深边、背景暗时得亮边，黑白手柄在两种主题下都有轮廓）
+QColor mixColors(const QColor &a, const QColor &b, qreal t)
+{
+    return QColor(qRound(a.red()   * (1.0 - t) + b.red()   * t),
+                  qRound(a.green() * (1.0 - t) + b.green() * t),
+                  qRound(a.blue()  * (1.0 - t) + b.blue()  * t));
+}
+
 } // namespace
 
 // ---------------------------------------------------------------------------
@@ -490,7 +521,8 @@ void LevelsWidget::paintEvent(QPaintEvent *event)
     Q_UNUSED(event)
 
     QPainter p(this);
-    p.fillRect(rect(), QColor(250, 250, 250));
+    // 深色主题适配：控件底色从 palette 取（见匿名 namespace 注释）
+    p.fillRect(rect(), palette().color(QPalette::Window));
 
     drawHistogram(p);
     drawOutputBar(p);
@@ -512,13 +544,18 @@ void LevelsWidget::drawHistogram(QPainter &p)
 
     // 底色与外框先画 —— 即使直方图还没算出来（或操作的是空图层）也要有框，
     // 否则控件在视觉上会"塌掉"，用户以为是布局没展开。
-    p.fillRect(r, QColor(255, 255, 255));
+    // 底色与外框先画 —— 即使直方图还没算出来（或操作的是空图层）也要有框，
+    // 否则控件在视觉上会"塌掉"，用户以为是布局没展开。
+    // 深色主题适配：绘图区底用 Base 角色（比控件底 Window 更"内容向"，
+    // 浅色下 255、深色下 ~25，保留原来的两层分层）
+    p.fillRect(r, palette().color(QPalette::Base));
 
     if (m_histogram.size() == 256) {
         const QVector<qreal> norm = histogram::normalized(m_histogram, true);
         if (!norm.isEmpty() && r.width() > 2 && r.height() > 4) {
             // 4 等分竖网格：判断"黑白场该落在哪"时的参考刻度
-            p.setPen(QPen(QColor(236, 236, 236), 1.0));
+            // 深色主题适配：mix(Window, Mid, 0.2)，浅色 ≈224（原 236）
+            p.setPen(QPen(mixWithMid(palette(), 0.20), 1.0));
             for (int i = 1; i < 4; ++i) {
                 const int x = r.left() + r.width() * i / 4;
                 p.drawLine(x, r.top() + 1, x, r.bottom() - 1);
@@ -540,7 +577,9 @@ void LevelsWidget::drawHistogram(QPainter &p)
 
             // 刻意不开抗锯齿：直方图表达的是"柱状统计"，
             // 边缘被虚化后相邻的窄峰就糊在一起了。
-            p.fillPath(path, QColor(90, 90, 90, 130));
+            // 深色主题适配：柱子从 Text 派生 alpha（浅色近似 90@130，
+            // 深色下变亮灰，柱子不会消失）
+            p.fillPath(path, withAlpha(palette().color(QPalette::Text), 130));
         }
     }
 
@@ -548,10 +587,12 @@ void LevelsWidget::drawHistogram(QPainter &p)
     //   黑场左侧、白场右侧的像素在结果里会分别变成纯黑 / 纯白。
     //   把它们盖住，用户一眼就能看到自己丢掉了多少信息 ——
     //   比只在数值框里显示"黑场 = 20"直观得多。
+    //   深色主题适配：雾色从 Base 派生 alpha（浅色下仍是白雾，
+    //   深色下变成与绘图区同色的深雾，不会变成亮块）
     if (r.width() > 2) {
         const int xb = levelToX(m_params.inBlack, r);
         const int xw = levelToX(m_params.inWhite, r);
-        const QColor veil(255, 255, 255, 168);
+        const QColor veil = withAlpha(palette().color(QPalette::Base), 168);
 
         if (xb > r.left())
             p.fillRect(QRect(r.left(), r.top() + 1, xb - r.left(), r.height() - 2), veil);
@@ -559,7 +600,8 @@ void LevelsWidget::drawHistogram(QPainter &p)
             p.fillRect(QRect(xw, r.top() + 1, r.right() - xw, r.height() - 2), veil);
     }
 
-    p.setPen(QPen(QColor(150, 150, 150), 1.0));
+    // 深色主题适配：绘图区外框用 Mid（浅色 ≈160，与原 150 接近）
+    p.setPen(QPen(palette().color(QPalette::Mid), 1.0));
     p.drawRect(r.adjusted(0, 0, -1, -1));
 }
 
@@ -581,7 +623,8 @@ void LevelsWidget::drawOutputBar(QPainter &p) const
     g.setColorAt(1.0, QColor(m_params.outWhite, m_params.outWhite, m_params.outWhite));
     p.fillRect(bar, g);
 
-    p.setPen(QPen(QColor(150, 150, 150), 1.0));
+    // 深色主题适配：描边用 Mid（浅色 ≈160，与原 150 接近）
+    p.setPen(QPen(palette().color(QPalette::Mid), 1.0));
     p.drawRect(bar.adjusted(0, 0, -1, -1));
 }
 
@@ -592,7 +635,8 @@ void LevelsWidget::drawSeparator(QPainter &p) const
     if (y <= 0 || y >= height())
         return;
 
-    p.setPen(QPen(QColor(225, 225, 225), 1.0));
+    // 深色主题适配：mix(Window, Mid, 0.15)，浅色 ≈228（原 225）
+    p.setPen(QPen(mixWithMid(palette(), 0.15), 1.0));
     p.drawLine(kMargin, y, width() - kMargin, y);
 }
 
@@ -603,7 +647,6 @@ void LevelsWidget::drawHandle(QPainter &p, Handle h) const
         return;
 
     const bool active = (h == m_hover) || (h == m_dragging);
-    const bool isWhite = (h == Handle::InWhite || h == Handle::OutWhite);
 
     // 颜色沿用 Photoshop 的约定：黑场黑、灰点中灰、白场白。
     // 用户对这三个颜色的含义有现成的直觉，换成统一配色反而要重新学。
@@ -632,8 +675,9 @@ void LevelsWidget::drawHandle(QPainter &p, Handle h) const
         << QPoint(r.right(),       r.bottom());
 
     p.setRenderHint(QPainter::Antialiasing, true);
-    // 白手柄在浅色背景上几乎看不见轮廓，描边要比黑手柄更重
-    p.setPen(QPen(isWhite ? QColor(130, 130, 130) : QColor(60, 60, 60), 1.0));
+    // 深色主题适配：描边与 WindowText 混一半 —— 浅色底得深边（原 130/60），
+    // 深色底得亮边。否则黑手柄(40)在深色底(~53)上会找不到轮廓。
+    p.setPen(QPen(mixColors(fill, palette().color(QPalette::WindowText), 0.5), 1.0));
     p.setBrush(fill);
     p.drawPolygon(tri);
 

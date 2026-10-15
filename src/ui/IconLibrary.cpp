@@ -51,7 +51,16 @@ QPixmap renderSvg(const QString &svgPath, int px, qreal dpr)
     QPainter p(&pm);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    renderer.render(&p);
+    // ★ 必须显式传 bounds（2026-10-15 实测，探针见工作日志）★
+    //   renderer.render(&p) 不传 bounds 时：
+    //     · dpr = 1 —— Qt5.15 / Qt6.8 都正常（SVG 铺满 painter 设备）；
+    //     · dpr > 1 —— **两版本一起病态**：只把 SVG 的 defaultSize
+    //       （24×24）画到左上角一小块（96×96 画布上非透明区仅 54..95），
+    //       高 DPI 屏上工具栏/菜单图标正是"图片左上角一点点区域"的元凶。
+    //   bounds 用**逻辑尺寸**（= 物理像素 / DPR）：painter 在带 DPR 的
+    //   pixmap 上绘制时逻辑坐标会自动乘 DPR，传 px×px 即铺满整张图。
+    //   传了之后 Qt5/Qt6、任意 DPR 行为完全一致。
+    renderer.render(&p, QRectF(0, 0, px, px));
     p.end();
 
     return pm;

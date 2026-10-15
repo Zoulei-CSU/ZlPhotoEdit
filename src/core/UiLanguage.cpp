@@ -73,21 +73,21 @@ QString deriveFromLocale()
     //   只有字形是繁体；2026-10-14 加 zh_TW 翻译时补的这一支。）
     if (QLocale::system().language() == QLocale::Chinese) {
         if (QLocale::system().script() == QLocale::TraditionalChineseScript)
-            return QString::fromLatin1("zh_TW");
-        return QString::fromLatin1("zh_CN");
+            return QLatin1String("zh_TW");
+        return QLatin1String("zh_CN");
     }
     // 法 / 西 / 日 / 俄环境 → 各自语言（2026-10-15 加翻译时补）
     if (QLocale::system().language() == QLocale::French)
-        return QString::fromLatin1("fr");
+        return QLatin1String("fr");
     if (QLocale::system().language() == QLocale::Spanish)
-        return QString::fromLatin1("es");
+        return QLatin1String("es");
     if (QLocale::system().language() == QLocale::Japanese)
-        return QString::fromLatin1("ja");
+        return QLatin1String("ja");
     if (QLocale::system().language() == QLocale::Russian)
-        return QString::fromLatin1("ru");
+        return QLatin1String("ru");
     // 其余语言（德语/意大利语/...）没有翻译 —— 英文兜底，
     // 与 currentLanguage() 第 ③ 步同一个来源（kSourceLanguage）。
-    return QString::fromLatin1("en");
+    return QLatin1String("en");
 }
 
 } // anonymous namespace
@@ -98,12 +98,12 @@ QString deriveFromLocale()
 
 QString sourceLanguage()
 {
-    return QString::fromLatin1(kSourceLanguage);
+    return QLatin1String(kSourceLanguage);
 }
 
 QString autoLanguage()
 {
-    return QString::fromLatin1(kAutoLanguage);
+    return QLatin1String(kAutoLanguage);
 }
 
 QStringList availableLanguages()
@@ -133,9 +133,9 @@ QString languagePreference()
     // 好过把垃圾当成一个语言去装载。
     QSettings settings;
     const QString saved =
-        settings.value(QString::fromLatin1(kSettingsKey)).toString();
+        settings.value(QLatin1String(kSettingsKey)).toString();
     if (saved.isEmpty())
-        return QString::fromLatin1(kAutoLanguage);
+        return QLatin1String(kAutoLanguage);
     return saved;
 }
 
@@ -174,7 +174,7 @@ void setCurrentLanguage(const QString &code)
         return;
 
     QSettings settings;
-    settings.setValue(QString::fromLatin1(kSettingsKey), code);
+    settings.setValue(QLatin1String(kSettingsKey), code);
     // 紧接着调用方会弹"重启生效"的提示框；落盘要赶在那之前完成，
     // 否则用户看完提示直接 Alt+F4，这次选择就丢了。
     settings.sync();

@@ -33,7 +33,7 @@ ImageMetadata readMetadata(const QString &filePath)
     }
 
     meta.size = reader.size();
-    meta.formatName = QString::fromLatin1(reader.format()).toUpper();
+    meta.formatName = QString::fromUtf8(reader.format()).toUpper();
     meta.orientation = reader.transformation();
     meta.hasOrientation = (meta.orientation != QImageIOHandler::TransformationNone);
 
@@ -115,7 +115,7 @@ QImage loadImageWithMetadata(const QString &filePath,
 
         // 若有缩放，size 以实际加载结果为准（缩略图的尺寸）
         meta.size = image.size();
-        meta.formatName = QString::fromLatin1(reader.format()).toUpper();
+        meta.formatName = QString::fromUtf8(reader.format()).toUpper();
         meta.orientation = reader.transformation();
         meta.hasOrientation = (meta.orientation != QImageIOHandler::TransformationNone);
         meta.hasAlpha = image.hasAlphaChannel();

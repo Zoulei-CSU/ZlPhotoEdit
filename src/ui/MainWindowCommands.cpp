@@ -1067,7 +1067,7 @@ bool MainWindow::saveDocument()
     //   会导致保存失败或静默丢弃透明通道。
     const bool includeAlpha = formatSupportsAlpha(format);
 
-    if (!writeImage(path, QString::fromLatin1(format), quality, includeAlpha)) {
+    if (!writeImage(path, QLatin1String(format), quality, includeAlpha)) {
         // writeImage 内部已经弹了详细的错误对话框
         return false;
     }
@@ -1792,7 +1792,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     //   如果是"文本输入类"就完全不干预 ——
     //   用户输入的每一个字符都应该是给他的输入框的。
     if (QWidget *focus = QApplication::focusWidget()) {
-        const QString className = QString::fromLatin1(focus->metaObject()->className());
+        const QString className = QLatin1String(focus->metaObject()->className());
 
         // ★ 用类名判断而不是 qobject_cast ★
         //   原因：qobject_cast 需要 include 每种控件的头文件，

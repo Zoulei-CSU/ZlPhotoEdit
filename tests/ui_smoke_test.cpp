@@ -977,7 +977,7 @@ static void testCanvasSizeDialog()
     };
     int missing = 0;
     for (int i = 0; i < 9; ++i)
-        if (!dlg.findChild<QToolButton *>(QString::fromLatin1(anchorNames[i])))
+        if (!dlg.findChild<QToolButton *>(QLatin1String(anchorNames[i])))
             ++missing;
     checkEq(missing, 0, "九个锚点按钮都能按名字找到");
 

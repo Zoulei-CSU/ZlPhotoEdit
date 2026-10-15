@@ -240,13 +240,13 @@ static void logSupportedImageFormats()
     const QList<QByteArray> rawRead = QImageReader::supportedImageFormats();
     readFormats.reserve(rawRead.size());
     for (const QByteArray &f : rawRead)
-        readFormats << QString::fromLatin1(f);
+        readFormats << QLatin1String(f);
 
     QStringList writeFormats;
     const QList<QByteArray> rawWrite = QImageWriter::supportedImageFormats();
     writeFormats.reserve(rawWrite.size());
     for (const QByteArray &f : rawWrite)
-        writeFormats << QString::fromLatin1(f);
+        writeFormats << QLatin1String(f);
 
     std::fprintf(stderr, "[ZlPhotoEdit] 可读格式: %s\n",
                  qPrintable(readFormats.join(QStringLiteral(" "))));
@@ -303,9 +303,9 @@ int main(int argc, char *argv[])
     //   但"图标"与"应用标识"是两件事，分开写更清楚。
 
     // ── 步骤 3：应用标识（必须在任何 QSettings 之前）──
-    QCoreApplication::setOrganizationName(QString::fromLatin1(kOrganizationName));
-    QCoreApplication::setApplicationName(QString::fromLatin1(kApplicationName));
-    QCoreApplication::setApplicationVersion(QString::fromLatin1(kApplicationVer));
+    QCoreApplication::setOrganizationName(QLatin1String(kOrganizationName));
+    QCoreApplication::setApplicationName(QLatin1String(kApplicationName));
+    QCoreApplication::setApplicationVersion(QLatin1String(kApplicationVer));
 
     // ★ 关于 QApplication 构造顺序的一个细节 ★
     //   setOrganizationName 在 QApplication 构造**之后**调用是没问题的，

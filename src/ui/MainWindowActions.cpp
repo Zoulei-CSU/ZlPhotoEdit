@@ -1595,7 +1595,7 @@ void MainWindow::setupStatusBar()
 QStringList MainWindow::captureHotkeyCandidates()
 {
     return QStringList{
-        QString::fromLatin1(kCaptureHotkey),   // Ctrl+Alt+S ← 必须留在第一位
+        QLatin1String(kCaptureHotkey),   // Ctrl+Alt+S ← 必须留在第一位
         QStringLiteral("Ctrl+Alt+Shift+S"),
         QStringLiteral("Ctrl+Alt+Shift+A"),
     };
@@ -1675,13 +1675,13 @@ void MainWindow::setupScreenCapture()
         applyCaptureHotkey(effective);
 
         if (effective.toString(QKeySequence::PortableText)
-            != QString::fromLatin1(kCaptureHotkey)) {
+            != QLatin1String(kCaptureHotkey)) {
             // 回落不是错误，但**必须说出来**，否则用户按首选键毫无反应时
             // 只会怀疑程序。状态栏 + 日志两处都留。
             if (m_statusBar) {
                 m_statusBar->showMessage(
                     tr("The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)")
-                        .arg(QString::fromLatin1(kCaptureHotkey),
+                        .arg(QLatin1String(kCaptureHotkey),
                              effective.toString(QKeySequence::NativeText)),
                     15000);
             }
@@ -1704,7 +1704,7 @@ void MainWindow::setupScreenCapture()
                "the program is minimized, but %2 still works in the "
                "foreground, or use File → Screen Capture → Capture Now")
                 .arg(tried.join(QStringLiteral("；")),
-                     QString::fromLatin1(kCaptureHotkey)),
+                     QLatin1String(kCaptureHotkey)),
             20000);
     }
     // 日志里也留一条：自检与截图工具拿不到状态栏（窗口没显示）。
