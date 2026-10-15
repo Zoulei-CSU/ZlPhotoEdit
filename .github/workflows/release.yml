@@ -78,7 +78,6 @@ jobs:
           New-Item -ItemType Directory -Force -Path $dist | Out-Null
           Copy-Item $exe $dist
           windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw "$dist\ZlPhotoEdit.exe"
-          Copy-Item README.md $dist
           Compress-Archive -Path "$dist\*" -DestinationPath "dist\ZlPhotoEdit-$env:APP_VERSION-win64.zip"
 
       - uses: actions/upload-artifact@v4

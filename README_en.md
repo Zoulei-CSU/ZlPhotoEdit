@@ -189,7 +189,7 @@ packaging and directory structure are all in
 > would reset all user settings.
 >
 > The **icon** has two layers, both provided by the same `logo`: the window / taskbar
-> icon goes through `resources/logo.svg` → qrc; the exe file's own icon goes through
+> icon goes through `resources/logo.png` → qrc; the exe file's own icon goes through
 > `resources/logo.ico` → `resources/app.rc` → PE resource section (cannot be changed at
 > runtime).
 

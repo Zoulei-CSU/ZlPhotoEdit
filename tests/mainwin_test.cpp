@@ -829,9 +829,9 @@ static void testAppIdentityAndIcon()
     // ── ② 图标：窗口图标 ──
     //   ★ 这里必须量像素 ★
     //     只断言 !isNull() 会漏掉"有 QIcon 但 pixmap 全透明"这一类，
-    //     而那恰好是 SVG 解析失败但资源路径存在时的表现。
+    //     而那恰好是 PNG 解码失败但资源路径存在时的表现。
     const QIcon appIcon = appinfo::windowIcon();
-    check(!appIcon.isNull(), "★ 应用程序图标不是空 QIcon（logo.svg 打得开）");
+    check(!appIcon.isNull(), "★ 应用程序图标不是空 QIcon（logo.png 解码成功）");
 
     bool allNull = true;
     for (int px : {16, 32, 48, 128}) {
@@ -855,14 +855,14 @@ static void testAppIdentityAndIcon()
     // ── 图标：几何合理性（防止"画出来了，但是一团糊"）──
     //
     //  ★ 为什么不能断言"覆盖率必须小于某个值" ★
-    //    这个 logo 是一张**圆角方底 + 相机**的图 —— 方底几乎铺满整个
-    //    viewBox，16px 下覆盖率天然接近 1（实测 0.98）。硬写一个
+    //    这个 logo 是一张**圆角方底 + 插画**的图 —— 方底几乎铺满整个
+    //    画面，16px 下覆盖率天然接近 1（旧版相机 logo 实测 0.98）。硬写一个
     //    "覆盖率 < 0.9" 之类的阈值，是在用另一张图的设计去约束这张图，
     //    改天换 logo 就会无理由变红。
     //
     //    真正该钉的是**"不是简单的一整块纯色"** —— 也就是"画上去了细节"。
     //    做法：数一下有多少种不同的颜色。纯色块只有 1 种；
-    //    这张图有灰底、深灰机身、黑镜头、白高光、黄灯 —— 至少好几种。
+    //    这张图有橙鹿、蓝天、绿树、黄太阳、棕画架 —— 至少好几种。
     {
         const QPixmap pm32 = appinfo::windowIconPixmap(32);
         QSet<QRgb> colors;
@@ -881,7 +881,7 @@ static void testAppIdentityAndIcon()
         std::printf("       32px 不同颜色数 %d\n", int(colors.size()));
     }
 
-    // 同一档重复渲染必须稳定（QSvgRenderer 是确定性的；若不稳定说明
+    // 同一档重复渲染必须稳定（同源缩放是确定性的；若不稳定说明
     // 渲染路径里有不该有的状态 —— 比如缓存串了名字）
     {
         const QPixmap a = appinfo::windowIconPixmap(48);

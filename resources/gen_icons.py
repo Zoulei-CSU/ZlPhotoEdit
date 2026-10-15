@@ -43,9 +43,9 @@ QRC_PATH = os.path.join(HERE, "resources.qrc")
 #    因此：**凡是需要进 qrc 的文件，要么由本脚本生成，要么登记在这张表里。**
 #
 #  路径规则（与 prefix="/" 拼接后得到的运行时路径）：
-#    "logo.svg"  →  ":/logo.svg"        ← 应用图标（AppInfo.cpp 用它）
+#    "logo.png"  →  ":/logo.png"        ← 应用图标（AppInfo.cpp 用它）
 FIXED_RESOURCES = [
-    "logo.svg",
+    "logo.png",
 ]
 
 STROKE = "#33393f"          # 主色（与浅色主题的下拉/菜单文字同色系）

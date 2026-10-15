@@ -15,7 +15,6 @@ BIN="${2:?缺少可执行文件路径}"
 OUTDIR="${3:-dist}"
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-ROOT="$(cd "$HERE/../.." && pwd)"
 
 # ── 汇总"待安装"的产物到一处，交给 spec 的 %{_stage} ──
 STAGE="$(mktemp -d)"
@@ -24,7 +23,6 @@ trap 'rm -rf "$STAGE"' EXIT
 cp "$BIN"                     "$STAGE/ZlPhotoEdit"
 cp "$HERE/zlphotoedit.desktop" "$STAGE/zlphotoedit.desktop"
 cp "$HERE/zlphotoedit.png"     "$STAGE/zlphotoedit.png"
-cp "$ROOT/README.md"           "$STAGE/README.md"
 
 # ── 一个空的 Source0（spec 里声明了它，但 %prep 不解压）──
 TOPSRC="$(mktemp -d)"

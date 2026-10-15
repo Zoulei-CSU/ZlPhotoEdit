@@ -51,13 +51,11 @@ rm -rf %{buildroot}
 install -Dm755 %{_stage}/ZlPhotoEdit                    %{buildroot}%{_bindir}/ZlPhotoEdit
 install -Dm644 %{_stage}/zlphotoedit.desktop            %{buildroot}%{_datadir}/applications/zlphotoedit.desktop
 install -Dm644 %{_stage}/zlphotoedit.png                %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/zlphotoedit.png
-install -Dm644 %{_stage}/README.md                      %{buildroot}%{_docdir}/%{name}/README.md
 
 %files
 %{_bindir}/ZlPhotoEdit
 %{_datadir}/applications/zlphotoedit.desktop
 %{_datadir}/icons/hicolor/256x256/apps/zlphotoedit.png
-%{_docdir}/%{name}/README.md
 
 %changelog
 * Sun Oct 11 2026 Zoulei-CSU <zoulei.csu@gmail.com> - %{_ver}-1

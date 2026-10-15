@@ -7,9 +7,9 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QImage>
 #include <QPainter>
 #include <QPixmap>
-#include <QSvgRenderer>
 
 namespace zl {
 namespace appinfo {
@@ -104,20 +104,30 @@ const int kIconSizes[] = {16, 20, 24, 32, 48, 64, 128, 256};
 const int kIconSizeCount = int(sizeof(kIconSizes) / sizeof(kIconSizes[0]));
 
 // ★ 资源路径的坑 ★
-//   gen_icons.py 用 prefix="/" + <file>logo.svg</file>，
-//   prefix 会与相对路径**拼接**，所以最终路径是 ":/logo.svg"（不是 :/icons/…）。
-//   写成 ":/logo.svg" 少一个斜杠（":/logo.svg" vs ":/logo.svg"）都会静默拿到空图标。
-const char *kIconResourcePath = ":/logo.svg";
+//   gen_icons.py 用 prefix="/" + <file>logo.png</file>，
+//   prefix 会与相对路径**拼接**，所以最终路径是 ":/logo.png"（不是 :/icons/…）。
+//   少一个斜杠、多一个斜杠都会静默拿到空图标。
+//   ★ 2026-10-15：logo.svg → logo.png ★
+//     源图换成用户提供的 512×512 成品位图后，窗口图标不再经过
+//     QSvgRenderer —— 少一层"解析失败但静默"的风险，也不再依赖
+//     qsvg 插件。exe 图标仍走 logo.ico → app.rc（PE 资源段）；
+//     macOS 的 .icns 与 Linux 的 256×256 桌面图标也由同一张
+//     logo.png 派生（见 packaging/）。
+const char *kIconResourcePath = ":/logo.png";
+
+// 源图只解码一次：windowIcon() 要渲染 8 档 × 2 个 dpr = 16 次，
+// 每次重新解码同一张 PNG 是白工。静态局部量在 C++11 起初始化线程安全。
+const QImage &sourceLogo()
+{
+    static const QImage img(QString::fromUtf8(kIconResourcePath));
+    return img;
+}
 
 QPixmap renderLogo(int px, qreal dpr)
 {
-    // ★ 不能写成 QSvgRenderer renderer(QLatin1String(...)) ★
-    //   那是"最令人烦恼的解析"：QLatin1String(x) 被当成变量声明，
-    //   renderer 变成函数声明（与 MainWindowActions.cpp 的注释同坑）。
-    //   变量路径用 fromUtf8（字面量才可以用 QStringLiteral）。
-    QSvgRenderer renderer(QString::fromUtf8(kIconResourcePath));
-    if (!renderer.isValid())
-        return QPixmap();          // 资源缺失 / SVG 解析失败
+    const QImage &src = sourceLogo();
+    if (src.isNull())
+        return QPixmap();          // 资源缺失 / PNG 解码失败
 
     const int phys = qMax(1, qRound(px * dpr));
     QPixmap pm(phys, phys);
@@ -127,10 +137,11 @@ QPixmap renderLogo(int px, qreal dpr)
     QPainter p(&pm);
     p.setRenderHint(QPainter::Antialiasing, true);
     p.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    // ★ 必须显式传 bounds（与 IconLibrary.cpp 同一实测结论）★
-    //   render(&p) 不传 bounds 时 dpr>1 只画左上角一小块（Qt5/Qt6 同罪），
-    //   窗口/任务栏图标在高 DPI 屏上会缺一角。bounds 用逻辑尺寸 px×px。
-    renderer.render(&p, QRectF(0, 0, px, px));
+    // 512×512 源图缩到各档逻辑尺寸，SmoothPixmapTransform 保证
+    // 16px 小图不糊。目标矩形必须是逻辑尺寸 px×px —— 与
+    // IconLibrary.cpp 的 SVG 分支同一实测结论：不传 bounds 时
+    // dpr>1 只画左上角一小块（Qt5/Qt6 同罪）。
+    p.drawImage(QRectF(0, 0, px, px), src);
     p.end();
 
     return pm;

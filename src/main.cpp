@@ -20,9 +20,9 @@
 #include "compat/QtCompat.h"
 #include "ui/MainWindow.h"
 // ★ 应用图标的唯一来源 ★
-//   不在这边直接写 QIcon(":/logo.svg")：那条路会在 qsvg 插件缺失时
-//   **静默**返回空图标，而且路径写错也不报错 —— 症状只是"没有图标"。
-//   AppInfo 自己用 QSvgRenderer 光栅化，失败能主动发现（见其文件头）。
+//   不在这边直接写 QIcon(":/logo.png")：路径写错也不报错 ——
+//   症状只是"没有图标"（静默）。AppInfo 集中加载，失败能主动
+//   发现（见其文件头），自检也能逐档量它。
 #include "ui/AppInfo.h"
 // ★ 界面语言 ★ 启动时决定装不装翻译器，必须早于第一个窗口
 //   （tr() 的结果在控件构造那一刻就定下来了）。
@@ -270,7 +270,7 @@ int main(int argc, char *argv[])
     //
     //  ★ 这里设的是"窗口/任务栏"图标，与 exe 文件图标是两码事 ★
     //
-    //    · 本行（setWindowIcon）：运行时生效，图来自 qrc 里的 logo.svg。
+    //    · 本行（setWindowIcon）：运行时生效，图来自 qrc 里的 logo.png。
     //      窗口标题栏、任务栏、Alt+Tab 用的是它。
     //    · exe 文件图标：链接期由 rc.exe 把 resources/logo.ico 嵌进 PE
     //      资源段（见 resources/app.rc 与 .pro / CMakeLists.txt 里的接法）。
@@ -284,7 +284,7 @@ int main(int argc, char *argv[])
     //    默认图标显示出来了（部分平台上不会刷新）。
     //
     //  ★ 失败是静默的 → 所以要有下面这条日志与自检 ★
-    //    SVG 解析失败 / 资源没打进 qrc 时，AppInfo::windowIcon() 返回空
+    //    PNG 解码失败 / 资源没打进 qrc 时，AppInfo::windowIcon() 返回空
     //    QIcon，setWindowIcon(空) 不报任何错，只是没有图标。
     //    用一个 qInfo 把结论打出来，排查时一眼能看到。
     {
@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
         QApplication::setWindowIcon(appIcon);
         if (appIcon.isNull()) {
             qWarning().noquote()
-                << "[ZlPhotoEdit] 应用程序图标加载失败：logo.svg 缺失或无法渲染"
+                << "[ZlPhotoEdit] 应用程序图标加载失败：logo.png 缺失或无法解码"
                    "（窗口与任务栏将显示系统默认图标）";
         }
     }

@@ -28,7 +28,6 @@ BIN="${2:?缺少可执行文件路径}"
 OUTDIR="${3:-dist}"
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-ROOT="$(cd "$HERE/../.." && pwd)"
 
 # ★★ OUTDIR 必须先转成绝对路径 ★★
 #   下面为跑 dpkg-shlibdeps 会 `cd "$STAGE"`，之后再写相对路径就会落到
@@ -47,7 +46,6 @@ trap 'rm -rf "$STAGE"' EXIT
 install -Dm755 "$BIN"                          "$STAGE/usr/bin/ZlPhotoEdit"
 install -Dm644 "$HERE/zlphotoedit.desktop"     "$STAGE/usr/share/applications/zlphotoedit.desktop"
 install -Dm644 "$HERE/zlphotoedit.png"         "$STAGE/usr/share/icons/hicolor/256x256/apps/zlphotoedit.png"
-install -Dm644 "$ROOT/README.md"               "$STAGE/usr/share/doc/zlphotoedit/README.md"
 
 # ── 自动算依赖 ──
 #  dpkg-shlibdeps 必须在"有 debian/control 上下文"或显式 -O 下运行。

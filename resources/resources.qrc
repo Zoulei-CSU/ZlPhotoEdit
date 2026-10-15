@@ -1,7 +1,7 @@
 <!-- 由 resources/gen_icons.py 生成，请勿手改 -->
 <RCC>
   <qresource prefix="/">
-    <file>logo.svg</file>
+    <file>logo.png</file>
     <file>icons/action_capture_delay.svg</file>
     <file>icons/action_screen_capture.svg</file>
     <file>icons/adjust_brightness.svg</file>

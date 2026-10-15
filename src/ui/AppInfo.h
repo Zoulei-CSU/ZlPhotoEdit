@@ -31,11 +31,13 @@
 //
 //  ★ 图标分两层，别混 ★
 //
-//    · windowIcon()  —— Qt 层的窗口/任务栏图标，来自 qrc 里的 logo.svg。
+//    · windowIcon()  —— Qt 层的窗口/任务栏图标，来自 qrc 里的 logo.png。
 //    · exe 图标      —— Windows 资源里的那个（resources/app.rc + logo.ico），
 //                       资源管理器里看到的文件图标。它**运行时改不了**，
 //                       只能靠 .rc 在链接期嵌入。
 //    两者必须用同一张图，否则"任务栏一个样、桌面文件另一个样"。
+//    （2026-10-15 起窗口图标源图是 logo.png；macOS .icns 与 Linux
+//     桌面图标也由同一张 logo.png 派生。）
 // ============================================================================
 
 namespace zl {
@@ -59,9 +61,11 @@ QString titleSuffix();
 QString windowTitleFor(const QString &fileName, const QString &zoomText);
 
 /// 应用程序图标（资源的唯一入口）。
-/// ★ 不用 QIcon(":/logo.svg") 直接加载 ★ —— 与 IconLibrary 的理由相同：
-///   QIcon 从 .svg 加载会走 qsvg 图片插件，插件缺失时**静默返回空图标**；
-///   这里自己用 QSvgRenderer 光栅化，能主动发现失败。
+/// ★ 为什么还保留集中入口，而不是各处写 QIcon(":/logo.png") ★
+///   PNG 由 Qt 内置解码器处理，不依赖 qsvg 插件（这一点与当年的
+///   .svg 不同）；但"资源没打进 qrc / 文件损坏"的失败形态仍然是
+///   **静默的空图标**。集中一个入口，自检才能逐档量像素
+///   （windowIconPixmap），把"有没有画出来"变成可判定的事。
 /// 失败返回空 QIcon，调用方（main / MainWindow）必须有降级方案。
 QIcon windowIcon();
 

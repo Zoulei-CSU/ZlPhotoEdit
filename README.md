@@ -149,7 +149,7 @@ cmake -S . -B build_cmake -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build b
 > ★ **英文名同时是 QSettings 的存储路径**（注册表 `HKCU\Software\ZlStudio\ZlPhotoEdit`），
 > 一旦发布就不能改 —— 改了等于把用户全部设置重置。
 >
-> **图标**分两层，都由同一张 `logo` 提供：窗口 / 任务栏图标走 `resources/logo.svg` → qrc；
+> **图标**分两层，都由同一张 `logo` 提供：窗口 / 任务栏图标走 `resources/logo.png` → qrc；
 > exe 文件本身的图标走 `resources/logo.ico` → `resources/app.rc` → PE 资源段（运行时改不了）。
 
 ## 开发文档

@@ -71,7 +71,7 @@ file(GLOB_RECURSE ZLPE_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
 )
 
-# 资源文件：resources.qrc（图标 + logo.svg）。
+# 资源文件：resources.qrc（图标 + logo.png）。
 # 用 EXISTS 判断避免文件缺失时配置阶段就报错。
 set(ZLPE_RESOURCES "")
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc")
