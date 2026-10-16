@@ -927,7 +927,7 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
 <context>
     <name>zl::CurveEditor</name>
     <message>
-        <location filename="../src/ui/CurveEditor.cpp" line="603"/>
+        <location filename="../src/ui/CurveEditor.cpp" line="637"/>
         <source>Input %1  Output %2</source>
         <translation>输入 %1  输出 %2</translation>
     </message>
@@ -2034,162 +2034,162 @@ Larger values soften the transition along the selection edge.</source>
     </message>
     <message>
         <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
-        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;一个基于 Qt 的轻量级图片编辑器。&lt;/p&gt;&lt;p&gt;&lt;b&gt;技术栈&lt;/b&gt;&lt;br&gt;Qt %2（编译期版本 %3）&lt;br&gt;纯 Qt 实现，不依赖任何第三方图像库&lt;/p&gt;&lt;p&gt;&lt;b&gt;核心特性&lt;/b&gt;&lt;br&gt;多图层与 22 种混合模式 · 灰度蒙版选区（支持羽化）&lt;br&gt;曲线 / 色阶 / 亮度对比度 · 自实现二次立方与 Lanczos 重采样&lt;br&gt;脏矩形与整层快照双撤销策略 · EXIF 自动旋转&lt;/p&gt;</translation>
+        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;一个基于 Qt 的轻量级图片编辑器。&lt;/p&gt;&lt;p&gt;&lt;b&gt;版本&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;技术栈&lt;/b&gt;&lt;br&gt;Qt %2（编译期版本 %3）&lt;br&gt;纯 Qt 实现，不依赖任何第三方图像库&lt;/p&gt;&lt;p&gt;&lt;b&gt;核心特性&lt;/b&gt;&lt;br&gt;多图层与 22 种混合模式 · 灰度蒙版选区（支持羽化）&lt;br&gt;曲线 / 色阶 / 亮度对比度 · 自实现二次立方与 Lanczos 重采样&lt;br&gt;脏矩形与整层快照双撤销策略 · EXIF 自动旋转&lt;/p&gt;&lt;p&gt;&lt;b&gt;项目主页&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="810"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>关于 Qt(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="844"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
         <source>File(&amp;F)</source>
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="864"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>屏幕截图(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="875"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
         <source>Recent Files(&amp;R)</source>
         <translation>最近打开(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="897"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
         <source>Clear List</source>
         <translation>清空列表</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="914"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
         <source>Edit(&amp;E)</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="929"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
         <source>Select(&amp;S)</source>
         <translation>选择(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
         <source>Adjust(&amp;A)</source>
         <translation>调整(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="952"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
         <source>Image(&amp;I)</source>
         <translation>图像(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="979"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
         <source>Layer(&amp;L)</source>
         <translation>图层(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="997"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
         <source>View(&amp;V)</source>
         <translation>视图(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1010"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>网格间距(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>标尺单位(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1037"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
         <source>Panels(&amp;P)</source>
         <translation>面板(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1061"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
         <source>Language(&amp;Y)</source>
         <translation>语言(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="828"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
         <source>Switch UI Language</source>
         <translation>切换界面语言</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="829"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>界面语言已设置为「%1」，下次启动程序时生效。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
         <source>Auto (Follow System)</source>
         <translation>自动（跟随系统）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1109"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
         <source>Help(&amp;H)</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1124"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
         <source>Main Toolbar</source>
         <translation>主工具栏</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1153"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
         <source>Tool Options</source>
         <translation>工具选项</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1173"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
         <source>Toolbox</source>
         <translation>工具箱</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1244"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
         <source>Switch to the %1 tool</source>
         <translation>切换到%1工具</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1271"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1409"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
         <source>Foreground color (click to change)</source>
         <translation>前景色（点击修改）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1376"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
         <source>History</source>
         <translation>历史记录</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1381"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
         <source>(Already at the initial state)</source>
         <translation>（已经是初始状态）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1390"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
         <source>Color</source>
         <translation>颜色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1415"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
         <source>Background color (click to change)</source>
         <translation>背景色（点击修改）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>交换前景色与背景色 (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1433"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>恢复默认颜色：黑 / 白 (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1459"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2202,32 +2202,32 @@ Colors picked with the eyedropper become the foreground color.</source>
 吸管工具取到的颜色会进入前景色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1484"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
         <source>Layers</source>
         <translation>图层</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
         <source>Ready</source>
         <translation>就绪</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1614"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>抓取当前屏幕并开为新标签页（%1；程序最小化时也有效）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1668"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
         <source>%1 (%2)</source>
         <translation>%1（%2）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1683"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>首选快捷键 %1 已被其它程序占用，本次改用 %2（程序最小化时也有效）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1703"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>全局快捷键不可用（%1）。程序最小化时按不了，但前台仍可用 %2，或走「文件 → 屏幕截图 → 立即截图」</translation>
     </message>

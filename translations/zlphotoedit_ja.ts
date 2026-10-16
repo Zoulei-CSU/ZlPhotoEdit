@@ -928,7 +928,7 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
 <context>
     <name>zl::CurveEditor</name>
     <message>
-        <location filename="../src/ui/CurveEditor.cpp" line="603"/>
+        <location filename="../src/ui/CurveEditor.cpp" line="637"/>
         <source>Input %1  Output %2</source>
         <translation>入力 %1  出力 %2</translation>
     </message>
@@ -2044,162 +2044,162 @@ Larger values soften the transition along the selection edge.</source>
     </message>
     <message>
         <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
-        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Qt で作られた軽量画像エディター。&lt;/p&gt;&lt;p&gt;&lt;b&gt;技術スタック&lt;/b&gt;&lt;br&gt;Qt %2（%3 に対してビルド）&lt;br&gt;純粋な Qt 実装、サードパーティ製画像ライブラリなし&lt;/p&gt;&lt;p&gt;&lt;b&gt;主な機能&lt;/b&gt;&lt;br&gt;22 種の描画モードを持つ多レイヤー · グレースケールマスクによる選択（ぼかし対応）&lt;br&gt;トーンカーブ / レベル補正 / 明るさ-コントラスト · 独自のバイキューブとランチョスによる再サンプリング&lt;br&gt;ダーティ矩形とレイヤー全体スナップショットの二段階取り消し戦略 · EXIF 自動回転&lt;/p&gt;</translation>
+        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Qt で作られた軽量画像エディター。&lt;/p&gt;&lt;p&gt;&lt;b&gt;バージョン&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;技術スタック&lt;/b&gt;&lt;br&gt;Qt %2（%3 に対してビルド）&lt;br&gt;純粋な Qt 実装、サードパーティ製画像ライブラリなし&lt;/p&gt;&lt;p&gt;&lt;b&gt;主な機能&lt;/b&gt;&lt;br&gt;22 種の描画モードを持つ多レイヤー · グレースケールマスクによる選択（ぼかし対応）&lt;br&gt;トーンカーブ / レベル補正 / 明るさ-コントラスト · 独自のバイキューブとランチョスによる再サンプリング&lt;br&gt;ダーティ矩形とレイヤー全体スナップショットの二段階取り消し戦略 · EXIF 自動回転&lt;/p&gt;&lt;p&gt;&lt;b&gt;プロジェクトページ&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="810"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>Qt について(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="828"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
         <source>Switch UI Language</source>
         <translation>表示言語を切り替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="829"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>表示言語を %1 に設定しました。次回プログラムを起動したときに有効になります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="844"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
         <source>File(&amp;F)</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="864"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>スクリーンキャプチャー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="875"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
         <source>Recent Files(&amp;R)</source>
         <translation>最近使ったファイル(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="897"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
         <source>Clear List</source>
         <translation>リストを消去</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="914"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
         <source>Edit(&amp;E)</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="929"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
         <source>Select(&amp;S)</source>
         <translation>選択(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
         <source>Adjust(&amp;A)</source>
         <translation>調整(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="952"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
         <source>Image(&amp;I)</source>
         <translation>画像(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="979"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
         <source>Layer(&amp;L)</source>
         <translation>レイヤー(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="997"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
         <source>View(&amp;V)</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1010"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>グリッド間隔(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>定規の単位(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1037"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
         <source>Panels(&amp;P)</source>
         <translation>パネル(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1061"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
         <source>Language(&amp;Y)</source>
         <translation>言語(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
         <source>Auto (Follow System)</source>
         <translation>自動（システムに従う）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1109"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
         <source>Help(&amp;H)</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1124"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
         <source>Main Toolbar</source>
         <translation>メインツールバー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1153"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
         <source>Tool Options</source>
         <translation>ツールオプション</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1173"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
         <source>Toolbox</source>
         <translation>ツールボックス</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1244"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
         <source>Switch to the %1 tool</source>
         <translation>%1ツールに切り替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1271"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1409"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
         <source>Foreground color (click to change)</source>
         <translation>前景色（クリックで変更）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1376"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
         <source>History</source>
         <translation>ヒストリー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1381"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
         <source>(Already at the initial state)</source>
         <translation>（すでに初期状態です）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1390"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
         <source>Color</source>
         <translation>色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1415"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
         <source>Background color (click to change)</source>
         <translation>背景色（クリックで変更）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>前景色と背景色を入れ替え (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1433"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>デフォルトの色に戻す: 黒 / 白 (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1459"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2212,32 +2212,32 @@ Colors picked with the eyedropper become the foreground color.</source>
 スポイトで採取した色は前景色になります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1484"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
         <source>Layers</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1614"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>現在の画面を新しいタブにキャプチャーします（%1。プログラム最小化時も動作します）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1668"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1683"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>優先ショートカット %1 は他のプログラムが使用中のため、今回は %2 を使用します（プログラム最小化時も動作します）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1703"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>グローバルショートカットが使用できません（%1）。プログラム最小化時は押せませんが、前面では %2 が使えます。または「ファイル → スクリーンキャプチャー → 今すぐキャプチャー」をお使いください</translation>
     </message>

@@ -928,7 +928,7 @@ Desactivado: rellena todos los píxeles dentro de la tolerancia de toda la image
 <context>
     <name>zl::CurveEditor</name>
     <message>
-        <location filename="../src/ui/CurveEditor.cpp" line="603"/>
+        <location filename="../src/ui/CurveEditor.cpp" line="637"/>
         <source>Input %1  Output %2</source>
         <translation>Entrada %1  Salida %2</translation>
     </message>
@@ -2044,162 +2044,162 @@ Valores mayores suavizan la transición por el borde de la selección.</translat
     </message>
     <message>
         <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
-        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Un editor de imágenes ligero creado con Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tecnología&lt;/b&gt;&lt;br&gt;Qt %2 (compilado con %3)&lt;br&gt;Implementación puramente en Qt, sin bibliotecas de imagen de terceros&lt;/p&gt;&lt;p&gt;&lt;b&gt;Funciones clave&lt;/b&gt;&lt;br&gt;Varias capas con 22 modos de fusión · selección con máscara en escala de grises (con difuminado)&lt;br&gt;Curvas / Niveles / Brillo-Contraste · remuestreo bicúbico y Lanczos propio&lt;br&gt;Estrategia doble de deshacer con rectángulo sucio e instantánea de capa completa · rotación automática EXIF&lt;/p&gt;</translation>
+        <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Un editor de imágenes ligero creado con Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Versión&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tecnología&lt;/b&gt;&lt;br&gt;Qt %2 (compilado con %3)&lt;br&gt;Implementación puramente en Qt, sin bibliotecas de imagen de terceros&lt;/p&gt;&lt;p&gt;&lt;b&gt;Funciones clave&lt;/b&gt;&lt;br&gt;Varias capas con 22 modos de fusión · selección con máscara en escala de grises (con difuminado)&lt;br&gt;Curvas / Niveles / Brillo-Contraste · remuestreo bicúbico y Lanczos propio&lt;br&gt;Estrategia doble de deshacer con rectángulo sucio e instantánea de capa completa · rotación automática EXIF&lt;/p&gt;&lt;p&gt;&lt;b&gt;Página del proyecto&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="810"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>Acerca de Qt(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="828"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
         <source>Switch UI Language</source>
         <translation>Cambiar el idioma de la interfaz</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="829"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>El idioma de la interfaz se ha establecido en %1. Surgirá efecto la próxima vez que se inicie el programa.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="844"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
         <source>File(&amp;F)</source>
         <translation>Archivo(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="864"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>Captura de pantalla(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="875"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
         <source>Recent Files(&amp;R)</source>
         <translation>Archivos recientes(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="897"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
         <source>Clear List</source>
         <translation>Borrar lista</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="914"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
         <source>Edit(&amp;E)</source>
         <translation>Edición(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="929"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
         <source>Select(&amp;S)</source>
         <translation>Selección(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
         <source>Adjust(&amp;A)</source>
         <translation>Ajuste(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="952"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
         <source>Image(&amp;I)</source>
         <translation>Imagen(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="979"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
         <source>Layer(&amp;L)</source>
         <translation>Capa(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="997"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
         <source>View(&amp;V)</source>
         <translation>Ver(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1010"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>Intervalo de cuadrícula(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>Unidades de regla(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1037"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
         <source>Panels(&amp;P)</source>
         <translation>Paneles(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1061"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
         <source>Language(&amp;Y)</source>
         <translation>Idioma(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
         <source>Auto (Follow System)</source>
         <translation>Automático (seguir al sistema)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1109"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
         <source>Help(&amp;H)</source>
         <translation>Ayuda(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1124"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
         <source>Main Toolbar</source>
         <translation>Barra de herramientas principal</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1153"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
         <source>Tool Options</source>
         <translation>Opciones de herramienta</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1173"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
         <source>Toolbox</source>
         <translation>Caja de herramientas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1244"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
         <source>Switch to the %1 tool</source>
         <translation>Cambia a la herramienta %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1271"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1409"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
         <source>Foreground color (click to change)</source>
         <translation>Color de primer plano (clic para cambiarlo)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1376"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
         <source>History</source>
         <translation>Historial</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1381"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
         <source>(Already at the initial state)</source>
         <translation>(Ya está en el estado inicial)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1390"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
         <source>Color</source>
         <translation>Color</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1415"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
         <source>Background color (click to change)</source>
         <translation>Color de fondo (clic para cambiarlo)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>Intercambia los colores de primer plano y fondo (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1433"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>Restaura los colores predeterminados: negro / blanco (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1459"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2212,32 +2212,32 @@ Colors picked with the eyedropper become the foreground color.</source>
 Los colores tomados con el cuentagotas pasan a ser el color de primer plano.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1484"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
         <source>Layers</source>
         <translation>Capas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
         <source>Ready</source>
         <translation>Listo</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1614"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>Captura la pantalla actual en una pestaña nueva (%1; funciona incluso con el programa minimizado)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1668"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1683"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>La tecla rápida preferida %1 está ocupada por otro programa; esta vez se usará %2 (funciona incluso con el programa minimizado)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1703"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>Tecla rápida global no disponible (%1). No funcionará con el programa minimizado, pero %2 sigue funcionando en primer plano, o usa Archivo → Captura de pantalla → Capturar ahora</translation>
     </message>
