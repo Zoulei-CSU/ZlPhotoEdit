@@ -42,6 +42,33 @@ CommandStack::CommandStack(Document *doc, QObject *parent)
                 // 栈 clean == 文档未修改。
                 m_doc->setModified(!clean);
             });
+
+    // ── 外部跳转的兜底失效（2026-10-16，历史面板双击不回刷的 bug）──
+    //
+    //  病灶：历史面板（QUndoView）点击条目时，Qt 内部直接调
+    //  QUndoStack::setIndex()。命令的 undo()/redo() 照常执行 ——
+    //  数据确实回退到了那个状态 —— 但这条路**完全不经过**本类的
+    //  push()/undo()/redo()，于是没人调 notifyDocument()，
+    //  Document 的合成缓存不失效，画布继续显示旧画面。
+    //  症状："双击初始状态，画面不动；做个全图框选强制重绘后才
+    //  发现其实已经回退了"（探针实测：双击/单击均复现，
+    //  contentChanged 零次；对照组 CommandStack::undo() 正常）。
+    //
+    //  修法：indexChanged 覆盖**所有**改索引的路径（push / undo /
+    //  redo / setIndex 跳转 / endMacro，实测均发），在这里统一兜底。
+    //  四条内部路径已各自手动失效过，用 m_internalChange 抑制
+    //  （见头文件对该标记的不变量说明）。
+    //
+    //  ★ 为什么这里用全量失效而不是按区域 ★
+    //    跳历史是低频、用户主动的操作，全量重绘正是用户预期
+    //    （"给我看那个状态"）；且此刻栈里的命令可能已被 clear()
+    //    删掉，逐个取区域反而有野指针风险。全量是安全方向。
+    connect(m_stack, &QUndoStack::indexChanged, this, [this]() {
+        if (m_internalChange)
+            return;
+        if (m_doc)
+            m_doc->markDirty();
+    });
 }
 
 CommandStack::~CommandStack()
@@ -133,7 +160,13 @@ void CommandStack::push(QUndoCommand *command)
 
     // push 会立即执行 command->redo()，然后压入栈。
     // 所有权转移给栈 —— 调用方不要再 delete。
+    //
+    //  ★ 抑制标记必须罩住 m_stack->push() ★
+    //    push 内部会同步发 indexChanged；不罩的话兜底槽会跟着
+    //    全量失效一次，把上面刚算好的区域提示白白浪费掉。
+    m_internalChange = true;
     m_stack->push(command);
+    m_internalChange = false;
 
     // ── 自动通知 Document 刷新 ──
     //
@@ -159,7 +192,11 @@ void CommandStack::beginMacro(const QString &text)
 
 void CommandStack::endMacro()
 {
+    // endMacro 会把整个宏压上栈并发一次 indexChanged（实测），
+    // 同样罩起来避开兜底槽 —— 宏结束时下面已经有全量失效了。
+    m_internalChange = true;
     m_stack->endMacro();
+    m_internalChange = false;
 
     // 宏结束时也要刷新 —— 宏内的命令虽然各自也会触发 push()，
     // 但为避免将来的实现变化（例如宏内不走 push），这里保险起见再刷一次。
@@ -198,7 +235,10 @@ void CommandStack::undo()
     if (!m_stack->canUndo())
         return;
 
+    // 罩住 m_stack 操作，避开兜底槽的重复全量失效（理由同 push）。
+    m_internalChange = true;
     m_stack->undo();
+    m_internalChange = false;
 
     // undo 不会走 push()，所以这里必须手动刷新 ——
     // 这是最容易漏的一处：漏了之后症状是"撤销后画面不变，直到下一次操作才更新"。
@@ -214,7 +254,10 @@ void CommandStack::redo()
     if (!m_stack->canRedo())
         return;
 
+    // 罩住 m_stack 操作，避开兜底槽的重复全量失效（理由同 push）。
+    m_internalChange = true;
     m_stack->redo();
+    m_internalChange = false;
 
     // 刚被重做的命令现在位于 index() - 1 处。
     const int done = m_stack->index() - 1;

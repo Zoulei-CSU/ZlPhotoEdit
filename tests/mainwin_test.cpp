@@ -94,6 +94,11 @@
 #include <QColor>
 #include <QComboBox>
 #include <QDir>
+// 历史面板跳转那组：QUndoView 挂在 historyDock 里，点击条目走的是
+// selectionModel 的 currentChanged（QUndoView 内部接到 setIndex）。
+#include <QDockWidget>
+#include <QModelIndex>
+#include <QUndoView>
 // 屏幕截图那几组要用到：等待"延迟截图"的定时器到点（要真的跑事件循环）、
 // 以及把系统消息交给事件循环处理的时间预算。
 #include <QElapsedTimer>
@@ -3628,6 +3633,132 @@ static void testLanguageMenuAssembly()
 
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+//  历史面板跳转必须刷新画布（2026-10-16 修复的回归钉）
+// ---------------------------------------------------------------------------
+//
+//  病灶（用户实测）：历史面板里双击某条记录回退到那个状态，数据确实回退了，
+//  但画布不刷新 —— 直到做一次全图框选之类的大范围重绘，才看到其实已经回退。
+//  根因：QUndoView 点条目走的是 QUndoStack::setIndex()，命令的 undo()/
+//  redo() 照常执行，但这条路**不经过** CommandStack::push()/undo()/redo()，
+//  于是没人通知 Document 失效合成缓存，画面停在旧内容上。
+//  修复：CommandStack 监听 QUndoStack::indexChanged 兜底失效，内部路径用
+//  m_internalChange 抑制重复失效（见 CommandStack.cpp 构造函数）。
+//
+//  本组用可观察行为钉住四件事：
+//    ① 点击历史条目后 Document 必须收到 contentChanged（画布刷新的事实来源）
+//    ② 点击后撤销/重做动作状态翻转（证明条目点击**真的跳转了**，
+//       否则 ① 可能被别的事件误触发，变成假绿）
+//    ③ 跳回后数据确实复原（合成图像素回到笔画之前的状态）
+//    ④ 之后普通 undo/redo 每次仍然只刷新一次（抑制标记没把内部路径带坏）
+static void testHistoryJumpRefreshesCanvas()
+{
+    beginGroup("历史面板跳转：回退后画布必须刷新");
+
+    MainWindow *w = newWindow(QStringLiteral("brush"));
+    CanvasView *cv = canvasOf(w);
+    Document *doc = cv ? cv->document() : nullptr;
+    check(doc != nullptr, "拿得到当前文档");
+    if (!doc) {
+        delete w;
+        return;
+    }
+
+    auto *undoAct = w->findChild<QAction *>(QStringLiteral("actionUndo"));
+    auto *redoAct = w->findChild<QAction *>(QStringLiteral("actionRedo"));
+    check(undoAct != nullptr && redoAct != nullptr, "有撤销 / 重做动作");
+    if (!undoAct || !redoAct) {
+        delete w;
+        return;
+    }
+
+    // ── 用画笔在画布上画一笔（压一条 DrawCommand）──
+    //
+    //  ★ 为什么用画笔而不是「粘贴为新图层」★
+    //    LayerCommand 的 undo()/redo() 自己就会调 markDirty()
+    //    （LayerCommand.cpp 里的既有行为）—— 拿它做跳转断言会**假绿**：
+    //    就算没有修复，contentChanged 也会被命令自己发出来，断言恒真。
+    //    DrawCommand 完全不自失效，刷新只可能来自 CommandStack，
+    //    这样才能真的钉住这个 bug。
+    const QRectF strokeRect(20, 20, 60, 20);   // 图像坐标：画布角上一小条
+    const QPoint probePt(40, 30);              // 笔画必经之路上的探针点
+
+    const QRgb beforeStroke = doc->composite().pixel(probePt);
+    // dragSelection 只是往 CanvasView 送一串真实鼠标事件（按下→移动→
+    // 松开），与工具无关；画笔激活时，同一串事件就是画一笔。
+    dragSelection(cv, strokeRect);
+    QApplication::processEvents();
+
+    check(undoAct->isEnabled() && !redoAct->isEnabled(),
+          "画一笔后：可撤销、不可重做（压上了一条命令）");
+    check(doc->composite().pixel(probePt) != beforeStroke,
+          "笔画真的落进了合成图（探针点像素变了）");
+
+    // ── 在历史面板里点「初始状态」那一行 ──
+    auto *historyDock = w->findChild<QDockWidget *>(QStringLiteral("historyDock"));
+    auto *undoView = historyDock ? qobject_cast<QUndoView *>(historyDock->widget())
+                                 : nullptr;
+    check(undoView != nullptr, "历史面板里是 QUndoView");
+    if (!undoView) {
+        delete w;
+        return;
+    }
+
+    int refreshes = 0;
+    QObject::connect(doc, &Document::contentChanged,
+                     [&refreshes]() { ++refreshes; });
+
+    const QModelIndex initialRow = undoView->model()->index(0, 0);
+    check(initialRow.isValid(), "历史面板有「初始状态」行");
+    // ★ 用「真实鼠标双击」模拟用户点击历史条目 ★
+    //   之前直接调 selectionModel()->setCurrentIndex() 绕过视图内部路径，
+    //   在 offscreen 环境下会踩 Qt 视图未就绪的内部状态（崩在
+    //   QListView::scrollTo → QModelIndex::parent，栈上 current 是垃圾）。
+    //   真实用户就是双击条目 —— 测试就该送真实鼠标事件，和别的测试一致。
+    const QRect rowRect = undoView->visualRect(initialRow);
+    const QPoint clickPt = (rowRect.isValid() && !rowRect.isEmpty())
+                               ? rowRect.center() : QPoint(8, 8);
+    QWidget *vp = undoView->viewport();
+    const QPoint globalPt = vp->mapToGlobal(clickPt);
+    auto sendMouse = [vp, clickPt, globalPt](QEvent::Type t,
+                                             Qt::MouseButtons btns) {
+        QMouseEvent e(t, clickPt, globalPt, Qt::LeftButton, btns,
+                      Qt::NoModifier);
+        QApplication::sendEvent(vp, &e);
+    };
+    sendMouse(QEvent::MouseButtonPress, Qt::LeftButton);
+    sendMouse(QEvent::MouseButtonRelease, Qt::NoButton);
+    sendMouse(QEvent::MouseButtonDblClick, Qt::LeftButton);
+    sendMouse(QEvent::MouseButtonRelease, Qt::NoButton);
+    QApplication::processEvents();
+
+    //  ★ 本组的三颗钉子 ★
+    checkEqInt(refreshes, 1,
+               "★ 点击历史条目后 Document 正好收到一次 contentChanged"
+               "（修复前是 0 —— 数据回了但画面不动）");
+    check(doc->composite().pixel(probePt) == beforeStroke,
+          "★ 合成图回到笔画之前（缓存真的失效重算了，不是残留的旧画面）");
+    check(!undoAct->isEnabled() && redoAct->isEnabled(),
+          "★ 点击后撤销/重做状态翻转（证明真的跳回了初始状态）");
+
+    // ── 跳完之后，普通 undo/redo 每次仍然只刷新一次 ──
+    //  （抑制标记生效：兜底槽没有给内部路径再加一次全量失效。
+    //    DrawCommand 不自失效，所以这里必须是干净的 1。）
+    refreshes = 0;
+    redoAct->trigger();
+    QApplication::processEvents();
+    checkEqInt(refreshes, 1, "★ 重做一次只刷新一次（抑制标记生效）");
+    check(doc->composite().pixel(probePt) != beforeStroke, "重做后笔画回来");
+
+    refreshes = 0;
+    undoAct->trigger();
+    QApplication::processEvents();
+    checkEqInt(refreshes, 1, "★ 撤销一次只刷新一次");
+    check(doc->composite().pixel(probePt) == beforeStroke, "撤销后笔画消失");
+
+    delete w;
+}
+
 int main(int argc, char **argv)
 {
     // ★ 必须在 QApplication 构造前设置 ★
@@ -3668,6 +3799,7 @@ int main(int argc, char **argv)
     testGlobalHotkey();
     testScreenCaptureFlow();
     testCreateImagePage();
+    testHistoryJumpRefreshesCanvas();
 
     std::printf("------------------------------------------------\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);
