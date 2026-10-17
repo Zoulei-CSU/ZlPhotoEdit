@@ -3300,6 +3300,10 @@ Continue?</source>
         <source>Remove Layer Mask</source>
         <translation>Удалить маску слоя</translation>
     </message>
+    <message>
+        <source>Printing is unavailable in this build; use Export PDF instead</source>
+        <translation>Печать недоступна в этой сборке; используйте экспорт в PDF</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>

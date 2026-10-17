@@ -3300,6 +3300,10 @@ Continue?</source>
         <source>Remove Layer Mask</source>
         <translation>Quitar máscara de capa</translation>
     </message>
+    <message>
+        <source>Printing is unavailable in this build; use Export PDF instead</source>
+        <translation>La impresión no está disponible en esta versión; use Exportar PDF</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>

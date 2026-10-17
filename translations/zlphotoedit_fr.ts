@@ -3286,6 +3286,10 @@ Continuer&#xa0;?</translation>
         <source>Remove Layer Mask</source>
         <translation>Supprimer le masque de calque</translation>
     </message>
+    <message>
+        <source>Printing is unavailable in this build; use Export PDF instead</source>
+        <translation>L'impression n'est pas disponible dans cette version ; utilisez Exporter en PDF</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>

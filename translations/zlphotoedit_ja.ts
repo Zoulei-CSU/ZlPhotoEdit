@@ -3300,6 +3300,10 @@ Continue?</source>
         <source>Remove Layer Mask</source>
         <translation>レイヤーマスクを削除</translation>
     </message>
+    <message>
+        <source>Printing is unavailable in this build; use Export PDF instead</source>
+        <translation>このビルドでは印刷できません。PDF 書き出しをお使いください</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>

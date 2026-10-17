@@ -3287,6 +3287,10 @@ Continue?</source>
         <source>Remove Layer Mask</source>
         <translation>刪除圖層遮色片</translation>
     </message>
+    <message>
+        <source>Printing is unavailable in this build; use Export PDF instead</source>
+        <translation>此版本不支援直接列印，請改用匯出 PDF</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>

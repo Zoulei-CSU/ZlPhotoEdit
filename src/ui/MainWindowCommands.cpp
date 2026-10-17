@@ -104,6 +104,7 @@
 #include <QImageWriter>
 #include <QImageReader>
 #include <QPrinter>
+#include <QPrinterInfo>
 #include <QPrintDialog>
 #include <QPageSize>
 #include <QPageLayout>
@@ -1411,6 +1412,19 @@ void MainWindow::printDocument()
 {
     if (!requireDocument())
         return;
+
+    // 低 glibc 的 Qt5 AppImage 刻意不打包 libcups（否则会把 glibc 2.27 的库链
+    // 拖进去，见 release.yml），该环境下没有 CUPS 打印后端。
+    // availablePrinters 为空时提前说明并指向导出 PDF —— 不检测的话，
+    // 用户只会看到一个空打印机列表的对话框，不知道发生了什么。
+    if (QPrinterInfo::availablePrinters().isEmpty()) {
+        if (m_statusBar) {
+            m_statusBar->showMessage(
+                tr("Printing is unavailable in this build; use Export PDF instead"),
+                8000);
+        }
+        return;
+    }
 
     QPrinter printer(QPrinter::HighResolution);
     printer.setDocName(m_doc->displayName());
