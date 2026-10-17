@@ -59,8 +59,18 @@ CanvasView::CanvasView(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
-    // 允许接受拖放（阶段七的"拖文件到窗口打开"）
-    setAcceptDrops(true);
+    // ★ 这里绝对不要 setAcceptDrops(true) ★
+    //
+    //   "拖文件到窗口打开"是由 MainWindow::dragEnterEvent/dropEvent 实现的。
+    //   Qt 找拖放目标的规则（qwidgetwindow.cpp::findDnDTarget）是：
+    //   从鼠标下最内层的 widget 开始，向上找**第一个** acceptDrops() 的
+    //   widget，找到就只给它发事件 —— 它 ignore 了也**不会**再回退给父窗口。
+    //
+    //   画布铺满整个客户区，一旦这里接受拖放，拖进来的文件就全被它吞掉
+    //   （且它没有任何 drag/drop 处理器，默认 ignore），表现为"拖到窗口上
+    //   毫无反应"。保持 false，事件才能一路向上落到 MainWindow。
+    //   将来若画布自己要接收拖放（如拖图片为新图层），必须在这里实现
+    //   dragEnterEvent/dropEvent，并注意与窗口级的行为不要重复。
 
     // 自动填充背景由我们自己绘制（棋盘格 + 中性灰），
     // 关掉 Qt 的默认填充避免闪烁。

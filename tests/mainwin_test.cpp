@@ -95,6 +95,10 @@
 #include <QColor>
 #include <QComboBox>
 #include <QDir>
+// 拖文件打开那组：构造一个真实的拖放进入事件交给窗口。
+#include <QDragEnterEvent>
+#include <QMimeData>
+#include <QUrl>
 // 历史面板跳转那组：QUndoView 挂在 historyDock 里，点击条目走的是
 // selectionModel 的 currentChanged（QUndoView 内部接到 setIndex）。
 #include <QDockWidget>
@@ -3769,6 +3773,81 @@ static void testHistoryJumpRefreshesCanvas()
     delete w;
 }
 
+// ===========================================================================
+//  [22] 拖文件到窗口打开（拖放到 MainWindow）
+// ===========================================================================
+//
+//  "把文件拖到程序上就打开"落在 MainWindow::dragEnterEvent / dropEvent 上，
+//  最终与命令行参数走同一条 openDocumentPaths()。
+//
+//  这一组钉两件事：
+//    ① 拖进来**能被本程序解码**的本地文件 → 必须 accepted；
+//       解不了的文件 → 不许 accepted（否则用户看到"能放"的光标，
+//       松手却什么都没发生）。
+//    ② 画布**不许**接受拖放。
+//       ② 不是内部细节：Qt 找拖放目标是从鼠标下最内层 widget 向上找
+//       **第一个** acceptDrops() 的 widget，找到就只发给它，即便它
+//       ignore 也**不会**回退父控件（qwidgetwindow.cpp::findDnDTarget）。
+//       画布铺满客户区，一旦它接受拖放，拖到画布上就静默无反应 ——
+//       这正是历史上 CanvasView 里那句孤立 setAcceptDrops(true) 的后果。
+static void testDropToOpenFiles()
+{
+    beginGroup("拖文件打开：窗口接受可解码的本地文件 / 画布不许抢");
+
+    QTemporaryDir dir;
+    check(dir.isValid(), "临时目录可用");
+    if (!dir.isValid())
+        return;
+
+    // 真造一个图片文件（QImageReader::canRead 探测的是文件头，不是扩展名）
+    const QString pngPath = dir.filePath(QStringLiteral("drop.png"));
+    QImage img(64, 48, QImage::Format_ARGB32);
+    img.fill(QColor(200, 40, 40));
+    check(img.save(pngPath, "PNG"), "造出一个真的 PNG");
+
+    // 再造一个"后缀像图片、内容不是"的文件 —— 钉住"看文件头而不是看后缀"
+    const QString fakePath = dir.filePath(QStringLiteral("fake.png"));
+    {
+        QFile f(fakePath);
+        if (f.open(QIODevice::WriteOnly))
+            f.write("this is definitely not a png");
+    }
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+
+    // ── ① 画布不许接受拖放 ──
+    CanvasView *cv = canvasOf(w);
+    check(cv != nullptr, "拿得到画布");
+    if (cv) {
+        check(!cv->acceptDrops(),
+              "★ 画布不接受拖放（它一接受，拖到窗口上的文件就被吞掉，"
+              "Qt 不会再把事件回退给 MainWindow）");
+    }
+
+    // ── ② 拖入可解码的本地图片 → 接受 ──
+    {
+        QMimeData mime;
+        mime.setUrls(QList<QUrl>() << QUrl::fromLocalFile(pngPath));
+        QDragEnterEvent ev(QPoint(200, 200), Qt::CopyAction, &mime,
+                           Qt::LeftButton, Qt::NoModifier);
+        QApplication::sendEvent(w, &ev);
+        check(ev.isAccepted(), "★ 拖入本地 PNG → 窗口接受拖放");
+    }
+
+    // ── ③ 拖入解不了的文件 → 不接受 ──
+    {
+        QMimeData mime;
+        mime.setUrls(QList<QUrl>() << QUrl::fromLocalFile(fakePath));
+        QDragEnterEvent ev(QPoint(200, 200), Qt::CopyAction, &mime,
+                           Qt::LeftButton, Qt::NoModifier);
+        QApplication::sendEvent(w, &ev);
+        check(!ev.isAccepted(),
+              "★ 拖入内容不是图片的文件 → 不接受（判据是文件头，不是后缀）");
+    }
+
+    delete w;
+}
+
 int main(int argc, char **argv)
 {
     // ★ 必须在 QApplication 构造前设置 ★
@@ -3810,6 +3889,7 @@ int main(int argc, char **argv)
     testScreenCaptureFlow();
     testCreateImagePage();
     testHistoryJumpRefreshesCanvas();
+    testDropToOpenFiles();
 
     std::printf("------------------------------------------------\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);
