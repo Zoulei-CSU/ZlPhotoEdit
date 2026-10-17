@@ -192,24 +192,29 @@ jobs:
               #   从 18.04 容器拖出去只会把 glibc 下限抬到 2.27，与目标相悖。
               # ⇒ 排除后最高需求应回落到 GLIBC_2.17（Qt 5.15.2 二进制自身的基线）。
               #
-              # 为什么 libcups 要"装进来再排除"（缺一不可，第 16 轮实测）：
+              # 为什么 libcups 链要"装进来再排除"（缺一不可，第 16、17 轮实测）：
               #   本工程加了打印/导出 PDF 后，Qt5 PrintSupport 的
               #   libcupsprintersupport.so 链 libcups.so.2。linuxdeploy 对每个
               #   DT_NEEDED 的处理顺序是：先按名字找库，找不到就直接
               #   ERROR Could not find dependency 退出；找到才查排除名单。
               #   libsystemd/libbsd 当初能排除成功，正因为 18.04 自带它们。
               #   ⇒ 必须先在容器里装 libcups2-dev（仅构建期），排除名单才有机会生效。
-              #   不直接打包的原因：18.04 的 libcups 及其依赖链（gnutls/gcrypt/
-              #   avahi 等）全是 glibc 2.27 基线，会把 AppImage 下限抬过 2.17。
-              #   libcups 被排除后它的依赖根本不会被遍历，那些库不会进产物。
-              #   代价：这个包里打印到实体打印机不可用（CUPS 后端缺失，Qt 静默降级），
-              #   导出 PDF 不依赖 CUPS，仍然可用。其它包（win/mac/deb/rpm/Qt6）不受影响。
-              #   Qt6 那个 job 跑在 rockylinux:8，系统自带 libcups，无需这套处理。
-              export LINUXDEPLOY_EXCLUDED_LIBRARIES="libsystemd.so.0;libbsd.so.0;libcups.so.2"
+              #   第 17 轮的新发现：排除 libcups 只是让它自己不打包，插件的**其它**
+              #   直接依赖照样部署 —— libcupsprintersupport.so 还直接链
+              #   libgnutls.so.30（Kerberos/GSSAPI 与 p11-kit 是它的传递依赖），
+              #   这三个在 18.04 上分别是 2.25/2.26/2.27 基线，把 AppImage 抬过 2.17。
+              #   ⇒ 整条链四个库全部排除；它们只服务于 CUPS 打印，排除后插件加载
+              #   失败、Qt 静默降级，导出 PDF 不依赖 CUPS 仍可用。
+              #   代价：这个包里打印到实体打印机不可用，其它包（win/mac/deb/rpm/Qt6）
+              #   不受影响（Qt6 那个 job 在 rockylinux:8，系统自带 libcups）。
+              export LINUXDEPLOY_EXCLUDED_LIBRARIES="libsystemd.so.0;libbsd.so.0;libcups.so.2;libgnutls.so.30;libp11-kit.so.0;libgssapi_krb5.so.2"
               ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
                 --exclude-library "libsystemd.so.0" \
                 --exclude-library "libbsd.so.0" \
-                --exclude-library "libcups.so.2"
+                --exclude-library "libcups.so.2" \
+                --exclude-library "libgnutls.so.30" \
+                --exclude-library "libp11-kit.so.0" \
+                --exclude-library "libgssapi_krb5.so.2"
 
               # ★★ 自证：把 glibc 上限做成构建期断言，而不是"希望它是 2.17" ★★
               #   那个 python 文件是**仓内真脚本**（不是塞在 YAML 里的多行代码）——
