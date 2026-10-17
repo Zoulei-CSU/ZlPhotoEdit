@@ -2372,6 +2372,14 @@ Le fichier est peut-être corrompu, ou les données d’image utilisent un encod
         <translation>Échec de la capture&#xa0;: aucun contenu d’écran capturé (aucun affichage n’est peut-être disponible)</translation>
     </message>
     <message>
+        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>Capture d’écran indisponible : cette session Wayland n’autorise pas les applications à lire l’écran. Faites une capture avec le raccourci du système, puis appuyez sur Ctrl+V pour la coller ici comme nouveau calque.</translation>
+    </message>
+    <message>
+        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>Cette session Wayland n’autorise pas les applications à lire l’écran ; la capture intégrée ne peut donc pas fonctionner. Faites une capture avec le raccourci du système, puis appuyez sur Ctrl+V pour la coller ici comme nouveau calque.</translation>
+    </message>
+    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
         <source>Screenshot-%1</source>
         <translation>Capture-%1</translation>

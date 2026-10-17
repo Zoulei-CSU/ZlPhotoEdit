@@ -2373,6 +2373,14 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>截图失败：抓不到屏幕内容（可能没有可用的显示器）</translation>
     </message>
     <message>
+        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>无法截图：当前 Wayland 会话不允许应用读取屏幕内容。请先用系统截图键截图，再按 Ctrl+V 粘贴到这里作为新图层。</translation>
+    </message>
+    <message>
+        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>当前 Wayland 会话不允许应用读取屏幕内容，程序内置的截图无法使用。请用系统截图快捷键截图，再按 Ctrl+V 粘贴到这里作为新图层。</translation>
+    </message>
+    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
         <source>Screenshot-%1</source>
         <translation>屏幕截图-%1</translation>

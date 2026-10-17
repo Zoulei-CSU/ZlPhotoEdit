@@ -2385,6 +2385,14 @@ El archivo podría estar dañado, o los datos de la imagen usan una codificació
         <translation>Error de captura: no se ha obtenido contenido de pantalla (puede que no haya ninguna pantalla disponible)</translation>
     </message>
     <message>
+        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>Captura de pantalla no disponible: esta sesión de Wayland no permite que las aplicaciones lean la pantalla. Haz una captura con el atajo del sistema y luego pulsa Ctrl+V para pegarla aquí como una capa nueva.</translation>
+    </message>
+    <message>
+        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+        <translation>Esta sesión de Wayland no permite que las aplicaciones lean la pantalla, por lo que la captura integrada no puede funcionar. Haz una captura con el atajo del sistema y luego pulsa Ctrl+V para pegarla aquí como una capa nueva.</translation>
+    </message>
+    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
         <source>Screenshot-%1</source>
         <translation>Captura-%1</translation>

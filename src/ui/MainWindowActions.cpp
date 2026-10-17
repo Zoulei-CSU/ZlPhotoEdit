@@ -21,6 +21,7 @@
 #include "ui/AppInfo.h"
 #include "compat/QtCompat.h"
 #include "compat/GlobalHotkey.h"
+#include "compat/ScreenCapture.h"
 #include "ui/CanvasView.h"
 #include "ui/ToolOptionsBar.h"
 #include "ui/StatusBarWidget.h"
@@ -1646,6 +1647,33 @@ void MainWindow::applyCaptureHotkey(const QKeySequence &sequence)
 
 void MainWindow::setupScreenCapture()
 {
+    // ── ⓪ 当前会话允不允许抓屏？（Wayland 下恒不允许）──
+    //
+    //  ★ 为什么在装配阶段就说，而不是等用户点了才说 ★
+    //    这个限制是**常驻**的：不是"这一次没抓到"，而是这条路在当前
+    //    桌面上根本走不通。状态栏一闪而过容易被忽略，所以同时写进
+    //    四个动作的 statusTip —— 鼠标在菜单项上停一下就能看到。
+    //
+    //  ★ 不因此禁用菜单 ★
+    //    灰掉的菜单项只会让用户更困惑（连"为什么"都点不出来）。
+    //    保持可点、点下去给一条能照着做的提示，比灰掉有用。
+    if (screenCaptureBlock() == CaptureBlock::Wayland) {
+        const QString tip =
+            tr("This Wayland session does not allow applications to read the "
+               "screen, so the built-in capture cannot work. Take a screenshot "
+               "with the system shortcut, then press Ctrl+V to paste it here "
+               "as a new layer.");
+        m_actionCaptureNow->setStatusTip(tip);
+        m_actionCaptureDelay3->setStatusTip(tip);
+        m_actionCaptureDelay5->setStatusTip(tip);
+        m_actionCaptureDelay10->setStatusTip(tip);
+        if (m_statusBar)
+            m_statusBar->showMessage(tip, 20000);
+        // 自检与截图工具看不到状态栏（窗口可能没显示过），日志里也留一条。
+        qWarning("Wayland 会话不允许应用直接抓屏（QScreen::grabWindow 恒返回空图）："
+                 "截图入口改为引导用户用系统截图键 + Ctrl+V 粘贴");
+    }
+
     // ── ① 延迟截图的定时器（单次）──
     //   只建一个：重复点"延迟 N 秒"= 重新计时（见 scheduleScreenCapture）
     m_captureTimer = new QTimer(this);

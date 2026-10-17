@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QScreen>
 #include <QSize>
+#include <QString>
 
 namespace zl {
 
@@ -25,6 +26,30 @@ static QScreen *screenUnderCursor()
 
     // 光标不在任何屏幕上（多屏之间的空隙、或离屏平台没有真实光标）
     return QGuiApplication::primaryScreen();
+}
+
+// ---------------------------------------------------------------------------
+//  会话层面能不能抓屏
+// ---------------------------------------------------------------------------
+//  Qt 明写：Wayland 下 screen capturing 不被 grabWindow() 支持，恒返回
+//  空 pixmap，官方指路 xdg-desktop-portal（那是另一套异步 D-Bus 流程）。
+//  在当前架构里接 portal 的代价远大于收益（要弹系统授权框、要把同步接口
+//  改成回调、还要改打包依赖），所以这里只做**识别**，由上层把"为什么"
+//  和"改怎么做"讲清楚 —— 系统截图键 + Ctrl+V 粘贴这条路在 Wayland 上
+//  完全可用（粘贴走 Qt 剪贴板，不受抓屏限制）。
+CaptureBlock screenCaptureBlock()
+{
+    if (!QGuiApplication::instance())
+        return CaptureBlock::None;
+
+    //  ★ 用 contains 而不是 == ★
+    //    实际插件名可能是 "wayland"、"wayland-egl"、"wayland-origin"……
+    //    精确相等会漏判，而漏判的表现是"该提示的时候沉默"。
+    const QString platform = QGuiApplication::platformName();
+    if (platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive))
+        return CaptureBlock::Wayland;
+
+    return CaptureBlock::None;
 }
 
 QImage grabScreen()

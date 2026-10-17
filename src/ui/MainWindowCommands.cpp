@@ -571,10 +571,28 @@ bool MainWindow::captureScreenNow()
     const QImage shot = m_screenGrabber ? m_screenGrabber() : grabScreen();
 
     if (shot.isNull()) {
-        // 契约③（空图 = 抓不到）在这里翻译成人话
-        if (m_statusBar)
-            m_statusBar->showMessage(
-                tr("Screenshot failed: no screen content captured (no display may be available)"), 6000);
+        // 契约③（空图 = 抓不到）在这里翻译成人话。
+        //
+        // ★ 分两种说法，因为"接下来该怎么做"完全不同 ★
+        //   Wayland 会话下这不是"这一次没抓到"，而是**这条路在当前桌面
+        //   环境里根本走不通**（合成器不允许客户端读屏幕上不属于自己的
+        //   像素，Qt 的 grabWindow() 在那里恒返回空图）。此时说"可能没有
+        //   显示器"是误导 —— 用户明明开着屏幕。
+        //   要告诉他改用系统截图键，再 Ctrl+V 粘进来：粘贴走剪贴板，
+        //   Wayland 下完全正常，不需要任何额外授权。
+        if (m_statusBar) {
+            if (screenCaptureBlock() == CaptureBlock::Wayland) {
+                m_statusBar->showMessage(
+                    tr("Screenshot unavailable: this Wayland session does not "
+                       "allow applications to read the screen. Use the system "
+                       "screenshot key, then press Ctrl+V to paste it here as "
+                       "a new layer."),
+                    20000);
+            } else {
+                m_statusBar->showMessage(
+                    tr("Screenshot failed: no screen content captured (no display may be available)"), 6000);
+            }
+        }
         return false;
     }
 

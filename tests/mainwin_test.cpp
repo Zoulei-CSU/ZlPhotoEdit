@@ -55,6 +55,7 @@
 // ============================================================================
 
 #include "compat/GlobalHotkey.h"
+#include "compat/ScreenCapture.h"
 
 #include "ui/MainWindow.h"
 #include "ui/CanvasView.h"
@@ -2990,6 +2991,15 @@ static void testScreenCaptureMenu()
     check(iconless.isEmpty(), "★ 四个动作都有图标");
     if (!iconless.isEmpty())
         std::printf("       缺图标：%s\n", qUtf8Printable(iconless.join(QStringLiteral(", "))));
+
+    // ── ②.5 会话限制的判断不能"恒真" ──
+    //   Wayland 会话里抓屏必然失败，上层据此改成"用系统截图键 + Ctrl+V
+    //   粘贴"的提示。但如果这个判断写错了方向（比如无脑返回 Wayland），
+    //   **所有桌面**都会看到"当前环境不支持截图" —— 那比原来的 bug 更糟：
+    //   用户会以为软件坏了，其实一切正常。
+    //   自检跑在 offscreen 平台上，正确答案必须是 None。
+    check(zl::screenCaptureBlock() == zl::CaptureBlock::None,
+          "★ 非 Wayland 会话不应被判为受限（否则所有桌面都会误报不支持）");
 
     // ── ③ 快捷键只在「立即截图」上，且必须来自候选表 ──
     //   ★ 这条不变量值得钉住 ★
