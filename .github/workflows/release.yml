@@ -137,7 +137,8 @@ jobs:
                 libxcb-keysyms1-dev libxcb-randr0-dev libxcb-render-util0-dev \
                 libxcb-shape0-dev libxcb-shm0-dev libxcb-sync-dev \
                 libxcb-xfixes0-dev libxcb-xinerama0-dev libxcb-util-dev \
-                libxcb-xkb-dev libfontconfig1-dev libfreetype6-dev
+                libxcb-xkb-dev libfontconfig1-dev libfreetype6-dev \
+                libcups2-dev
 
               # bionic 自带 cmake 3.10.2，项目要求 >= 3.16 → 加 Kitware 源
               wget -qO - https://apt.kitware.com/keys/kitware-archive-latest.asc \
@@ -191,13 +192,19 @@ jobs:
               #   从 18.04 容器拖出去只会把 glibc 下限抬到 2.27，与目标相悖。
               # ⇒ 排除后最高需求应回落到 GLIBC_2.17（Qt 5.15.2 二进制自身的基线）。
               #
-              # 为什么还要排除 libcups.so.2（本工程加了打印/导出 PDF 之后才有）：
-              #   Qt5 PrintSupport 的 libcupsprintersupport.so 链 libcups.so.2，
-              #   而 ubuntu:18.04 容器不装 libcups（Qt6 那个 job 跑在 rockylinux:8，
-              #   系统自带 2.2.6，所以那边不用排除）。apt 装 libcups2 会把 glibc 2.27
-              #   基线的库链（gnutls/gcrypt/avahi 等）拖进 AppImage，与 2.17 定位冲突。
+              # 为什么 libcups 要"装进来再排除"（缺一不可，第 16 轮实测）：
+              #   本工程加了打印/导出 PDF 后，Qt5 PrintSupport 的
+              #   libcupsprintersupport.so 链 libcups.so.2。linuxdeploy 对每个
+              #   DT_NEEDED 的处理顺序是：先按名字找库，找不到就直接
+              #   ERROR Could not find dependency 退出；找到才查排除名单。
+              #   libsystemd/libbsd 当初能排除成功，正因为 18.04 自带它们。
+              #   ⇒ 必须先在容器里装 libcups2-dev（仅构建期），排除名单才有机会生效。
+              #   不直接打包的原因：18.04 的 libcups 及其依赖链（gnutls/gcrypt/
+              #   avahi 等）全是 glibc 2.27 基线，会把 AppImage 下限抬过 2.17。
+              #   libcups 被排除后它的依赖根本不会被遍历，那些库不会进产物。
               #   代价：这个包里打印到实体打印机不可用（CUPS 后端缺失，Qt 静默降级），
               #   导出 PDF 不依赖 CUPS，仍然可用。其它包（win/mac/deb/rpm/Qt6）不受影响。
+              #   Qt6 那个 job 跑在 rockylinux:8，系统自带 libcups，无需这套处理。
               export LINUXDEPLOY_EXCLUDED_LIBRARIES="libsystemd.so.0;libbsd.so.0;libcups.so.2"
               ./linuxdeploy --appdir AppDir --plugin qt --output appimage \
                 --exclude-library "libsystemd.so.0" \
