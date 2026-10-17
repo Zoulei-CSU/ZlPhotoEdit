@@ -3147,6 +3147,146 @@ Continue?</source>
         <source>Applied %1</source>
         <translation>已套用%1</translation>
     </message>
+        <message>
+            <source>Navigator</source>
+            <translation>導覽器</translation>
+        </message>
+        <message>
+            <source>Recover Unsaved Work</source>
+            <translation>恢復未儲存的內容</translation>
+        </message>
+        <message>
+            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
+            <translation>上次工作階段中發現 %1 個未儲存的文件：\n\n%2\n\n是否恢復？圖層資訊不會保留。</translation>
+        </message>
+        <message>
+            <source>(Untitled)</source>
+            <translation>(無標題)</translation>
+        </message>
+        <message>
+            <source>Recovered</source>
+            <translation>已恢復</translation>
+        </message>
+        <message>
+            <source>%1 (Recovered)</source>
+            <translation>%1（已恢復）</translation>
+        </message>
+        <message>
+            <source>Recovered %1 document(s)</source>
+            <translation>已恢復 %1 個文件</translation>
+        </message>
+    <message>
+        <source>Undo Steps...</source>
+        <translation>復原步數…</translation>
+    </message>
+    <message>
+        <source>How many undo steps each document keeps</source>
+        <translation>每個文件保留多少步復原記錄</translation>
+    </message>
+    <message>
+        <source>Full Screen(&amp;U)</source>
+        <translation>全螢幕(&amp;U)</translation>
+    </message>
+    <message>
+        <source>Toggle full screen (F11)</source>
+        <translation>切換全螢幕（F11）</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>復原步數</translation>
+    </message>
+    <message>
+        <source>How many undo steps to keep per document:</source>
+        <translation>每個文件保留多少步復原記錄：</translation>
+    </message>
+    <message>
+        <source>Undo steps: %1</source>
+        <translation>復原步數：%1</translation>
+    </message>
+    <message>
+        <source>Print(&amp;P)...</source>
+        <translation>列印(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>Print the current image</source>
+        <translation>列印目前影像</translation>
+    </message>
+    <message>
+        <source>Export PDF(&amp;F)...</source>
+        <translation>匯出 PDF(&amp;F)…</translation>
+    </message>
+    <message>
+        <source>Export the current image as a single-page PDF</source>
+        <translation>將目前影像匯出為單頁 PDF</translation>
+    </message>
+    <message>
+        <source>Failed to write the PDF file.</source>
+        <translation>寫入 PDF 檔案失敗。</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>列印</translation>
+    </message>
+    <message>
+        <source>Printing failed</source>
+        <translation>列印失敗</translation>
+    </message>
+    <message>
+        <source>Sent to printer</source>
+        <translation>已傳送到印表機</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation>匯出 PDF</translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation>PDF 檔案 (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF exported: %1</source>
+        <translation>PDF 已匯出：%1</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask from Selection(&amp;M)</source>
+        <translation>從選取範圍新增圖層遮色片(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Hide everything outside the current selection without deleting pixels</source>
+        <translation>隱藏選取範圍外的內容，但不刪除像素</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask(&amp;K)</source>
+        <translation>刪除圖層遮色片(&amp;K)</translation>
+    </message>
+    <message>
+        <source>Delete the mask and show the whole layer again</source>
+        <translation>刪除遮色片，重新顯示整個圖層</translation>
+    </message>
+    <message>
+        <source>Select an area first; that area becomes the visible part</source>
+        <translation>請先建立選取範圍，選取的部分會成為可見區域</translation>
+    </message>
+    <message>
+        <source>Layer mask added</source>
+        <translation>已新增圖層遮色片</translation>
+    </message>
+    <message>
+        <source>This layer has no mask</source>
+        <translation>該圖層沒有遮色片</translation>
+    </message>
+    <message>
+        <source>Layer mask removed</source>
+        <translation>已刪除圖層遮色片</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>新增圖層遮色片</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>刪除圖層遮色片</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3756,4 +3896,11 @@ ICO 是圖示格式，邊長上限為 %3 像素（Windows 官方口徑是 256，
 請先用「影像 → 影像大小」把影像縮小到 %3 像素以內，再另存新檔 ICO。</translation>
     </message>
 </context>
+    <context>
+        <name>zl::NavigatorPanel</name>
+        <message>
+            <source>No document</source>
+            <translation>無文件</translation>
+        </message>
+    </context>
 </TS>

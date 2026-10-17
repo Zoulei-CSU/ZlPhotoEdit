@@ -87,8 +87,25 @@ public:
     // 透明底板上，这样图层面板里的缩略图尺寸统一，不会因长宽比不同而参差。
     QImage thumbnail(const QSize &size) const;
 
+    // ── 图层蒙版 ──
+    //
+    // 蒙版是"另一种 alpha"：它不改动图层自己的像素，只在合成时决定
+    // 每个像素露出多少。存成 ARGB32_Premultiplied 的"白色 + alpha"，
+    // 于是合成侧一句 DestinationIn 就能把它乘进去（见 Document 那边）。
+    //
+    // 空图 = 没有蒙版，这是本工程唯一的"没有"表示，不要用全白代替 ——
+    // 全白蒙版会让 hasMask() 为真，用户看到"删不掉"的蒙版标记。
+    bool          hasMask() const { return !m_mask.isNull(); }
+    const QImage &mask() const { return m_mask; }
+
+    // 设定蒙版。尺寸与图层不一致时按图层尺寸缩放；
+    // 传入空图等于删除蒙版。
+    void setMask(const QImage &mask);
+    void clearMask() { m_mask = QImage(); }
+
 private:
     QImage    m_image;
+    QImage    m_mask;      // 空 = 无蒙版
     QString   m_name;
     quint8    m_opacity   = 255;
     BlendMode m_blendMode = BlendMode::Normal;

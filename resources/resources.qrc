@@ -22,10 +22,13 @@
     <file>icons/edit_paste_into.svg</file>
     <file>icons/edit_redo.svg</file>
     <file>icons/edit_undo.svg</file>
+    <file>icons/edit_undo_limit.svg</file>
     <file>icons/file_close.svg</file>
+    <file>icons/file_export_pdf.svg</file>
     <file>icons/file_new.svg</file>
     <file>icons/file_open.svg</file>
     <file>icons/file_open_as_layer.svg</file>
+    <file>icons/file_print.svg</file>
     <file>icons/file_quit.svg</file>
     <file>icons/file_save.svg</file>
     <file>icons/file_save_as.svg</file>
@@ -41,6 +44,8 @@
     <file>icons/layer_flatten.svg</file>
     <file>icons/layer_hidden.svg</file>
     <file>icons/layer_lock.svg</file>
+    <file>icons/layer_mask_add.svg</file>
+    <file>icons/layer_mask_remove.svg</file>
     <file>icons/layer_merge_down.svg</file>
     <file>icons/layer_merge_visible.svg</file>
     <file>icons/layer_new.svg</file>
@@ -75,6 +80,7 @@
     <file>icons/tool_text.svg</file>
     <file>icons/tool_zoom.svg</file>
     <file>icons/view_checkerboard.svg</file>
+    <file>icons/view_fullscreen.svg</file>
     <file>icons/view_grid.svg</file>
     <file>icons/view_grid_snap.svg</file>
     <file>icons/view_grid_spacing.svg</file>

@@ -26,6 +26,7 @@
 #include "ui/ToolOptionsBar.h"
 #include "ui/StatusBarWidget.h"
 #include "ui/LayerPanel.h"
+#include "ui/NavigatorPanel.h"
 
 #include "core/DocumentManager.h"
 #include "core/Document.h"
@@ -250,6 +251,21 @@ void MainWindow::setupActions()
     m_actionSaveAs->setStatusTip(tr("Save to a new file; the format is decided by the extension"));
     connect(m_actionSaveAs, &QAction::triggered, this, &MainWindow::saveDocumentAs);
 
+    m_actionPrint = new QAction(tr("Print(&P)..."), this);
+    m_actionPrint->setObjectName(QStringLiteral("actionPrint"));
+    m_actionPrint->setIcon(icons::icon(QStringLiteral("file_print")));
+    m_actionPrint->setShortcut(QKeySequence::Print);
+    m_actionPrint->setStatusTip(tr("Print the current image"));
+    connect(m_actionPrint, &QAction::triggered, this, &MainWindow::printDocument);
+
+    // 「导出 PDF」不挂快捷键：Ctrl+Shift+P 之类容易与打印混，
+    // 而它本身是低频动作，菜单里点一次就够。
+    m_actionExportPdf = new QAction(tr("Export PDF(&F)..."), this);
+    m_actionExportPdf->setObjectName(QStringLiteral("actionExportPdf"));
+    m_actionExportPdf->setIcon(icons::icon(QStringLiteral("file_export_pdf")));
+    m_actionExportPdf->setStatusTip(tr("Export the current image as a single-page PDF"));
+    connect(m_actionExportPdf, &QAction::triggered, this, &MainWindow::saveAsPdf);
+
     m_actionClose = new QAction(tr("Close(&W)"), this);
     m_actionClose->setObjectName(QStringLiteral("actionClose"));
     m_actionClose->setIcon(icons::icon(QStringLiteral("file_close")));
@@ -327,6 +343,14 @@ void MainWindow::setupActions()
     m_actionDelete->setShortcut(QKeySequence::Delete);
     m_actionDelete->setStatusTip(tr("Delete the content inside the selection (clears the whole layer when there is no selection)"));
     connect(m_actionDelete, &QAction::triggered, this, &MainWindow::onDeleteSelection);
+
+    // 撤销步数：每页撤销栈保留多少条历史。
+    // 不挂快捷键 —— 它是设置项，不是操作。
+    m_actionUndoLimit = new QAction(tr("Undo Steps..."), this);
+    m_actionUndoLimit->setObjectName(QStringLiteral("actionUndoLimit"));
+    m_actionUndoLimit->setIcon(icons::icon(QStringLiteral("edit_undo_limit")));
+    m_actionUndoLimit->setStatusTip(tr("How many undo steps each document keeps"));
+    connect(m_actionUndoLimit, &QAction::triggered, this, &MainWindow::openUndoLimitDialog);
 
     // ─────────────────────────────────────────────────────────────────────
     //  选择
@@ -552,6 +576,22 @@ void MainWindow::setupActions()
     connect(m_actionLayerRename, &QAction::triggered,
             this, &MainWindow::renameActiveLayer);
 
+    m_actionLayerMaskAdd = new QAction(tr("Add Layer Mask from Selection(&M)"), this);
+    m_actionLayerMaskAdd->setObjectName(QStringLiteral("actionLayerMaskAdd"));
+    m_actionLayerMaskAdd->setIcon(icons::icon(QStringLiteral("layer_mask_add")));
+    m_actionLayerMaskAdd->setStatusTip(
+        tr("Hide everything outside the current selection without deleting pixels"));
+    connect(m_actionLayerMaskAdd, &QAction::triggered,
+            this, &MainWindow::addLayerMaskFromSelection);
+
+    m_actionLayerMaskRemove = new QAction(tr("Remove Layer Mask(&K)"), this);
+    m_actionLayerMaskRemove->setObjectName(QStringLiteral("actionLayerMaskRemove"));
+    m_actionLayerMaskRemove->setIcon(icons::icon(QStringLiteral("layer_mask_remove")));
+    m_actionLayerMaskRemove->setStatusTip(
+        tr("Delete the mask and show the whole layer again"));
+    connect(m_actionLayerMaskRemove, &QAction::triggered,
+            this, &MainWindow::removeLayerMask);
+
     // ─────────────────────────────────────────────────────────────────────
     //  视图
     // ─────────────────────────────────────────────────────────────────────
@@ -595,6 +635,16 @@ void MainWindow::setupActions()
     m_actionShowCheckerboard->setChecked(true);
     connect(m_actionShowCheckerboard, &QAction::toggled,
             this, &MainWindow::toggleCheckerboard);
+
+    // 全屏（F11）。★ 不用可勾选动作 ★
+    //   勾选态要靠窗口真实状态回写；用户从系统菜单退出全屏时，
+    //   一个没跟上来的勾只会让人以为"菜单里还写着全屏"。
+    m_actionFullScreen = new QAction(tr("Full Screen(&U)"), this);
+    m_actionFullScreen->setObjectName(QStringLiteral("actionFullScreen"));
+    m_actionFullScreen->setIcon(icons::icon(QStringLiteral("view_fullscreen")));
+    m_actionFullScreen->setShortcut(QKeySequence(Qt::Key_F11));
+    m_actionFullScreen->setStatusTip(tr("Toggle full screen (F11)"));
+    connect(m_actionFullScreen, &QAction::triggered, this, &MainWindow::toggleFullScreen);
 
     // ── 网格的间距与吸附（阶段七收尾）──
     //
@@ -916,6 +966,9 @@ void MainWindow::setupMenus()
     fileMenu->addAction(m_actionSave);
     fileMenu->addAction(m_actionSaveAs);
     fileMenu->addSeparator();
+    fileMenu->addAction(m_actionPrint);
+    fileMenu->addAction(m_actionExportPdf);
+    fileMenu->addSeparator();
     fileMenu->addAction(m_actionClose);
     fileMenu->addAction(m_actionQuit);
 
@@ -933,6 +986,8 @@ void MainWindow::setupMenus()
     editMenu->addAction(m_actionPasteInto);
     editMenu->addSeparator();
     editMenu->addAction(m_actionDelete);
+    editMenu->addSeparator();
+    editMenu->addAction(m_actionUndoLimit);
 
     // ─────────────────────────────────────────────────────────────────────
     //  选择
@@ -1001,6 +1056,9 @@ void MainWindow::setupMenus()
     layerMenu->addAction(m_actionFlatten);
     layerMenu->addSeparator();
     layerMenu->addAction(m_actionLayerRename);
+    layerMenu->addSeparator();
+    layerMenu->addAction(m_actionLayerMaskAdd);
+    layerMenu->addAction(m_actionLayerMaskRemove);
 
     // ─────────────────────────────────────────────────────────────────────
     //  视图
@@ -1048,6 +1106,9 @@ void MainWindow::setupMenus()
     QMenu *panelMenu = viewMenu->addMenu(tr("Panels(&P)"));
     panelMenu->setObjectName(QStringLiteral("menuPanel"));
     panelMenu->setIcon(icons::icon(QStringLiteral("menu_panels")));
+
+    viewMenu->addSeparator();
+    viewMenu->addAction(m_actionFullScreen);
 
     // ─────────────────────────────────────────────────────────────────────
     //  语言
@@ -1507,6 +1568,12 @@ void MainWindow::setupDocks()
     //    不报错、不崩溃。新式连接下签名对不上直接编译报错。
     connect(m_layerPanel, &LayerPanel::addLayerRequested,
             this, &MainWindow::addNewLayer);
+
+    // 文件被拖到图层面板上：与拖到窗口空白处走同一条"批量打开"。
+    // 面板为了拖拽排序必须 acceptDrops，所以这一步不能省 ——
+    // 否则拖到面板上的文件会被它静默吃掉。
+    connect(m_layerPanel, &LayerPanel::filesDropped,
+            this, &MainWindow::openDocumentPaths);
     connect(m_layerPanel, &LayerPanel::duplicateRequested,
             this, &MainWindow::duplicateLayersFromPanel);
     connect(m_layerPanel, &LayerPanel::deleteRequested,
@@ -1544,28 +1611,41 @@ void MainWindow::setupDocks()
     addDockWidget(Qt::RightDockWidgetArea, m_layerDock);
 
     // ─────────────────────────────────────────────────────────────────────
+    //  导航器面板（缩略图 + 可视框）
+    // ─────────────────────────────────────────────────────────────────────
+    //
+    // 文档与画布都不在这里绑，由 applyDocumentToPanels() 统一推。
+    m_navigatorDock = new QDockWidget(tr("Navigator"), this);
+    m_navigatorDock->setObjectName(QStringLiteral("navigatorDock"));
+    m_navigatorDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    m_navigatorPanel = new NavigatorPanel(this);
+    m_navigatorDock->setWidget(m_navigatorPanel);
+
+    addDockWidget(Qt::RightDockWidgetArea, m_navigatorDock);
+
+    // ─────────────────────────────────────────────────────────────────────
     //  把面板的显隐动作填进"视图 → 面板"菜单
     // ─────────────────────────────────────────────────────────────────────
-    if (QMenu *panelMenu = menuBar()->findChild<QMenu *>(QStringLiteral("menuPanels"))) {
+    // 注意 objectName 是 menuPanel（单数），与 setupMenus 里创建时一致。
+    if (QMenu *panelMenu = menuBar()->findChild<QMenu *>(QStringLiteral("menuPanel"))) {
+        panelMenu->addAction(m_navigatorDock->toggleViewAction());
         panelMenu->addAction(m_layerDock->toggleViewAction());
         panelMenu->addAction(m_historyDock->toggleViewAction());
         panelMenu->addAction(m_colorDock->toggleViewAction());
     }
 
-    // ── 右侧三个面板竖排 ──
-    //
-    // ★ 不 split 的话 Qt 会把它们并排放在右侧，各占 1/3 宽度 ★
-    //   图层列表需要宽度来显示图层名，而历史记录不需要那么宽。
-    //   竖排（上下堆叠）是更合理的布局。
+    // 右侧四个面板竖排。并排的话每块只剩四分之一宽度，图层名看不清。
+    splitDockWidget(m_navigatorDock, m_layerDock, Qt::Vertical);
     splitDockWidget(m_layerDock, m_historyDock, Qt::Vertical);
     splitDockWidget(m_historyDock, m_colorDock, Qt::Vertical);
 
-    // 面板的初始宽度（图层面板宽一些，历史与颜色窄一些）
-    resizeDocks({ m_layerDock, m_historyDock, m_colorDock },
-                { 240, 200, 180 }, Qt::Horizontal);
-    // 初始高度（历史记录区块大一些，颜色面板只需要放两个色块）
-    resizeDocks({ m_layerDock, m_historyDock, m_colorDock },
-                { 300, 260, 150 }, Qt::Vertical);
+    // 面板的初始宽度
+    resizeDocks({ m_navigatorDock, m_layerDock, m_historyDock, m_colorDock },
+                { 240, 240, 200, 180 }, Qt::Horizontal);
+    // 初始高度：导航器只需要装下缩略图，颜色面板只有两个色块
+    resizeDocks({ m_navigatorDock, m_layerDock, m_historyDock, m_colorDock },
+                { 170, 260, 240, 130 }, Qt::Vertical);
 }
 
 // ============================================================================
@@ -1999,6 +2079,11 @@ void MainWindow::loadSettings()
     //    （"为什么画笔是红的？我明明没设过"）。
     //    大部分程序的做法是每次启动回到默认的黑/白。
 
+    // ── 编辑偏好：撤销步数 ──
+    //   存档越界时夹回去。setUndoLimit 会把值推给所有已打开的页，
+    //   所以这里不需要关心"加载时到底有没有页"。
+    setUndoLimit(settings.value(QStringLiteral("edit/undoLimit"), 30).toInt());
+
     // ── 最近文件 ──
     updateRecentFileActions();
 
@@ -2038,6 +2123,9 @@ void MainWindow::saveSettings()
     settings.setValue(QStringLiteral("view/showRuler"), m_actionShowRuler->isChecked());
     settings.setValue(QStringLiteral("view/showGuides"), m_actionShowGuides->isChecked());
     settings.setValue(QStringLiteral("view/lockGuides"), m_actionLockGuides->isChecked());
+
+    // ── 编辑偏好 ──
+    settings.setValue(QStringLiteral("edit/undoLimit"), m_undoLimit);
 
     //   单位存**下标**（协议见 rulermetrics::unitAt）。
     //   从"当前选中项"反查下标，而不是缓存一个 int 成员 ——

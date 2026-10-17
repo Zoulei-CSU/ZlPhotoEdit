@@ -65,6 +65,8 @@
 //   否则改一次中文名就要改一次测试（然后被人随手删掉）。
 #include "ui/AppInfo.h"
 #include "ui/LayerPanel.h"
+#include "ui/NavigatorPanel.h"
+#include "core/RecoveryManager.h"
 // ★ 状态栏 ★ 用来读"缩放"那一栏显示的数字 —— 多标签下它是
 //   "切页要显式补推"的又一处（见 testDocumentTabs 的 ③b 段）。
 #include "ui/StatusBarWidget.h"
@@ -97,6 +99,8 @@
 #include <QDir>
 // 拖文件打开那组：构造一个真实的拖放进入事件交给窗口。
 #include <QDragEnterEvent>
+// 同一组：macOS 的"用本程序打开文件"事件走 QEvent::FileOpen。
+#include <QFileOpenEvent>
 #include <QMimeData>
 #include <QUrl>
 // 历史面板跳转那组：QUndoView 挂在 historyDock 里，点击条目走的是
@@ -3845,7 +3849,643 @@ static void testDropToOpenFiles()
               "★ 拖入内容不是图片的文件 → 不接受（判据是文件头，不是后缀）");
     }
 
+    // ── ④ 拖到图层面板上：不许被静默吞掉 ──
+    //
+    //  列表控件为了"拖拽排序"必须是 acceptDrops(true)，而 Qt 只把拖放事件
+    //  发给第一个 acceptDrops 的控件 —— 所以拖文件到面板上会被它吃掉。
+    //  修法是它自己接住并转成 filesDropped。
+    {
+        LayerPanel *panel = w->findChild<LayerPanel *>();
+        check(panel != nullptr, "拿得到图层面板");
+        QListWidget *list = panel ? panel->listWidget() : nullptr;
+        check(list != nullptr, "拿得到面板里的列表控件");
+        check(list && list->acceptDrops(),
+              "列表控件接受拖放（拖拽排序要用）—— 这正是它会吞文件的原因");
+
+        if (list) {
+            int dropped = 0;
+            QStringList got;
+            QObject::connect(panel, &LayerPanel::filesDropped, panel,
+                             [&dropped, &got](const QStringList &paths) {
+                                 ++dropped;
+                                 got = paths;
+                             });
+
+            QMimeData mime;
+            mime.setUrls(QList<QUrl>() << QUrl::fromLocalFile(pngPath));
+
+            // 送真实事件给 viewport（QAbstractScrollArea 的拖放都在它身上）
+            QWidget *target = list->viewport();
+            QDragEnterEvent enter(QPoint(10, 10), Qt::CopyAction, &mime,
+                                  Qt::LeftButton, Qt::NoModifier);
+            QApplication::sendEvent(target, &enter);
+            check(enter.isAccepted(), "拖入文件时列表控件接受拖放");
+
+            QDropEvent drop(QPointF(10, 10), Qt::CopyAction, &mime,
+                            Qt::LeftButton, Qt::NoModifier);
+            QApplication::sendEvent(target, &drop);
+            checkEqInt(dropped, 1, "拖放结束发出 filesDropped（没有被静默吞掉）");
+            check(got.size() == 1 && got.first() == pngPath, "转出的是原始路径");
+        }
+    }
+
+    // ── ⑤ macOS 的「用本程序打开文件」事件 ──
+    //
+    //  这条不是 macOS 专属逻辑：事件发给 QApplication，过滤器把它翻译成
+    //  一次 openDocumentPaths。在 offscreen 下同样能发这个事件，所以能钉。
+    {
+        DocumentTabs *tabs = tabsOf(w);
+        const int before = tabs ? tabs->count() : -1;
+        check(before >= 1, "事件之前至少有一页");
+
+        // 上面第 ④ 段已经把 pngPath 开过了，这里用另一个文件 ——
+        // 否则测的是"同一文件不重复开"，而不是 FileOpen 处理本身。
+        const QString secondPath = dir.filePath(QStringLiteral("fileopen.png"));
+        QImage img2(20, 20, QImage::Format_ARGB32);
+        img2.fill(QColor(30, 160, 90));
+        check(img2.save(secondPath, "PNG"), "造出第二个 PNG");
+
+        QFileOpenEvent ev(secondPath);
+        QApplication::sendEvent(qApp, &ev);
+
+        checkEqInt(tabs ? tabs->count() : -1, before + 1,
+                   "收到 QEvent::FileOpen → 开成一页（macOS 拖到 Dock 图标走这条）");
+
+        // 同一个文件再来一次：只切到已有那一页，不重复开
+        QFileOpenEvent again(secondPath);
+        QApplication::sendEvent(qApp, &again);
+        checkEqInt(tabs ? tabs->count() : -1, before + 1,
+                   "同一文件再次 FileOpen → 不重复开页");
+    }
+
     delete w;
+}
+
+// ===========================================================================
+//  [28] 导航器面板：缩略图布局 / 坐标换算 / 拖动定位
+// ===========================================================================
+//
+// 三件事值得钉：
+//   ① 缩略图等比居中（算错就是图被拉变形或贴在角上）
+//   ② 图像坐标与缩略图坐标的双向换算（"点哪跳哪"的前提）
+//   ③ 装配与绑定（面板关掉后再也打不开、切页后指向旧文档，都是静默失效）
+static void testNavigatorPanel()
+{
+    beginGroup("导航器：缩略图布局 / 坐标换算 / 拖动定位");
+
+    const QRectF panelRect(0, 0, 200, 200);
+
+    // ── ① 等比 + 居中 ──
+    {
+        const QRectF box = navigator::thumbnailRect(QSizeF(800, 400), panelRect, 8);
+        checkEqInt(qRound(box.width()), 184, "宽文档按宽度铺满（扣掉两侧 8px）");
+        checkEqInt(qRound(box.height()), 92, "高度按原比例");
+        check(qAbs(box.center().x() - panelRect.center().x()) < 0.51
+                  && qAbs(box.center().y() - panelRect.center().y()) < 0.51,
+              "缩略图在面板内居中");
+    }
+    {
+        const QRectF box = navigator::thumbnailRect(QSizeF(400, 800), panelRect, 8);
+        checkEqInt(qRound(box.height()), 184, "高文档按高度铺满");
+        checkEqInt(qRound(box.width()), 92, "宽度按原比例");
+    }
+    check(navigator::thumbnailRect(QSizeF(), panelRect, 8).isEmpty(),
+          "文档尺寸为空时返回空矩形（不除零）");
+
+    // ── ② 坐标双向换算 ──
+    {
+        const QRectF thumb(10, 20, 400, 200);
+        const QSizeF docSize(800, 400);
+
+        const QPointF centerImg = navigator::thumbToImage(thumb.center(), thumb, docSize);
+        checkEqInt(qRound(centerImg.x()), 400, "缩略图中心对应图像中心 x");
+        checkEqInt(qRound(centerImg.y()), 200, "缩略图中心对应图像中心 y");
+
+        const QRectF back = navigator::imageRectToThumb(
+            QRectF(380, 190, 40, 20), thumb, docSize);
+        checkEqInt(qRound(back.width()), 20, "图像 40 宽换算成缩略图 20（缩放 0.5）");
+        check(qAbs(back.center().x() - thumb.center().x()) < 0.51,
+              "同一中心点换算回去仍在中心");
+    }
+    {
+        const QPointF clamped = navigator::thumbToImage(
+            QPointF(-100, 900), QRectF(0, 0, 400, 200), QSizeF(800, 400));
+        checkEqInt(qRound(clamped.x()), 0, "左侧越界夹到 0");
+        checkEqInt(qRound(clamped.y()), 400, "下方越界夹到图像高度");
+    }
+
+    // ── ③ 装配与绑定 ──
+    MainWindow *w = newWindow(QStringLiteral("move"));
+
+    QDockWidget *navDock = w->findChild<QDockWidget *>(QStringLiteral("navigatorDock"));
+    check(navDock != nullptr, "建出了导航器 dock");
+
+    NavigatorPanel *navPanel = w->findChild<NavigatorPanel *>(
+        QStringLiteral("navigatorPanel"));
+    check(navPanel != nullptr, "dock 里装的是 NavigatorPanel");
+    check(navPanel && navPanel->document() != nullptr, "绑上了当前文档");
+    check(navPanel && navPanel->view() != nullptr, "绑上了当前画布");
+
+    QMenu *panelMenu = w->findChild<QMenu *>(QStringLiteral("menuPanel"));
+    check(panelMenu && navDock
+              && panelMenu->actions().contains(navDock->toggleViewAction()),
+          "「视图 → 面板」里能找到它（关掉之后还能再打开）");
+
+    CanvasView *cv = canvasOf(w);
+    Document *doc = navPanel ? navPanel->document() : nullptr;
+    check(cv != nullptr && doc != nullptr, "拿得到画布与文档");
+
+    // ── ④ 缩略图真的生成了 ──
+    if (navPanel && doc) {
+        // setDocument 传同一个指针会早退，先解除再设回来，强制重建一次。
+        // 这一步同时钉住"重建用的是当前面板尺寸"，而不是构造时那个尺寸。
+        navPanel->setDocument(nullptr);
+        navPanel->setDocument(doc);
+
+        const QRectF box = navPanel->thumbnailRect();
+        check(!box.isEmpty(), "缩略图矩形非空");
+        check(!navPanel->thumbnail().isNull(), "缩略图已生成（不是空图）");
+        check(qAbs(navPanel->thumbnail().width() - box.width()) <= 2.0,
+              "缩略图宽度与目标矩形一致");
+    }
+
+    // ── ⑤ 点缩略图某处 → 该点移到画布中心 ──
+    if (navPanel && cv && doc) {
+        // 先让布局跑完：画布没有实际尺寸时，居中的目标位置就是 (0,0)，
+        // 断言只会给出误导性的失败。
+        QApplication::processEvents();
+        check(cv->width() > 0 && cv->height() > 0, "画布已完成布局（有实际尺寸）");
+
+        // 先放大，让可视区只占图像一小块。否则点击点落在可视框内，
+        // 面板会保留"抓取偏移"，中心不等于点击点，断言就失去意义。
+        // 注意 setZoomLevel 收的是百分比（800 = 800%）。
+        cv->setZoomLevel(800.0);
+        QApplication::processEvents();
+
+        const QRectF box = navPanel->thumbnailRect();
+        const QSizeF docSize(doc->canvasSize());
+        const QPointF clickPt(box.left() + box.width() * 0.15,
+                              box.top() + box.height() * 0.85);
+        const QPointF targetImg = navigator::thumbToImage(clickPt, box, docSize);
+
+        QMouseEvent press(QEvent::MouseButtonPress, clickPt,
+                          QPointF(navPanel->mapToGlobal(clickPt.toPoint())),
+                          Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QApplication::sendEvent(navPanel, &press);
+        QApplication::processEvents();
+
+        const QRectF visible = cv->visibleImageRect();
+        check(qAbs(visible.center().x() - targetImg.x()) < 12.0
+                  && qAbs(visible.center().y() - targetImg.y()) < 12.0,
+              "在缩略图上点某处，该点被移到画布中心附近");
+    }
+
+    // ── ⑥ 解除绑定要清空 ──
+    if (navPanel) {
+        navPanel->setDocument(nullptr);
+        check(navPanel->document() == nullptr && navPanel->thumbnail().isNull(),
+              "解除绑定后缩略图清空");
+    }
+
+    delete w;
+}
+
+// ===========================================================================
+//  [29] 自动保存 / 崩溃恢复（只存扁平合成图）
+// ===========================================================================
+//
+// 钉四件事：
+//   ① 快照能写、能覆盖、能删（写不出来等于没有这个功能）
+//   ② 元数据在、图不在的条目要被跳过（否则用户点一个打不开的恢复项）
+//   ③ 只有"还有未保存修改"的文档才写快照
+//   ④ 存回干净状态后快照要消失（否则下次启动会拿旧内容问用户）
+static void testRecovery()
+{
+    beginGroup("自动保存：快照写入 / 覆盖 / 清理 / 只存脏文档");
+
+    QTemporaryDir dir;
+    check(dir.isValid(), "临时目录可用");
+    if (!dir.isValid())
+        return;
+
+    // ── ① RecoveryManager 本身 ──
+    {
+        RecoveryManager mgr;
+        mgr.setDirectory(dir.filePath(QStringLiteral("rec")));
+
+        QImage img(40, 30, QImage::Format_ARGB32);
+        img.fill(QColor(10, 120, 200));
+
+        check(mgr.save(QStringLiteral("k1"), img, QStringLiteral("/tmp/a.png"),
+                       QStringLiteral("a.png")),
+              "写入一条快照");
+        check(QFileInfo::exists(dir.filePath(QStringLiteral("rec/k1.png"))),
+              "快照图落盘");
+        checkEqInt(mgr.pendingEntries().size(), 1, "枚举到一条");
+
+        if (!mgr.pendingEntries().isEmpty()) {
+            const RecoveryManager::Entry entry = mgr.pendingEntries().first();
+            check(entry.title == QStringLiteral("a.png"), "元数据里有原标题");
+            check(entry.imageSize == QSize(40, 30), "元数据里有尺寸");
+            check(entry.savedAt.isValid(), "元数据里有保存时间");
+        }
+
+        check(mgr.save(QStringLiteral("k1"), img, QString(), QStringLiteral("b.png")),
+              "同名再存一次（覆盖）");
+        checkEqInt(mgr.pendingEntries().size(), 1, "覆盖不产生第二条");
+
+        QImage img2(8, 8, QImage::Format_ARGB32);
+        img2.fill(Qt::red);
+        mgr.save(QStringLiteral("k2"), img2, QString(), QStringLiteral("c.png"));
+        QFile::remove(dir.filePath(QStringLiteral("rec/k2.png")));
+        checkEqInt(mgr.pendingEntries().size(), 1,
+                   "图丢了的条目被跳过（不会让用户点一个不存在的恢复项）");
+
+        mgr.discard(QStringLiteral("k1"));
+        check(mgr.pendingEntries().isEmpty(), "discard 之后清空");
+    }
+
+    // ── ② 与主窗口联动 ──
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    const QString liveDir = dir.filePath(QStringLiteral("live"));
+    w->setRecoveryDirectory(liveDir);
+    w->setAutoSaveIntervalMs(10);
+    checkEqInt(w->autoSaveIntervalMs(), 10, "自动保存间隔可调");
+
+    CanvasView *cv = canvasOf(w);
+    Document *doc = cv ? cv->document() : nullptr;
+    check(doc != nullptr, "拿得到当前文档");
+
+    auto snapshotCount = [&liveDir]() {
+        return QDir(liveDir).entryList(QStringList() << QStringLiteral("*.json"),
+                                       QDir::Files).size();
+    };
+
+    if (doc) {
+        checkEqInt(snapshotCount(), 0, "一开始没有快照");
+
+        doc->setModified(true);
+
+        QElapsedTimer wait;
+        wait.start();
+        while (wait.elapsed() < 3000 && snapshotCount() == 0)
+            QApplication::processEvents();
+
+        checkEqInt(snapshotCount(), 1, "脏文档在间隔到点后写出快照");
+
+        const QStringList metas = QDir(liveDir).entryList(
+            QStringList() << QStringLiteral("*.json"), QDir::Files);
+        if (!metas.isEmpty()) {
+            const QString key = QFileInfo(metas.first()).completeBaseName();
+            const QImage restored(QDir(liveDir).filePath(key + QStringLiteral(".png")));
+            check(!restored.isNull() && restored.size() == doc->canvasSize(),
+                  "快照是一张与画布同尺寸的真图");
+        }
+
+        doc->setModified(false);
+        QApplication::processEvents();
+        checkEqInt(snapshotCount(), 0, "回到干净状态后快照被删除");
+    }
+
+    delete w;
+}
+
+// ============================================================================
+//  [30] 全屏与撤销步数
+// ============================================================================
+static void testFullScreenAndUndoLimit()
+{
+    beginGroup("全屏切换 / 撤销步数：菜单装配 + 立即生效 + 越界夹紧");
+
+    // ── ① 菜单装配 ──
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    QApplication::processEvents();
+
+    QAction *fullScreen = namedAction(w, "actionFullScreen");
+    check(fullScreen != nullptr, "视图 → 全屏：按 objectName 找得到");
+    if (fullScreen) {
+        check(!fullScreen->icon().isNull(), "全屏动作有图标");
+        check(fullScreen->shortcut() == QKeySequence(Qt::Key_F11), "快捷键是 F11");
+        // 可勾选动作的勾必须靠窗口真实状态回写，而"从系统菜单退出全屏"
+        // 不经过 QAction —— 索性不做成可勾选，免得留下一个骗人的勾。
+        check(!fullScreen->isCheckable(), "全屏不是可勾选动作");
+    }
+
+    QAction *undoLimitAction = namedAction(w, "actionUndoLimit");
+    check(undoLimitAction != nullptr, "编辑 → 撤销步数：按 objectName 找得到");
+    if (undoLimitAction)
+        check(!undoLimitAction->icon().isNull(), "撤销步数动作有图标");
+
+    // ── ② 全屏真的进得去、也出得来 ──
+    if (fullScreen) {
+        check(!w->isFullScreen(), "起始不在全屏");
+        fullScreen->trigger();
+        QApplication::processEvents();
+        check(w->isFullScreen(), "触发一次进全屏");
+        fullScreen->trigger();
+        QApplication::processEvents();
+        check(!w->isFullScreen(), "再触发一次退出全屏");
+    }
+
+    // ── ③ 撤销步数：默认值 / 立即生效 / 越界夹紧 ──
+    DocumentTabs *tabs = tabsOf(w);
+    CommandStack *stack =
+        (tabs && tabs->currentTab()) ? tabs->currentTab()->stack : nullptr;
+    check(stack != nullptr, "拿得到当前页的撤销栈");
+
+    checkEqInt(w->undoLimit(), 30, "默认 30 步");
+    if (stack)
+        checkEqInt(stack->undoLimit(), 30, "当前页的栈也是 30");
+
+    w->setUndoLimit(75);
+    checkEqInt(w->undoLimit(), 75, "主窗口记住新值");
+    if (stack)
+        checkEqInt(stack->undoLimit(), 75,
+                   "已打开的页立刻生效（不是只影响以后新开的页）");
+
+    w->setUndoLimit(0);
+    checkEqInt(w->undoLimit(), 1, "0 被夹到下限 1");
+    w->setUndoLimit(9999);
+    checkEqInt(w->undoLimit(), 200, "超上限被夹到 200");
+
+    delete w;
+
+    // ── ④ 多页：每一页的栈都要跟着变 ──
+    if (!g_settingsDir) {
+        check(false, "临时目录不可用");
+        return;
+    }
+    {
+        const QString dir = g_settingsDir->path() + QStringLiteral("/undolimit");
+        QDir().mkpath(dir);
+        const QString p1 = dir + QStringLiteral("/a.png");
+        const QString p2 = dir + QStringLiteral("/b.png");
+
+        QImage a(QSize(16, 12), QImage::Format_ARGB32_Premultiplied);
+        a.fill(QColor(200, 60, 60));
+        QImage b(QSize(16, 12), QImage::Format_ARGB32_Premultiplied);
+        b.fill(QColor(60, 60, 200));
+        check(a.save(p1, "PNG") && b.save(p2, "PNG"), "写出两张临时 PNG");
+
+        MainWindow mw(nullptr, QStringList{p1, p2});
+        DocumentTabs *mt = tabsOf(&mw);
+        checkEqInt(mt ? mt->count() : -1, 2, "两个文件开成两页");
+        if (mt && mt->count() == 2) {
+            mw.setUndoLimit(120);
+            checkEqInt(mt->tabAt(0)->stack->undoLimit(), 120, "第一页跟着变");
+            checkEqInt(mt->tabAt(1)->stack->undoLimit(), 120, "第二页也跟着变");
+        }
+    }
+}
+
+// ============================================================================
+//  [31] 打印 / 导出 PDF
+// ============================================================================
+static void testPrintAndPdf()
+{
+    beginGroup("打印 / 导出 PDF：菜单装配 + 真能写出 PDF");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    QApplication::processEvents();
+
+    // ── ① 菜单装配 ──
+    QAction *print = namedAction(w, "actionPrint");
+    check(print != nullptr, "文件 → 打印：按 objectName 找得到");
+    if (print) {
+        check(!print->icon().isNull(), "打印动作有图标");
+        check(print->shortcut() == QKeySequence(QKeySequence::Print),
+              "快捷键是 QKeySequence::Print（Ctrl+P）");
+    }
+
+    QAction *pdf = namedAction(w, "actionExportPdf");
+    check(pdf != nullptr, "文件 → 导出 PDF：按 objectName 找得到");
+    if (pdf)
+        check(!pdf->icon().isNull(), "导出 PDF 动作有图标");
+
+    QMenu *fileMenu = fileMenuOf(w);
+    check(fileMenu != nullptr, "拿得到「文件」菜单");
+    if (fileMenu) {
+        const QList<QAction *> acts = fileMenu->actions();
+        check(acts.contains(print), "打印项挂在「文件」菜单里");
+        check(acts.contains(pdf), "导出 PDF 项挂在「文件」菜单里");
+    }
+
+    // ── ② 空指针防御 ──
+    check(!w->renderToPrinter(nullptr), "renderToPrinter(nullptr) 返回 false（不崩）");
+
+    // ── ③ 真写一份 PDF ──
+    if (!g_settingsDir) {
+        check(false, "临时目录不可用");
+        delete w;
+        return;
+    }
+
+    const QString path = g_settingsDir->path() + QStringLiteral("/export.pdf");
+    QFile::remove(path);
+
+    QString error;
+    check(w->exportPdf(path, &error), "导出 PDF 成功");
+    check(error.isEmpty(), "成功时不带错误文案");
+
+    QFile f(path);
+    if (f.open(QIODevice::ReadOnly)) {
+        const QByteArray head = f.read(5);
+        const qint64 size = f.size();
+        f.close();
+        check(head.startsWith("%PDF"), "文件头是 %PDF（不是一张改了后缀的位图）");
+        check(size > 500, "文件确实有内容");
+    } else {
+        check(false, "导出后的 PDF 打得开");
+    }
+
+    // 同一路径再导一次：覆盖写不该失败（这也是"另存为同名文件"的常见路径）
+    check(w->exportPdf(path), "同一路径再导出一次（覆盖）成功");
+
+    QFile::remove(path);
+    delete w;
+}
+
+// ============================================================================
+//  [32] 图层蒙版
+// ============================================================================
+static void testLayerMask()
+{
+    beginGroup("图层蒙版：合成 / 撤销 / 合并也遵守");
+
+    // ── ① Layer 自身：设蒙版 / 缩放 / 删除 / 深拷贝 ──
+    {
+        Layer layer(QSize(40, 30), QStringLiteral("L"));
+        check(!layer.hasMask(), "新图层没有蒙版");
+
+        QImage gray(40, 30, QImage::Format_Grayscale8);
+        gray.fill(255);
+        layer.setMask(gray);
+        check(layer.hasMask(), "设了蒙版之后 hasMask 为真");
+        checkEqInt(layer.mask().width(), 40, "蒙版宽度与图层一致");
+        check(layer.mask().format() == QImage::Format_ARGB32_Premultiplied,
+              "蒙版被统一成预乘 ARGB（合成侧不必每次现转）");
+
+        // 尺寸不一致时必须缩放，否则合成时蒙版会错位
+        QImage small(8, 6, QImage::Format_Grayscale8);
+        small.fill(0);
+        layer.setMask(small);
+        checkEqInt(layer.mask().width(), 40, "尺寸不同的蒙版被缩放到图层尺寸");
+
+        layer.setMask(QImage());
+        check(!layer.hasMask(), "传空图等于删除蒙版");
+
+        // clone 必须带上蒙版，而且是深拷贝 ——
+        // 共享的话撤销会连带改掉当前蒙版（与像素那个坑同源）
+        layer.setMask(gray);
+        Layer copy = layer.clone();
+        check(copy.hasMask(), "clone 带上蒙版");
+        check(copy.mask().constBits() != layer.mask().constBits(),
+              "clone 的蒙版是深拷贝");
+    }
+
+    // ── ② 合成：蒙版决定露出哪一半 ──
+    {
+        Document doc(QSize(40, 30), QColor(0, 0, 255));   // 底：纯蓝
+        checkEqInt(doc.layerCount(), 1, "初始一个图层");
+
+        Layer top(QSize(40, 30), QStringLiteral("Top"));
+        QImage red(40, 30, QImage::Format_ARGB32_Premultiplied);
+        red.fill(QColor(255, 0, 0));
+        top.setImage(red);
+
+        // 左半白（露出）、右半黑（遮住）
+        //
+        // ★ 必须传 qRgb，不能直接传 255 ★
+        //   Grayscale8 的 setPixel() 会把参数当成 QRgb 再取亮度：
+        //   qGray(0x000000FF) = 39，于是"全白"会变成"几乎全黑"，
+        //   而症状只是合成结果不对 —— 看不出是构造数据时写错了。
+        QImage mask(40, 30, QImage::Format_Grayscale8);
+        for (int y = 0; y < 30; ++y) {
+            for (int x = 0; x < 40; ++x)
+                mask.setPixel(x, y, x < 20 ? qRgb(255, 255, 255) : qRgb(0, 0, 0));
+        }
+        top.setMask(mask);
+        doc.addLayer(top);
+
+        // 诊断用：先确认蒙版图本身是"左白右黑"
+        checkEqInt(qAlpha(top.mask().pixel(5, 15)), 255, "蒙版左半 alpha=255");
+        checkEqInt(qAlpha(top.mask().pixel(35, 15)), 0, "蒙版右半 alpha=0");
+
+        const QImage composed = doc.composite();
+        check(composed.pixelColor(5, 15).red() > 200,
+              "蒙版白色的那一半：看到上层（红）");
+        check(composed.pixelColor(35, 15).blue() > 200,
+              "蒙版黑色的那一半：透出下层（蓝）");
+    }
+
+    // ── ③ 合并可见 / 拼合也要遵守 ──
+    //
+    //  这是最容易漏的一处：漏了不会报错，只在合并后的图上才看得出来 ——
+    //  即"屏幕上看着有蒙版，合并出来的却没有"。
+    {
+        const auto buildDoc = [](Document &doc) {
+            Layer top(QSize(40, 30), QStringLiteral("Top"));
+            QImage red(40, 30, QImage::Format_ARGB32_Premultiplied);
+            red.fill(QColor(255, 0, 0));
+            top.setImage(red);
+
+            QImage mask(40, 30, QImage::Format_Grayscale8);
+            for (int y = 0; y < 30; ++y) {
+                for (int x = 0; x < 40; ++x)
+                    mask.setPixel(x, y, x < 20 ? qRgb(255, 255, 255) : qRgb(0, 0, 0));
+            }
+            top.setMask(mask);
+            doc.addLayer(top);
+        };
+
+        {
+            Document doc(QSize(40, 30), QColor(0, 0, 255));
+            buildDoc(doc);
+            check(doc.mergeVisibleLayers(), "合并可见图层成功");
+            const QImage merged = doc.composite();
+            check(merged.pixelColor(5, 15).red() > 200, "合并可见：左半仍是上层");
+            check(merged.pixelColor(35, 15).blue() > 200, "合并可见：右半仍透出下层");
+        }
+        {
+            Document doc(QSize(40, 30), QColor(0, 0, 255));
+            buildDoc(doc);
+            check(doc.flattenImage(), "拼合图像成功");
+            const QImage flat = doc.composite();
+            check(flat.pixelColor(5, 15).red() > 200, "拼合：左半仍是上层");
+            check(flat.pixelColor(35, 15).blue() > 200, "拼合：右半仍透出下层");
+        }
+    }
+
+    // ── ④ 菜单 + 命令 + 撤销（走真实路径）──
+    {
+        MainWindow *w = newWindow(QStringLiteral("move"));
+        CanvasView *cv = currentCanvasOf(w);
+        Document *doc = cv ? cv->document() : nullptr;
+        check(doc != nullptr, "拿得到当前文档");
+
+        QAction *add = namedAction(w, "actionLayerMaskAdd");
+        QAction *remove = namedAction(w, "actionLayerMaskRemove");
+        check(add != nullptr, "图层 → 从选区添加蒙版：按 objectName 找得到");
+        check(remove != nullptr, "图层 → 删除蒙版：按 objectName 找得到");
+
+        if (doc && add && remove) {
+            QMenu *layerMenu = w->findChild<QMenu *>(QStringLiteral("menuLayer"));
+            check(layerMenu != nullptr, "拿得到「图层」菜单");
+            if (layerMenu) {
+                const QList<QAction *> acts = layerMenu->actions();
+                check(acts.contains(add) && acts.contains(remove),
+                      "两个蒙版菜单项挂在「图层」菜单里");
+            }
+
+            Layer *layer = doc->activeLayer();
+            check(layer && !layer->hasMask(), "起始没有蒙版");
+
+            // 新建文档的初始图层是**透明**的（Qt::transparent），
+            // 透明层上量 alpha 量不出蒙版效果，所以先填成不透明。
+            if (layer) {
+                QImage filled(doc->canvasSize(),
+                              QImage::Format_ARGB32_Premultiplied);
+                filled.fill(QColor(255, 0, 0));
+                layer->setImage(filled);
+                doc->markDirty();
+            }
+
+            // 选区蒙版必须先按画布尺寸建好，否则 selectRect 会被静默吞掉
+            // （Selection::selectRect 的第一行就是"没有蒙版就返回"）。
+            doc->selection().prepareCanvas(doc->canvasSize());
+            doc->selection().selectRect(QRect(0, 0, 20, 20));
+            check(doc->selection().isActive(), "选区已建立");
+            check(!doc->selection().mask().isNull(), "选区蒙版非空");
+            check(add->isEnabled(), "「添加蒙版」菜单项是启用的");
+
+            add->trigger();
+            check(layer && layer->hasMask(), "触发菜单后有了蒙版");
+
+            const QImage shown = doc->composite();
+            check(shown.pixelColor(5, 5).alpha() > 200,
+                  "选区内仍然可见");
+            check(shown.pixelColor(600, 400).alpha() == 0,
+                  "选区外被蒙版遮住（变成透明）");
+
+            CommandStack *stack = tabsOf(w) ? tabsOf(w)->currentTab()->stack : nullptr;
+            check(stack != nullptr, "拿得到撤销栈");
+            if (stack) {
+                stack->undo();
+                check(layer && !layer->hasMask(), "撤销后蒙版消失");
+                stack->redo();
+                check(layer && layer->hasMask(), "重做后蒙版回来");
+            }
+
+            remove->trigger();
+            check(layer && !layer->hasMask(), "删除蒙版");
+            if (stack) {
+                stack->undo();
+                check(layer && layer->hasMask(), "撤销删除后蒙版回来");
+            }
+        }
+
+        delete w;
+    }
 }
 
 int main(int argc, char **argv)
@@ -3890,6 +4530,11 @@ int main(int argc, char **argv)
     testCreateImagePage();
     testHistoryJumpRefreshesCanvas();
     testDropToOpenFiles();
+    testNavigatorPanel();
+    testRecovery();
+    testFullScreenAndUndoLimit();
+    testPrintAndPdf();
+    testLayerMask();
 
     std::printf("------------------------------------------------\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);

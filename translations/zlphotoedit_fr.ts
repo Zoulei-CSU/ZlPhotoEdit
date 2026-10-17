@@ -3146,6 +3146,146 @@ Continuer&#xa0;?</translation>
         <source>Applied %1</source>
         <translation>%1 appliqué</translation>
     </message>
+        <message>
+            <source>Navigator</source>
+            <translation>Navigateur</translation>
+        </message>
+        <message>
+            <source>Recover Unsaved Work</source>
+            <translation>Récupérer le travail non enregistré</translation>
+        </message>
+        <message>
+            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
+            <translation>%1 document(s) non enregistré(s) trouvé(s) lors de la session précédente :\n\n%2\n\nLes récupérer ? Les informations de calque ne seront pas conservées.</translation>
+        </message>
+        <message>
+            <source>(Untitled)</source>
+            <translation>(Sans titre)</translation>
+        </message>
+        <message>
+            <source>Recovered</source>
+            <translation>Récupéré</translation>
+        </message>
+        <message>
+            <source>%1 (Recovered)</source>
+            <translation>%1 (récupéré)</translation>
+        </message>
+        <message>
+            <source>Recovered %1 document(s)</source>
+            <translation>%1 document(s) récupéré(s)</translation>
+        </message>
+    <message>
+        <source>Undo Steps...</source>
+        <translation>Étapes d'annulation…</translation>
+    </message>
+    <message>
+        <source>How many undo steps each document keeps</source>
+        <translation>Combien d'étapes d'annulation chaque document conserve</translation>
+    </message>
+    <message>
+        <source>Full Screen(&amp;U)</source>
+        <translation>Plein écran(&amp;U)</translation>
+    </message>
+    <message>
+        <source>Toggle full screen (F11)</source>
+        <translation>Basculer en plein écran (F11)</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>Étapes d'annulation</translation>
+    </message>
+    <message>
+        <source>How many undo steps to keep per document:</source>
+        <translation>Combien d'étapes d'annulation conserver par document :</translation>
+    </message>
+    <message>
+        <source>Undo steps: %1</source>
+        <translation>Étapes d'annulation : %1</translation>
+    </message>
+    <message>
+        <source>Print(&amp;P)...</source>
+        <translation>Imprimer(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>Print the current image</source>
+        <translation>Imprimer l'image actuelle</translation>
+    </message>
+    <message>
+        <source>Export PDF(&amp;F)...</source>
+        <translation>Exporter en PDF(&amp;F)…</translation>
+    </message>
+    <message>
+        <source>Export the current image as a single-page PDF</source>
+        <translation>Exporter l'image actuelle en PDF d'une page</translation>
+    </message>
+    <message>
+        <source>Failed to write the PDF file.</source>
+        <translation>Impossible d'écrire le fichier PDF.</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Imprimer</translation>
+    </message>
+    <message>
+        <source>Printing failed</source>
+        <translation>Échec de l'impression</translation>
+    </message>
+    <message>
+        <source>Sent to printer</source>
+        <translation>Envoyé à l'imprimante</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation>Exporter en PDF</translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation>Fichiers PDF (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF exported: %1</source>
+        <translation>PDF exporté : %1</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask from Selection(&amp;M)</source>
+        <translation>Ajouter un masque de calque depuis la sélection(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Hide everything outside the current selection without deleting pixels</source>
+        <translation>Masquer tout ce qui est hors de la sélection sans supprimer de pixels</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask(&amp;K)</source>
+        <translation>Supprimer le masque de calque(&amp;K)</translation>
+    </message>
+    <message>
+        <source>Delete the mask and show the whole layer again</source>
+        <translation>Supprimer le masque et réafficher tout le calque</translation>
+    </message>
+    <message>
+        <source>Select an area first; that area becomes the visible part</source>
+        <translation>Sélectionnez d'abord une zone ; elle deviendra la partie visible</translation>
+    </message>
+    <message>
+        <source>Layer mask added</source>
+        <translation>Masque de calque ajouté</translation>
+    </message>
+    <message>
+        <source>This layer has no mask</source>
+        <translation>Ce calque n'a pas de masque</translation>
+    </message>
+    <message>
+        <source>Layer mask removed</source>
+        <translation>Masque de calque supprimé</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>Ajouter un masque de calque</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>Supprimer le masque de calque</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3755,4 +3895,11 @@ ICO est un format d’icône dont l’arête ne peut dépasser %3 pixels (Window
 Utilisez Image → Taille de l’image pour réduire l’image à %3 pixels ou moins, puis enregistrez en ICO.</translation>
     </message>
 </context>
+    <context>
+        <name>zl::NavigatorPanel</name>
+        <message>
+            <source>No document</source>
+            <translation>Aucun document</translation>
+        </message>
+    </context>
 </TS>

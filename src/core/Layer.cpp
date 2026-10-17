@@ -53,7 +53,44 @@ Layer Layer::clone() const
     // 像素内存。撤销时修改"旧快照"会连带修改当前图像，撤销功能彻底失效。
     // 这个坑不报错，只是撤销时画面诡异，非常难查。
     copy.m_image = m_image.copy();
+    if (!m_mask.isNull())
+        copy.m_mask = m_mask.copy();
     return copy;
+}
+
+void Layer::setMask(const QImage &mask)
+{
+    if (mask.isNull()) {
+        m_mask = QImage();
+        return;
+    }
+
+    // 蒙版必须与图层同尺寸：合成时是按 (0,0) 直接叠上去的，
+    // 尺寸不同会让蒙版错位 —— 而错位的蒙版看起来"效果很奇怪"，
+    // 不像一个能一眼认出的 bug。
+    QImage source = mask;
+    if (!m_image.isNull() && source.size() != m_image.size()) {
+        source = source.scaled(m_image.size(), Qt::IgnoreAspectRatio,
+                               Qt::SmoothTransformation);
+    }
+
+    // 统一成"白色 + alpha"的预乘格式：这样一来合成侧只需要一次
+    // CompositionMode_DestinationIn，不需要每次现转格式。
+    if (source.format() != QImage::Format_ARGB32_Premultiplied) {
+        QImage converted(source.size(), QImage::Format_ARGB32_Premultiplied);
+        converted.fill(Qt::transparent);
+        // 从灰度/彩色图取亮度当 alpha。用 qGray 而不是 blue 通道：
+        // 用户拿一张彩色图当蒙版时，亮度才是他看到的"深浅"。
+        for (int y = 0; y < source.height(); ++y) {
+            for (int x = 0; x < source.width(); ++x) {
+                const int value = qGray(source.pixel(x, y));
+                converted.setPixel(x, y, qRgba(value, value, value, value));
+            }
+        }
+        m_mask = converted;
+    } else {
+        m_mask = source;
+    }
 }
 
 QImage Layer::thumbnail(const QSize &size) const

@@ -3160,6 +3160,146 @@ Continue?</source>
         <source>Applied %1</source>
         <translation>Применено: %1</translation>
     </message>
+        <message>
+            <source>Navigator</source>
+            <translation>Навигатор</translation>
+        </message>
+        <message>
+            <source>Recover Unsaved Work</source>
+            <translation>Восстановление несохранённой работы</translation>
+        </message>
+        <message>
+            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
+            <translation>В предыдущем сеансе найдено несохранённых документов: %1\n\n%2\n\nВосстановить? Информация о слоях не сохранится.</translation>
+        </message>
+        <message>
+            <source>(Untitled)</source>
+            <translation>(Без названия)</translation>
+        </message>
+        <message>
+            <source>Recovered</source>
+            <translation>Восстановлено</translation>
+        </message>
+        <message>
+            <source>%1 (Recovered)</source>
+            <translation>%1 (восстановлено)</translation>
+        </message>
+        <message>
+            <source>Recovered %1 document(s)</source>
+            <translation>Восстановлено документов: %1</translation>
+        </message>
+    <message>
+        <source>Undo Steps...</source>
+        <translation>Шагов отмены…</translation>
+    </message>
+    <message>
+        <source>How many undo steps each document keeps</source>
+        <translation>Сколько шагов отмены хранит каждый документ</translation>
+    </message>
+    <message>
+        <source>Full Screen(&amp;U)</source>
+        <translation>Полноэкранный режим(&amp;U)</translation>
+    </message>
+    <message>
+        <source>Toggle full screen (F11)</source>
+        <translation>Переключить полноэкранный режим (F11)</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>Шаги отмены</translation>
+    </message>
+    <message>
+        <source>How many undo steps to keep per document:</source>
+        <translation>Сколько шагов отмены хранить для каждого документа:</translation>
+    </message>
+    <message>
+        <source>Undo steps: %1</source>
+        <translation>Шагов отмены: %1</translation>
+    </message>
+    <message>
+        <source>Print(&amp;P)...</source>
+        <translation>Печать(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>Print the current image</source>
+        <translation>Печать текущего изображения</translation>
+    </message>
+    <message>
+        <source>Export PDF(&amp;F)...</source>
+        <translation>Экспорт в PDF(&amp;F)…</translation>
+    </message>
+    <message>
+        <source>Export the current image as a single-page PDF</source>
+        <translation>Экспортировать текущее изображение в PDF из одной страницы</translation>
+    </message>
+    <message>
+        <source>Failed to write the PDF file.</source>
+        <translation>Не удалось записать файл PDF.</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Печать</translation>
+    </message>
+    <message>
+        <source>Printing failed</source>
+        <translation>Ошибка печати</translation>
+    </message>
+    <message>
+        <source>Sent to printer</source>
+        <translation>Отправлено на принтер</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation>Экспорт в PDF</translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation>Файлы PDF (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF exported: %1</source>
+        <translation>PDF экспортирован: %1</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask from Selection(&amp;M)</source>
+        <translation>Добавить маску слоя из выделения(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Hide everything outside the current selection without deleting pixels</source>
+        <translation>Скрыть всё за пределами выделения, не удаляя пиксели</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask(&amp;K)</source>
+        <translation>Удалить маску слоя(&amp;K)</translation>
+    </message>
+    <message>
+        <source>Delete the mask and show the whole layer again</source>
+        <translation>Удалить маску и снова показать весь слой</translation>
+    </message>
+    <message>
+        <source>Select an area first; that area becomes the visible part</source>
+        <translation>Сначала выделите область — она станет видимой частью</translation>
+    </message>
+    <message>
+        <source>Layer mask added</source>
+        <translation>Маска слоя добавлена</translation>
+    </message>
+    <message>
+        <source>This layer has no mask</source>
+        <translation>У этого слоя нет маски</translation>
+    </message>
+    <message>
+        <source>Layer mask removed</source>
+        <translation>Маска слоя удалена</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>Добавить маску слоя</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>Удалить маску слоя</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3770,4 +3910,11 @@ ICO — формат значков с максимальной стороной
 С помощью «Изображение → Размер изображения» уменьшите изображение до %3 пикселей или менее, затем сохраните как ICO.</translation>
     </message>
 </context>
+    <context>
+        <name>zl::NavigatorPanel</name>
+        <message>
+            <source>No document</source>
+            <translation>Нет документа</translation>
+        </message>
+    </context>
 </TS>

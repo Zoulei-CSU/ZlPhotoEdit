@@ -60,6 +60,7 @@
 #include "ui/RotateImageDialog.h"
 
 #include "core/DocumentManager.h"
+#include "core/RecoveryManager.h"
 #include "core/Document.h"
 #include "core/Layer.h"
 #include "core/Selection.h"
@@ -102,6 +103,11 @@
 #include <QSettings>
 #include <QImageWriter>
 #include <QImageReader>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QPageSize>
+#include <QPageLayout>
+#include <QDialog>
 #include <QInputDialog>
 #include <QLineEdit>
 #include <QPushButton>   // 「打开为图层」的三选一对话框要拿 addButton 的返回值比较
@@ -1317,6 +1323,151 @@ bool MainWindow::exportIcon(const QString &path, QString *errorOut)
 }
 
 // ===========================================================================
+//  打印 / PDF
+// ===========================================================================
+
+namespace {
+
+// 按图像的物理尺寸算纸张（毫米），并夹在 50mm ~ A0 之间。
+//
+// 夹紧的两头都不是理论问题：16×16 的图标按 72dpi 印出来只有 5.6mm，
+// 落在纸上是个看不清的小点；而 20000px 的长图会要求打印机提供一张
+// 七八米长的纸 —— 打印对话框会直接拒绝这个尺寸。
+QSizeF paperSizeMm(const QImage &image, qreal dpi)
+{
+    const qreal safeDpi = (dpi > 1.0) ? dpi : 72.0;
+    const qreal w = image.width() / safeDpi * 25.4;
+    const qreal h = image.height() / safeDpi * 25.4;
+    return QSizeF(qBound(50.0, w, 841.0), qBound(50.0, h, 1189.0));
+}
+
+}   // namespace
+
+bool MainWindow::renderToPrinter(QPrinter *printer)
+{
+    if (!printer || !m_doc)
+        return false;
+
+    const QImage image = m_doc->composite();
+    if (image.isNull())
+        return false;
+
+    QPainter painter;
+    if (!painter.begin(printer))
+        return false;
+
+    // 可打印区域（设备像素）。不用整页尺寸，否则打印机的物理页边距
+    // 会盖住图的边缘。
+    const QRectF page = printer->pageRect(QPrinter::DevicePixel);
+
+    // 等比缩放 + 居中。宁可留白，也不要把图拉变形 ——
+    // 一张被拉伸过的图比一张小的图更难接受。
+    const qreal scale = qMin(page.width() / image.width(),
+                             page.height() / image.height());
+    QRectF target(0, 0, image.width() * scale, image.height() * scale);
+    target.moveCenter(page.center());
+
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter.drawImage(target, image);
+    painter.end();
+    return true;
+}
+
+bool MainWindow::exportPdf(const QString &path, QString *errorOut)
+{
+    if (!m_doc) {
+        if (errorOut)
+            *errorOut = tr("No image is open.");
+        return false;
+    }
+
+    const QImage image = m_doc->composite();
+    if (image.isNull()) {
+        if (errorOut)
+            *errorOut = tr("Cannot generate the image data (the composite is empty).");
+        return false;
+    }
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(path);
+    printer.setDocName(m_doc->displayName());
+
+    // 纸张照图像的物理尺寸定；PDF 没有物理页边距的限制，所以边距给 0，
+    // 让图正好铺满一页（读者缩放时不会看到一圈莫名留白）。
+    const QSizeF paper = paperSizeMm(image, m_doc->dpiX());
+    printer.setPageSize(QPageSize(paper, QPageSize::Millimeter));
+    printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout::Millimeter);
+
+    if (!renderToPrinter(&printer)) {
+        if (errorOut)
+            *errorOut = tr("Failed to write the PDF file.");
+        return false;
+    }
+    return true;
+}
+
+void MainWindow::printDocument()
+{
+    if (!requireDocument())
+        return;
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setDocName(m_doc->displayName());
+
+    // 给一个合理的初始纸张，用户仍可在对话框里改。
+    const QImage image = m_doc->composite();
+    if (!image.isNull())
+        printer.setPageSize(QPageSize(paperSizeMm(image, m_doc->dpiX()),
+                                      QPageSize::Millimeter));
+
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print"));
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    if (!renderToPrinter(&printer)) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("Printing failed"), 5000);
+        return;
+    }
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("Sent to printer"), 4000);
+}
+
+void MainWindow::saveAsPdf()
+{
+    if (!requireDocument())
+        return;
+
+    QString suggested;
+    if (m_doc->filePath().isEmpty()) {
+        suggested = QDir::homePath() + QLatin1Char('/')
+                    + tr("Untitled") + QStringLiteral(".pdf");
+    } else {
+        const QFileInfo fi(m_doc->filePath());
+        suggested = fi.absolutePath() + QLatin1Char('/')
+                    + fi.completeBaseName() + QStringLiteral(".pdf");
+    }
+
+    const QString path = QFileDialog::getSaveFileName(
+        this, tr("Export PDF"), suggested, tr("PDF files (*.pdf)"));
+    if (path.isEmpty())
+        return;
+
+    QString error;
+    if (!exportPdf(path, &error)) {
+        QMessageBox::warning(this, tr("Export PDF"), error);
+        return;
+    }
+
+    if (m_statusBar)
+        m_statusBar->showMessage(
+            tr("PDF exported: %1").arg(QFileInfo(path).fileName()), 5000);
+}
+
+// ===========================================================================
 //  写图像文件
 // ===========================================================================
 
@@ -1633,6 +1784,30 @@ bool MainWindow::maybeSaveAll()
 }
 
 // ============================================================================
+//  eventFilter —— 接收系统的"用本程序打开文件"事件
+// ============================================================================
+//
+//  macOS 上把文件拖到 Dock 图标、或在 Finder 里选"打开方式"，系统不会给
+//  命令行参数，而是往应用里投一个 QEvent::FileOpen。这个事件发给
+//  QApplication，所以在 qApp 上装了过滤器。
+//
+//  其它平台不会发这个事件，这个分支自然不成立 —— 不加平台条件，
+//  少一处"换平台忘了改"。
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::FileOpen) {
+        auto *openEvent = static_cast<QFileOpenEvent *>(event);
+        const QString path = openEvent->file();
+        if (!path.isEmpty()) {
+            openDocumentPaths(QStringList() << path);
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
+// ============================================================================
 //  closeEvent —— 窗口关闭
 // ============================================================================
 
@@ -1654,6 +1829,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
     // 保存设置（窗口几何、停靠状态、工具参数）
     saveSettings();
+
+    // 正常退出：本实例的恢复快照没有留存价值。
+    // 只删自己的 key——同目录可能还有另一个实例的（它用不同的 pid 前缀）。
+    if (m_recoveryManager) {
+        for (const QString &key : m_recoveryKeys)
+            m_recoveryManager->discard(key);
+        m_recoveryKeys.clear();
+    }
 
     // ★ 顺序：先拆 UI 页 → 再让面板松手 → 最后销毁文档 ★
     //
@@ -1945,6 +2128,48 @@ void MainWindow::redo()
 {
     if (m_commandStack)
         m_commandStack->redo();
+}
+
+// ---------------------------------------------------------------------------
+//  撤销步数
+// ---------------------------------------------------------------------------
+
+void MainWindow::setUndoLimit(int limit)
+{
+    // CommandStack 内部也会夹一次。这里先夹，是为了让 m_undoLimit
+    // 与真正生效的值永远相等 —— 否则存进设置的是越界值，下次启动还要再夹。
+    m_undoLimit = qBound(1, limit, 200);
+
+    if (!m_tabs)
+        return;
+
+    // 对**所有已打开的页**生效，不只是以后新开的页。
+    for (int i = 0; i < m_tabs->count(); ++i) {
+        DocumentTab *tab = m_tabs->tabAt(i);
+        if (tab && tab->stack)
+            tab->stack->setUndoLimit(m_undoLimit);
+    }
+}
+
+void MainWindow::openUndoLimitDialog()
+{
+    bool ok = false;
+    const int value = QInputDialog::getInt(
+        this, tr("Undo Steps"), tr("How many undo steps to keep per document:"),
+        m_undoLimit, 1, 200, 10, &ok);
+
+    if (!ok || value == m_undoLimit)
+        return;
+
+    setUndoLimit(value);
+
+    // 改完立刻落盘：用户可能直接关窗口，而那条路径上不保证再走一遍
+    // saveSettings() 的全部分支。
+    QSettings settings;
+    settings.setValue(QStringLiteral("edit/undoLimit"), m_undoLimit);
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("Undo steps: %1").arg(m_undoLimit), 4000);
 }
 
 // ---------------------------------------------------------------------------
@@ -3968,6 +4193,76 @@ void MainWindow::mergeVisibleLayers()
         m_statusBar->showMessage(tr("Visible layers merged"), 2000);
 }
 
+// ── 图层蒙版 ──
+//
+//  MVP 只做"用选区生成"与"删除"。不做画笔涂蒙版：那需要工具层知道
+//  "现在写的是蒙版而不是图层像素"，是另一个量级的改动。
+//  即便如此，非破坏性遮挡这个核心价值已经成立 —— 而且随时可撤销、可删除。
+
+void MainWindow::addLayerMaskFromSelection()
+{
+    if (!requireDocument() || !m_commandStack)
+        return;
+
+    const int index = m_doc->activeLayerIndex();
+    Layer *layer = m_doc->layers().layer(index);
+    if (!layer)
+        return;
+
+    if (layer->isLocked()) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("The current layer is not editable"), 2500);
+        return;
+    }
+
+    const Selection &selection = m_doc->selection();
+    if (!selection.isActive() || selection.mask().isNull()) {
+        // 没有选区就做全白蒙版是"看得见但没用"，而且本版还不能涂蒙版，
+        // 所以直接说清楚要什么，而不是塞一个空壳给用户。
+        if (m_statusBar)
+            m_statusBar->showMessage(
+                tr("Select an area first; that area becomes the visible part"), 5000);
+        return;
+    }
+
+    auto *cmd = LayerCommand::createPropertyCommand(
+        m_doc, index, LayerCommand::Op::SetMask,
+        QVariant::fromValue(layer->mask()),
+        QVariant::fromValue(selection.mask()),
+        tr("Add Layer Mask"));
+    m_commandStack->push(cmd);
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("Layer mask added"), 3000);
+}
+
+void MainWindow::removeLayerMask()
+{
+    if (!requireDocument() || !m_commandStack)
+        return;
+
+    const int index = m_doc->activeLayerIndex();
+    Layer *layer = m_doc->layers().layer(index);
+    if (!layer)
+        return;
+
+    if (!layer->hasMask()) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("This layer has no mask"), 3000);
+        return;
+    }
+
+    auto *cmd = LayerCommand::createPropertyCommand(
+        m_doc, index, LayerCommand::Op::SetMask,
+        QVariant::fromValue(layer->mask()),
+        QVariant::fromValue(QImage()),
+        tr("Remove Layer Mask"));
+    m_commandStack->push(cmd);
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("Layer mask removed"), 3000);
+}
+
 void MainWindow::renameActiveLayer()
 {
     if (!requireDocument() || !m_layerPanel)
@@ -4130,6 +4425,19 @@ void MainWindow::commitLayerOpacity(int layerIndex, int before, int after)
 // ============================================================================
 //  视图操作
 // ============================================================================
+
+void MainWindow::toggleFullScreen()
+{
+    if (!isFullScreen()) {
+        // 记住进来之前是不是最大化，退出时要还原成那个状态。
+        m_wasMaximizedBeforeFullScreen = isMaximized();
+        showFullScreen();
+    } else if (m_wasMaximizedBeforeFullScreen) {
+        showMaximized();
+    } else {
+        showNormal();
+    }
+}
 
 void MainWindow::zoomIn()
 {

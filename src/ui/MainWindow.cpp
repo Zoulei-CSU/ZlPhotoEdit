@@ -8,6 +8,7 @@
 #include "ui/AppInfo.h"
 
 #include "core/DocumentManager.h"
+#include "core/RecoveryManager.h"
 #include "core/Document.h"
 #include "core/Layer.h"
 #include "core/Selection.h"
@@ -50,8 +51,10 @@
 //   编译器需要知道 LayerPanel 有这个方法，前置声明不够。
 //   报错是 C2027「使用了未定义类型」。
 #include "ui/LayerPanel.h"
+#include "ui/NavigatorPanel.h"
 
 #include <QApplication>
+#include <QFileOpenEvent>
 #include <QAction>
 #include <QActionGroup>
 // 屏幕截图的全局热键要从 kCaptureHotkey（字符串）构造它 —— 只此一处构造，
@@ -66,7 +69,6 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QComboBox>
-#include <QProgressBar>
 #include <QUndoView>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -189,6 +191,10 @@ MainWindow::MainWindow(QWidget *parent, const QStringList &initialFiles)
 
     loadSettings();
 
+    // macOS 的"用本程序打开文件"是发给 QApplication 的事件，窗口自己收不到。
+    // 过滤器跟着本对象走：QObject 析构时会自动从 qApp 上摘掉。
+    qApp->installEventFilter(this);
+
     // ── 启动时的文档 ──
     //
     //  有命令行参数 → 每个文件开一页（`ZlPhotoEdit a.png b.png`）；
@@ -269,6 +275,155 @@ void MainWindow::setupDocumentManager()
             this, [this](Document *) {
         updateWindowTitle();
     });
+
+    setupRecovery();
+}
+
+// ============================================================================
+//  自动保存 / 崩溃恢复
+// ============================================================================
+
+void MainWindow::setupRecovery()
+{
+    m_recoveryManager = new RecoveryManager(this);
+
+    m_recoveryTimer = new QTimer(this);
+    m_recoveryTimer->setSingleShot(true);
+    m_recoveryTimer->setInterval(15000);
+    connect(m_recoveryTimer, &QTimer::timeout,
+            this, &MainWindow::writeRecoverySnapshots);
+
+    if (m_docManager) {
+        connect(m_docManager, &DocumentManager::documentModifiedChanged,
+                this, [this](Document *doc, bool modified) {
+            if (modified)
+                scheduleRecovery();
+            else
+                discardRecoveryFor(doc);
+        });
+        connect(m_docManager, &DocumentManager::documentRemoved,
+                this, [this](Document *doc) { discardRecoveryFor(doc); });
+    }
+}
+
+void MainWindow::setAutoSaveIntervalMs(int ms)
+{
+    if (m_recoveryTimer)
+        m_recoveryTimer->setInterval(qMax(0, ms));
+}
+
+int MainWindow::autoSaveIntervalMs() const
+{
+    return m_recoveryTimer ? m_recoveryTimer->interval() : -1;
+}
+
+void MainWindow::setRecoveryDirectory(const QString &dir)
+{
+    if (m_recoveryManager)
+        m_recoveryManager->setDirectory(dir);
+}
+
+QString MainWindow::recoveryKeyFor(Document *doc)
+{
+    if (!doc)
+        return QString();
+
+    const auto it = m_recoveryKeys.constFind(doc);
+    if (it != m_recoveryKeys.constEnd())
+        return it.value();
+
+    const QString key = RecoveryManager::makeKey(++m_recoverySeq);
+    m_recoveryKeys.insert(doc, key);
+    return key;
+}
+
+void MainWindow::scheduleRecovery()
+{
+    // 已在计时就不重置：连续落笔时重置会让快照永远写不出去。
+    if (m_recoveryTimer && !m_recoveryTimer->isActive())
+        m_recoveryTimer->start();
+}
+
+void MainWindow::writeRecoverySnapshots()
+{
+    if (!m_recoveryManager || !m_docManager)
+        return;
+
+    bool stillDirty = false;
+
+    for (int i = 0; i < m_docManager->count(); ++i) {
+        Document *doc = m_docManager->documentAt(i);
+        if (!doc || !doc->isModified())
+            continue;
+
+        stillDirty = true;
+
+        const QString key = recoveryKeyFor(doc);
+        const QImage snapshot = doc->composite();
+        if (snapshot.isNull())
+            continue;
+
+        m_recoveryManager->save(key, snapshot, doc->filePath(), doc->displayName());
+    }
+
+    if (stillDirty)
+        m_recoveryTimer->start();
+}
+
+void MainWindow::discardRecoveryFor(Document *doc)
+{
+    if (!doc || !m_recoveryManager)
+        return;
+
+    const QString key = m_recoveryKeys.take(doc);
+    if (!key.isEmpty())
+        m_recoveryManager->discard(key);
+}
+
+void MainWindow::promptRecoveryOnStartup()
+{
+    if (!m_recoveryManager)
+        return;
+
+    const QList<RecoveryManager::Entry> entries = m_recoveryManager->pendingEntries();
+    if (entries.isEmpty())
+        return;
+
+    QStringList names;
+    for (const RecoveryManager::Entry &entry : entries)
+        names << (entry.title.isEmpty() ? tr("(Untitled)") : entry.title);
+
+    const int count = entries.size();
+    const auto answer = QMessageBox::question(
+        this, tr("Recover Unsaved Work"),
+        tr("Found %1 unsaved document(s) from the previous session:\n\n%2\n\n"
+           "Recover them? Layer information is not preserved.")
+            .arg(count)
+            .arg(names.join(QLatin1Char('\n'))),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+    if (answer != QMessageBox::Yes) {
+        m_recoveryManager->clearAll();
+        return;
+    }
+
+    int restored = 0;
+    for (const RecoveryManager::Entry &entry : entries) {
+        const QImage image(entry.imagePath);
+        if (!image.isNull()) {
+            ImagePageSpec spec;
+            spec.image = image;
+            spec.titleHint = entry.title.isEmpty()
+                                 ? tr("Recovered")
+                                 : tr("%1 (Recovered)").arg(entry.title);
+            if (createImagePage(spec))
+                ++restored;
+        }
+        m_recoveryManager->discard(entry.key);
+    }
+
+    if (m_statusBar)
+        m_statusBar->showMessage(tr("Recovered %1 document(s)").arg(restored), 6000);
 }
 
 // ============================================================================
@@ -730,6 +885,9 @@ int MainWindow::attachDocumentTab(Document *doc)
     //   连一次就够：回调里用 stack != m_commandStack 过滤非当前页（见下）。
     wireCommandStack(tab->stack);
 
+    // 撤销步数沿用应用级设置（新页也必须遵守，不只是启动时那几页）。
+    tab->stack->setUndoLimit(m_undoLimit);
+
     // ── 让"控件上的当前页"与"逻辑上的当前页"一致，然后显式激活 ──
     //
     //  ★ 为什么不能只靠信号 ★
@@ -1064,6 +1222,12 @@ void MainWindow::applyDocumentToPanels(Document *doc)
 
     if (m_layerPanel)
         m_layerPanel->setDocument(doc);
+
+    // 导航器要两样东西：文档出缩略图，画布出可视框。
+    if (m_navigatorPanel) {
+        m_navigatorPanel->setDocument(doc);
+        m_navigatorPanel->setView(m_canvas);
+    }
 
     if (m_toolManager) {
         m_toolManager->setDocument(doc);

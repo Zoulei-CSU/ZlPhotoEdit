@@ -9,7 +9,11 @@
 #include <QApplication>
 #include <QBrush>
 #include <QComboBox>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
 #include <QDropEvent>
+#include <QMimeData>
+#include <QUrl>
 #include <QFontMetrics>
 #include <QHBoxLayout>
 #include <QItemSelectionModel>
@@ -45,7 +49,8 @@ enum RowRole {
     VisibleRole,                        // 该图层当前是否可见
     LockedRole,                         // 该图层当前是否锁定
     SubtitleRole,                       // 副标题（混合模式 · 不透明度），默认值下为空
-    ThumbnailRole                       // 缩略图（QImage）
+    ThumbnailRole,                      // 缩略图（QImage）
+    MaskRole                            // 该图层是否带蒙版
 };
 
 /// 图层副标题：只在"非默认"时才显示。
@@ -240,6 +245,26 @@ void LayerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(thumbRect.adjusted(0, 0, -1, -1));
 
+    // ── ①b 蒙版徽标：缩略图右下角一个小方块 ──
+    //
+    //  缩略图本身显示的是图层像素（未应用蒙版），所以必须有另一个记号
+    //  告诉用户"这层还挂着蒙版" —— 否则画布上看到的和缩略图对不上，
+    //  用户会以为是渲染出了问题。
+    if (index.data(MaskRole).toBool()) {
+        const int side = 11;
+        const QRect badge(thumbRect.right() - side - 2,
+                          thumbRect.bottom() - side - 2, side, side);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QColor(255, 255, 255, 235));
+        painter->drawRoundedRect(badge, 2, 2);
+        painter->setPen(QPen(QColor(40, 40, 40, 200), 1));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRoundedRect(badge, 2, 2);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QColor(40, 40, 40, 210));
+        painter->drawEllipse(badge.center(), 3, 3);
+    }
+
     // ── ② 名字 + 副标题 ──
     const QRect nameR = nameRect(rowRect);
     const QFontMetrics fm(opt.font);
@@ -403,8 +428,46 @@ void LayerListWidget::mousePressEvent(QMouseEvent *event)
     QListWidget::mousePressEvent(event);
 }
 
+void LayerListWidget::dragEnterEvent(QDragEnterEvent *event)
+{
+    // 外部文件：接住，按"要打开文件"处理。
+    // 这里不能靠 ignore() 指望事件回退给 MainWindow —— Qt 只把拖放事件
+    // 发给鼠标下第一个 acceptDrops() 的控件，ignore 不会往上走。
+    if (event->mimeData() && event->mimeData()->hasUrls()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+        return;
+    }
+    QListWidget::dragEnterEvent(event);
+}
+
+void LayerListWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (event->mimeData() && event->mimeData()->hasUrls()) {
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+        return;
+    }
+    QListWidget::dragMoveEvent(event);
+}
+
 void LayerListWidget::dropEvent(QDropEvent *event)
 {
+    // 文件拖到面板上：把路径转给上层去打开，不要当成"移动图层行"。
+    if (event->mimeData() && event->mimeData()->hasUrls()) {
+        QStringList paths;
+        const QList<QUrl> urls = event->mimeData()->urls();
+        for (const QUrl &url : urls) {
+            if (url.isLocalFile())
+                paths.append(url.toLocalFile());
+        }
+        event->setDropAction(Qt::CopyAction);
+        event->accept();
+        if (!paths.isEmpty())
+            emit filesDropped(paths);
+        return;
+    }
+
     // ★ 不调用基类的实现 ★
     //
     //  基类的 InternalMove 会**就地搬动行**，而行的真身在 Document 里。
@@ -641,6 +704,8 @@ void LayerPanel::setupUi()
             this, &LayerPanel::lockToggled);
     connect(m_list, &LayerListWidget::reorderRequested,
             this, &LayerPanel::reorderRequested);
+    connect(m_list, &LayerListWidget::filesDropped,
+            this, &LayerPanel::filesDropped);
 
     // 重命名：delegate 提交 → 发出去（文档改完会重建行）
     if (auto *delegate = qobject_cast<LayerItemDelegate *>(m_list->itemDelegate())) {
@@ -782,6 +847,7 @@ void LayerPanel::rebuildRows()
         item->setData(LayerIndexRole, index);
         item->setData(VisibleRole, layer->isVisible());
         item->setData(LockedRole, layer->isLocked());
+        item->setData(MaskRole, layer->hasMask());
         item->setData(SubtitleRole, subtitleFor(*layer));
         item->setData(ThumbnailRole, layer->thumbnail(QSize(kThumbSize, kThumbSize)));
         ++m_thumbnailRenderCount;
@@ -880,6 +946,7 @@ void LayerPanel::updateRowDisplay(int layerIndex)
         item->setData(Qt::DisplayRole, layer->name());
         item->setData(VisibleRole, layer->isVisible());
         item->setData(LockedRole, layer->isLocked());
+        item->setData(MaskRole, layer->hasMask());
         item->setData(SubtitleRole, subtitleFor(*layer));
         m_syncing = wasSyncing;
         break;

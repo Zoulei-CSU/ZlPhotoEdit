@@ -124,7 +124,9 @@ SOURCES += \
     src/ui/GridSettingsDialog.cpp \
     src/ui/RotateImageDialog.cpp \
     src/ui/ToolOptionsBar.cpp \
-    src/ui/StatusBarWidget.cpp
+    src/ui/StatusBarWidget.cpp \
+    src/ui/NavigatorPanel.cpp \
+    src/core/RecoveryManager.cpp
 
 HEADERS += \
     src/compat/QtCompat.h \
@@ -199,7 +201,9 @@ HEADERS += \
     src/ui/StatusBarWidget.h \
     src/ui/LayerPanel.h \
     src/ui/IconLibrary.h \
-    src/ui/AppInfo.h
+    src/ui/AppInfo.h \
+    src/ui/NavigatorPanel.h \
+    src/core/RecoveryManager.h
 
 # ---------------------------------------------------------------------------
 #  资源文件（SVG 图标）

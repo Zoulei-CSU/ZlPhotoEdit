@@ -355,5 +355,9 @@ int main(int argc, char *argv[])
     zl::MainWindow window(nullptr, initialFiles);
     window.show();
 
+    // 上次异常退出留下的未保存内容：问用户是否恢复。
+    // 放在 show() 之后，模态框才有父窗口，位置也才对。
+    window.promptRecoveryOnStartup();
+
     return app.exec();
 }

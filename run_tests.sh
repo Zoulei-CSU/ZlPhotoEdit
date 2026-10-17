@@ -307,6 +307,7 @@ moc_headers_for() {
                   src/ui/ToolOptionsBar.h \
                   src/ui/StatusBarWidget.h \
                   src/ui/LayerPanel.h \
+                  src/ui/NavigatorPanel.h \
                   src/ui/AdjustmentDialog.h \
                   src/ui/BrightnessContrastDialog.h \
                   src/ui/HueSaturationDialog.h \
@@ -329,8 +330,9 @@ moc_headers_for() {
 extra_libs_for() {
     case "$1" in
         # 图标要用 QSvgRenderer 自己光栅化 → 必须真链 Qt5Svg
-        icon_test|mainwin_test|layer_panel_test)
-                                           echo "Qt5Widgets.lib Qt5Svg.lib" ;;
+        # 主窗口测试另外要链 PrintSupport：打印 / 导出 PDF 用 QPrinter
+        icon_test|layer_panel_test)        echo "Qt5Widgets.lib Qt5Svg.lib" ;;
+        mainwin_test)                      echo "Qt5Widgets.lib Qt5Svg.lib Qt5PrintSupport.lib" ;;
         ui_smoke_test|view_test|crop_test|tool_paint_test|shape_tool_test|hand_zoom_test|text_tool_test|document_tabs_test|perf_test|brush_tool_test|move_tool_test|magic_wand_test)
                                            echo "Qt5Widgets.lib" ;;
         *)                                 echo "" ;;
@@ -531,6 +533,7 @@ build_and_run() {
        /I "$QT_WIN/include/QtGui" \
        /I "$QT_WIN/include/QtWidgets" \
        /I "$QT_WIN/include/QtSvg" \
+       /I "$QT_WIN/include/QtPrintSupport" \
        "${args[@]}" \
        "${moc_args[@]}" \
        "${rcc_args[@]}" \
@@ -1364,7 +1367,9 @@ run_one() {
                 src/ui/AppInfo.cpp \
                 src/ui/LayerPanel.cpp \
                 src/ui/ToolOptionsBar.cpp \
-                src/ui/StatusBarWidget.cpp
+                src/ui/StatusBarWidget.cpp \
+                src/ui/NavigatorPanel.cpp \
+                src/core/RecoveryManager.cpp
             ;;
         actions)
             run_action_check

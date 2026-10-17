@@ -168,7 +168,18 @@ signals:
     /// 拖动排序：from/to 都是**文档索引**
     void reorderRequested(int fromIndex, int toIndex);
 
+    /// 有文件被拖到列表上（而不是图层行被拖动）。
+    /// 面板自己不打开文件，原样转给 MainWindow。
+    void filesDropped(const QStringList &paths);
+
 protected:
+    // 外部文件拖放。★ 必须在这里接住，否则文件永远打不开 ★
+    //   Qt 找拖放目标时从鼠标下最内层控件往上找第一个 acceptDrops() 的控件，
+    //   找到就只发给它 —— 它在 dropEvent 里 ignore() 也不会回退给父控件。
+    //   本控件为了拖拽排序必须是 acceptDrops(true)，于是拖到图层面板上的
+    //   文件会被它吞掉（画布那边是同一个坑，修法相反：那边根本不该 accept）。
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void dropEvent(QDropEvent *event) override;
 
@@ -230,6 +241,9 @@ signals:
     void mergeVisibleRequested();
     void flattenRequested();
     void reorderRequested(int fromIndex, int toIndex);
+
+    /// 文件被拖到图层面板上。面板负责转达，打开文件是 MainWindow 的事。
+    void filesDropped(const QStringList &paths);
 
     // ── 属性类 ──
     void visibilityToggled(int layerIndex, bool visible);

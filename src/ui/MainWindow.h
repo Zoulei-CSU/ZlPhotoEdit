@@ -57,8 +57,8 @@ class QLabel;
 class QDockWidget;
 class QToolBar;
 class QUndoView;
-class QProgressBar;
 class QComboBox;
+class QPrinter;
 // ★ Qt 的类只能声明在**全局**命名空间 ★
 //   曾经把 `class QTimer;` 写进了下面的 namespace zl 里 —— 那声明出来的是
 //   **zl::QTimer**，一个与 ::QTimer 毫不相干的类。头文件里（成员是指针）
@@ -69,9 +69,11 @@ class QTimer;
 namespace zl {
 
 class LayerPanel;
+class NavigatorPanel;
 
 class Document;
 class DocumentManager;
+class RecoveryManager;
 class CommandStack;
 class Selection;
 class AbstractTool;   // applyActiveToolToUi() 的形参（只用到指针）
@@ -188,6 +190,45 @@ public:
     };
     Document *createImagePage(const ImagePageSpec &spec);
 
+    // ── 自动保存 / 崩溃恢复 ──
+    //
+    // 默认每 15 秒把"仍有未保存修改"的文档合成图写一份快照到用户数据目录，
+    // 正常保存或正常退出时删掉。启动时若发现残留，问用户是否恢复。
+    // 只存扁平图（多图层恢复后是单图层），见 core/RecoveryManager.h。
+
+    void setAutoSaveIntervalMs(int ms);
+    int  autoSaveIntervalMs() const;
+
+    // 恢复目录。测试要指到临时目录，否则会污染真实用户数据。
+    void setRecoveryDirectory(const QString &dir);
+
+    // 启动后调用：有残留快照时询问是否恢复。
+    // 不放在构造函数里，是为了让测试可以完全跳过这个模态框。
+    void promptRecoveryOnStartup();
+
+    // ── 撤销步数 ──
+    //
+    // 每个文档的撤销栈上限（1~200）。改完立刻对**所有已打开的页**生效，
+    // 而不只是以后新开的页 —— 否则用户改完设置会发现"当前这张图没变"。
+    // 超出的最旧记录被丢弃，这一点由 QUndoStack 自己保证。
+    void setUndoLimit(int limit);
+    int  undoLimit() const { return m_undoLimit; }
+
+    // ── 打印与 PDF ──
+    //
+    // 与 importImageAsLayer / exportIcon 同一条纪律：带对话框的入口只负责
+    // "选目标"，真正干活的这一半必须能脱离对话框被调用 —— 否则它永远
+    // 只能靠人眼验证（模态框在离屏环境里会让进程永久挂住）。
+
+    // 把当前文档的合成图铺到 printer 的第一页上（等比缩放、居中）。
+    // printer 的输出格式、纸张、文件名都由调用方配好，这里不再改。
+    // 返回 false = 没有文档 / 合成图为空 / QPainter 打不开设备。
+    bool renderToPrinter(QPrinter *printer);
+
+    // 导出单页 PDF。不弹任何对话框。
+    // 纸张按图像的物理尺寸（像素 ÷ DPI）定，两边都带兜底夹紧。
+    bool exportPdf(const QString &path, QString *errorOut = nullptr);
+
     // 立即抓取当前屏幕的内容，开为新的一页。
     //
     // 返回 false = 抓不到屏幕（没有显示器 / 平台拒绝）。此时**什么都不做**：
@@ -268,6 +309,11 @@ protected:
     // 快捷键（工具的单键快捷键需要在这里拦截 —— 见 keyPressEvent 说明）
     void keyPressEvent(QKeyEvent *event) override;
 
+    // macOS：系统把"用本程序打开文件"投成 QEvent::FileOpen 事件，
+    // 而不是命令行参数（拖到 Dock 图标、Finder 里选"打开方式"都走这条）。
+    // 事件发给 QApplication，所以过滤器装在 qApp 上，不在窗口自己身上。
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     // ── 初始化 ──
 
@@ -289,6 +335,13 @@ private:
     void setupToolBars();
     void setupDocks();
     void setupStatusBar();
+
+    // 自动保存：建立管理器与定时器（在 setupDocumentManager 里调用）。
+    void setupRecovery();
+    void scheduleRecovery();
+    void writeRecoverySnapshots();
+    void discardRecoveryFor(Document *doc);
+    QString recoveryKeyFor(Document *doc);
 
     // ★ 屏幕截图的两件"活物"：全局热键与延迟定时器 ★
     //   必须在 setupStatusBar() **之后**调用 —— 热键登记失败时要用状态栏
@@ -431,6 +484,12 @@ private:
     bool saveDocumentAs();
     void closeCurrentDocument();
 
+    // 「文件 → 打印…」：选打印机与纸张，再把当前页交给 renderToPrinter()。
+    void printDocument();
+
+    // 「文件 → 导出 PDF…」：选路径，再交给 exportPdf()。
+    void saveAsPdf();
+
     // 用 QImageWriter 写文件（而非 QImage::save），以便设置格式参数
     bool writeImage(const QString &path, const QString &format,
                     int quality, bool includeAlpha);
@@ -453,6 +512,10 @@ private:
 
     void undo();
     void redo();
+
+    // 「编辑 → 撤销步数…」：问一个数字，交给 setUndoLimit() 落地。
+    // 对话框与实现分开，理由同 importImageAsLayer：模态框在自动化环境会卡死。
+    void openUndoLimitDialog();
 
     void cutSelection();
     void copySelection();
@@ -556,6 +619,13 @@ private:
     void flattenImage();
     void mergeVisibleLayers();
 
+    // ── 图层蒙版 ──
+    //
+    // 用当前选区生成蒙版：选中处露出、未选中处遮住。蒙版不改图层像素，
+    // 所以随时可以删掉还原 —— 这是它相对"直接删像素"的全部价值。
+    void addLayerMaskFromSelection();
+    void removeLayerMask();
+
     /// 让图层面板里活动图层那一行进入重命名编辑态
     void renameActiveLayer();
 
@@ -590,6 +660,10 @@ private:
     void commitLayerOpacity(int layerIndex, int before, int after);
 
     // ── 视图操作 ──
+
+    // 全屏切换（F11）。退出时恢复到进入前的状态（最大化 / 普通），
+    // 而不是一律还原成普通窗口 —— 全屏前最大化的用户会突然丢掉大窗口。
+    void toggleFullScreen();
 
     void zoomIn();
     void zoomOut();
@@ -691,10 +765,18 @@ private:
     QDockWidget     *m_layerDock = nullptr;
     QDockWidget     *m_historyDock = nullptr;
     QDockWidget     *m_colorDock = nullptr;
+    QDockWidget     *m_navigatorDock = nullptr;
 
     LayerPanel      *m_layerPanel = nullptr;
+    NavigatorPanel  *m_navigatorPanel = nullptr;
 
     QUndoView       *m_undoView = nullptr;
+
+    // 自动保存 / 崩溃恢复。定时器是单次型的：存完若还有脏文档就再续一次。
+    RecoveryManager *m_recoveryManager = nullptr;
+    QTimer          *m_recoveryTimer = nullptr;
+    int              m_recoverySeq = 0;
+    QHash<Document *, QString> m_recoveryKeys;
 
     QToolBar        *m_mainToolBar = nullptr;
     QToolBar        *m_toolsToolBar = nullptr;
@@ -721,6 +803,10 @@ private:
 
     QAction *m_actionSave = nullptr;
     QAction *m_actionSaveAs = nullptr;
+
+    // 文件 → 打印… / 导出 PDF…
+    QAction *m_actionPrint = nullptr;
+    QAction *m_actionExportPdf = nullptr;
     QAction *m_actionClose = nullptr;
     QAction *m_actionQuit = nullptr;
 
@@ -731,6 +817,9 @@ private:
     QAction *m_actionPaste = nullptr;
     QAction *m_actionPasteInto = nullptr;
     QAction *m_actionDelete = nullptr;
+
+    // 编辑 → 撤销步数…
+    QAction *m_actionUndoLimit = nullptr;
 
     QAction *m_actionSelectAll = nullptr;
     QAction *m_actionDeselect = nullptr;
@@ -765,12 +854,19 @@ private:
     QAction *m_actionLayerMergeVisible = nullptr;
     QAction *m_actionLayerRename = nullptr;
 
+    // 图层 → 蒙版
+    QAction *m_actionLayerMaskAdd = nullptr;
+    QAction *m_actionLayerMaskRemove = nullptr;
+
     QAction *m_actionZoomIn = nullptr;
     QAction *m_actionZoomOut = nullptr;
     QAction *m_actionZoomFit = nullptr;
     QAction *m_actionZoomActual = nullptr;
     QAction *m_actionShowGrid = nullptr;
     QAction *m_actionShowCheckerboard = nullptr;
+
+    // 视图 → 全屏（F11）
+    QAction *m_actionFullScreen = nullptr;
 
     // ── 网格的间距与吸附（阶段七收尾）──
     QAction *m_actionSnapToGrid = nullptr;
@@ -819,6 +915,15 @@ private:
     // 文档内嵌的"最近使用文件"上限
     static constexpr int kMaxRecentFiles = 10;
     QList<QAction *> m_recentFileActions;
+
+    // ── 编辑偏好 ──
+
+    // 撤销步数上限。开新页时推给它的撤销栈，改设置时推给全部已有的栈。
+    int m_undoLimit = 30;
+
+    // 进入全屏前是否处于最大化。退出全屏时据此还原 ——
+    // 一律 showNormal() 会让"最大化后按 F11 再按 F11"丢掉大窗口。
+    bool m_wasMaximizedBeforeFullScreen = false;
 
     // ── 屏幕截图的状态（装配在 setupScreenCapture 里）──
 

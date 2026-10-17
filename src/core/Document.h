@@ -284,6 +284,14 @@ private:
     // 内部使用：不做任何检查地设置画布尺寸
     void setCanvasSizeInternal(const QSize &size);
 
+    // 该图层参与合成时应该用的像素：有蒙版就返回"蒙版已乘进 alpha"的副本，
+    // 没有则直接返回原图（隐式共享，零拷贝）。
+    //
+    // 所有合成路径都必须走这里 —— composite / 向下合并 / 合并可见 / 拼合。
+    // 少走一处，症状就是"屏幕上看着有蒙版，合并出来的却没有"，
+    // 而且不报错、只在合并后的图上才看得见。
+    QImage layerPixelsForComposite(const Layer &layer) const;
+
     QSize     m_canvasSize;
     LayerList m_layers;
     Selection m_selection;

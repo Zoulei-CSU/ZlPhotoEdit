@@ -3160,6 +3160,146 @@ Continue?</source>
         <source>Applied %1</source>
         <translation>Se ha aplicado %1</translation>
     </message>
+        <message>
+            <source>Navigator</source>
+            <translation>Navegador</translation>
+        </message>
+        <message>
+            <source>Recover Unsaved Work</source>
+            <translation>Recuperar trabajo sin guardar</translation>
+        </message>
+        <message>
+            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
+            <translation>Se encontraron %1 documento(s) sin guardar de la sesión anterior:\n\n%2\n\n¿Recuperarlos? La información de capas no se conservará.</translation>
+        </message>
+        <message>
+            <source>(Untitled)</source>
+            <translation>(Sin título)</translation>
+        </message>
+        <message>
+            <source>Recovered</source>
+            <translation>Recuperado</translation>
+        </message>
+        <message>
+            <source>%1 (Recovered)</source>
+            <translation>%1 (recuperado)</translation>
+        </message>
+        <message>
+            <source>Recovered %1 document(s)</source>
+            <translation>%1 documento(s) recuperado(s)</translation>
+        </message>
+    <message>
+        <source>Undo Steps...</source>
+        <translation>Pasos de deshacer…</translation>
+    </message>
+    <message>
+        <source>How many undo steps each document keeps</source>
+        <translation>Cuántos pasos de deshacer guarda cada documento</translation>
+    </message>
+    <message>
+        <source>Full Screen(&amp;U)</source>
+        <translation>Pantalla completa(&amp;U)</translation>
+    </message>
+    <message>
+        <source>Toggle full screen (F11)</source>
+        <translation>Alternar pantalla completa (F11)</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>Pasos de deshacer</translation>
+    </message>
+    <message>
+        <source>How many undo steps to keep per document:</source>
+        <translation>Cuántos pasos de deshacer conservar por documento:</translation>
+    </message>
+    <message>
+        <source>Undo steps: %1</source>
+        <translation>Pasos de deshacer: %1</translation>
+    </message>
+    <message>
+        <source>Print(&amp;P)...</source>
+        <translation>Imprimir(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>Print the current image</source>
+        <translation>Imprimir la imagen actual</translation>
+    </message>
+    <message>
+        <source>Export PDF(&amp;F)...</source>
+        <translation>Exportar PDF(&amp;F)…</translation>
+    </message>
+    <message>
+        <source>Export the current image as a single-page PDF</source>
+        <translation>Exportar la imagen actual como un PDF de una página</translation>
+    </message>
+    <message>
+        <source>Failed to write the PDF file.</source>
+        <translation>No se pudo escribir el archivo PDF.</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>Imprimir</translation>
+    </message>
+    <message>
+        <source>Printing failed</source>
+        <translation>Error al imprimir</translation>
+    </message>
+    <message>
+        <source>Sent to printer</source>
+        <translation>Enviado a la impresora</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation>Exportar PDF</translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation>Archivos PDF (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF exported: %1</source>
+        <translation>PDF exportado: %1</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask from Selection(&amp;M)</source>
+        <translation>Añadir máscara de capa desde la selección(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Hide everything outside the current selection without deleting pixels</source>
+        <translation>Ocultar todo lo que está fuera de la selección sin borrar píxeles</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask(&amp;K)</source>
+        <translation>Quitar máscara de capa(&amp;K)</translation>
+    </message>
+    <message>
+        <source>Delete the mask and show the whole layer again</source>
+        <translation>Eliminar la máscara y volver a mostrar toda la capa</translation>
+    </message>
+    <message>
+        <source>Select an area first; that area becomes the visible part</source>
+        <translation>Selecciona un área primero; esa área será la parte visible</translation>
+    </message>
+    <message>
+        <source>Layer mask added</source>
+        <translation>Máscara de capa añadida</translation>
+    </message>
+    <message>
+        <source>This layer has no mask</source>
+        <translation>Esta capa no tiene máscara</translation>
+    </message>
+    <message>
+        <source>Layer mask removed</source>
+        <translation>Máscara de capa eliminada</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>Añadir máscara de capa</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>Quitar máscara de capa</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3770,4 +3910,11 @@ ICO es un formato de iconos con un lado máximo de %3 píxeles (Windows dice ofi
 Usa Imagen → Tamaño de imagen para reducir la imagen a %3 píxeles o menos y luego guárdala como ICO.</translation>
     </message>
 </context>
+    <context>
+        <name>zl::NavigatorPanel</name>
+        <message>
+            <source>No document</source>
+            <translation>Sin documento</translation>
+        </message>
+    </context>
 </TS>

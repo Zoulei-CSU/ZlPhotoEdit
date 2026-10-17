@@ -258,12 +258,12 @@ bool Document::mergeLayerDown(int index)
     QImage scaledBase(m_canvasSize, QImage::Format_ARGB32_Premultiplied);
     scaledBase.fill(Qt::transparent);
     const QImage base = blend::compositeLayer(scaledBase,
-                                              lower->image(),
+                                              layerPixelsForComposite(*lower),
                                               BlendMode::Normal,
                                               lower->opacityF());
 
     const QImage merged = blend::compositeLayer(base,
-                                                upper->image(),
+                                                layerPixelsForComposite(*upper),
                                                 upper->blendMode(),
                                                 upper->opacityF());
 
@@ -330,7 +330,7 @@ bool Document::mergeVisibleLayers()
         const Layer *layer = m_layers.layer(i);
         if (!layer)
             continue;
-        images.append(layer->image());
+        images.append(layerPixelsForComposite(*layer));
         modes.append(layer->blendMode());
         opacities.append(layer->opacityF());
         visible.append(layer->isVisible());
@@ -419,7 +419,7 @@ bool Document::flattenImage()
         const Layer *layer = m_layers.layer(i);
         if (!layer)
             continue;
-        images.append(layer->image());
+        images.append(layerPixelsForComposite(*layer));
         modes.append(layer->blendMode());
         opacities.append(layer->opacityF());
         // 关键区别：拼合图像会**丢弃**不可见图层的内容，
@@ -510,6 +510,23 @@ QRect Document::pendingDirtyRegion() const
     return m_dirtyRegion;
 }
 
+QImage Document::layerPixelsForComposite(const Layer &layer) const
+{
+    if (!layer.hasMask())
+        return layer.image();
+
+    // DestinationIn：结果 = 目标 × 源 alpha，正好是"蒙版按比例挡住图层"。
+    // 逐像素手算也能做，但边缘会多一次除以 255 的舍入，而且慢一个量级。
+    QImage masked = layer.image().copy();
+    QPainter painter(&masked);
+    if (!painter.isActive())
+        return layer.image();
+    painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    painter.drawImage(0, 0, layer.mask());
+    painter.end();
+    return masked;
+}
+
 QImage Document::composite()
 {
     // 缓存命中：直接返回。
@@ -529,7 +546,8 @@ QImage Document::composite()
         const Layer *layer = m_layers.layer(i);
         if (!layer)
             continue;
-        images.append(layer->image());
+        // 有蒙版的图层要取"蒙版已乘进 alpha"的那一份。
+        images.append(layerPixelsForComposite(*layer));
         modes.append(layer->blendMode());
         opacities.append(layer->opacityF());
         visible.append(layer->isVisible());

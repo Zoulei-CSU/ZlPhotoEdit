@@ -3160,6 +3160,146 @@ Continue?</source>
         <source>Applied %1</source>
         <translation>%1 を適用しました</translation>
     </message>
+        <message>
+            <source>Navigator</source>
+            <translation>ナビゲーター</translation>
+        </message>
+        <message>
+            <source>Recover Unsaved Work</source>
+            <translation>未保存の作業を復元</translation>
+        </message>
+        <message>
+            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
+            <translation>前回のセッションで未保存のドキュメントが %1 件見つかりました:\n\n%2\n\n復元しますか？レイヤー情報は保持されません。</translation>
+        </message>
+        <message>
+            <source>(Untitled)</source>
+            <translation>(無題)</translation>
+        </message>
+        <message>
+            <source>Recovered</source>
+            <translation>復元済み</translation>
+        </message>
+        <message>
+            <source>%1 (Recovered)</source>
+            <translation>%1（復元済み）</translation>
+        </message>
+        <message>
+            <source>Recovered %1 document(s)</source>
+            <translation>%1 件のドキュメントを復元しました</translation>
+        </message>
+    <message>
+        <source>Undo Steps...</source>
+        <translation>元に戻す回数…</translation>
+    </message>
+    <message>
+        <source>How many undo steps each document keeps</source>
+        <translation>各ドキュメントで保持する元に戻す回数</translation>
+    </message>
+    <message>
+        <source>Full Screen(&amp;U)</source>
+        <translation>全画面表示(&amp;U)</translation>
+    </message>
+    <message>
+        <source>Toggle full screen (F11)</source>
+        <translation>全画面表示を切り替え (F11)</translation>
+    </message>
+    <message>
+        <source>Undo Steps</source>
+        <translation>元に戻す回数</translation>
+    </message>
+    <message>
+        <source>How many undo steps to keep per document:</source>
+        <translation>ドキュメントごとに保持する元に戻す回数：</translation>
+    </message>
+    <message>
+        <source>Undo steps: %1</source>
+        <translation>元に戻す回数：%1</translation>
+    </message>
+    <message>
+        <source>Print(&amp;P)...</source>
+        <translation>印刷(&amp;P)…</translation>
+    </message>
+    <message>
+        <source>Print the current image</source>
+        <translation>現在の画像を印刷</translation>
+    </message>
+    <message>
+        <source>Export PDF(&amp;F)...</source>
+        <translation>PDF を書き出し(&amp;F)…</translation>
+    </message>
+    <message>
+        <source>Export the current image as a single-page PDF</source>
+        <translation>現在の画像を 1 ページの PDF に書き出す</translation>
+    </message>
+    <message>
+        <source>Failed to write the PDF file.</source>
+        <translation>PDF ファイルの書き込みに失敗しました。</translation>
+    </message>
+    <message>
+        <source>Print</source>
+        <translation>印刷</translation>
+    </message>
+    <message>
+        <source>Printing failed</source>
+        <translation>印刷に失敗しました</translation>
+    </message>
+    <message>
+        <source>Sent to printer</source>
+        <translation>プリンターに送信しました</translation>
+    </message>
+    <message>
+        <source>Export PDF</source>
+        <translation>PDF 書き出し</translation>
+    </message>
+    <message>
+        <source>PDF files (*.pdf)</source>
+        <translation>PDF ファイル (*.pdf)</translation>
+    </message>
+    <message>
+        <source>PDF exported: %1</source>
+        <translation>PDF を書き出しました：%1</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask from Selection(&amp;M)</source>
+        <translation>選択範囲からレイヤーマスクを追加(&amp;M)</translation>
+    </message>
+    <message>
+        <source>Hide everything outside the current selection without deleting pixels</source>
+        <translation>選択範囲の外側を、ピクセルを消さずに隠します</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask(&amp;K)</source>
+        <translation>レイヤーマスクを削除(&amp;K)</translation>
+    </message>
+    <message>
+        <source>Delete the mask and show the whole layer again</source>
+        <translation>マスクを削除して、レイヤー全体を再表示します</translation>
+    </message>
+    <message>
+        <source>Select an area first; that area becomes the visible part</source>
+        <translation>先に選択範囲を作成してください。選択した部分が表示されます</translation>
+    </message>
+    <message>
+        <source>Layer mask added</source>
+        <translation>レイヤーマスクを追加しました</translation>
+    </message>
+    <message>
+        <source>This layer has no mask</source>
+        <translation>このレイヤーにはマスクがありません</translation>
+    </message>
+    <message>
+        <source>Layer mask removed</source>
+        <translation>レイヤーマスクを削除しました</translation>
+    </message>
+    <message>
+        <source>Add Layer Mask</source>
+        <translation>レイヤーマスクを追加</translation>
+    </message>
+    <message>
+        <source>Remove Layer Mask</source>
+        <translation>レイヤーマスクを削除</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3770,4 +3910,11 @@ ICO は 1 辺が最大 %3 ピクセルのアイコン形式です（Windows の�
 「画像 → 画像サイズ」で画像を %3 ピクセル以下にしてから、ICO として保存してください。</translation>
     </message>
 </context>
+    <context>
+        <name>zl::NavigatorPanel</name>
+        <message>
+            <source>No document</source>
+            <translation>ドキュメントがありません</translation>
+        </message>
+    </context>
 </TS>

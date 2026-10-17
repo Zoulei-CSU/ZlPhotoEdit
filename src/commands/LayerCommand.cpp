@@ -148,6 +148,11 @@ void LayerCommand::applyProperty(const QVariant &value)
         layer->setLocked(value.toBool());
         break;
 
+    case Op::SetMask:
+        // 空 QImage 就是"删除蒙版"，与 Layer::setMask 的约定一致。
+        layer->setMask(value.value<QImage>());
+        break;
+
     default:
         // 结构类操作走到这里说明用错了，静默忽略而不是崩溃
         return;

@@ -60,6 +60,7 @@ public:
         SetBlendMode,   // 改混合模式
         SetVisible,     // 改可见性
         SetLocked,      // 改锁定状态
+        SetMask,        // 换图层蒙版（QVariant<QImage>；空图 = 删除蒙版）
         MergeDown,      // 向下合并
         MergeVisible,   // 合并可见图层
         Flatten         // 拼合图像
