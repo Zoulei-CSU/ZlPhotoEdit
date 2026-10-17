@@ -41,7 +41,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_VERSION: '1.0.0'          # ← 版本号唯一来源（以后可换成 ${{ github.ref_name }}）
+  APP_VERSION: '1.0.1'          # ← 版本号唯一来源（以后可换成 ${{ github.ref_name }}）
 
 jobs:
   # ────────────────────────────────────────────────────────────────────────
