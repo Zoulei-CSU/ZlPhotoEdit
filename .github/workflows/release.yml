@@ -63,7 +63,7 @@ jobs:
       - name: 配置
         run: >
           cmake -S . -B build -G "Visual Studio 17 2022" -A x64
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=Release -DZLPE_REQUIRE_I18N=ON
 
       - name: 构建
         run: cmake --build build --config Release
@@ -149,7 +149,7 @@ jobs:
               cmake --version
 
               cmake -S . -B build-qt5 -G Ninja -DCMAKE_BUILD_TYPE=Release \
-                    -DCMAKE_PREFIX_PATH=/opt/Qt
+                    -DCMAKE_PREFIX_PATH=/opt/Qt -DZLPE_REQUIRE_I18N=ON
               cmake --build build-qt5
 
               export APPIMAGE_EXTRACT_AND_RUN=1
@@ -341,7 +341,7 @@ jobs:
 
               # ★ 不写 -G Ninja → 用默认生成器（Unix Makefiles）
               cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
-                    -DCMAKE_PREFIX_PATH=/opt/Qt
+                    -DCMAKE_PREFIX_PATH=/opt/Qt -DZLPE_REQUIRE_I18N=ON
               cmake --build build
 
               export APPIMAGE_EXTRACT_AND_RUN=1
@@ -403,20 +403,29 @@ jobs:
         if: matrix.fmt == 'deb'
         run: |
           apt-get update
+          # ★ qt6-l10n-tools 提供 lrelease（/usr/lib/qt6/bin，不在 PATH）★
+          #   漏装它 = 没有 .qm = 打包出来的程序界面永远回落到英文源码，
+          #   而构建全绿。见 CMakeLists.txt 的 ZLPE_REQUIRE_I18N。
           apt-get install -y --no-install-recommends \
-            qt6-base-dev qt6-svg-dev libgl1-mesa-dev \
+            qt6-base-dev qt6-svg-dev qt6-l10n-tools libgl1-mesa-dev \
             cmake ninja-build g++ dpkg-dev fakeroot
 
       - name: 安装系统 Qt6 + 打包工具（RPM 系）
         if: matrix.fmt == 'rpm'
         run: |
-          dnf install -y qt6-qtbase-devel qt6-qtsvg-devel mesa-libGL-devel \
-            cmake ninja-build gcc-c++ rpm-build
+          # ★ qt6-linguist 提供 lrelease（/usr/lib64/qt6/bin，不在 PATH）★
+          dnf install -y qt6-qtbase-devel qt6-qtsvg-devel qt6-linguist \
+            mesa-libGL-devel cmake ninja-build gcc-c++ rpm-build
 
       - name: 配置 + 构建（★ 链系统 Qt，不给 CMAKE_PREFIX_PATH）
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+                -DZLPE_REQUIRE_I18N=ON
           cmake --build build
+
+      - name: 核对翻译已内嵌（★ 挡住"能跑但永远英文"的静默事故）
+        run: python3 packaging/i18n/check_embedded_i18n.py build/ZlPhotoEdit \
+               zh_CN zh_TW fr es ja ru
 
       - name: 打 deb
         if: matrix.fmt == 'deb'
@@ -463,7 +472,8 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_OSX_ARCHITECTURES=x86_64 \
-                -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 \
+                -DZLPE_REQUIRE_I18N=ON
           cmake --build build
 
       - name: macdeployqt
@@ -503,7 +513,8 @@ jobs:
         run: |
           cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_OSX_ARCHITECTURES=arm64 \
-                -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+                -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+                -DZLPE_REQUIRE_I18N=ON
           cmake --build build
 
       - name: macdeployqt

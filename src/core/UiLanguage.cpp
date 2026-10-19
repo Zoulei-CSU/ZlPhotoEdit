@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QLocale>
 #include <QSettings>
@@ -214,9 +215,22 @@ bool installTranslator(QCoreApplication *app, const QString &code)
     const QString path =
         QStringLiteral(":/i18n/zlphotoedit_%1.qm").arg(code);
     if (!translator->load(path)) {
+        // ★ 失败时把"资源里到底有什么"打出来 ★
+        //   只报"加载失败 :/i18n/xxx.qm"时，排查者无法区分：
+        //     ① .qm 根本没内嵌（构建期 lrelease 缺失 → i18n.qrc 没生成）
+        //     ② 内嵌了但路径对不上（qrc prefix 写错）
+        //     ③ 内嵌了但文件损坏
+        //   列出 :/i18n 目录的实际内容，一眼就能分辨 ①/②。
+        //   2026-10-19 的"切中文没反应"就是 ①，而当时这条日志只说
+        //   "加载失败"，看不出是构建没带翻译。
+        const QStringList available =
+            QDir(QStringLiteral(":/i18n")).entryList(QDir::Files, QDir::Name);
         qWarning().noquote()
             << "[ZlPhotoEdit] 翻译文件加载失败:" << path
-            << "（界面将显示源码文本）";
+            << "（界面将显示源码文本）"
+            << "| :/i18n 下实际内嵌:" << (available.isEmpty()
+                    ? QStringLiteral("【空 —— 这个构建没有内嵌任何翻译】")
+                    : available.join(QLatin1Char(' ')));
         translator.reset();
         return false;
     }

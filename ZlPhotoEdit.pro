@@ -308,17 +308,30 @@ win32 {
 # 逐个 .ts → .qm.任何一步没产出 .qm 就整体跳过内嵌（与 CMake 侧
 # "lrelease 找不到只警告"的降级一致）：翻译是增强项，不该让一个
 # 可选的 Linguist 组件把构建挡死；界面会回落到源码文本.
+# ★ 发布构建必须强制 ★
+#   传 "CONFIG+=zlpe_require_i18n" 或环境变量 ZLPE_REQUIRE_I18N=1 后，
+#   缺任何一种 .qm 就直接 error() 中止。理由与 CMake 侧同名开关相同：
+#   缺翻译的构建 0 错 0 警，症状只有"切了中文还是英文"，事后极难定位.
+ZLPE_REQUIRE_I18N = $$(ZLPE_REQUIRE_I18N)
+contains(CONFIG, zlpe_require_i18n): ZLPE_REQUIRE_I18N = 1
+
 I18N_OK =
+I18N_MISSING =
 for(lang, I18N_LANG_CODES) {
     ts = $$PWD/translations/zlphotoedit_$${lang}.ts
     qm = $$I18N_DIR/zlphotoedit_$${lang}.qm
     system($$I18N_LRELEASE $$ts -qm $$qm)
     exists($$qm): I18N_OK = true
+    else: I18N_MISSING += $${lang}
 }
+!isEmpty(I18N_MISSING): message("警告：以下 .qm 未产出：$$I18N_MISSING")
 isEmpty(I18N_OK) {
     message("警告：lrelease 未产出 .qm，跳过翻译内嵌（界面将回落到源码文本）")
 } else {
     RESOURCES += $$I18N_QRC
+}
+!isEmpty(I18N_MISSING):!isEmpty(ZLPE_REQUIRE_I18N) {
+    error("本次构建要求内嵌翻译（ZLPE_REQUIRE_I18N=1），但缺少：$$I18N_MISSING 。请确认 lrelease 可用：$$I18N_LRELEASE")
 }
 
 # ---------------------------------------------------------------------------

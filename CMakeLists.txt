@@ -136,7 +136,7 @@ target_link_libraries(ZlPhotoEdit PRIVATE
 #      → lrelease（构建期，逐个 .ts 跑）
 #      → build/i18n/zlphotoedit_zh_CN.qm
 #      → packaging/i18n/gen_i18n_qrc.cmake 生成 build/i18n/i18n.qrc
-#         （内容 = 真实产出的 .qm 清单，新增语言只改 ZLPE_TRANSLATIONS）
+#         （内容 = 真实产出的 .qm 清单，新增语言只改 ZLPE_LANG_CODES）
 #      → AUTORCC 把 .qm 编进 rcc 数据 → 运行时 ":/i18n/xxx.qm"
 #
 #  ★ qmake 侧的同一套逻辑见 ZlPhotoEdit.pro 的「多语言」段 ★
@@ -148,19 +148,35 @@ target_link_libraries(ZlPhotoEdit PRIVATE
 #    Linux/macOS job 都自带 Qt 完整包，不会触发这条分支。
 # ---------------------------------------------------------------------------
 set(ZLPE_I18N_DIR "${CMAKE_CURRENT_BINARY_DIR}/i18n")
-set(ZLPE_TRANSLATIONS
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_CN.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_zh_TW.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_fr.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_es.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_ja.ts"
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_ru.ts")
+set(ZLPE_LANG_CODES zh_CN zh_TW fr es ja ru)
+set(ZLPE_TRANSLATIONS "")
+foreach(_lang IN LISTS ZLPE_LANG_CODES)
+    list(APPEND ZLPE_TRANSLATIONS
+        "${CMAKE_CURRENT_SOURCE_DIR}/translations/zlphotoedit_${_lang}.ts")
+endforeach()
 set(ZLPE_I18N_QRC "${ZLPE_I18N_DIR}/i18n.qrc")
 
-# lrelease 的安装位置随发行方式漂移，三个来源都要找：
+# ★ 发布构建必须带上翻译：缺 lrelease 直接 configure 失败 ★
+#   默认 OFF（本地开发没装 Linguist 组件也能编），CI 的每个发布 job
+#   都显式传 -DZLPE_REQUIRE_I18N=ON —— 否则"少装一个可选包"会一路
+#   静默到用户手里，表现成"切中文还是英文"，而构建日志 0 错 0 警。
+#   （2026-10-19 的真实事故：deb/rpm 两个 job 只装 qt6-base-dev /
+#     qt6-qtbase-devel，容器里根本没有 lrelease，configure 只打了一条
+#     WARNING，装出来的程序里一条翻译都没有。）
+option(ZLPE_REQUIRE_I18N "翻译内嵌失败时终止配置（发布构建必须为 ON）" OFF)
+
+# lrelease 的安装位置随发行方式漂移，四个来源都要找：
 #   · Qt 官方安装包 → bin/lrelease（与 qmake 同目录，走 IMPORTED 目标）
+#   · Qt6 官方包    → libexec/lrelease（Qt6 起工具链从 bin 拆了出去）
 #   · Debian/Ubuntu 的 Qt5 → /usr/bin/lrelease（find_program 默认路径）
-#   · Qt6 发行包 → libexec/lrelease（Qt6 起工具链从 bin 拆了出去）
+#   · Debian/Ubuntu 的 Qt6 → /usr/lib/qt6/bin/lrelease（qt6-l10n-tools 包，
+#     **不在 PATH 里**）；RPM 系 → /usr/lib64/qt6/bin/lrelease（qt6-linguist）
+#
+# ★ 用 qmake 的 IMPORTED 位置反推是最可靠的一路 ★
+#   /usr/lib/qt6/bin/qmake 与 lrelease 同目录，而"从 Qt6Core_DIR 往上三级"
+#   在 Debian 多架构布局下是错的：Qt6Core_DIR = /usr/lib/x86_64-linux-gnu/
+#   cmake/Qt6Core，往上三级是 /usr/lib/x86_64-linux-gnu —— 既不是前缀，
+#   底下也没有 bin/。这条启发式只对 Qt 官方安装包成立。
 if(TARGET Qt${QT_VERSION_MAJOR}::qmake)
     get_target_property(_zlpe_qmake_exe
         Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
@@ -182,7 +198,39 @@ if(NOT QT_LRELEASE)
     endforeach()
 endif()
 if(NOT QT_LRELEASE)
+    # 发行版把 Qt6 工具放在 lib/<multiarch>/qt6/bin 或 lib64/qt6/bin，
+    # 这两个目录**不在 PATH 里**，必须显式给（否则装了 qt6-l10n-tools
+    # 也找不到，症状是同一条静默回落）。
+    find_program(QT_LRELEASE NAMES lrelease lrelease-qt5 lrelease-qt6
+        PATHS
+            /usr/lib/qt6/bin
+            /usr/lib64/qt6/bin
+            /usr/lib/x86_64-linux-gnu/qt6/bin
+            /usr/lib/aarch64-linux-gnu/qt6/bin
+        DOC "Qt Linguist 的 lrelease（用于把 .ts 编成内嵌 .qm）")
+endif()
+if(NOT QT_LRELEASE)
     find_program(QT_LRELEASE NAMES lrelease lrelease-qt5 lrelease-qt6)
+endif()
+
+# find_program 会把结果**缓存**：改过 PATH 再 configure 也还是旧值，
+# 而 -DQT_LRELEASE=/不存在的路径 这种手误同样会被当成"找到了"。
+# 缓存里的值必须真的可执行，否则等于没有。
+if(QT_LRELEASE AND NOT EXISTS "${QT_LRELEASE}")
+    message(WARNING "缓存的 QT_LRELEASE 不存在：${QT_LRELEASE} —— 当作没找到处理")
+    unset(QT_LRELEASE CACHE)
+    set(QT_LRELEASE "")
+endif()
+
+if(NOT QT_LRELEASE AND ZLPE_REQUIRE_I18N)
+    message(FATAL_ERROR
+        "找不到 lrelease，但本次构建要求内嵌翻译（ZLPE_REQUIRE_I18N=ON）。\n"
+        "  翻译文件缺失时界面会静默回落到源码文本（英文），而构建本身 0 错 ——\n"
+        "  这正是「切简体中文没反应」那一类事故的成因，所以在这里挡住。\n"
+        "  装法：Debian/Ubuntu → apt install qt6-l10n-tools（或 qt6-tools-dev）；\n"
+        "        Fedora/RHEL   → dnf install qt6-linguist；\n"
+        "        Qt 官方安装包 → 装 Qt Linguist 组件。\n"
+        "  仅本地开发可加 -DZLPE_REQUIRE_I18N=OFF 跳过。")
 endif()
 
 if(QT_LRELEASE)
@@ -213,12 +261,17 @@ if(QT_LRELEASE)
         list(APPEND _zlpe_qm_outputs "${_qm}")
     endforeach()
 
+    # 期望产出的语言清单（逗号分隔）—— 供生成脚本逐个核对，
+    # 少一个就构建期报错，而不是运行期静默回落。
+    string(REPLACE ";" "," _zlpe_lang_codes "${ZLPE_LANG_CODES}")
+
     # qrc 的内容由"真实生成了哪些 .qm"决定（脚本里 glob），
     # 且 DEPENDS 全部 .qm —— lrelease 全部跑完后才生成 qrc。
     add_custom_command(OUTPUT "${ZLPE_I18N_QRC}"
         COMMAND "${CMAKE_COMMAND}"
                 "-DQM_DIR=${ZLPE_I18N_DIR}"
                 "-DOUT=${ZLPE_I18N_QRC}"
+                "-DEXPECTED=${_zlpe_lang_codes}"
                 -P "${CMAKE_CURRENT_SOURCE_DIR}/packaging/i18n/gen_i18n_qrc.cmake"
         DEPENDS ${_zlpe_qm_outputs}
         COMMENT "生成 i18n.qrc（内嵌翻译清单）"

@@ -32,6 +32,31 @@ endif()
 file(GLOB _qm_files RELATIVE "${QM_DIR}" "${QM_DIR}/*.qm")
 list(SORT _qm_files)
 
+# ★ EXPECTED（可选）：本次构建**要求**有多少个 .qm ★
+#   glob 只能回答"现在有什么"，回答不了"该有的齐不齐"。少一个 .qm 时
+#   qrc 照样生成、rcc 照样通过、程序照样启动，只有那个语言静默回落到
+#   源码文本 —— 正是"切中文还是英文"这类事故的形状。
+#   传了就逐个核对，缺一个即 FATAL_ERROR（构建期，不是运行期）。
+if(DEFINED EXPECTED)
+    if(NOT DEFINED QM_DIR)
+        message(FATAL_ERROR "EXPECTED 需要同时给出 QM_DIR")
+    endif()
+    set(_missing "")
+    string(REPLACE "," ";" _want "${EXPECTED}")
+    foreach(_lang IN LISTS _want)
+        if(NOT EXISTS "${QM_DIR}/zlphotoedit_${_lang}.qm")
+            list(APPEND _missing "${_lang}")
+        endif()
+    endforeach()
+    if(_missing)
+        message(FATAL_ERROR
+            "以下语言没有产出 .qm：${_missing}\n"
+            "  lrelease 可能静默失败了（源 .ts 损坏、目录不可写、"
+            "或 lrelease 版本与 .ts 的 <TS version> 不兼容）。\n"
+            "  缺 .qm 的后果不是构建失败，而是运行期静默回落源码文本。")
+    endif()
+endif()
+
 # prefix "/i18n" 与 ZlPhotoEdit.pro 的 qmake 侧保持一致 ——
 # 两条构建路径必须产出同一个运行时路径（:/i18n/...），
 # 否则换构建路径就等于换语言集，而那种差异没有任何编译期信号。
