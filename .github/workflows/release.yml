@@ -424,8 +424,14 @@ jobs:
           cmake --build build
 
       - name: 核对翻译已内嵌（★ 挡住"能跑但永远英文"的静默事故）
-        run: python3 packaging/i18n/check_embedded_i18n.py build/ZlPhotoEdit \
-               zh_CN zh_TW fr es ja ru
+        # ★ 必须用 "|" 字面块，不能用普通标量 + 反斜杠续行 ★
+        #   普通标量里 YAML 把换行折叠成空格，反斜杠成了字面字符，
+        #   于是 shell 看到 "build/ZlPhotoEdit \ zh_CN ..."，
+        #   "\ " 转义掉空格 → 第一个语言变成 " zh_CN"（带前导空格），
+        #   脚本去找 "zlphotoedit_ zh_CN.qm" 当然找不到 —— run #23 就栽在这。
+        run: |
+          python3 packaging/i18n/check_embedded_i18n.py build/ZlPhotoEdit \
+            zh_CN zh_TW fr es ja ru
 
       - name: 打 deb
         if: matrix.fmt == 'deb'

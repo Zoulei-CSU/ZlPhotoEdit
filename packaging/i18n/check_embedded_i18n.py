@@ -55,7 +55,12 @@ def main(argv):
         return 2
 
     path = argv[1]
-    langs = argv[2:] or ["zh_CN"]
+    # ★ 逐个 strip ★ 语言码来自命令行，YAML 续行/引号写错会带进空格或
+    #   换行（run #23 就是这样：第一个参数成了 " zh_CN"）。不剥离的话
+    #   报出的是"翻译缺失"，看起来像产品真的坏了，实际只是参数脏了 ——
+    #   一条断言如果会把"调用方写错"伪装成"被测对象坏了"，它本身就是坑。
+    langs = [a.strip() for a in argv[2:]]
+    langs = [a for a in langs if a] or ["zh_CN"]
 
     if not os.path.isfile(path):
         print("找不到可执行文件: %s" % path, file=sys.stderr)
