@@ -1701,6 +1701,19 @@ void MainWindow::applyCaptureHotkey(const QKeySequence &sequence)
         return;
 
     m_actionCaptureNow->setShortcut(sequence);
+
+    // ★ 会话本身就不允许抓屏时，提示文字要讲那个更根本的原因 ★
+    //   这里若照常写"按 %1 截图"，菜单上就会挂着一条**它做不到的承诺**：
+    //   用户按下去，弹出的是"Wayland 不允许"—— 两句话互相打脸。
+    //   （本函数在 setupScreenCapture 里被调用了一次，所以不能在
+    //     setupScreenCapture 里先把 statusTip 设成 Wayland 提示了事：
+    //     那一行会被这里覆盖掉。提示文字的来源必须收敛到这一处。）
+    if (screenCaptureBlock() == CaptureBlock::Wayland) {
+        m_actionCaptureNow->setStatusTip(
+            captureFailureText(CaptureBlock::Wayland));
+        return;
+    }
+
     m_actionCaptureNow->setStatusTip(
         tr("Capture the current screen into a new tab (%1; works even while the program is minimized)")
             .arg(sequence.toString(QKeySequence::NativeText)));
@@ -1729,29 +1742,25 @@ void MainWindow::setupScreenCapture()
 {
     // ── ⓪ 当前会话允不允许抓屏？（Wayland 下恒不允许）──
     //
-    //  ★ 为什么在装配阶段就说，而不是等用户点了才说 ★
-    //    这个限制是**常驻**的：不是"这一次没抓到"，而是这条路在当前
-    //    桌面上根本走不通。状态栏一闪而过容易被忽略，所以同时写进
-    //    四个动作的 statusTip —— 鼠标在菜单项上停一下就能看到。
+    //  ★ 装配阶段只改 statusTip，**不说话、不弹框、不打日志** ★
+    //    这个限制是常驻的，但它不是一次"操作结果"—— 程序刚启动就弹一个
+    //    "你这里截不了图"的框，只会让用户以为软件坏了（他还没想截图）。
+    //    所以"为什么 / 怎么办"只在**用户真的点了截图**那一刻说（见
+    //    captureScreenNow 的失败路径），平时把同样的文字放在
+    //    statusTip 里 —— 鼠标在菜单项上停一下就能看到，零打扰。
     //
     //  ★ 不因此禁用菜单 ★
     //    灰掉的菜单项只会让用户更困惑（连"为什么"都点不出来）。
     //    保持可点、点下去给一条能照着做的提示，比灰掉有用。
     if (screenCaptureBlock() == CaptureBlock::Wayland) {
-        const QString tip =
-            tr("This Wayland session does not allow applications to read the "
-               "screen, so the built-in capture cannot work. Take a screenshot "
-               "with the system shortcut, then press Ctrl+V to paste it here "
-               "as a new layer.");
-        m_actionCaptureNow->setStatusTip(tip);
+        // 「立即截图」的提示不在这里设 —— 它的提示文字由 applyCaptureHotkey()
+        // 单独负责（它稍后会被调用两次：setupActions 建动作时一次、下面登记
+        // 成功时再改一次）。在这一处也写一遍的话，最后一次调用会把这里的
+        // 文字覆盖掉，而"两处都写"正是这类覆盖最容易出问题的地方。
+        const QString tip = captureFailureText(CaptureBlock::Wayland);
         m_actionCaptureDelay3->setStatusTip(tip);
         m_actionCaptureDelay5->setStatusTip(tip);
         m_actionCaptureDelay10->setStatusTip(tip);
-        if (m_statusBar)
-            m_statusBar->showMessage(tip, 20000);
-        // 自检与截图工具看不到状态栏（窗口可能没显示过），日志里也留一条。
-        qWarning("Wayland 会话不允许应用直接抓屏（QScreen::grabWindow 恒返回空图）："
-                 "截图入口改为引导用户用系统截图键 + Ctrl+V 粘贴");
     }
 
     // ── ① 延迟截图的定时器（单次）──

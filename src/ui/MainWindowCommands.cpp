@@ -568,9 +568,53 @@ Document *MainWindow::createImagePage(const ImagePageSpec &spec)
 //    "菜单立即截图 / 延迟截图 / 全局热键"三条入口全都能在 offscreen 上
 //    端到端跑通 —— 它们共用下面这一个函数，不存在"测的是另一条路"。
 //
-//  ★ 抓不到屏幕时必须"什么都不做 + 说一句" ★
+//  ★ 抓不到屏幕时必须"什么都不做 + 说清楚为什么" ★
 //    没有显示器、会话被锁、平台拒绝……都不是程序 bug，但它们的表现
-//    全都是"按了没反应"。所以失败路径一定有状态栏消息，绝不留白。
+//    全都是"按了没反应"。所以失败路径一定有提示，绝不留白。
+//
+//  ★ 提示的形态：状态栏 + 模态框，两者都要 ★
+//    状态栏是"此刻发生了什么"的即时反馈，但它一闪而过、还可能被别的
+//    消息顶掉（延迟截图到点时状态栏正写着"3 秒后截图…"）。
+//    Wayland 这类"这条路在当前桌面上根本走不通"的失败尤其不能靠状态栏：
+//    用户点完菜单什么都没发生，只会认为功能坏了。
+//    所以交互路径**一定要弹模态框**，把"为什么"和"接下来怎么做"写全。
+
+// ============================================================================
+//  抓屏失败的文案（与"怎么显示"分开，便于自检断言）
+// ============================================================================
+
+QString MainWindow::captureFailureTitle()
+{
+    return tr("Screenshot Unavailable");
+}
+
+QString MainWindow::captureFailureText(CaptureBlock block)
+{
+    // ★ 分两种说法，因为"接下来该怎么做"完全不同 ★
+    //   Wayland 会话下这不是"这一次没抓到"，而是**这条路在当前桌面
+    //   环境里根本走不通**（合成器不允许客户端读屏幕上不属于自己的
+    //   像素，Qt 的 grabWindow() 在那里恒返回空图）。此时说"可能没有
+    //   显示器"是误导 —— 用户明明开着屏幕。
+    //   要告诉他改用系统截图键，再 Ctrl+V 粘进来：粘贴走剪贴板，
+    //   Wayland 下完全正常，不需要任何额外授权。
+    //
+    // ★ 这两句与状态栏用的是**同一份源文本** ★
+    //   另外编一句更短的放在状态栏，等于同一件事要维护两份译文 ——
+    //   而译文散开之后，改一处忘一处几乎是必然的。
+    if (block == CaptureBlock::Wayland) {
+        return tr("This Wayland session does not allow applications to read the "
+                  "screen, so the built-in capture cannot work. Take a screenshot "
+                  "with the system shortcut, then press Ctrl+V to paste it here "
+                  "as a new layer.");
+    }
+    return tr("Screenshot failed: no screen content captured "
+              "(no display may be available)");
+}
+
+void MainWindow::setScreenCaptureDialogsEnabled(bool enabled)
+{
+    m_captureDialogs = enabled;
+}
 
 bool MainWindow::captureScreenNow()
 {
@@ -579,26 +623,42 @@ bool MainWindow::captureScreenNow()
 
     if (shot.isNull()) {
         // 契约③（空图 = 抓不到）在这里翻译成人话。
+        const CaptureBlock block = screenCaptureBlock();
+
+        // ── 先写状态栏：这个是**同步**的，调用方返回时就已经在屏幕上 ──
+        //   与弹框共用 captureFailureText() 的同一份源文本：同一件事只有
+        //   一份译文要维护，也就不会出现"状态栏和弹框说法不一致"。
+        if (m_statusBar)
+            m_statusBar->showMessage(captureFailureText(block), 20000);
+
+        // ── 再排队弹框 ──
         //
-        // ★ 分两种说法，因为"接下来该怎么做"完全不同 ★
-        //   Wayland 会话下这不是"这一次没抓到"，而是**这条路在当前桌面
-        //   环境里根本走不通**（合成器不允许客户端读屏幕上不属于自己的
-        //   像素，Qt 的 grabWindow() 在那里恒返回空图）。此时说"可能没有
-        //   显示器"是误导 —— 用户明明开着屏幕。
-        //   要告诉他改用系统截图键，再 Ctrl+V 粘进来：粘贴走剪贴板，
-        //   Wayland 下完全正常，不需要任何额外授权。
-        if (m_statusBar) {
-            if (screenCaptureBlock() == CaptureBlock::Wayland) {
-                m_statusBar->showMessage(
-                    tr("Screenshot unavailable: this Wayland session does not "
-                       "allow applications to read the screen. Use the system "
-                       "screenshot key, then press Ctrl+V to paste it here as "
-                       "a new layer."),
-                    20000);
-            } else {
-                m_statusBar->showMessage(
-                    tr("Screenshot failed: no screen content captured (no display may be available)"), 6000);
-            }
+        // ★ 为什么不是在这里直接 exec() ★
+        //   这个函数有两个调用点会把它叫在"窗口正被最小化"的时刻：
+        //   延迟截图到点（onCaptureTimerFired，抓完才 showNormal）
+        //   和全局热键（用户按的时候程序本来就在后台）。
+        //   直接 exec() 的话模态框会挂在一个最小化 / 隐藏的父窗口上 ——
+        //   要么根本看不见，要么一出来就抢焦点把用户正在做的事打断。
+        //   排队到下一轮事件循环，调用链（含"抓完还原窗口"）先跑完，
+        //   弹框时就有一个正常显示的父窗口可以依附。
+        //
+        //   返回值仍然是**同步**的 false：调用方不用等用户点确定。
+        if (m_captureDialogs && !m_captureFailureDialogPending) {
+            m_captureFailureDialogPending = true;
+            QTimer::singleShot(0, this, [this, block] {
+                m_captureFailureDialogPending = false;
+
+                // 父窗口最小化时，模态框只会出现在任务栏里 —— 用户看不到，
+                // 于是"点了没反应"照旧。先把它叫回来（这一步是必要的打断：
+                // 不打断就永远没机会告诉他为什么没反应）。
+                if (isMinimized())
+                    showNormal();
+                raise();
+                activateWindow();
+
+                QMessageBox::warning(this, captureFailureTitle(),
+                                     captureFailureText(block));
+            });
         }
         return false;
     }

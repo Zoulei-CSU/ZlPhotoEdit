@@ -232,6 +232,12 @@ static MainWindow *newWindow(const QString &lastActive)
     }
 
     auto *w = new MainWindow;
+    // ★ 离屏自检里**一律关掉截图失败的模态框** ★
+    //   抓不到屏幕时交互路径会弹框（那是产品行为），但离屏环境没有人点
+    //   "确定"—— 模态框会把整个测试进程永久挂住，表现是"跑到某一组就卡死"，
+    //   而看起来完全不像框的问题。与 importImageAsLayer 的 GrowPolicy 同理：
+    //   把"自动化不弹框"做成结构性保证，而不是靠每处记得判断。
+    w->setScreenCaptureDialogsEnabled(false);
     w->resize(1000, 700);
     w->show();
     QApplication::processEvents();   // 让 show 触发的布局/重绘跑完
@@ -3356,6 +3362,52 @@ static void testScreenCaptureFlow()
               "★ 当前页也没被换掉");
     }
 
+    // ── ⑥ 失败文案：Wayland 那句必须"能照着做" ──
+    //
+    //   ★ 这条钉的是"提示有没有用"，不是"有没有提示" ★
+    //     旧版只有一句"当前会话不允许抓屏"，用户看完仍然不知道该怎么办。
+    //     所以断言里必须有**可执行的下一条路**：系统截图键 + Ctrl+V。
+    //     这也是唯一能验的部分 —— 弹框本身在离屏环境里验不了（会挂死），
+    //     所以文案被抽成静态函数，这里直接量字符串。
+    {
+        const QString wayland =
+            MainWindow::captureFailureText(zl::CaptureBlock::Wayland);
+        check(!wayland.isEmpty(), "★★ Wayland 失败文案非空");
+        check(wayland.contains(QStringLiteral("Wayland")),
+              "★ 文案点名了 Wayland（用户才知道不是程序坏了）");
+        check(wayland.contains(QStringLiteral("Ctrl+V")),
+              "★★ 文案给出了可照做的下一步（Ctrl+V 粘贴）");
+        check(wayland.contains(QStringLiteral("system shortcut"))
+                  || wayland.contains(QStringLiteral("system screenshot key")),
+              "★ 文案提到用系统快捷键截图（否则用户不知道图从哪来）");
+
+        const QString other =
+            MainWindow::captureFailureText(zl::CaptureBlock::None);
+        check(!other.isEmpty(), "★ 一般失败文案非空");
+        check(other != wayland,
+              "★★ 两种失败说法不同（否则用户会去 Wayland 之外的地方找 Ctrl+V）");
+        check(!other.contains(QStringLiteral("Ctrl+V")),
+              "★ 一般失败不提 Ctrl+V —— 那不是这次的解法");
+
+        check(!MainWindow::captureFailureTitle().isEmpty(), "★ 弹框标题非空");
+    }
+
+    // ── ⑦ 失败时"弹框开关"确实生效，且关掉后**不会挂住测试** ──
+    //
+    //   ★ 上面 ⑤ 已经证明了"关着弹框时返回 false、不建页" ★
+    //     这一节只补一条：开关的**默认值**必须是"开" —— 产品里要弹框，
+    //     如果哪天有人把默认值写成 false，用户就又回到"点了没反应"。
+    {
+        MainWindow *fresh = new MainWindow;
+        check(fresh->screenCaptureDialogsEnabled(),
+              "★★ 弹框开关默认是开的（否则产品里又变成静默失败）");
+        fresh->setScreenCaptureDialogsEnabled(false);
+        check(!fresh->screenCaptureDialogsEnabled(), "开关能关");
+        fresh->setScreenCaptureDialogsEnabled(true);
+        check(fresh->screenCaptureDialogsEnabled(), "开关能再开");
+        delete fresh;
+    }
+
     delete w;
 }
 
@@ -3568,6 +3620,8 @@ static void testUiLanguage()
 static MainWindow *newWindowForLanguageMenu()
 {
     auto *w = new MainWindow;
+    // 离屏环境不弹截图失败的模态框（理由见 newWindow()）
+    w->setScreenCaptureDialogsEnabled(false);
     w->resize(1000, 700);
     w->show();
     QApplication::processEvents();

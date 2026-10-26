@@ -2385,6 +2385,10 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>キャプチャー失敗: 画面内容を取得できません（利用できるディスプレイがない可能性があります）</translation>
     </message>
     <message>
+        <source>Screenshot Unavailable</source>
+        <translation>スクリーンショットを利用できません</translation>
+    </message>
+    <message>
         <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>スクリーンショットを利用できません：この Wayland セッションではアプリケーションが画面を読み取ることが許可されていません。システムのスクリーンショットキーで撮影し、Ctrl+V でここに新しいレイヤーとして貼り付けてください。</translation>
     </message>

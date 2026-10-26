@@ -2385,6 +2385,10 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>Снимок не удался: не получено содержимое экрана (возможно, нет доступного дисплея)</translation>
     </message>
     <message>
+        <source>Screenshot Unavailable</source>
+        <translation>Снимок экрана недоступен</translation>
+    </message>
+    <message>
         <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>Снимок экрана недоступен: этот сеанс Wayland не разрешает приложениям читать экран. Сделайте снимок системным сочетанием клавиш, затем нажмите Ctrl+V, чтобы вставить его сюда как новый слой.</translation>
     </message>

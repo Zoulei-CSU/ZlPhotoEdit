@@ -2373,6 +2373,10 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>擷圖失敗：抓不到螢幕內容（可能沒有可用的顯示器）</translation>
     </message>
     <message>
+        <source>Screenshot Unavailable</source>
+        <translation>無法截圖</translation>
+    </message>
+    <message>
         <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>無法截圖：目前 Wayland 工作階段不允許應用程式讀取螢幕內容。請先用系統截圖鍵截圖，再按 Ctrl+V 貼到這裡作為新圖層。</translation>
     </message>

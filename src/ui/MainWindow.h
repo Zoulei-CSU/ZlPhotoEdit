@@ -48,6 +48,13 @@
 #include <functional>
 
 // ★ 需要完整定义，而不是前置声明 ★
+//   captureFailureText() 的形参是 CaptureBlock —— 这是个 enum class，
+//   前置声明它要么写成 `enum class CaptureBlock;`（需要固定底层类型才合规），
+//   要么就得让每个包含 MainWindow.h 的文件都去猜它的底层类型。
+//   直接把 compat 头文件引进来：它只依赖 QImage，代价极小。
+#include "compat/ScreenCapture.h"
+
+// ★ 需要完整定义，而不是前置声明 ★
 //   commitGeometryChange() 的参数用到了 GeometryChangeCommand 的两个
 //   **嵌套类型**（Snapshot / Kind），嵌套类型无法前置声明。
 //   依赖方向 ui → commands 是合法的（见架构铁律第 1 条）。
@@ -232,8 +239,25 @@ public:
     // 立即抓取当前屏幕的内容，开为新的一页。
     //
     // 返回 false = 抓不到屏幕（没有显示器 / 平台拒绝）。此时**什么都不做**：
-    // 不开空页、不动当前页，只在状态栏说一句为什么。
+    // 不开空页、不动当前页，只把"为什么"说给用户听 ——
+    // **交互式入口弹模态框**（Wayland 这种"这条路根本走不通"的情形，
+    // 状态栏一闪而过的文字等于没说），**自动化入口只写状态栏**（没人点确定）。
     bool captureScreenNow();
+
+    // 抓不到屏幕时到底要显示什么（标题 + 正文）。
+    //
+    // ★ 抽成函数是为了让"文案"与"怎么显示"分开 ★
+    //   文案本身是要被自检断言的（Wayland 那句必须提到系统截图键与 Ctrl+V），
+    //   但断言时**不能真的弹框** —— 离屏环境下一个模态框会把测试永久挂住。
+    //   所以取值与显示分成两步，自检只需调这一个。
+    static QString captureFailureTitle();
+    static QString captureFailureText(CaptureBlock block);
+
+    // ★ 弹框开关：默认 true，自检入口第一件事就是关掉它 ★
+    //   不是"测试里记得别点那条路"，而是**结构上**保证离屏跑不到模态框。
+    //   与 importImageAsLayer 的 GrowPolicy 同一条纪律。
+    void setScreenCaptureDialogsEnabled(bool enabled);
+    bool screenCaptureDialogsEnabled() const { return m_captureDialogs; }
 
     // 延迟抓取：**先把本窗口最小化**，到点抓屏，抓完自动恢复窗口。
     //
@@ -950,6 +974,14 @@ private:
     // 自检用 setScreenGrabber() 换成一张造好的图，于是整条
     // "定时器/热键 → 抓 → 建页" 都能在 offscreen 上跑通。
     std::function<QImage()> m_screenGrabber;
+
+    // 抓不到屏幕时允不允许弹模态框（默认允许）。
+    // 自检会把自检入口设成 false —— 见 setScreenCaptureDialogsEnabled()。
+    bool m_captureDialogs = true;
+
+    // 失败弹框是否已经排在事件队列里。
+    // 连点两次"立即截图"时不该叠出两个一模一样的失败框。
+    bool m_captureFailureDialogPending = false;
 
     // 延迟截图：先最小化再等 —— 公开入口是 scheduleScreenCapture()，
     // 四个菜单项直接调它（不再包一层私有同名函数，少一个名字少一处不一致）。
