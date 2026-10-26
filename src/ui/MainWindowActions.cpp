@@ -1002,24 +1002,28 @@ void MainWindow::setupMenus()
     fileMenu->addAction(m_actionPrint);
     fileMenu->addAction(m_actionExportPdf);
     fileMenu->addSeparator();
-    fileMenu->addAction(m_actionClose);
-    fileMenu->addAction(m_actionQuit);
 
     // ── 主题（子菜单）──
     //
-    //  ★ 为什么放在「退出」之后的最后一项 ★
-    //    上面全是"对文件做的事"（新建/打开/存/打印/关），主题与它们无关；
-    //    排在最后，用户找文件操作时不会被它打断。
-    //    与"语言"放在菜单栏末尾同一个位置逻辑 —— 都是应用级偏好，
-    //    不掺进业务动作里。
+    //  ★ 位置：紧挨在「关闭」上面 ★
+    //    用户明确要求放这里。也说得通：上面那串全是"对文件做的事"
+    //    （新建/打开/存/打印），主题是应用级偏好，本来就该在它们之外；
+    //    放在关闭/退出这两条"收尾"动作之前，和「语言」放在菜单栏末尾是
+    //    同一个位置逻辑，只是不必排到最末。
+    //    前后各留一条分隔线，自成一组 —— 夹在保存和关闭中间不分组的话，
+    //    会被读成"又一个文件操作"。
     //
     //  ★ 子菜单也要图标 ★
-    //    它是这个菜单里唯一一个没有图标的条目，不挂的话在"整栏都有图标"
-    //    的菜单里一眼就能看出缺一块。
-    QMenu *themeMenu = fileMenu->addMenu(tr("Theme(&T)"));    themeMenu->setObjectName(QStringLiteral("menuTheme"));
+    //    不挂的话在"整栏都有图标"的菜单里一眼就能看出缺一块。
+    QMenu *themeMenu = fileMenu->addMenu(tr("Theme(&T)"));
+    themeMenu->setObjectName(QStringLiteral("menuTheme"));
     setActionIcon(themeMenu->menuAction(), QStringLiteral("menu_theme"));
     for (QAction *act : m_actionTheme)
         themeMenu->addAction(act);
+
+    fileMenu->addSeparator();
+    fileMenu->addAction(m_actionClose);
+    fileMenu->addAction(m_actionQuit);
 
     // ─────────────────────────────────────────────────────────────────────
     //  编辑

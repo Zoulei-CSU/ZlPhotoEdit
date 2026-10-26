@@ -3823,6 +3823,41 @@ static void testThemeMenu()
         return;
     }
 
+    // ── 位置：在「关闭」上面，且自成一组 ──
+    //
+    //  ★ 为什么位置也要断言 ★
+    //    需求就是"放哪"，而位置没有任何编译期保证 —— 重新排序菜单时
+    //    它会被无声挪走，功能完全不受影响，只有人眼看菜单才发现。
+    //  ★ 判据是"隔一条分组线就在关闭上面" ★
+    //    主题与关闭之间留了一条分隔线（没有它，主题会被读成又一个
+    //    文件操作、关闭会被读成"接着往下排"）。所以不能要求两个下标
+    //    相邻，而要：主题前面是分隔线、且往后第一个**非分隔线**动作
+    //    就是关闭。
+    {
+        QMenu *fileMenu = w->findChild<QMenu *>(QStringLiteral("menuFile"));
+        QAction *closeAct = w->findChild<QAction *>(QStringLiteral("actionClose"));
+        check(fileMenu && closeAct, "拿得到文件菜单与「关闭」动作");
+        if (fileMenu && closeAct) {
+            const QList<QAction *> all = fileMenu->actions();
+            const int iTheme = all.indexOf(tm->menuAction());
+            const int iClose = all.indexOf(closeAct);
+            bool onlySeparatorsBetween = iClose > iTheme;
+            for (int i = iTheme + 1; onlySeparatorsBetween && i < iClose; ++i)
+                if (!all[i]->isSeparator())
+                    onlySeparatorsBetween = false;
+            check(iTheme >= 0 && onlySeparatorsBetween,
+                  "★ 「主题」在「关闭」正上方（中间只有分组线）");
+            check(iTheme > 0 && all[iTheme - 1]->isSeparator(),
+                  "★ 「主题」前面有分隔线（自成一组，不混进文件操作）");
+            if (!(iTheme >= 0 && onlySeparatorsBetween)) {
+                QStringList order;
+                for (QAction *a : all)
+                    order << (a->isSeparator() ? QStringLiteral("---") : a->text());
+                std::printf("       实际顺序：%s\n", qPrintable(order.join(QLatin1Char('|'))));
+            }
+        }
+    }
+
     // ── 装配：三项、顺序、互斥、默认勾"自动" ──
     const QList<QAction *> acts = tm->actions();
     check(acts.size() == 3, "★ 恰好三项（默认 / 浅色 / 深色）");
