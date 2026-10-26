@@ -17,7 +17,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(ZlPhotoEdit VERSION 1.0.1 LANGUAGES CXX)
+project(ZlPhotoEdit VERSION 1.0.2 LANGUAGES CXX)
 
 # ---------------------------------------------------------------------------
 #  Qt 探测 —— 优先 Qt6，找不到则 Qt5
