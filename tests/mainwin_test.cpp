@@ -719,6 +719,83 @@ static void testIcons()
 }
 
 // ===========================================================================
+//  [7a-1b] 图标跟随主题
+// ===========================================================================
+//
+//  ★ 这一组为什么必须存在 ★
+//    图标是在**渲染时刻**按 palette 上色的（深色主题下自动变浅）。
+//    它带来两个只有真跑才看得见的失效：
+//      ① 换主题后不重设 → 图标永远停在旧颜色（用户看到"切了深色，图标还是黑的"）；
+//      ② 重设了但没清缓存 → 取回来的还是旧色缓存项，等于没重设。
+//    两条都不会报错、不会崩，界面上只是"看不清"。任何静态检查都发现不了。
+//
+//  ★ 探针是像素，不是 cacheKey ★
+//    "图标换了个 QIcon 对象"不等于"颜色变了"。直接读一个不透明像素的 RGB。
+static QRgb sampleOpaqueInk(const QIcon &ic)
+{
+    const QImage img = ic.pixmap(QSize(24, 24)).toImage()
+                           .convertToFormat(QImage::Format_ARGB32);
+    for (int y = 0; y < img.height(); ++y)
+        for (int x = 0; x < img.width(); ++x)
+            if (qAlpha(img.pixel(x, y)) == 255)
+                return img.pixel(x, y);
+    return 0;
+}
+
+static void testIconsFollowTheme()
+{
+    beginGroup("图标跟随主题（上色 + 换主题重设）");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    QAction *a = w->findChild<QAction *>(QStringLiteral("actionNew"));
+    check(a != nullptr, "找得到菜单动作");
+    if (!a) {
+        delete w;
+        return;
+    }
+    // 必须有图标名（否则换主题根本不知道该重设成什么）
+    check(a->property("iconName").toString() == QStringLiteral("file_new"),
+          "动作上记着自己用的图标名");
+
+    const QPalette original = QApplication::palette();
+
+    QPalette light = original;
+    light.setColor(QPalette::WindowText, QColor(0x33, 0x39, 0x3F));
+    QApplication::setPalette(light);
+    QApplication::processEvents();
+    const QRgb onLight = sampleOpaqueInk(a->icon());
+
+    QPalette dark = original;
+    dark.setColor(QPalette::WindowText, QColor(0xE6, 0xE6, 0xE6));
+    QApplication::setPalette(dark);
+    QApplication::processEvents();
+    const QRgb onDark = sampleOpaqueInk(a->icon());
+
+    check(qRed(onLight) < 0x80, "浅色主题下图标是深色");
+    check(qRed(onDark) > 0xC0, "切到深色主题后图标自动变浅");
+    if (!(qRed(onLight) < 0x80) || !(qRed(onDark) > 0xC0))
+        std::printf("       实测 浅=%08x 深=%08x\n", onLight, onDark);
+
+    // 切回去也要对（不是单向的）
+    QApplication::setPalette(light);
+    QApplication::processEvents();
+    check(qRed(sampleOpaqueInk(a->icon())) < 0x80, "切回浅色主题图标又变回深色");
+
+    // ★ 颜色没变时不该重设 ★
+    //   PaletteChange 在拖动窗口、切焦点时也会来，无脑重设 74 个动作是白干。
+    const qint64 before = a->icon().cacheKey();
+    QPalette other = light;
+    other.setColor(QPalette::Window, QColor(0x11, 0x22, 0x33));
+    QApplication::setPalette(other);
+    QApplication::processEvents();
+    check(a->icon().cacheKey() == before, "只改无关颜色时不重设图标");
+
+    QApplication::setPalette(original);
+    QApplication::processEvents();
+    delete w;
+}
+
+// ===========================================================================
 //  [7a-2] 应用名称与图标
 // ===========================================================================
 //
@@ -4564,6 +4641,7 @@ int main(int argc, char **argv)
     testCropMenuEnabledState();
     testCropToSelection();
     testIcons();
+    testIconsFollowTheme();
     testAppIdentityAndIcon();
     testUiLanguage();
     testLanguageMenuAssembly();

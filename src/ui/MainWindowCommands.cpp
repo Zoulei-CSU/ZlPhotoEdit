@@ -39,6 +39,7 @@
 #include "ui/ToolOptionsBar.h"
 #include "ui/StatusBarWidget.h"
 #include "ui/LayerPanel.h"
+#include "ui/IconLibrary.h"
 // ★ 必须完整定义 ★
 //   closeDocumentTab / activateTab / closeEvent 都要调它的方法
 //   （tabAt / removeDocumentTab / count / currentIndex…），
@@ -86,6 +87,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QEvent>
 // 屏幕截图要用 QGuiApplication::primaryScreen() 取逻辑 DPI（见 captureScreenNow）
 #include <QGuiApplication>
 #include <QScreen>
@@ -132,6 +134,7 @@
 #include <algorithm>
 #include <functional>
 #include <QPainter>
+#include <QPalette>
 #include <QBuffer>
 #include <QTimer>
 #include <QFile>
@@ -1858,7 +1861,7 @@ bool MainWindow::maybeSaveAll()
 }
 
 // ============================================================================
-//  eventFilter —— 接收系统的"用本程序打开文件"事件
+//  eventFilter —— 接收系统的"用本程序打开文件"事件 / 画标尺拐角
 // ============================================================================
 //
 //  macOS 上把文件拖到 Dock 图标、或在 Finder 里选"打开方式"，系统不会给
@@ -1867,9 +1870,28 @@ bool MainWindow::maybeSaveAll()
 //
 //  其它平台不会发这个事件，这个分支自然不成立 —— 不加平台条件，
 //  少一处"换平台忘了改"。
+//
+//  ★ 另一个用途：标尺拐角 ★
+//    它不是普通 QWidget —— 必须和标尺**同色**，而标尺的颜色来自
+//    RulerWidget 自己的 palette。用子类或另存一份颜色都会让两处不同步，
+//    所以把它的绘制也收在这里，颜色从**它旁边那把标尺**的 palette 取，
+//    一处来源，派生关系与标尺完全一致。
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
+    if (watched && watched == m_rulerCorner && event->type() == QEvent::Paint) {
+        auto *w = static_cast<QWidget *>(watched);
+        QPainter p(w);
+        // 用横向标尺当色源：它与拐角紧邻同一行，且两者 palette 同源。
+        const QPalette pal = m_hruler ? m_hruler->palette() : w->palette();
+        p.fillRect(w->rect(), pal.color(QPalette::Window));
+        // 与标尺一致的分界线：右侧、下侧各一条（靠画布方向）
+        p.setPen(pal.color(QPalette::Midlight));
+        p.drawLine(w->width() - 1, 0, w->width() - 1, w->height() - 1);
+        p.drawLine(0, w->height() - 1, w->width() - 1, w->height() - 1);
+        return true;          // 自绘：不要再让 QWidget 去填背景
+    }
+
     if (event->type() == QEvent::FileOpen) {
         auto *openEvent = static_cast<QFileOpenEvent *>(event);
         const QString path = openEvent->file();
@@ -1879,6 +1901,98 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return QMainWindow::eventFilter(watched, event);
+}
+
+// ============================================================================
+//  setActionIcon / refreshAllIcons / changeEvent —— 图标跟随主题
+// ============================================================================
+
+void MainWindow::setActionIcon(QAction *action, const QString &name)
+{
+    if (!action)
+        return;
+    action->setIcon(icons::icon(name));
+    // ★ 名字记在动作上 ★
+    //   光设图标的话，换主题之后没有任何线索能把这些动作"反查"回图标名 ——
+    //   于是只能遍历全部动作猜。存一份名字是最省事也最不会漏的办法。
+    action->setProperty("iconName", name);
+}
+
+// ----------------------------------------------------------------------------
+//  refreshAllIcons —— 按当前 palette 重取全部图标
+// ----------------------------------------------------------------------------
+//
+//  调用时机只有一处：changeEvent() 收到 PaletteChange 且颜色真的变了。
+//
+//  ★ 为什么必须"重设"而不是只清缓存 ★
+//    图标是渲染时刻染色的（见 IconLibrary.h 的说明）。清缓存只影响下次取图，
+//    已经 setIcon 进菜单/工具栏的那张旧色图不会自己变 ——
+//    用户看到的仍然是"切了深色，图标还是黑的"。
+//
+//  ★ 为什么先比颜色 ★
+//    PaletteChange 在拖动窗口、切换焦点窗口时也会来（Qt 会把非活动窗口的
+//    某些颜色改掉）。颜色没变就重设 74 个动作 × 5 档 × 2 倍率纯属白干。
+void MainWindow::refreshAllIcons()
+{
+    const QColor color = icons::currentColor();
+    if (color == m_lastIconColor)
+        return;
+    m_lastIconColor = color;
+
+    icons::clearCache();      // ★ 必须先清 ★ 否则取回来的还是旧色的缓存项
+
+    const QList<QAction *> all = findChildren<QAction *>();
+    for (QAction *a : all) {
+        const QString name = a->property("iconName").toString();
+        if (name.isEmpty())
+            continue;
+        const QIcon ic = icons::icon(name);
+        if (!ic.isNull())
+            a->setIcon(ic);
+    }
+
+    // 工具按钮：图标来自工具 id（不是属性表），得单独走一遍。
+    // ★ 必须整条降级链照 buildToolBox 重来 ★ 只换"专用图标"那一级的话：
+    //   · 没有配图标的工具会从字母占位图变成空按钮（IconOnly 模式下是空白）；
+    //   · 字母占位图自己是按旧 palette 画的，也是旧色。
+    //   所以这里按工具名重画，而不是"能取到就设、取不到就跳过"。
+    for (auto it = m_toolActions.constBegin(); it != m_toolActions.constEnd(); ++it) {
+        QAction *a = it.value();
+        if (!a)
+            continue;
+        const QString id = it.key();
+        QString text = id;
+        if (m_toolManager) {
+            if (const AbstractTool *t = m_toolManager->findById(id))
+                text = t->displayName();
+        }
+        QIcon ic = icons::iconForTool(id);
+        if (ic.isNull())
+            ic = makeLetterIcon(text);
+        a->setIcon(ic);
+    }
+
+    if (m_layerPanel)
+        m_layerPanel->refreshIcons();
+
+    // 工具箱底部的"前景色"色块也是 palette 派生的
+    updateColorIndicators();
+}
+
+// ----------------------------------------------------------------------------
+//  changeEvent —— 主题切换
+// ----------------------------------------------------------------------------
+//
+//  ★ 为什么用 PaletteChange 而不是 colorSchemeChanged ★
+//    colorSchemeChanged 是 Qt 6.5 才有的信号，而本工程还要支持 Qt 5.15。
+//    PaletteChange 两个版本都有，且它反映的正是"前景/底色真的换了"这件事 ——
+//    对"图标该用什么颜色"来说，它比"系统设成了深色"更贴题
+//    （应用被强制成浅色主题时，palette 就是浅的）。
+void MainWindow::changeEvent(QEvent *event)
+{
+    QMainWindow::changeEvent(event);
+    if (event->type() == QEvent::PaletteChange)
+        refreshAllIcons();
 }
 
 // ============================================================================

@@ -24,6 +24,13 @@
 #include <QTextStream>
 #include <QString>
 #include <QWheelEvent>   // wheelEventPos / wheelEventGlobalPos 需要完整类型
+// isDarkTheme() 要读调色板 / 样式提示
+#include <QGuiApplication>
+#include <QPalette>
+#include <QColor>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+#  include <QStyleHints>   // colorScheme()
+#endif
 
 // Qt6 把 QStringConverter 独立出来用于文本流编码，Qt5 没有这个头。
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -217,5 +224,40 @@ inline QString qtVersionString()
 }
 
 } // namespace compat
+
+// ---------------------------------------------------------------------------
+//  当前是不是深色主题
+// ---------------------------------------------------------------------------
+//  ★ 为什么需要它 ★
+//    图标、标尺这些自绘的东西必须自己决定颜色。系统切成深色主题时，
+//    深色图标压在深色工具栏上根本看不清；反过来浅色图标在浅色主题下也一样。
+//    只有知道"现在是深是浅"，自绘代码才可能两边都对。
+//
+//  ★ 为什么放在 compat 里 ★
+//    两条判定路径的可用性完全不同：
+//      · Qt 6.5+ 有 QStyleHints::colorScheme()，这是系统的**明示**答案，
+//        连"系统设了深色但应用被强制浅色"这种情况都能正确反映；
+//      · Qt 5 没有这个 API，只能拿 QPalette::Window 的亮度兜底。
+//    这就是一处纯版本差异，按本文件开头的约定收在这里。
+//    （Qt5 的兜底天然不完美：它回答的是"当前 palette 深浅"，而不是
+//     "用户想要什么"。对图标配色来说这个差别可以接受 —— 我们要的正是
+//     "图标与它所在的底色对比够" 。）
+//
+//  ★ 判据是亮度，不是"颜色相等" ★
+//    主题可能不是纯黑纯白（深色主题的背景常是 #2b2b2b 这类），
+//    所以只能用亮度阈值，不能比字符串。
+inline bool isDarkTheme()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
+#else
+    // 取应用的 palette（不是某个部件的）：部件的 palette 可能被
+    // 局部改过，拿它判断会得出"这个按钮所在的地方是深色"这种局部结论。
+    if (!qApp)
+        return false;
+    const QColor bg = QGuiApplication::palette().color(QPalette::Window);
+    return bg.lightness() < 128;
+#endif
+}
 
 } // namespace zl

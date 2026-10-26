@@ -141,14 +141,14 @@ void MainWindow::setupActions()
 
     m_actionNew = new QAction(tr("New(&N)..."), this);
     m_actionNew->setObjectName(QStringLiteral("actionNew"));
-    m_actionNew->setIcon(icons::icon(QStringLiteral("file_new")));
+    setActionIcon(m_actionNew, QStringLiteral("file_new"));
     m_actionNew->setShortcut(QKeySequence::New);
     m_actionNew->setStatusTip(tr("Create a new blank image"));
     connect(m_actionNew, &QAction::triggered, this, &MainWindow::newDocument);
 
     m_actionOpen = new QAction(tr("Open(&O)..."), this);
     m_actionOpen->setObjectName(QStringLiteral("actionOpen"));
-    m_actionOpen->setIcon(icons::icon(QStringLiteral("file_open")));
+    setActionIcon(m_actionOpen, QStringLiteral("file_open"));
     m_actionOpen->setShortcut(QKeySequence::Open);
     m_actionOpen->setStatusTip(tr("Open an existing image file"));
     connect(m_actionOpen, &QAction::triggered, this, &MainWindow::openDocument);
@@ -164,7 +164,7 @@ void MainWindow::setupActions()
     //   硬塞一个进去只会在键盘上误触，进而悄悄改掉画布尺寸。
     m_actionOpenAsLayer = new QAction(tr("Open as Layer(&L)..."), this);
     m_actionOpenAsLayer->setObjectName(QStringLiteral("actionOpenAsLayer"));
-    m_actionOpenAsLayer->setIcon(icons::icon(QStringLiteral("file_open_as_layer")));
+    setActionIcon(m_actionOpenAsLayer, QStringLiteral("file_open_as_layer"));
     m_actionOpenAsLayer->setStatusTip(
         tr("Add another image as a new layer in the current document (without switching documents)"));
     connect(m_actionOpenAsLayer, &QAction::triggered, this, &MainWindow::openAsLayer);
@@ -205,7 +205,7 @@ void MainWindow::setupActions()
 
     m_actionCaptureNow = new QAction(tr("Capture Now"), this);
     m_actionCaptureNow->setObjectName(QStringLiteral("actionCaptureNow"));
-    m_actionCaptureNow->setIcon(icons::icon(QStringLiteral("action_screen_capture")));
+    setActionIcon(m_actionCaptureNow, QStringLiteral("action_screen_capture"));
     applyCaptureHotkey(captureSeq);
     connect(m_actionCaptureNow, &QAction::triggered, this,
             [this] { captureScreenNow(); });
@@ -215,7 +215,7 @@ void MainWindow::setupActions()
     //   散出去就会有人把 3000 写成 3。
     m_actionCaptureDelay3 = new QAction(tr("Delay 3 Seconds"), this);
     m_actionCaptureDelay3->setObjectName(QStringLiteral("actionCaptureDelay3"));
-    m_actionCaptureDelay3->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    setActionIcon(m_actionCaptureDelay3, QStringLiteral("action_capture_delay"));
     m_actionCaptureDelay3->setStatusTip(
         tr("Capture after 3 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay3, &QAction::triggered, this,
@@ -223,7 +223,7 @@ void MainWindow::setupActions()
 
     m_actionCaptureDelay5 = new QAction(tr("Delay 5 Seconds"), this);
     m_actionCaptureDelay5->setObjectName(QStringLiteral("actionCaptureDelay5"));
-    m_actionCaptureDelay5->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    setActionIcon(m_actionCaptureDelay5, QStringLiteral("action_capture_delay"));
     m_actionCaptureDelay5->setStatusTip(
         tr("Capture after 5 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay5, &QAction::triggered, this,
@@ -231,7 +231,7 @@ void MainWindow::setupActions()
 
     m_actionCaptureDelay10 = new QAction(tr("Delay 10 Seconds"), this);
     m_actionCaptureDelay10->setObjectName(QStringLiteral("actionCaptureDelay10"));
-    m_actionCaptureDelay10->setIcon(icons::icon(QStringLiteral("action_capture_delay")));
+    setActionIcon(m_actionCaptureDelay10, QStringLiteral("action_capture_delay"));
     m_actionCaptureDelay10->setStatusTip(
         tr("Capture after 10 seconds: this window will minimize first, switch to the target screen"));
     connect(m_actionCaptureDelay10, &QAction::triggered, this,
@@ -239,21 +239,21 @@ void MainWindow::setupActions()
 
     m_actionSave = new QAction(tr("Save(&S)"), this);
     m_actionSave->setObjectName(QStringLiteral("actionSave"));
-    m_actionSave->setIcon(icons::icon(QStringLiteral("file_save")));
+    setActionIcon(m_actionSave, QStringLiteral("file_save"));
     m_actionSave->setShortcut(QKeySequence::Save);
     m_actionSave->setStatusTip(tr("Save to the current file (asks for a path if untitled)"));
     connect(m_actionSave, &QAction::triggered, this, &MainWindow::saveDocument);
 
     m_actionSaveAs = new QAction(tr("Save As(&A)..."), this);
     m_actionSaveAs->setObjectName(QStringLiteral("actionSaveAs"));
-    m_actionSaveAs->setIcon(icons::icon(QStringLiteral("file_save_as")));
+    setActionIcon(m_actionSaveAs, QStringLiteral("file_save_as"));
     m_actionSaveAs->setShortcut(QKeySequence::SaveAs);
     m_actionSaveAs->setStatusTip(tr("Save to a new file; the format is decided by the extension"));
     connect(m_actionSaveAs, &QAction::triggered, this, &MainWindow::saveDocumentAs);
 
     m_actionPrint = new QAction(tr("Print(&P)..."), this);
     m_actionPrint->setObjectName(QStringLiteral("actionPrint"));
-    m_actionPrint->setIcon(icons::icon(QStringLiteral("file_print")));
+    setActionIcon(m_actionPrint, QStringLiteral("file_print"));
     m_actionPrint->setShortcut(QKeySequence::Print);
     m_actionPrint->setStatusTip(tr("Print the current image"));
     connect(m_actionPrint, &QAction::triggered, this, &MainWindow::printDocument);
@@ -262,20 +262,20 @@ void MainWindow::setupActions()
     // 而它本身是低频动作，菜单里点一次就够。
     m_actionExportPdf = new QAction(tr("Export PDF(&F)..."), this);
     m_actionExportPdf->setObjectName(QStringLiteral("actionExportPdf"));
-    m_actionExportPdf->setIcon(icons::icon(QStringLiteral("file_export_pdf")));
+    setActionIcon(m_actionExportPdf, QStringLiteral("file_export_pdf"));
     m_actionExportPdf->setStatusTip(tr("Export the current image as a single-page PDF"));
     connect(m_actionExportPdf, &QAction::triggered, this, &MainWindow::saveAsPdf);
 
     m_actionClose = new QAction(tr("Close(&W)"), this);
     m_actionClose->setObjectName(QStringLiteral("actionClose"));
-    m_actionClose->setIcon(icons::icon(QStringLiteral("file_close")));
+    setActionIcon(m_actionClose, QStringLiteral("file_close"));
     m_actionClose->setShortcut(QKeySequence::Close);
     m_actionClose->setStatusTip(tr("Close the current image"));
     connect(m_actionClose, &QAction::triggered, this, &MainWindow::closeCurrentDocument);
 
     m_actionQuit = new QAction(tr("Quit(&Q)"), this);
     m_actionQuit->setObjectName(QStringLiteral("actionQuit"));
-    m_actionQuit->setIcon(icons::icon(QStringLiteral("file_quit")));
+    setActionIcon(m_actionQuit, QStringLiteral("file_quit"));
     m_actionQuit->setShortcut(QKeySequence::Quit);
     m_actionQuit->setMenuRole(QAction::QuitRole);
     m_actionQuit->setStatusTip(tr("Quit %1").arg(zl::appinfo::displayName()));
@@ -287,7 +287,7 @@ void MainWindow::setupActions()
 
     m_actionUndo = new QAction(tr("Undo(&U)"), this);
     m_actionUndo->setObjectName(QStringLiteral("actionUndo"));
-    m_actionUndo->setIcon(icons::icon(QStringLiteral("edit_undo")));
+    setActionIcon(m_actionUndo, QStringLiteral("edit_undo"));
     m_actionUndo->setShortcut(QKeySequence::Undo);
     m_actionUndo->setStatusTip(tr("Undo the last operation"));
     m_actionUndo->setEnabled(false);
@@ -295,7 +295,7 @@ void MainWindow::setupActions()
 
     m_actionRedo = new QAction(tr("Redo(&R)"), this);
     m_actionRedo->setObjectName(QStringLiteral("actionRedo"));
-    m_actionRedo->setIcon(icons::icon(QStringLiteral("edit_redo")));
+    setActionIcon(m_actionRedo, QStringLiteral("edit_redo"));
     // ★ 重做给两个快捷键 ★
     //   QKeySequence::Redo 在 Windows 上解析为 Ctrl+Y。
     //   但很多用户习惯 Ctrl+Shift+Z（Linux/Mac 的约定），
@@ -309,7 +309,7 @@ void MainWindow::setupActions()
 
     m_actionCut = new QAction(tr("Cut(&T)"), this);
     m_actionCut->setObjectName(QStringLiteral("actionCut"));
-    m_actionCut->setIcon(icons::icon(QStringLiteral("edit_cut")));
+    setActionIcon(m_actionCut, QStringLiteral("edit_cut"));
     m_actionCut->setShortcut(QKeySequence::Cut);
     m_actionCut->setStatusTip(tr("Cut the selection to the clipboard"));
     m_actionCut->setEnabled(false);
@@ -317,7 +317,7 @@ void MainWindow::setupActions()
 
     m_actionCopy = new QAction(tr("Copy(&C)"), this);
     m_actionCopy->setObjectName(QStringLiteral("actionCopy"));
-    m_actionCopy->setIcon(icons::icon(QStringLiteral("edit_copy")));
+    setActionIcon(m_actionCopy, QStringLiteral("edit_copy"));
     m_actionCopy->setShortcut(QKeySequence::Copy);
     m_actionCopy->setStatusTip(tr("Copy the selection to the clipboard (copies the whole layer when there is no selection)"));
     m_actionCopy->setEnabled(false);
@@ -325,21 +325,21 @@ void MainWindow::setupActions()
 
     m_actionPaste = new QAction(tr("Paste as New Layer(&P)"), this);
     m_actionPaste->setObjectName(QStringLiteral("actionPaste"));
-    m_actionPaste->setIcon(icons::icon(QStringLiteral("edit_paste")));
+    setActionIcon(m_actionPaste, QStringLiteral("edit_paste"));
     m_actionPaste->setShortcut(QKeySequence::Paste);
     m_actionPaste->setStatusTip(tr("Paste the clipboard content as a new layer"));
     connect(m_actionPaste, &QAction::triggered, this, &MainWindow::pasteAsNewLayer);
 
     m_actionPasteInto = new QAction(tr("Paste into Current Layer(&I)"), this);
     m_actionPasteInto->setObjectName(QStringLiteral("actionPasteInto"));
-    m_actionPasteInto->setIcon(icons::icon(QStringLiteral("edit_paste_into")));
+    setActionIcon(m_actionPasteInto, QStringLiteral("edit_paste_into"));
     m_actionPasteInto->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_V));
     m_actionPasteInto->setStatusTip(tr("Merge the clipboard content into the current layer"));
     connect(m_actionPasteInto, &QAction::triggered, this, &MainWindow::pasteIntoLayer);
 
     m_actionDelete = new QAction(tr("Delete(&D)"), this);
     m_actionDelete->setObjectName(QStringLiteral("actionDelete"));
-    m_actionDelete->setIcon(icons::icon(QStringLiteral("edit_delete")));
+    setActionIcon(m_actionDelete, QStringLiteral("edit_delete"));
     m_actionDelete->setShortcut(QKeySequence::Delete);
     m_actionDelete->setStatusTip(tr("Delete the content inside the selection (clears the whole layer when there is no selection)"));
     connect(m_actionDelete, &QAction::triggered, this, &MainWindow::onDeleteSelection);
@@ -348,7 +348,7 @@ void MainWindow::setupActions()
     // 不挂快捷键 —— 它是设置项，不是操作。
     m_actionUndoLimit = new QAction(tr("Undo Steps..."), this);
     m_actionUndoLimit->setObjectName(QStringLiteral("actionUndoLimit"));
-    m_actionUndoLimit->setIcon(icons::icon(QStringLiteral("edit_undo_limit")));
+    setActionIcon(m_actionUndoLimit, QStringLiteral("edit_undo_limit"));
     m_actionUndoLimit->setStatusTip(tr("How many undo steps each document keeps"));
     connect(m_actionUndoLimit, &QAction::triggered, this, &MainWindow::openUndoLimitDialog);
 
@@ -358,14 +358,14 @@ void MainWindow::setupActions()
 
     m_actionSelectAll = new QAction(tr("Select All(&A)"), this);
     m_actionSelectAll->setObjectName(QStringLiteral("actionSelectAll"));
-    m_actionSelectAll->setIcon(icons::icon(QStringLiteral("select_all")));
+    setActionIcon(m_actionSelectAll, QStringLiteral("select_all"));
     m_actionSelectAll->setShortcut(QKeySequence::SelectAll);
     m_actionSelectAll->setStatusTip(tr("Select the whole canvas"));
     connect(m_actionSelectAll, &QAction::triggered, this, &MainWindow::selectAll);
 
     m_actionDeselect = new QAction(tr("Deselect(&D)"), this);
     m_actionDeselect->setObjectName(QStringLiteral("actionDeselect"));
-    m_actionDeselect->setIcon(icons::icon(QStringLiteral("select_none")));
+    setActionIcon(m_actionDeselect, QStringLiteral("select_none"));
     // ★ 为什么不用 QKeySequence::Deselect ★
     //   Qt 没有提供这个标准键（SelectAll 有，Deselect 没有）。
     //   Ctrl+D 是 Photoshop 的约定，用户肌肉记忆很强，直接用。
@@ -375,7 +375,7 @@ void MainWindow::setupActions()
 
     m_actionInvertSelection = new QAction(tr("Invert Selection(&I)"), this);
     m_actionInvertSelection->setObjectName(QStringLiteral("actionInvertSelection"));
-    m_actionInvertSelection->setIcon(icons::icon(QStringLiteral("select_invert")));
+    setActionIcon(m_actionInvertSelection, QStringLiteral("select_invert"));
     m_actionInvertSelection->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_I));
     m_actionInvertSelection->setStatusTip(tr("Select everything outside the current selection"));
     connect(m_actionInvertSelection, &QAction::triggered, this, &MainWindow::invertSelection);
@@ -386,7 +386,7 @@ void MainWindow::setupActions()
 
     m_actionGrayscale = new QAction(tr("Desaturate(&G)"), this);
     m_actionGrayscale->setObjectName(QStringLiteral("actionGrayscale"));
-    m_actionGrayscale->setIcon(icons::icon(QStringLiteral("adjust_grayscale")));
+    setActionIcon(m_actionGrayscale, QStringLiteral("adjust_grayscale"));
     // Ctrl+Shift+U 是 Photoshop 的约定
     m_actionGrayscale->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_U));
     m_actionGrayscale->setStatusTip(tr("Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)"));
@@ -394,7 +394,7 @@ void MainWindow::setupActions()
 
     m_actionInvert = new QAction(tr("Invert(&I)"), this);
     m_actionInvert->setObjectName(QStringLiteral("actionInvert"));
-    m_actionInvert->setIcon(icons::icon(QStringLiteral("adjust_invert")));
+    setActionIcon(m_actionInvert, QStringLiteral("adjust_invert"));
     m_actionInvert->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_I));
     m_actionInvert->setStatusTip(tr("Invert all color channels (like a negative)"));
     connect(m_actionInvert, &QAction::triggered, this, &MainWindow::applyInvert);
@@ -406,28 +406,28 @@ void MainWindow::setupActions()
     // 容易和别的功能冲突的组合键，不如保持"无快捷键"。
     m_actionBrightnessContrast = new QAction(tr("Brightness/Contrast(&B)..."), this);
     m_actionBrightnessContrast->setObjectName(QStringLiteral("actionBrightnessContrast"));
-    m_actionBrightnessContrast->setIcon(icons::icon(QStringLiteral("adjust_brightness")));
+    setActionIcon(m_actionBrightnessContrast, QStringLiteral("adjust_brightness"));
     m_actionBrightnessContrast->setStatusTip(tr("Adjust the brightness and contrast of the image"));
     connect(m_actionBrightnessContrast, &QAction::triggered,
             this, &MainWindow::openBrightnessContrast);
 
     m_actionHueSaturation = new QAction(tr("Hue/Saturation(&H)..."), this);
     m_actionHueSaturation->setObjectName(QStringLiteral("actionHueSaturation"));
-    m_actionHueSaturation->setIcon(icons::icon(QStringLiteral("adjust_hue")));
+    setActionIcon(m_actionHueSaturation, QStringLiteral("adjust_hue"));
     m_actionHueSaturation->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_U));
     m_actionHueSaturation->setStatusTip(tr("Adjust the hue, saturation and lightness of colors"));
     connect(m_actionHueSaturation, &QAction::triggered, this, &MainWindow::openHueSaturation);
 
     m_actionCurves = new QAction(tr("Curves(&C)..."), this);
     m_actionCurves->setObjectName(QStringLiteral("actionCurves"));
-    m_actionCurves->setIcon(icons::icon(QStringLiteral("adjust_curves")));
+    setActionIcon(m_actionCurves, QStringLiteral("adjust_curves"));
     m_actionCurves->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_M));
     m_actionCurves->setStatusTip(tr("Finely adjust the per-channel tonal mapping with a control-point curve"));
     connect(m_actionCurves, &QAction::triggered, this, &MainWindow::openCurves);
 
     m_actionLevels = new QAction(tr("Levels(&L)..."), this);
     m_actionLevels->setObjectName(QStringLiteral("actionLevels"));
-    m_actionLevels->setIcon(icons::icon(QStringLiteral("adjust_levels")));
+    setActionIcon(m_actionLevels, QStringLiteral("adjust_levels"));
     // Ctrl+L 也是 Photoshop 的约定，且当前未被占用（已核对全部快捷键）
     m_actionLevels->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_L));
     m_actionLevels->setStatusTip(tr("Adjust the tonal distribution with the histogram black/white points and midtones"));
@@ -444,14 +444,14 @@ void MainWindow::setupActions()
     //   （已核对本工程其余快捷键，无冲突。）
     m_actionImageSize = new QAction(tr("Image Size(&I)..."), this);
     m_actionImageSize->setObjectName(QStringLiteral("actionImageSize"));
-    m_actionImageSize->setIcon(icons::icon(QStringLiteral("image_size")));
+    setActionIcon(m_actionImageSize, QStringLiteral("image_size"));
     m_actionImageSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
     m_actionImageSize->setStatusTip(tr("Resample the pixel content (the image becomes softer or sharper)"));
     connect(m_actionImageSize, &QAction::triggered, this, &MainWindow::openImageSize);
 
     m_actionCanvasSize = new QAction(tr("Canvas Size(&C)..."), this);
     m_actionCanvasSize->setObjectName(QStringLiteral("actionCanvasSize"));
-    m_actionCanvasSize->setIcon(icons::icon(QStringLiteral("canvas_size")));
+    setActionIcon(m_actionCanvasSize, QStringLiteral("canvas_size"));
     m_actionCanvasSize->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_C));
     m_actionCanvasSize->setStatusTip(tr("Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger"));
     connect(m_actionCanvasSize, &QAction::triggered, this, &MainWindow::openCanvasSize);
@@ -462,19 +462,19 @@ void MainWindow::setupActions()
 
     m_actionRotate90CW = new QAction(tr("Rotate 90° Clockwise"), this);
     m_actionRotate90CW->setObjectName(QStringLiteral("actionRotate90CW"));
-    m_actionRotate90CW->setIcon(icons::icon(QStringLiteral("rotate_cw")));
+    setActionIcon(m_actionRotate90CW, QStringLiteral("rotate_cw"));
     m_actionRotate90CW->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
     connect(m_actionRotate90CW, &QAction::triggered, this, &MainWindow::rotate90CW);
 
     m_actionRotate90CCW = new QAction(tr("Rotate 90° Counterclockwise"), this);
     m_actionRotate90CCW->setObjectName(QStringLiteral("actionRotate90CCW"));
-    m_actionRotate90CCW->setIcon(icons::icon(QStringLiteral("rotate_ccw")));
+    setActionIcon(m_actionRotate90CCW, QStringLiteral("rotate_ccw"));
     m_actionRotate90CCW->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_R));
     connect(m_actionRotate90CCW, &QAction::triggered, this, &MainWindow::rotate90CCW);
 
     m_actionRotate180 = new QAction(tr("Rotate 180°"), this);
     m_actionRotate180->setObjectName(QStringLiteral("actionRotate180"));
-    m_actionRotate180->setIcon(icons::icon(QStringLiteral("rotate_180")));
+    setActionIcon(m_actionRotate180, QStringLiteral("rotate_180"));
     connect(m_actionRotate180, &QAction::triggered, this, &MainWindow::rotate180);
 
     // ★ 这一块曾经"漏写"过一次 ★
@@ -485,19 +485,19 @@ void MainWindow::setupActions()
     //   addAction"四处齐全。
     m_actionRotateArbitrary = new QAction(tr("Rotate Arbitrary(&A)..."), this);
     m_actionRotateArbitrary->setObjectName(QStringLiteral("actionRotateArbitrary"));
-    m_actionRotateArbitrary->setIcon(icons::icon(QStringLiteral("rotate_arbitrary")));
+    setActionIcon(m_actionRotateArbitrary, QStringLiteral("rotate_arbitrary"));
     connect(m_actionRotateArbitrary, &QAction::triggered,
             this, &MainWindow::openRotateArbitrary);
 
     m_actionFlipH = new QAction(tr("Flip Horizontal"), this);
     m_actionFlipH->setObjectName(QStringLiteral("actionFlipH"));
-    m_actionFlipH->setIcon(icons::icon(QStringLiteral("flip_h")));
+    setActionIcon(m_actionFlipH, QStringLiteral("flip_h"));
     m_actionFlipH->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_H));
     connect(m_actionFlipH, &QAction::triggered, this, &MainWindow::flipHorizontal);
 
     m_actionFlipV = new QAction(tr("Flip Vertical"), this);
     m_actionFlipV->setObjectName(QStringLiteral("actionFlipV"));
-    m_actionFlipV->setIcon(icons::icon(QStringLiteral("flip_v")));
+    setActionIcon(m_actionFlipV, QStringLiteral("flip_v"));
     connect(m_actionFlipV, &QAction::triggered, this, &MainWindow::flipVertical);
 
     // ── 裁剪（裁到当前选区的包围盒）──
@@ -509,7 +509,7 @@ void MainWindow::setupActions()
     //   完整理由见 docs/画布与文件操作设计.md 6.8。
     m_actionCrop = new QAction(tr("Crop"), this);
     m_actionCrop->setObjectName(QStringLiteral("actionCrop"));
-    m_actionCrop->setIcon(icons::icon(QStringLiteral("tool_crop")));
+    setActionIcon(m_actionCrop, QStringLiteral("tool_crop"));
     m_actionCrop->setStatusTip(tr("Crop the canvas to the bounding box of the current selection"));
     connect(m_actionCrop, &QAction::triggered, this, &MainWindow::cropToSelection);
 
@@ -519,48 +519,48 @@ void MainWindow::setupActions()
 
     m_actionLayerNew = new QAction(tr("New Layer(&N)"), this);
     m_actionLayerNew->setObjectName(QStringLiteral("actionLayerNew"));
-    m_actionLayerNew->setIcon(icons::icon(QStringLiteral("layer_new")));
+    setActionIcon(m_actionLayerNew, QStringLiteral("layer_new"));
     m_actionLayerNew->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_N));
     connect(m_actionLayerNew, &QAction::triggered, this, &MainWindow::addNewLayer);
 
     m_actionLayerDuplicate = new QAction(tr("Duplicate Layer(&D)"), this);
     m_actionLayerDuplicate->setObjectName(QStringLiteral("actionLayerDuplicate"));
-    m_actionLayerDuplicate->setIcon(icons::icon(QStringLiteral("layer_duplicate")));
+    setActionIcon(m_actionLayerDuplicate, QStringLiteral("layer_duplicate"));
     m_actionLayerDuplicate->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_J));
     connect(m_actionLayerDuplicate, &QAction::triggered,
             this, &MainWindow::duplicateCurrentLayer);
 
     m_actionLayerDelete = new QAction(tr("Delete Layer"), this);
     m_actionLayerDelete->setObjectName(QStringLiteral("actionLayerDelete"));
-    m_actionLayerDelete->setIcon(icons::icon(QStringLiteral("layer_delete")));
+    setActionIcon(m_actionLayerDelete, QStringLiteral("layer_delete"));
     connect(m_actionLayerDelete, &QAction::triggered, this, &MainWindow::deleteCurrentLayer);
 
     m_actionLayerMoveUp = new QAction(tr("Move Layer Up"), this);
     m_actionLayerMoveUp->setObjectName(QStringLiteral("actionLayerMoveUp"));
-    m_actionLayerMoveUp->setIcon(icons::icon(QStringLiteral("layer_up")));
+    setActionIcon(m_actionLayerMoveUp, QStringLiteral("layer_up"));
     m_actionLayerMoveUp->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketRight));
     connect(m_actionLayerMoveUp, &QAction::triggered, this, &MainWindow::moveLayerUp);
 
     m_actionLayerMoveDown = new QAction(tr("Move Layer Down"), this);
     m_actionLayerMoveDown->setObjectName(QStringLiteral("actionLayerMoveDown"));
-    m_actionLayerMoveDown->setIcon(icons::icon(QStringLiteral("layer_down")));
+    setActionIcon(m_actionLayerMoveDown, QStringLiteral("layer_down"));
     m_actionLayerMoveDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_BracketLeft));
     connect(m_actionLayerMoveDown, &QAction::triggered, this, &MainWindow::moveLayerDown);
 
     m_actionMergeDown = new QAction(tr("Merge Down(&M)"), this);
     m_actionMergeDown->setObjectName(QStringLiteral("actionMergeDown"));
-    m_actionMergeDown->setIcon(icons::icon(QStringLiteral("layer_merge_down")));
+    setActionIcon(m_actionMergeDown, QStringLiteral("layer_merge_down"));
     m_actionMergeDown->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_E));
     connect(m_actionMergeDown, &QAction::triggered, this, &MainWindow::mergeLayerDown);
 
     m_actionFlatten = new QAction(tr("Flatten Image(&F)"), this);
     m_actionFlatten->setObjectName(QStringLiteral("actionFlatten"));
-    m_actionFlatten->setIcon(icons::icon(QStringLiteral("layer_flatten")));
+    setActionIcon(m_actionFlatten, QStringLiteral("layer_flatten"));
     connect(m_actionFlatten, &QAction::triggered, this, &MainWindow::flattenImage);
 
     m_actionLayerMergeVisible = new QAction(tr("Merge Visible Layers(&V)"), this);
     m_actionLayerMergeVisible->setObjectName(QStringLiteral("actionLayerMergeVisible"));
-    m_actionLayerMergeVisible->setIcon(icons::icon(QStringLiteral("layer_merge_visible")));
+    setActionIcon(m_actionLayerMergeVisible, QStringLiteral("layer_merge_visible"));
     // Ctrl+Shift+E：与"向下合并"的 Ctrl+E 成对，Shift 表示"范围更大"。
     m_actionLayerMergeVisible->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_E));
     connect(m_actionLayerMergeVisible, &QAction::triggered,
@@ -568,7 +568,7 @@ void MainWindow::setupActions()
 
     m_actionLayerRename = new QAction(tr("Rename Layer(&R)"), this);
     m_actionLayerRename->setObjectName(QStringLiteral("actionLayerRename"));
-    m_actionLayerRename->setIcon(icons::icon(QStringLiteral("layer_rename")));
+    setActionIcon(m_actionLayerRename, QStringLiteral("layer_rename"));
     // ★ 用 F2 而不是回车 ★
     //   回车在图层面板里已经被"确认重命名"占用了；F2 是各平台通用的
     //   "重命名当前项"，而且它不会和列表的键盘导航冲突。
@@ -578,7 +578,7 @@ void MainWindow::setupActions()
 
     m_actionLayerMaskAdd = new QAction(tr("Add Layer Mask from Selection(&M)"), this);
     m_actionLayerMaskAdd->setObjectName(QStringLiteral("actionLayerMaskAdd"));
-    m_actionLayerMaskAdd->setIcon(icons::icon(QStringLiteral("layer_mask_add")));
+    setActionIcon(m_actionLayerMaskAdd, QStringLiteral("layer_mask_add"));
     m_actionLayerMaskAdd->setStatusTip(
         tr("Hide everything outside the current selection without deleting pixels"));
     connect(m_actionLayerMaskAdd, &QAction::triggered,
@@ -586,7 +586,7 @@ void MainWindow::setupActions()
 
     m_actionLayerMaskRemove = new QAction(tr("Remove Layer Mask(&K)"), this);
     m_actionLayerMaskRemove->setObjectName(QStringLiteral("actionLayerMaskRemove"));
-    m_actionLayerMaskRemove->setIcon(icons::icon(QStringLiteral("layer_mask_remove")));
+    setActionIcon(m_actionLayerMaskRemove, QStringLiteral("layer_mask_remove"));
     m_actionLayerMaskRemove->setStatusTip(
         tr("Delete the mask and show the whole layer again"));
     connect(m_actionLayerMaskRemove, &QAction::triggered,
@@ -598,39 +598,39 @@ void MainWindow::setupActions()
 
     m_actionZoomIn = new QAction(tr("Zoom In(&I)"), this);
     m_actionZoomIn->setObjectName(QStringLiteral("actionZoomIn"));
-    m_actionZoomIn->setIcon(icons::icon(QStringLiteral("view_zoom_in")));
+    setActionIcon(m_actionZoomIn, QStringLiteral("view_zoom_in"));
     // QKeySequence::ZoomIn 会解析成 Ctrl++（同时接受 Ctrl+= 的变体）
     m_actionZoomIn->setShortcut(QKeySequence::ZoomIn);
     connect(m_actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
 
     m_actionZoomOut = new QAction(tr("Zoom Out(&O)"), this);
     m_actionZoomOut->setObjectName(QStringLiteral("actionZoomOut"));
-    m_actionZoomOut->setIcon(icons::icon(QStringLiteral("view_zoom_out")));
+    setActionIcon(m_actionZoomOut, QStringLiteral("view_zoom_out"));
     m_actionZoomOut->setShortcut(QKeySequence::ZoomOut);
     connect(m_actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
 
     m_actionZoomFit = new QAction(tr("Fit to Window(&F)"), this);
     m_actionZoomFit->setObjectName(QStringLiteral("actionZoomFit"));
-    m_actionZoomFit->setIcon(icons::icon(QStringLiteral("view_zoom_fit")));
+    setActionIcon(m_actionZoomFit, QStringLiteral("view_zoom_fit"));
     m_actionZoomFit->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
     connect(m_actionZoomFit, &QAction::triggered, this, &MainWindow::zoomToFit);
 
     m_actionZoomActual = new QAction(tr("Actual Size(&A)"), this);
     m_actionZoomActual->setObjectName(QStringLiteral("actionZoomActual"));
-    m_actionZoomActual->setIcon(icons::icon(QStringLiteral("view_zoom_100")));
+    setActionIcon(m_actionZoomActual, QStringLiteral("view_zoom_100"));
     m_actionZoomActual->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_1));
     connect(m_actionZoomActual, &QAction::triggered, this, &MainWindow::zoomToActualSize);
 
     m_actionShowGrid = new QAction(tr("Show Grid(&G)"), this);
     m_actionShowGrid->setObjectName(QStringLiteral("actionShowGrid"));
-    m_actionShowGrid->setIcon(icons::icon(QStringLiteral("view_grid")));
+    setActionIcon(m_actionShowGrid, QStringLiteral("view_grid"));
     m_actionShowGrid->setCheckable(true);
     m_actionShowGrid->setChecked(false);
     connect(m_actionShowGrid, &QAction::toggled, this, &MainWindow::toggleGrid);
 
     m_actionShowCheckerboard = new QAction(tr("Show Transparent Background"), this);
     m_actionShowCheckerboard->setObjectName(QStringLiteral("actionShowCheckerboard"));
-    m_actionShowCheckerboard->setIcon(icons::icon(QStringLiteral("view_checkerboard")));
+    setActionIcon(m_actionShowCheckerboard, QStringLiteral("view_checkerboard"));
     m_actionShowCheckerboard->setCheckable(true);
     m_actionShowCheckerboard->setChecked(true);
     connect(m_actionShowCheckerboard, &QAction::toggled,
@@ -641,7 +641,7 @@ void MainWindow::setupActions()
     //   一个没跟上来的勾只会让人以为"菜单里还写着全屏"。
     m_actionFullScreen = new QAction(tr("Full Screen(&U)"), this);
     m_actionFullScreen->setObjectName(QStringLiteral("actionFullScreen"));
-    m_actionFullScreen->setIcon(icons::icon(QStringLiteral("view_fullscreen")));
+    setActionIcon(m_actionFullScreen, QStringLiteral("view_fullscreen"));
     m_actionFullScreen->setShortcut(QKeySequence(Qt::Key_F11));
     m_actionFullScreen->setStatusTip(tr("Toggle full screen (F11)"));
     connect(m_actionFullScreen, &QAction::triggered, this, &MainWindow::toggleFullScreen);
@@ -654,7 +654,7 @@ void MainWindow::setupActions()
     //    "显示网格"本身没给快捷键（它是纯呈现，用得没吸附频繁）。
     m_actionSnapToGrid = new QAction(tr("Snap to Grid(&S)"), this);
     m_actionSnapToGrid->setObjectName(QStringLiteral("actionSnapToGrid"));
-    m_actionSnapToGrid->setIcon(icons::icon(QStringLiteral("view_grid_snap")));
+    setActionIcon(m_actionSnapToGrid, QStringLiteral("view_grid_snap"));
     m_actionSnapToGrid->setCheckable(true);
     m_actionSnapToGrid->setChecked(false);
     m_actionSnapToGrid->setShortcut(
@@ -687,7 +687,7 @@ void MainWindow::setupActions()
 
     m_actionGridCustom = new QAction(tr("Custom(&U)..."), this);
     m_actionGridCustom->setObjectName(QStringLiteral("actionGridCustom"));
-    m_actionGridCustom->setIcon(icons::icon(QStringLiteral("view_grid_spacing")));
+    setActionIcon(m_actionGridCustom, QStringLiteral("view_grid_spacing"));
     connect(m_actionGridCustom, &QAction::triggered, this, &MainWindow::editGridSettings);
 
     // ── 标尺与参考线（阶段七：视图辅助）──
@@ -699,7 +699,7 @@ void MainWindow::setupActions()
     //    参考线的 Ctrl+; / Ctrl+Alt+; 在本工程没有占用，按惯例直接用。
     m_actionShowRuler = new QAction(tr("Show Ruler(&R)"), this);
     m_actionShowRuler->setObjectName(QStringLiteral("actionShowRuler"));
-    m_actionShowRuler->setIcon(icons::icon(QStringLiteral("view_ruler")));
+    setActionIcon(m_actionShowRuler, QStringLiteral("view_ruler"));
     m_actionShowRuler->setCheckable(true);
     m_actionShowRuler->setChecked(true);              // 默认显示
     m_actionShowRuler->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_R));
@@ -707,7 +707,7 @@ void MainWindow::setupActions()
 
     m_actionShowGuides = new QAction(tr("Show Guides(&G)"), this);
     m_actionShowGuides->setObjectName(QStringLiteral("actionShowGuides"));
-    m_actionShowGuides->setIcon(icons::icon(QStringLiteral("view_guides")));
+    setActionIcon(m_actionShowGuides, QStringLiteral("view_guides"));
     m_actionShowGuides->setCheckable(true);
     m_actionShowGuides->setChecked(true);
     m_actionShowGuides->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Semicolon));
@@ -715,7 +715,7 @@ void MainWindow::setupActions()
 
     m_actionLockGuides = new QAction(tr("Lock Guides(&L)"), this);
     m_actionLockGuides->setObjectName(QStringLiteral("actionLockGuides"));
-    m_actionLockGuides->setIcon(icons::icon(QStringLiteral("view_guides_lock")));
+    setActionIcon(m_actionLockGuides, QStringLiteral("view_guides_lock"));
     m_actionLockGuides->setCheckable(true);
     m_actionLockGuides->setChecked(false);
     m_actionLockGuides->setShortcut(
@@ -725,7 +725,7 @@ void MainWindow::setupActions()
 
     m_actionClearGuides = new QAction(tr("Clear Guides(&C)"), this);
     m_actionClearGuides->setObjectName(QStringLiteral("actionClearGuides"));
-    m_actionClearGuides->setIcon(icons::icon(QStringLiteral("view_guides_clear")));
+    setActionIcon(m_actionClearGuides, QStringLiteral("view_guides_clear"));
     connect(m_actionClearGuides, &QAction::triggered, this, &MainWindow::clearGuides);
 
     // ── 「标尺单位」子菜单：5 个互斥项 ──
@@ -761,13 +761,13 @@ void MainWindow::setupActions()
 
     m_actionForegroundColor = new QAction(tr("Set Foreground Color..."), this);
     m_actionForegroundColor->setObjectName(QStringLiteral("actionForegroundColor"));
-    m_actionForegroundColor->setIcon(icons::icon(QStringLiteral("color_foreground")));
+    setActionIcon(m_actionForegroundColor, QStringLiteral("color_foreground"));
     connect(m_actionForegroundColor, &QAction::triggered,
             this, &MainWindow::chooseForegroundColor);
 
     m_actionBackgroundColor = new QAction(tr("Set Background Color..."), this);
     m_actionBackgroundColor->setObjectName(QStringLiteral("actionBackgroundColor"));
-    m_actionBackgroundColor->setIcon(icons::icon(QStringLiteral("color_background")));
+    setActionIcon(m_actionBackgroundColor, QStringLiteral("color_background"));
     connect(m_actionBackgroundColor, &QAction::triggered,
             this, &MainWindow::chooseBackgroundColor);
 
@@ -782,12 +782,12 @@ void MainWindow::setupActions()
     // 见 MainWindowCommands.cpp 的 keyPressEvent。
     m_actionSwapColors = new QAction(tr("Swap Foreground/Background Color"), this);
     m_actionSwapColors->setObjectName(QStringLiteral("actionSwapColors"));
-    m_actionSwapColors->setIcon(icons::icon(QStringLiteral("color_swap")));
+    setActionIcon(m_actionSwapColors, QStringLiteral("color_swap"));
     connect(m_actionSwapColors, &QAction::triggered, this, &MainWindow::swapColors);
 
     m_actionResetColors = new QAction(tr("Restore Default Colors"), this);
     m_actionResetColors->setObjectName(QStringLiteral("actionResetColors"));
-    m_actionResetColors->setIcon(icons::icon(QStringLiteral("color_reset")));
+    setActionIcon(m_actionResetColors, QStringLiteral("color_reset"));
     connect(m_actionResetColors, &QAction::triggered, this, &MainWindow::resetColors);
 
     // ─────────────────────────────────────────────────────────────────────
@@ -796,7 +796,7 @@ void MainWindow::setupActions()
 
     m_actionAbout = new QAction(tr("About %1(&A)...").arg(zl::appinfo::displayName()), this);
     m_actionAbout->setObjectName(QStringLiteral("actionAbout"));
-    m_actionAbout->setIcon(icons::icon(QStringLiteral("help_about")));
+    setActionIcon(m_actionAbout, QStringLiteral("help_about"));
     m_actionAbout->setMenuRole(QAction::AboutRole);
     connect(m_actionAbout, &QAction::triggered, this, [this]() {
         // ★ 为什么不用 QMessageBox::about ★
@@ -870,7 +870,7 @@ void MainWindow::setupActions()
 
     m_actionAboutQt = new QAction(tr("About Qt(&Q)..."), this);
     m_actionAboutQt->setObjectName(QStringLiteral("actionAboutQt"));
-    m_actionAboutQt->setIcon(icons::icon(QStringLiteral("help_qt")));
+    setActionIcon(m_actionAboutQt, QStringLiteral("help_qt"));
     m_actionAboutQt->setMenuRole(QAction::AboutQtRole);
     connect(m_actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 }
@@ -924,7 +924,7 @@ void MainWindow::setupMenus()
     //   "一栏都有图标"的菜单里明显掉队。
     QMenu *captureMenu = fileMenu->addMenu(tr("Screen Capture(&C)"));
     captureMenu->setObjectName(QStringLiteral("menuScreenCapture"));
-    captureMenu->setIcon(icons::icon(QStringLiteral("menu_screen_capture")));
+    setActionIcon(captureMenu->menuAction(), QStringLiteral("menu_screen_capture"));
     captureMenu->addAction(m_actionCaptureNow);
     // 三条延迟项归成一组：同一个动作的三个档，与"立即"之间用横线分开
     captureMenu->addSeparator();
@@ -939,7 +939,7 @@ void MainWindow::setupMenus()
     //   QMenu::addMenu() 返回的 QMenu 自带一个 menuAction()，
     //   setIcon() 就是给那个动作挂图 —— 它和普通菜单项走同一套绘制，
     //   所以子菜单在有图标的菜单里不会显得"掉队"。
-    recentMenu->setIcon(icons::icon(QStringLiteral("menu_recent")));
+    setActionIcon(recentMenu->menuAction(), QStringLiteral("menu_recent"));
     for (int i = 0; i < kMaxRecentFiles; ++i) {
         auto *action = new QAction(this);
         action->setVisible(false);
@@ -1078,7 +1078,7 @@ void MainWindow::setupMenus()
 
     QMenu *gridSpacingMenu = viewMenu->addMenu(tr("Grid Spacing(&Z)"));
     gridSpacingMenu->setObjectName(QStringLiteral("menuGridSpacing"));
-    gridSpacingMenu->setIcon(icons::icon(QStringLiteral("view_grid")));
+    setActionIcon(gridSpacingMenu->menuAction(), QStringLiteral("view_grid"));
     for (QAction *act : m_actionGridSpacing)
         gridSpacingMenu->addAction(act);
     gridSpacingMenu->addSeparator();
@@ -1091,7 +1091,7 @@ void MainWindow::setupMenus()
     // 「标尺单位」子菜单。★ 它自己带图标，5 个单选项不带 ★
     QMenu *unitMenu = viewMenu->addMenu(tr("Ruler Units(&N)"));
     unitMenu->setObjectName(QStringLiteral("menuRulerUnit"));
-    unitMenu->setIcon(icons::icon(QStringLiteral("view_ruler")));
+    setActionIcon(unitMenu->menuAction(), QStringLiteral("view_ruler"));
     for (QAction *act : m_actionRulerUnit)
         unitMenu->addAction(act);
 
@@ -1105,7 +1105,7 @@ void MainWindow::setupMenus()
     // （因为那时 QDockWidget 才存在）。
     QMenu *panelMenu = viewMenu->addMenu(tr("Panels(&P)"));
     panelMenu->setObjectName(QStringLiteral("menuPanel"));
-    panelMenu->setIcon(icons::icon(QStringLiteral("menu_panels")));
+    setActionIcon(panelMenu->menuAction(), QStringLiteral("menu_panels"));
 
     viewMenu->addSeparator();
     viewMenu->addAction(m_actionFullScreen);

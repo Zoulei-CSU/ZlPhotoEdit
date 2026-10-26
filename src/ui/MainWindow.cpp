@@ -7,6 +7,9 @@
 //   标题相关的一切都走它，别再往代码里写程序名字面量。
 #include "ui/AppInfo.h"
 
+// 图标在渲染时刻按 palette 上色，换主题要重取 —— 见 refreshAllIcons()
+#include "ui/IconLibrary.h"
+
 #include "core/DocumentManager.h"
 #include "core/RecoveryManager.h"
 #include "core/Document.h"
@@ -190,6 +193,12 @@ MainWindow::MainWindow(QWidget *parent, const QStringList &initialFiles)
     setupConnections();
 
     loadSettings();
+
+    // ★ 记下当前给图标上色用的是哪个颜色 ★
+    //   refreshAllIcons() 靠"颜色变了没变"决定要不要重设几十个图标。
+    //   初值必须是**实际用过的那个色**：若留空（无效 QColor），第一次
+    //   PaletteChange 会被当成"变了"而白刷一遍。
+    m_lastIconColor = icons::currentColor();
 
     // macOS 的"用本程序打开文件"是发给 QApplication 的事件，窗口自己收不到。
     // 过滤器跟着本对象走：QObject 析构时会自动从 qApp 上摘掉。
@@ -462,11 +471,10 @@ void MainWindow::setupCanvas()
     m_rulerCorner = new QWidget(m_canvasHost);
     m_rulerCorner->setFixedSize(RulerWidget::kThickness, RulerWidget::kThickness);
     m_rulerCorner->setAutoFillBackground(true);
-    {
-        QPalette pal = m_rulerCorner->palette();
-        pal.setColor(QPalette::Window, QColor(238, 238, 238));
-        m_rulerCorner->setPalette(pal);
-    }
+    // 不用调色板：这个方块必须和标尺**同色**，而标尺是自绘控件、
+    // 颜色取自它自己的 palette（见 RulerWidget::paintEvent）。
+    // 这里若再存一份颜色，两处迟早会不同步。直接画成标尺的样子。
+    m_rulerCorner->installEventFilter(this);
 
     m_hruler = new RulerWidget(Qt::Horizontal, m_canvasHost);
     m_vruler = new RulerWidget(Qt::Vertical, m_canvasHost);

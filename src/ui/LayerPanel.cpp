@@ -303,10 +303,14 @@ void LayerItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     // ── ③ 眼睛 / 锁 ──
     const qreal dpr = widget ? widget->devicePixelRatioF() : 1.0;
 
+    //  ★ 上色必须跟文字同色 ★
+    //    选中行整行被 Highlight 底色刷满，图标若还用"窗口前景色"，
+    //    浅色主题下就是深灰压在深蓝上 —— 和深色主题下"深图压深底"是同一类病。
+    //    这里直接取 textColor（选中时它已经是 HighlightedText）。
     const auto drawRowIcon = [&](const QString &iconName, const QRect &target,
                                  qreal alpha) {
         const int px = qMax(1, qRound(target.width() * dpr));
-        QPixmap pm = icons::pixmap(iconName, px);
+        QPixmap pm = icons::pixmap(iconName, px, textColor);
         if (pm.isNull())
             return;                     // 图标缺失：静默跳过，单元格仍然可用
         pm.setDevicePixelRatio(dpr);
@@ -562,6 +566,7 @@ void LayerPanel::setupUi()
             label->setPixmap(pm);
             label->setToolTip(tip);
             label->setFixedWidth(18);
+            m_iconLabels.append(qMakePair(label, iconName));
         } else {
             label->setText(tip.left(2));
         }
@@ -628,6 +633,8 @@ void LayerPanel::setupUi()
         btn->setIconSize(QSize(18, 18));
         btn->setFixedSize(26, 26);
         btn->setIcon(icons::icon(iconName));
+        // 名字存一份：refreshIcons() 换主题时靠它重新取图
+        btn->setProperty("iconName", iconName);
         if (btn->icon().isNull())
             btn->setText(tip.left(1));       // 图标缺失时用首字兜底，不留白按钮
         connect(btn, &QToolButton::clicked, this, [handler](bool) { handler(); });
@@ -1042,6 +1049,47 @@ void LayerPanel::refreshThumbnailsNow()
 
     m_list->viewport()->update();
     m_syncing = wasSyncing;
+}
+
+// ============================================================================
+//  refreshIcons —— 换主题后按新颜色重取图标
+// ============================================================================
+//
+//  ★ 为什么不能只靠 icons::clearCache() ★
+//    缓存的是一份 QIcon，而 setIcon/setPixmap 已经把**当时那张图**复制进
+//    控件了。清缓存只让下次取图重新上色，界面上已有的图标纹丝不动 ——
+//    用户看到的是"系统切了深色，菜单全灰看不见"。
+//    所以必须逐个控件重设一遍。
+//
+//  ★ 眼睛/锁不用管 ★
+//    它们是 delegate 现画的（drawRowIcon），每帧都现取 icons::pixmap，
+//    只要缓存被清过，下一帧自己就是新颜色。
+void LayerPanel::refreshIcons()
+{
+    for (QToolButton *btn : m_buttons) {
+        const QString name = btn->property("iconName").toString();
+        if (name.isEmpty())
+            continue;
+        const QIcon ic = icons::icon(name);
+        if (!ic.isNull())
+            btn->setIcon(ic);
+    }
+
+    for (const auto &pair : m_iconLabels) {
+        QLabel *label = pair.first;
+        if (!label)
+            continue;
+        const QPixmap pm = icons::pixmap(pair.second, 16);
+        if (pm.isNull()) {
+            label->setPixmap(QPixmap());     // ★ 空 pixmap 而非"不动"：否则留着旧色图
+            label->setText(label->toolTip().left(2));
+        } else {
+            label->setPixmap(pm);
+        }
+    }
+
+    if (m_list)
+        m_list->viewport()->update();
 }
 
 } // namespace zl

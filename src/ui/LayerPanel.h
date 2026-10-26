@@ -35,6 +35,7 @@
 
 #include <QList>
 #include <QListWidget>
+#include <QPair>
 #include <QStyledItemDelegate>
 #include <QWidget>
 
@@ -230,6 +231,10 @@ public:
     /// 立刻刷一遍缩略图（跳过节流）。自检与"手动刷新"用。
     void refreshThumbnailsNow();
 
+    /// 按当前 palette 重新取一遍本面板里的图标（换主题后由 MainWindow 调）。
+    /// ★ 图标是渲染时刻定色的 ★ 只清图标缓存不会改动已经设上去的 QIcon。
+    void refreshIcons();
+
 signals:
     // ── 结构类（MainWindow 包装成 LayerCommand）──
     void addLayerRequested();
@@ -279,6 +284,8 @@ private:
     QLabel          *m_opacityLabel = nullptr;
     QLabel          *m_countLabel = nullptr;
     QList<QToolButton *> m_buttons;
+    /// 属性区那两个"图标 + 提示"的标签。换主题时按名字重新上色需要用。
+    QList<QPair<QLabel *, QString>> m_iconLabels;
     QTimer          *m_thumbTimer = nullptr;
 
     int  m_thumbnailRenderCount = 0;

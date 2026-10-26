@@ -326,6 +326,9 @@ protected:
     // 关闭窗口时检查未保存的修改
     void closeEvent(QCloseEvent *event) override;
 
+    // 换主题（调色板变了）时重取全部图标 —— 见 refreshAllIcons() 的说明
+    void changeEvent(QEvent *event) override;
+
     // 拖文件到窗口打开
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
@@ -359,6 +362,15 @@ private:
     void setupToolBars();
     void setupDocks();
     void setupStatusBar();
+
+    /// 按当前 palette 重取并重设全部图标（换主题后调用）。
+    /// 颜色没变时什么也不做。
+    void refreshAllIcons();
+
+    /// 给动作挂图标，并把图标名记在动作上 —— refreshAllIcons() 靠它重设。
+    /// 直接 `action->setIcon(icons::icon(name))` 也画得对，但换主题后就
+    /// 没法知道该动作原来长什么样了。
+    void setActionIcon(QAction *action, const QString &name);
 
     // 自动保存：建立管理器与定时器（在 setupDocumentManager 里调用）。
     void setupRecovery();
@@ -982,6 +994,11 @@ private:
     // 失败弹框是否已经排在事件队列里。
     // 连点两次"立即截图"时不该叠出两个一模一样的失败框。
     bool m_captureFailureDialogPending = false;
+
+    // 上一轮给图标上色用的前景色。
+    // ★ 用它判断"真的变了吗" ★ 调色板变化（QEvent::PaletteChange）在
+    //   拖动窗口、切换激活窗口时也会来，颜色没变就重设一遍几十个图标纯属白干。
+    QColor m_lastIconColor;
 
     // 延迟截图：先最小化再等 —— 公开入口是 scheduleScreenCapture()，
     // 四个菜单项直接调它（不再包一层私有同名函数，少一个名字少一处不一致）。

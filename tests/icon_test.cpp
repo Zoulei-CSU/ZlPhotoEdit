@@ -19,6 +19,12 @@
 //    · 「不是小点」  : 墨迹包围盒的长宽各不小于视框的 1/3
 //    · 「小尺寸还在」: 16×16 下墨迹占比仍 ≥ 2%（缩到菜单尺寸不能消失）
 //
+//  ★ 还有一条单色契约 ★
+//    图标在运行时被整块刷成当前主题的前景色（见 IconLibrary.h），
+//    SVG 里的原色一律丢弃。所以**每个图标只能有一种颜色** ——
+//    出现第二种颜色时它会在运行时长成一片同色，而上面那些比例型判据
+//    全都发现不了。这条断言专门守它。
+//
 //  ★ 外加两个"成对"契约 ★
 //    · 工具箱里每个工具 id 都必须有图标（iconForTool 不留空）
 //    · 不存在的名字必须返回空 QIcon —— 这是"响亮失败"那条路，
@@ -45,8 +51,10 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QRect>
+#include <QRectF>
 #include <QString>
 #include <QStringList>
+#include <QSvgRenderer>
 
 #include <cstdio>
 
@@ -138,6 +146,66 @@ static bool outerRingClear(const QPixmap &pm)
     for (int y = 0; y < img.height(); ++y) {
         if (qAlpha(img.pixel(0, y)) > 8 || qAlpha(img.pixel(img.width() - 1, y)) > 8)
             return false;
+    }
+    return true;
+}
+
+/// 直接渲染 **未上色** 的原始 SVG（绕过 IconLibrary 的染色）。
+///
+/// ★ 为什么不拿 icons::pixmap() 的结果判单色 ★
+///   上色是整块 SourceIn —— 刷完之后每个像素必然同色，
+///   "单色"恒成立。也就是说拿上色后的图去判单色，这条断言永远绿，
+///   根本抓不住"某个 SVG 里偷偷写了第二种颜色"。必须看原图。
+static QImage renderRaw(const QString &name, int px)
+{
+    QSvgRenderer r(icons::pathOf(name));
+    if (!r.isValid())
+        return QImage();
+    QImage img(px, px, QImage::Format_ARGB32);
+    img.fill(Qt::transparent);
+    QPainter p(&img);
+    r.render(&p, QRectF(0, 0, px, px));
+    p.end();
+    return img;
+}
+
+/// 这张图是不是**单色**（除透明外只有一种 RGB）。
+///
+/// ★ 为什么必须盯着这条 ★
+///   图标是在渲染后被 CompositionMode_SourceIn 整块刷色的 ——
+///   它把 SVG 里原本的颜色**全部丢掉**，只保留 alpha。
+///   于是任何一个"两种颜色的图标"都会在运行时长成一片同色，
+///   而墨迹占比、包围盒这些比例型判据**全都照样通过**，
+///   肉眼也未必马上发现。这条断言是单色前提的唯一守卫。
+///
+/// ★ 判定要给容差、且跳过低 alpha（实测踩过）★
+///   即使 SVG 里只写了一种 #33393f，边缘像素经过预乘/反预乘的整数取整，
+///   单通道也会漂 1~11（0x33 旁边出现 0x28）。按"严格相等"判，
+///   90 个图标会**全部**被判成多色 —— 一条永远红的断言等于没有。
+///   所以：跳过 alpha < 128 的像素（它们只占描边最外一层的零头），
+///   剩下的允许每通道 ±24。真正换色相（例如红色警告点 #d9534f 与灰）
+///   的差距远超这个量级，照样抓得住。
+static bool isMonochrome(const QImage &img)
+{
+    if (img.isNull())
+        return true;
+    const QImage conv = img.convertToFormat(QImage::Format_ARGB32);
+    int r0 = -1, g0 = 0, b0 = 0;
+    for (int y = 0; y < conv.height(); ++y) {
+        for (int x = 0; x < conv.width(); ++x) {
+            const QRgb px = conv.pixel(x, y);
+            if (qAlpha(px) < 128)
+                continue;
+            if (r0 < 0) {
+                r0 = qRed(px);
+                g0 = qGreen(px);
+                b0 = qBlue(px);
+                continue;
+            }
+            if (qAbs(qRed(px) - r0) > 24 || qAbs(qGreen(px) - g0) > 24
+                || qAbs(qBlue(px) - b0) > 24)
+                return false;
+        }
     }
     return true;
 }
@@ -276,6 +344,19 @@ static void testEveryIconRenders()
     if (!vanished.isEmpty())
         std::printf("       消失：%s\n", qUtf8Printable(vanished.join(", ")));
 
+    // ── 单色前提 ──
+    // ★ 图标在运行时被整块刷成前景色（CompositionMode_SourceIn），
+    //   原始颜色一律丢弃。所以每个图标必须只有一种颜色，否则第二种颜色
+    //   会静默消失 —— 而空白/糊块/触边这一串比例型判据**全都发现不了**。
+    QStringList polychrome;
+    for (const QString &n : names) {
+        if (!isMonochrome(renderRaw(n, 96)))
+            polychrome << n;
+    }
+    check(polychrome.isEmpty(), "每个图标都是单色（整块上色不会吃掉第二种颜色）");
+    if (!polychrome.isEmpty())
+        std::printf("       多色：%s\n", qUtf8Printable(polychrome.join(", ")));
+
     // ── 抽两个已知形状做定点核对 ──
     // ★ 为什么必须有这一段 ★
     //   前面那一串"没空白 / 没糊块 / 没触边"全是**比例型**判据。
@@ -368,7 +449,88 @@ static void testCache()
 }
 
 // ---------------------------------------------------------------------------
-//  [5] 多档尺寸：QIcon 里确实备了多档
+//  [6] 上色：换色确实生效、两个主题不会串缓存
+// ---------------------------------------------------------------------------
+static void testTinting()
+{
+    beginGroup("按主题上色");
+
+    const QColor dark(0xE6, 0xE6, 0xE6);
+    const QColor light(0x33, 0x39, 0x3F);
+
+    const QPixmap onDark  = icons::pixmap(QStringLiteral("tool_brush"), 96, dark);
+    const QPixmap onLight = icons::pixmap(QStringLiteral("tool_brush"), 96, light);
+    check(!onDark.isNull() && !onLight.isNull(), "两种颜色都渲染得出来");
+
+    // ★ 颜色真的落到了像素上 ★
+    //   只比对 cacheKey 不够 —— 缓存键带了颜色，两个不同的键当然不同，
+    //   那只证明"键里写了颜色"，不证明"像素被染了"。
+    //   这里直接读一个墨迹像素，比对它的 RGB。
+    //
+    //   ★ 必须挑全不透明的像素，且容差 ±2 ★
+    //     抗锯齿边缘的像素是半透明的，经过预乘/反预乘的取整后，
+    //     通道值会和目标色差 1~2（实测 0x32 vs 0x33）。
+    //     拿第一个 alpha>200 的像素做精确比对，会因为这个假差异报红。
+    //   没找到全不透明像素时返回 0（＝必然不匹配，说明图形本身有问题）。
+    const auto opaqueInkColor = [](const QPixmap &pm) -> QRgb {
+        const QImage img = pm.toImage().convertToFormat(QImage::Format_ARGB32);
+        for (int y = 0; y < img.height(); ++y)
+            for (int x = 0; x < img.width(); ++x)
+                if (qAlpha(img.pixel(x, y)) == 255)
+                    return img.pixel(x, y);
+        return 0;
+    };
+    const auto closeTo = [](QRgb got, const QColor &want) {
+        return got != 0
+            && qAbs(qRed(got)   - want.red())   <= 2
+            && qAbs(qGreen(got) - want.green()) <= 2
+            && qAbs(qBlue(got)  - want.blue())  <= 2;
+    };
+    check(closeTo(opaqueInkColor(onDark), dark), "深色主题下图标被染成浅色");
+    check(closeTo(opaqueInkColor(onLight), light), "浅色主题下图标被染成深色");
+    if (!closeTo(opaqueInkColor(onLight), light))
+        std::printf("       实测墨迹 %08x，期望 %08x\n",
+                    opaqueInkColor(onLight), light.rgb());
+
+    // ★ 两种颜色不能共用一条缓存 ★
+    //   共用的话，界面上先出现的那种颜色会被后来所有窗口/主题复用
+    //   （症状：切主题后图标不变色，且只有新开的窗口正常）。
+    check(onDark.cacheKey() != onLight.cacheKey(),
+          "不同颜色是各自独立的缓存项（不互串）");
+
+    // 同样的颜色再取一次，必须命中缓存（不是每次都重新光栅化）
+    check(icons::pixmap(QStringLiteral("tool_brush"), 96, dark).cacheKey()
+              == onDark.cacheKey(),
+          "同色同尺寸命中缓存");
+
+    // ★ 透明区必须保持透明 ★
+    //   SourceIn 只是刷色，不该把背景也刷上（刷上就是一块不透明的方块）。
+    const QImage img = onDark.toImage().convertToFormat(QImage::Format_ARGB32);
+    check(qAlpha(img.pixel(1, 1)) == 0, "上色后四角仍然是透明的（没被刷成方块）");
+
+    // ★ 禁用态必须比正常态淡 ★
+    //   不能只靠 Qt 自动降透明：位图本身已经是前景色，淡化后对比还是很强，
+    //   禁用菜单项会看起来和可点的一样亮。
+    const QIcon ic = icons::icon(QStringLiteral("tool_brush"));
+    const QImage normalPm = ic.pixmap(QSize(24, 24), QIcon::Normal)
+                                .toImage().convertToFormat(QImage::Format_ARGB32);
+    const QImage disPm = ic.pixmap(QSize(24, 24), QIcon::Disabled)
+                             .toImage().convertToFormat(QImage::Format_ARGB32);
+    int normalInk = 0, disInk = 0;
+    for (int y = 0; y < normalPm.height(); ++y) {
+        for (int x = 0; x < normalPm.width(); ++x) {
+            normalInk += qAlpha(normalPm.pixel(x, y));
+            disInk    += qAlpha(disPm.pixel(x, y));
+        }
+    }
+    check(disInk > 0 && disInk < normalInk / 2,
+          "禁用态明显更淡（与正常态不是一样亮）");
+    if (disInk <= 0 || disInk >= normalInk / 2)
+        std::printf("       正常态总 alpha %d，禁用态 %d\n", normalInk, disInk);
+}
+
+// ---------------------------------------------------------------------------
+//  [7] 多档尺寸：QIcon 里确实备了多档
 // ---------------------------------------------------------------------------
 static void testSizes()
 {
@@ -411,6 +573,7 @@ int main(int argc, char **argv)
     testEveryIconRenders();
     testToolIcons();
     testCache();
+    testTinting();
     testSizes();
 
     // 接触表：给人看的（断言只能证明"不是空白/不是糊块"，
