@@ -1644,7 +1644,14 @@ void CanvasView::drawBackground(QPainter &painter, const QRect &widgetRect)
     //   · 纯白 —— 用户会分不清"这是画布背景"还是"这是图像的白色部分"
     //   · 纯黑 —— 看深色图像时边界不清，且长时间看易疲劳
     //   中性灰（约 30% 亮度）在两种极端情况下都能看清边界。
-    painter.fillRect(widgetRect, QColor(80, 80, 80));
+    //
+    // ★ 深色主题下要压暗一档 ★
+    //   固定 80 在深色主题里（窗口底 53）几乎与外壳同色，画布边界消失，
+    //   看起来像"图直接铺在窗口上"。压到 45 就重新拉开对比。
+    //   仍然不跟 palette 直接绑定：这是"图像外围"的语义色，
+    //   主题只影响深浅一档，不影响它的色相。
+    const int gray = isDarkTheme() ? 45 : 80;
+    painter.fillRect(widgetRect, QColor(gray, gray, gray));
 }
 
 // ---------------------------------------------------------------------------

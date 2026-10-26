@@ -73,7 +73,7 @@ LevelsDialog::LevelsDialog(const QImage &source, QWidget *parent)
     auto makeCaption = [this](const QString &text) {
         auto *l = new QLabel(text, this);
         l->setAlignment(Qt::AlignCenter);
-        l->setStyleSheet(QStringLiteral("color: #666666;"));
+        l->setStyleSheet(QStringLiteral("color: palette(mid);"));
         return l;
     };
 

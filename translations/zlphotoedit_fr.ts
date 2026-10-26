@@ -424,6 +424,21 @@
         <source>Keep only the overlap of both (Shift+Alt)</source>
         <translation>Ne garde que le chevauchement des deux (Maj+Alt)</translation>
     </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="175"/>
+        <source>Light</source>
+        <translation>Clair</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="176"/>
+        <source>Dark</source>
+        <translation>Sombre</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="181"/>
+        <source>Default (Follow System)</source>
+        <translation>Par défaut (suivre le système)</translation>
+    </message>
 </context>
 <context>
     <name>zl::AbstractTool</name>
@@ -775,62 +790,62 @@ Décoché&#xa0;: remplit tous les pixels dans la tolérance de toute l’image, 
 <context>
     <name>zl::CanvasView</name>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="1540"/>
+        <location filename="../src/ui/CanvasView.cpp" line="1550"/>
         <source>No document open</source>
         <translation>Aucun document ouvert</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2676"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2686"/>
         <source>Zoom In</source>
         <translation>Zoom avant</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2679"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2689"/>
         <source>Zoom Out</source>
         <translation>Zoom arrière</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2684"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2694"/>
         <source>Fit to Window</source>
         <translation>Ajuster à la fenêtre</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2687"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
         <source>Actual Size (100%)</source>
         <translation>Taille réelle (100&#xa0;%)</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2693"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2703"/>
         <source>Show Grid</source>
         <translation>Afficher la grille</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
         <source>Show Transparency Checkerboard</source>
         <translation>Afficher le damier de transparence</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2704"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2714"/>
         <source>View Rotation</source>
         <translation>Rotation de l’affichage</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2705"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2715"/>
         <source>No Rotation</source>
         <translation>Aucune rotation</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2706"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2716"/>
         <source>Rotate 90° CW</source>
         <translation>Rotation 90° horaire</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2717"/>
         <source>180°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2708"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2718"/>
         <source>Rotate 90° CCW</source>
         <translation>Rotation 90° antihoraire</translation>
     </message>
@@ -1004,8 +1019,8 @@ Suppr&#xa0;: supprime le point sélectionné</translation>
         <translation>Calque fusionné</translation>
     </message>
     <message>
-        <location filename="../src/core/Document.cpp" line="969"/>
-        <location filename="../src/core/Document.cpp" line="973"/>
+        <location filename="../src/core/Document.cpp" line="987"/>
+        <location filename="../src/core/Document.cpp" line="991"/>
         <source>Untitled</source>
         <translation>Sans titre</translation>
     </message>
@@ -1264,62 +1279,62 @@ Les lignes gardent une largeur de 1 pixel d’écran même quand la zone de trav
 <context>
     <name>zl::LayerPanel</name>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="510"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="578"/>
         <source>Blend Mode</source>
         <translation>Mode de fusion</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="523"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="591"/>
         <source>Opacity</source>
         <translation>Opacité</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="576"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="646"/>
         <source>New Layer (Ctrl+Shift+N)</source>
         <translation>Nouveau calque (Ctrl+Maj+N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="579"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="649"/>
         <source>Duplicate Layer (Ctrl+J)</source>
         <translation>Dupliquer le calque (Ctrl+J)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="588"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="658"/>
         <source>Delete Selected Layers</source>
         <translation>Supprimer les calques sélectionnés</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="596"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="666"/>
         <source>Move Layer Up (Ctrl+])</source>
         <translation>Déplacer le calque vers le haut (Ctrl+])</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="599"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="669"/>
         <source>Move Layer Down (Ctrl+[)</source>
         <translation>Déplacer le calque vers le bas (Ctrl+[)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="602"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="672"/>
         <source>Merge Down (Ctrl+E)</source>
         <translation>Fusionner avec le calque inférieur (Ctrl+E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="608"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="678"/>
         <source>Merge Visible Layers</source>
         <translation>Fusionner les calques visibles</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="611"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="681"/>
         <source>Flatten Image</source>
         <translation>Aplatir l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="899"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="973"/>
         <source>Total %1 layers</source>
         <translation>%1 calques au total</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="901"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="975"/>
         <source> · %1 selected</source>
         <translation> · %1 sélectionnés</translation>
     </message>
@@ -1536,659 +1551,664 @@ Des valeurs plus grandes adoucissent la transition le long du bord de la sélect
 <context>
     <name>zl::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="704"/>
+        <location filename="../src/ui/MainWindow.cpp" line="867"/>
         <source>Current tool: %1</source>
         <translation>Outil actif&#xa0;: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="857"/>
-        <location filename="../src/ui/MainWindow.cpp" line="910"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="271"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1076"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="321"/>
         <source>Undo(&amp;U)</source>
         <translation>Annuler(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="858"/>
-        <location filename="../src/ui/MainWindow.cpp" line="911"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1024"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1077"/>
         <source>Undo %1(&amp;U)</source>
         <translation>Annuler %1(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="866"/>
-        <location filename="../src/ui/MainWindow.cpp" line="917"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1032"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="329"/>
         <source>Redo(&amp;R)</source>
         <translation>Rétablir(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="867"/>
-        <location filename="../src/ui/MainWindow.cpp" line="918"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1084"/>
         <source>Redo %1(&amp;R)</source>
         <translation>Rétablir %1(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="140"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="145"/>
         <source>New(&amp;N)...</source>
         <translation>Nouveau(&amp;N)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="144"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="149"/>
         <source>Create a new blank image</source>
         <translation>Crée une nouvelle image vierge</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="147"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="152"/>
         <source>Open(&amp;O)...</source>
         <translation>Ouvrir(&amp;O)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="151"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="156"/>
         <source>Open an existing image file</source>
         <translation>Ouvre un fichier image existant</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="168"/>
         <source>Open as Layer(&amp;L)...</source>
         <translation>Ouvrir en tant que calque(&amp;L)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="167"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="172"/>
         <source>Add another image as a new layer in the current document (without switching documents)</source>
         <translation>Ajoute une autre image comme nouveau calque dans le document actif (sans changer de document)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="204"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="209"/>
         <source>Capture Now</source>
         <translation>Capturer maintenant</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="214"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="219"/>
         <source>Delay 3 Seconds</source>
         <translation>Délai de 3 secondes</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="218"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="223"/>
         <source>Capture after 3 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Capture dans 3 secondes&#xa0;: cette fenêtre va d’abord se minimiser, passez à l’écran à capturer</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="222"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="227"/>
         <source>Delay 5 Seconds</source>
         <translation>Délai de 5 secondes</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="226"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="231"/>
         <source>Capture after 5 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Capture dans 5 secondes&#xa0;: cette fenêtre va d’abord se minimiser, passez à l’écran à capturer</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="230"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="235"/>
         <source>Delay 10 Seconds</source>
         <translation>Délai de 10 secondes</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="234"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="239"/>
         <source>Capture after 10 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Capture dans 10 secondes&#xa0;: cette fenêtre va d’abord se minimiser, passez à l’écran à capturer</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="238"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="243"/>
         <source>Save(&amp;S)</source>
         <translation>Enregistrer(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="242"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="247"/>
         <source>Save to the current file (asks for a path if untitled)</source>
         <translation>Enregistre dans le fichier actif (demande un chemin si l’image n’a pas de nom)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="245"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="250"/>
         <source>Save As(&amp;A)...</source>
         <translation>Enregistrer sous(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="249"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="254"/>
         <source>Save to a new file; the format is decided by the extension</source>
         <translation>Enregistre dans un nouveau fichier&#xa0;; le format est déterminé par l’extension</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="252"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="272"/>
         <source>Close(&amp;W)</source>
         <translation>Fermer(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="256"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="276"/>
         <source>Close the current image</source>
         <translation>Ferme l’image actuelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="259"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
         <source>Quit(&amp;Q)</source>
         <translation>Quitter(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="264"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="284"/>
         <source>Quit %1</source>
         <translation>Quitter %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="275"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="325"/>
         <source>Undo the last operation</source>
         <translation>Annule la dernière opération</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="289"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="339"/>
         <source>Redo the undone operation</source>
         <translation>Rétablit l’opération annulée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="293"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="343"/>
         <source>Cut(&amp;T)</source>
         <translation>Couper(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="297"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="347"/>
         <source>Cut the selection to the clipboard</source>
         <translation>Coupe la sélection vers le presse-papiers</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="301"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
         <source>Copy(&amp;C)</source>
         <translation>Copier(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
         <source>Copy the selection to the clipboard (copies the whole layer when there is no selection)</source>
         <translation>Copie la sélection vers le presse-papiers (copie tout le calque s’il n’y a pas de sélection)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="309"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="359"/>
         <source>Paste as New Layer(&amp;P)</source>
         <translation>Coller comme nouveau calque(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="313"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="363"/>
         <source>Paste the clipboard content as a new layer</source>
         <translation>Colle le contenu du presse-papiers comme nouveau calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="316"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="366"/>
         <source>Paste into Current Layer(&amp;I)</source>
         <translation>Coller dans le calque actif(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="320"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
         <source>Merge the clipboard content into the current layer</source>
         <translation>Fusionne le contenu du presse-papiers dans le calque actif</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="323"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="373"/>
         <source>Delete(&amp;D)</source>
         <translation>Supprimer(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="327"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="377"/>
         <source>Delete the content inside the selection (clears the whole layer when there is no selection)</source>
         <translation>Supprime le contenu de la sélection (vide tout le calque s’il n’y a pas de sélection)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="334"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="392"/>
         <source>Select All(&amp;A)</source>
         <translation>Tout sélectionner(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
         <source>Select the whole canvas</source>
         <translation>Sélectionne toute la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="399"/>
         <source>Deselect(&amp;D)</source>
         <translation>Désélectionner(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="348"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="406"/>
         <source>Cancel the current selection</source>
         <translation>Annule la sélection actuelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="409"/>
         <source>Invert Selection(&amp;I)</source>
         <translation>Inverser la sélection(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="413"/>
         <source>Select everything outside the current selection</source>
         <translation>Sélectionne tout ce qui est à l’extérieur de la sélection actuelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="362"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
         <source>Desaturate(&amp;G)</source>
         <translation>Désaturer(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="367"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="425"/>
         <source>Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)</source>
         <translation>Convertit en niveaux de gris selon les poids de luminance (0,299 R + 0,587 V + 0,114 B)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="428"/>
         <source>Invert(&amp;I)</source>
         <translation>Inverser(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="374"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="432"/>
         <source>Invert all color channels (like a negative)</source>
         <translation>Inverse tous les canaux de couleur (comme un négatif)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="440"/>
         <source>Brightness/Contrast(&amp;B)...</source>
         <translation>Luminosité/Contraste(&amp;B)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="443"/>
         <source>Adjust the brightness and contrast of the image</source>
         <translation>Ajuste la luminosité et le contraste de l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="389"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="447"/>
         <source>Hue/Saturation(&amp;H)...</source>
         <translation>Teinte/Saturation(&amp;H)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="393"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="451"/>
         <source>Adjust the hue, saturation and lightness of colors</source>
         <translation>Ajuste la teinte, la saturation et la luminosité des couleurs</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="454"/>
         <source>Curves(&amp;C)...</source>
         <translation>Courbes(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="458"/>
         <source>Finely adjust the per-channel tonal mapping with a control-point curve</source>
         <translation>Ajuste finement la correspondance tonale de chaque canal avec une courbe à points de contrôle</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="403"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
         <source>Levels(&amp;L)...</source>
         <translation>Niveaux(&amp;L)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="408"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="466"/>
         <source>Adjust the tonal distribution with the histogram black/white points and midtones</source>
         <translation>Ajuste la distribution tonale avec les points noir/blanc et les tons moyens de l’histogramme</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
         <source>Image Size(&amp;I)...</source>
         <translation>Taille de l’image(&amp;I)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="424"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="482"/>
         <source>Resample the pixel content (the image becomes softer or sharper)</source>
         <translation>Rééchantillonne le contenu des pixels (l’image devient plus douce ou plus nette)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
         <source>Canvas Size(&amp;C)...</source>
         <translation>Taille de la zone de travail(&amp;C)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="431"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="489"/>
         <source>Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger</source>
         <translation>Change l’étendue de la zone de travail&#xa0;: pas de rééchantillonnage&#xa0;; rogne quand elle rétrécit, remplit avec la couleur de fond quand elle s’agrandit</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2912"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="496"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3375"/>
         <source>Rotate 90° Clockwise</source>
         <translation>Rotation 90° horaire</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="444"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2918"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="502"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3381"/>
         <source>Rotate 90° Counterclockwise</source>
         <translation>Rotation 90° antihoraire</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="450"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2932"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3395"/>
         <source>Rotate 180°</source>
         <translation>Rotation 180°</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
         <source>Rotate Arbitrary(&amp;A)...</source>
         <translation>Rotation d’angle arbitraire(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="467"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3401"/>
         <source>Flip Horizontal</source>
         <translation>Miroir horizontal</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="473"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2944"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3407"/>
         <source>Flip Vertical</source>
         <translation>Miroir vertical</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3410"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="543"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3873"/>
         <source>Crop</source>
         <translation>Rogner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="488"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="546"/>
         <source>Crop the canvas to the bounding box of the current selection</source>
         <translation>Rogne la zone de travail sur le cadre de la sélection actuelle</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="495"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="553"/>
         <source>New Layer(&amp;N)</source>
         <translation>Nouveau calque(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="501"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="559"/>
         <source>Duplicate Layer(&amp;D)</source>
         <translation>Dupliquer le calque(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3547"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3819"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="566"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4010"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4282"/>
         <source>Delete Layer</source>
         <translation>Supprimer le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="513"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3591"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4054"/>
         <source>Move Layer Up</source>
         <translation>Déplacer le calque vers le haut</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3622"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4085"/>
         <source>Move Layer Down</source>
         <translation>Déplacer le calque vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
         <source>Merge Down(&amp;M)</source>
         <translation>Fusionner avec le calque inférieur(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="589"/>
         <source>Flatten Image(&amp;F)</source>
         <translation>Aplatir l’image(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="536"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="594"/>
         <source>Merge Visible Layers(&amp;V)</source>
         <translation>Fusionner les calques visibles(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="544"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="602"/>
         <source>Rename Layer(&amp;R)</source>
         <translation>Renommer le calque(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="558"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="632"/>
         <source>Zoom In(&amp;I)</source>
         <translation>Zoom avant(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="565"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="639"/>
         <source>Zoom Out(&amp;O)</source>
         <translation>Zoom arrière(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="645"/>
         <source>Fit to Window(&amp;F)</source>
         <translation>Ajuster à la fenêtre(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="651"/>
         <source>Actual Size(&amp;A)</source>
         <translation>Taille réelle(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
         <source>Show Grid(&amp;G)</source>
         <translation>Afficher la grille(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="664"/>
         <source>Show Transparent Background</source>
         <translation>Afficher le fond transparent</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="604"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="688"/>
         <source>Snap to Grid(&amp;S)</source>
         <translation>Aligner sur la grille(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="623"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="707"/>
         <source>%1 px</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="637"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="721"/>
         <source>Custom(&amp;U)...</source>
         <translation>Personnalisé(&amp;U)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="649"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="733"/>
         <source>Show Ruler(&amp;R)</source>
         <translation>Afficher la règle(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="741"/>
         <source>Show Guides(&amp;G)</source>
         <translation>Afficher les repères(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="665"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="749"/>
         <source>Lock Guides(&amp;L)</source>
         <translation>Verrouiller les repères(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="759"/>
         <source>Clear Guides(&amp;C)</source>
         <translation>Effacer les repères(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="711"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="795"/>
         <source>Set Foreground Color...</source>
         <translation>Définir la couleur de premier plan…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="717"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="801"/>
         <source>Set Background Color...</source>
         <translation>Définir la couleur d’arrière-plan…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="732"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="816"/>
         <source>Swap Foreground/Background Color</source>
         <translation>Permuter premier plan / arrière-plan</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="737"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="821"/>
         <source>Restore Default Colors</source>
         <translation>Restaurer les couleurs par défaut</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="746"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="830"/>
         <source>About %1(&amp;A)...</source>
         <translation>À propos de %1(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="845"/>
         <source>About %1</source>
         <translation>À propos de %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="866"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Un éditeur d’images léger construit avec Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Pile technique&lt;/b&gt;&lt;br&gt;Qt %2 (compilé avec %3)&lt;br&gt;Implémentation pure Qt, aucune bibliothèque d’image tierce&lt;/p&gt;&lt;p&gt;&lt;b&gt;Fonctionnalités clés&lt;/b&gt;&lt;br&gt;Calques multiples avec 22 modes de fusion · sélection par masque de niveaux de gris (avec contour progressif)&lt;br&gt;Courbes / Niveaux / Luminosité-Contraste · rééchantillonnage bicubique et Lanczos maison&lt;br&gt;Stratégie d’annulation double&#xa0;: rectangles sales et instantanés de calque complets · rotation EXIF automatique&lt;/p&gt;&lt;p&gt;&lt;b&gt;Page du projet&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="904"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>À propos de Qt(&amp;Q)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="922"/>
         <source>Switch UI Language</source>
         <translation>Changer la langue de l’interface</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="923"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>La langue de l’interface est maintenant «&#xa0;%1&#xa0;». Elle prendra effet au prochain démarrage du programme.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
         <source>File(&amp;F)</source>
         <translation>Fichier(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="958"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>Capture d’écran(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="969"/>
         <source>Recent Files(&amp;R)</source>
         <translation>Fichiers récents(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="991"/>
         <source>Clear List</source>
         <translation>Vider la liste</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1019"/>
+        <source>Theme(&amp;T)</source>
+        <translation>Thème(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1027"/>
         <source>Edit(&amp;E)</source>
         <translation>Édition(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1044"/>
         <source>Select(&amp;S)</source>
         <translation>Sélection(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1053"/>
         <source>Adjust(&amp;A)</source>
         <translation>Ajustement(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1067"/>
         <source>Image(&amp;I)</source>
         <translation>Image(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1094"/>
         <source>Layer(&amp;L)</source>
         <translation>Calque(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1115"/>
         <source>View(&amp;V)</source>
         <translation>Affichage(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1128"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>Espacement de la grille(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1141"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>Unités de la règle(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1155"/>
         <source>Panels(&amp;P)</source>
         <translation>Panneaux(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1182"/>
         <source>Language(&amp;Y)</source>
         <translation>Langue(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1204"/>
         <source>Auto (Follow System)</source>
         <translation>Auto (suivre le système)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1230"/>
         <source>Help(&amp;H)</source>
         <translation>Aide(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1245"/>
         <source>Main Toolbar</source>
         <translation>Barre d’outils principale</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1274"/>
         <source>Tool Options</source>
         <translation>Options de l’outil</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1294"/>
         <source>Toolbox</source>
         <translation>Boîte à outils</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1365"/>
         <source>Switch to the %1 tool</source>
         <translation>Passer à l’outil %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1392"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1530"/>
         <source>Foreground color (click to change)</source>
         <translation>Couleur de premier plan (cliquez pour changer)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1497"/>
         <source>History</source>
         <translation>Historique</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1502"/>
         <source>(Already at the initial state)</source>
         <translation>(Déjà à l’état initial)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1511"/>
         <source>Color</source>
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1536"/>
         <source>Background color (click to change)</source>
         <translation>Couleur d’arrière-plan (cliquez pour changer)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1548"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>Permuter premier plan et arrière-plan (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1554"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>Restaurer les couleurs par défaut&#xa0;: noir / blanc (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2201,118 +2221,118 @@ Colors picked with the eyedropper become the foreground color.</source>
 Les couleurs prélevées à la pipette deviennent la couleur de premier plan.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1605"/>
         <source>Layers</source>
         <translation>Calques</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1720"/>
         <source>Ready</source>
         <translation>Prêt</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1767"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>Capture l’écran actuel dans un nouvel onglet (%1&#xa0;; fonctionne même quand le programme est minimisé)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1844"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1859"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>Le raccourci préféré %1 est occupé par un autre programme&#xa0;; %2 sera utilisé cette fois (fonctionne même quand le programme est minimisé)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1879"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>Raccourci global indisponible (%1). Il ne fonctionnera pas quand le programme est minimisé, mais %2 reste utilisable au premier plan, ou passez par Fichier → Capture d’écran → Capturer maintenant</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="212"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="224"/>
         <source>Create or open an image first</source>
         <translation>Commencez par créer ou ouvrir une image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="286"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="298"/>
         <source>New Failed</source>
         <translation>Échec de la création</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="469"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="299"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
         <source>Cannot create the document: %1</source>
         <translation>Impossible de créer le document&#xa0;: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="317"/>
         <source>Created a blank %1 × %2 image</source>
         <translation>Image vierge %1 × %2 créée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="326"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="760"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
         <source>All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</source>
         <translation>Toutes les images prises en charge (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="327"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="339"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
         <source>PNG Images (*.png)</source>
         <translation>Images PNG (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="762"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="340"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="852"/>
         <source>JPEG Images (*.jpg *.jpeg)</source>
         <translation>Images JPEG (*.jpg *.jpeg)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="329"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="763"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="853"/>
         <source>Bitmaps (*.bmp)</source>
         <translation>Bitmaps (*.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="330"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="764"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="342"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="854"/>
         <source>TIFF Images (*.tif *.tiff)</source>
         <translation>Images TIFF (*.tif *.tiff)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="331"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="765"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="343"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="855"/>
         <source>WebP Images (*.webp)</source>
         <translation>Images WebP (*.webp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="332"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="766"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="344"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="856"/>
         <source>All Files (*)</source>
         <translation>Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="335"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="347"/>
         <source>Open Image</source>
         <translation>Ouvrir une image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="391"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="403"/>
         <source>%1 is already open - switched to its tab</source>
         <translation>%1 est déjà ouvert — passage à son onglet</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="407"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="468"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="450"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="480"/>
         <source>Open Failed</source>
         <translation>Échec de l’ouverture</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="408"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="835"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="925"/>
         <source>Cannot read the image info:
 %1
 
@@ -2323,14 +2343,14 @@ Possible causes: the file is corrupted, the format is unsupported, or there is n
 Causes possibles&#xa0;: le fichier est corrompu, le format n’est pas pris en charge, ou l’accès en lecture manque.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="418"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="857"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="430"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="940"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="947"/>
         <source>Image Too Large</source>
         <translation>Image trop grande</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="431"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2345,8 +2365,8 @@ L’ouvrir peut épuiser la mémoire et devenir très lent.
 Essayer quand même de l’ouvrir&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="439"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="879"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="451"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="969"/>
         <source>Cannot load the image data:
 %1
 
@@ -2357,76 +2377,74 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
 Le fichier est peut-être corrompu, ou les données d’image utilisent un encodage non pris en charge.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="493"/>
         <source>Opened %1 (%2 × %3, %4)</source>
         <translation>%1 ouvert (%2 × %3, %4)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="485"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="497"/>
         <source>Unknown Format</source>
         <translation>Format inconnu</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="615"/>
         <source>Screenshot failed: no screen content captured (no display may be available)</source>
         <translation>Échec de la capture&#xa0;: aucun contenu d’écran capturé (aucun affichage n’est peut-être disponible)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="593"/>
         <source>Screenshot Unavailable</source>
         <translation>Capture d’écran indisponible</translation>
     </message>
     <message>
-        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>Capture d’écran indisponible : cette session Wayland n’autorise pas les applications à lire l’écran. Faites une capture avec le raccourci du système, puis appuyez sur Ctrl+V pour la coller ici comme nouveau calque.</translation>
-    </message>
-    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
         <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>Cette session Wayland n’autorise pas les applications à lire l’écran ; la capture intégrée ne peut donc pas fonctionner. Faites une capture avec le raccourci du système, puis appuyez sur Ctrl+V pour la coller ici comme nouveau calque.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>Capture-%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="586"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="676"/>
         <source>Screenshot</source>
         <translation>Capture d’écran</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="606"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="696"/>
         <source>Screenshot failed: cannot create the document (%1)</source>
         <translation>Échec de la capture&#xa0;: impossible de créer le document (%1)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="617"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="707"/>
         <source>Captured the screen at %1 × %2 and opened it as a new tab</source>
         <translation>Écran capturé à %1 × %2 et ouvert dans un nouvel onglet</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="661"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="751"/>
         <source>Screenshot in %1 seconds: this window is minimized, switch to the target screen</source>
         <translation>Capture dans %1 secondes&#xa0;: cette fenêtre est minimisée, passez à l’écran à capturer</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="769"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="859"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1073"/>
         <source>Open as Layer</source>
         <translation>Ouvrir en tant que calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="834"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="878"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="968"/>
         <source>Import Failed</source>
         <translation>Échec de l’importation</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="941"/>
         <source>Import rejected: the image is about %1 megapixels, above the limit (%2 megapixels)</source>
         <translation>Importation refusée&#xa0;: l’image fait environ %1 mégapixels, au-delà de la limite (%2 mégapixels)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="858"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="948"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2441,86 +2459,86 @@ L’importer peut épuiser la mémoire et devenir très lent.
 Essayer quand même de l’importer&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1000"/>
         <source>Image Is Larger Than the Canvas</source>
         <translation>L’image est plus grande que la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="911"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1001"/>
         <source>The imported image (%1 × %2) is larger than the current canvas (%3 × %4).</source>
         <translation>L’image importée (%1 × %2) est plus grande que la zone de travail actuelle (%3 × %4).</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="915"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1005"/>
         <source>&apos;Grow Canvas to Fit&apos; grows the canvas to %1 × %2, centering both the existing content and the new image;
 &apos;Crop to Canvas&apos; keeps the canvas size, centers the new image, and crops whatever sticks out.</source>
         <translation>«&#xa0;Agrandir la zone de travail&#xa0;» agrandit la zone de travail à %1 × %2, en centrant le contenu existant et la nouvelle image&#xa0;;
 «&#xa0;Rogner sur la zone de travail&#xa0;» conserve la taille, centre la nouvelle image et rogne ce qui dépasse.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="922"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1012"/>
         <source>Grow Canvas to Fit</source>
         <translation>Agrandir la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="923"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1013"/>
         <source>Crop to Canvas</source>
         <translation>Rogner sur la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="956"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1046"/>
         <source>Layer &quot;%1&quot; is locked; the canvas cannot grow. Unlock it before importing.</source>
         <translation>Le calque «&#xa0;%1&#xa0;» est verrouillé&#xa0;; la zone de travail ne peut pas s’agrandir. Déverrouillez-le avant d’importer.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1004"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1094"/>
         <source>Failed to grow the canvas - import cancelled</source>
         <translation>Échec de l’agrandissement de la zone de travail — importation annulée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1009"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1099"/>
         <source>Grow Canvas</source>
         <translation>Agrandir la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3475"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1104"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3938"/>
         <source>New Layer</source>
         <translation>Nouveau calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1113"/>
         <source>Imported %1 (%2 × %3); the canvas grew to %4 × %5</source>
         <translation>%1 importé (%2 × %3)&#xa0;; la zone de travail est passée à %4 × %5</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1118"/>
         <source>Imported %1 (%2 × %3) as a new layer</source>
         <translation>%1 importé (%2 × %3) comme nouveau calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1082"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1172"/>
         <source>Saved to %1</source>
         <translation>Enregistré sous %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1111"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1201"/>
         <source>Save As</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1178"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1268"/>
         <source>Format Does Not Support Transparency</source>
         <translation>Le format ne prend pas en charge la transparence</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1179"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1269"/>
         <source>The %1 format does not support a transparency channel.
 
 Semi-transparent areas will be filled with white.
@@ -2537,39 +2555,46 @@ Enregistrez plutôt en PNG pour conserver la transparence.
 Enregistrer quand même&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1217"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1307"/>
         <source>Saved as %1</source>
         <translation>Enregistré sous %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1266"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1356"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1446"/>
         <source>No image is open.</source>
         <translation>Aucune image n’est ouverte.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1350"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1377"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1453"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1598"/>
         <source>Cannot generate the image data (the composite is empty).</source>
         <translation>Impossible de générer les données d’image (la composition est vide).</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1336"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1526"/>
+        <source>Untitled</source>
+        <translation>Sans titre</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1584"/>
         <source>Cannot Save as ICO</source>
         <translation>Impossible d’enregistrer en ICO</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1585"/>
         <source>Failed to export the ICO icon.</source>
         <translation>Échec de l’exportation de l’icône ICO.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1349"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1410"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1597"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1658"/>
         <source>Save Failed</source>
         <translation>Échec de l’enregistrement</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1411"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1659"/>
         <source>Cannot write the file:
 %1
 
@@ -2590,22 +2615,22 @@ Veuillez vérifier&#xa0;:
   · si le fichier est utilisé par un autre programme</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1763"/>
         <source>Document Closed</source>
         <translation>Document fermé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1516"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1764"/>
         <source>Closed a document (%1 left)</source>
         <translation>Document fermé (%1 restants)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1551"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1799"/>
         <source>Unsaved Changes</source>
         <translation>Modifications non enregistrées</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1552"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1800"/>
         <source>&quot;%1&quot; has unsaved changes.
 
 Save them?</source>
@@ -2614,169 +2639,170 @@ Save them?</source>
 Les enregistrer&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2084"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2547"/>
         <source>Nothing to copy</source>
         <translation>Rien à copier</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2137"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2600"/>
         <source>Copied %1 × %2 of content</source>
         <translation>%1 × %2 de contenu copié</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2230"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2693"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2233"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2696"/>
         <source>Cut to the clipboard</source>
         <translation>Coupé dans le presse-papiers</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2252"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2715"/>
         <source>The clipboard is empty</source>
         <translation>Le presse-papiers est vide</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2279"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2742"/>
         <source>The clipboard has no usable image data</source>
         <translation>Le presse-papiers ne contient pas de données d’image utilisables</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2323"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2786"/>
         <source>Paste as New Layer</source>
         <translation>Coller comme nouveau calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
         <source>Pasted Layer</source>
         <translation>Calque collé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2334"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2797"/>
         <source>Pasted as a new layer (%1 × %2)</source>
         <translation>Collé comme nouveau calque (%1 × %2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2345"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2808"/>
         <source>No active layer available</source>
         <translation>Aucun calque actif disponible</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2351"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2814"/>
         <source>The current layer is locked - cannot paste</source>
         <translation>Le calque actif est verrouillé — collage impossible</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2883"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2423"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2886"/>
         <source>Pasted into the current layer</source>
         <translation>Collé dans le calque actif</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2520"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2691"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2740"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4394"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3203"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4940"/>
         <source>The current layer is not editable</source>
         <translation>Le calque actif n’est pas modifiable</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2569"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3032"/>
         <source>Delete Selection Content</source>
         <translation>Supprimer le contenu de la sélection</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2575"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3038"/>
         <source>Clear Layer</source>
         <translation>Vider le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2594"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
         <source>Already in the select-all state</source>
         <translation>Déjà en sélection totale</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3068"/>
         <source>Select All</source>
         <translation>Tout sélectionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2630"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3093"/>
         <source>Deselect</source>
         <translation>Désélectionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2637"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3100"/>
         <source>Selection cancelled</source>
         <translation>Sélection annulée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2657"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3120"/>
         <source>No selection to invert</source>
         <translation>Aucune sélection à inverser</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2668"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3131"/>
         <source>Invert Selection</source>
         <translation>Inverser la sélection</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2675"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3138"/>
         <source>Selection inverted</source>
         <translation>Sélection inversée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2726"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3189"/>
         <source>Desaturate</source>
         <translation>Désaturer</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2729"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3192"/>
         <source>Desaturate applied</source>
         <translation>Désaturation appliquée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2752"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3215"/>
         <source>Invert</source>
         <translation>Inverser</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2755"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3218"/>
         <source>Invert applied</source>
         <translation>Inversion appliquée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2874"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3113"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3191"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3365"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3520"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3576"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3654"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3828"/>
         <source>No layer to operate on</source>
         <translation>Aucun calque à manipuler</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2891"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3354"/>
         <source>The current layer is locked - geometry operations are not allowed</source>
         <translation>Le calque actif est verrouillé — opérations géométriques interdites</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3413"/>
         <source>Geometry operation failed</source>
         <translation>Échec de l’opération géométrique</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2991"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3454"/>
         <source>Undo Not Recorded</source>
         <translation>Annulation non enregistrée</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2992"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3455"/>
         <source>The &quot;%1&quot; operation moved too much data, above the undo memory limit,
 so it &lt;b&gt;cannot be undone&lt;/b&gt;.
 
@@ -2787,121 +2813,121 @@ elle ne peut donc &lt;b&gt;pas être annulée&lt;/b&gt;.
 L’image a été modifiée. Pour conserver l’original, n’enregistrez pas — rouvrez plutôt le fichier.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3486"/>
         <source>%1 applied (canvas %2 × %3)</source>
         <translation>%1 appliqué (zone de travail %2 × %3)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3072"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3535"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the image</source>
         <translation>Le calque «&#xa0;%1&#xa0;» est verrouillé — déverrouillez-le avant de redimensionner l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3098"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3561"/>
         <source>Failed to resize the image (the new size may be too large)</source>
         <translation>Échec du redimensionnement de l’image (la nouvelle taille est peut-être trop grande)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3103"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3566"/>
         <source>Image Size</source>
         <translation>Taille de l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3122"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3585"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the canvas</source>
         <translation>Le calque «&#xa0;%1&#xa0;» est verrouillé — déverrouillez-le avant de redimensionner la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3149"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3612"/>
         <source>Failed to resize the canvas</source>
         <translation>Échec du redimensionnement de la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3617"/>
         <source>Canvas Size</source>
         <translation>Taille de la zone de travail</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3204"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3667"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before rotating the image</source>
         <translation>Le calque «&#xa0;%1&#xa0;» est verrouillé — déverrouillez-le avant de faire pivoter l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3213"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3676"/>
         <source>Cannot generate a preview: the image content is empty</source>
         <translation>Impossible de générer l’aperçu&#xa0;: le contenu de l’image est vide</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3274"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
         <source>Rotation failed</source>
         <translation>Échec de la rotation</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3280"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3743"/>
         <source>Rotate Image</source>
         <translation>Rotation de l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3378"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3841"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before cropping</source>
         <translation>Le calque «&#xa0;%1&#xa0;» est verrouillé — déverrouillez-le avant de rogner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3388"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3851"/>
         <source>The crop area is empty</source>
         <translation>La zone de rognage est vide</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3396"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3859"/>
         <source>The crop area is the whole canvas - nothing to crop</source>
         <translation>La zone de rognage occupe toute la zone de travail — rien à rogner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3406"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3869"/>
         <source>Crop failed</source>
         <translation>Échec du rognage</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
         <source>Select the area to keep with a selection tool first</source>
         <translation>Sélectionnez d’abord la zone à conserver avec un outil de sélection</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3466"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3929"/>
         <source>Failed to create a layer</source>
         <translation>Échec de la création du calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3479"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
         <source>Layer created</source>
         <translation>Calque créé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3494"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3868"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4331"/>
         <source>Failed to duplicate the layer</source>
         <translation>Échec de la duplication du calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3503"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3884"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3966"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
         <source>Duplicate Layer</source>
         <translation>Dupliquer le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3507"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3970"/>
         <source>Layer duplicated</source>
         <translation>Calque dupliqué</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3521"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3790"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3984"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4253"/>
         <source>Cannot Delete the Layer</source>
         <translation>Impossible de supprimer le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3522"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3985"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4254"/>
         <source>A document must keep at least one layer.
 
 To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
@@ -2910,69 +2936,69 @@ To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
 Pour vider le contenu de ce calque, utilisez «&#xa0;Édition → Supprimer&#xa0;».</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3997"/>
         <source>Failed to delete the layer</source>
         <translation>Échec de la suppression du calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4020"/>
         <source>Layer deleted</source>
         <translation>Calque supprimé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3574"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4037"/>
         <source>Already the topmost layer</source>
         <translation>Déjà le calque le plus haut</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3582"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3613"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4045"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4076"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4373"/>
         <source>Failed to move the layer</source>
         <translation>Échec du déplacement du calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4068"/>
         <source>Already the bottommost layer</source>
         <translation>Déjà le calque le plus bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3647"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4110"/>
         <source>At least two layers are required to merge</source>
         <translation>Au moins deux calques sont nécessaires pour fusionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3660"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4123"/>
         <source>The bottommost layer cannot be merged down</source>
         <translation>Le calque le plus bas ne peut pas être fusionné vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3669"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4132"/>
         <source>Merge down failed</source>
         <translation>Échec de la fusion vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3678"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4141"/>
         <source>Merge Down</source>
         <translation>Fusionner vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3682"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4145"/>
         <source>Merged down</source>
         <translation>Fusionné vers le bas</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3692"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4155"/>
         <source>Only one layer - nothing to flatten</source>
         <translation>Un seul calque — rien à aplatir</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3707"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4170"/>
         <source>Flatten Image merges all visible layers into one.</source>
         <translation>«&#xa0;Aplatir l’image&#xa0;» fusionne tous les calques visibles en un seul.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3709"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4172"/>
         <source>
 
 Note: %1 hidden layers exist and their content will be discarded.</source>
@@ -2981,7 +3007,7 @@ Note: %1 hidden layers exist and their content will be discarded.</source>
 Remarque&#xa0;: %1 calques masqués existent et leur contenu sera perdu.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3711"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4174"/>
         <source>
 
 Continue?</source>
@@ -2990,309 +3016,350 @@ Continue?</source>
 Continuer&#xa0;?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3713"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3733"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4176"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4196"/>
         <source>Flatten Image</source>
         <translation>Aplatir l’image</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3724"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4187"/>
         <source>Flatten failed</source>
         <translation>Échec de l’aplatissement</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4200"/>
         <source>Image flattened</source>
         <translation>Image aplatie</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3818"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4281"/>
         <source>Delete Multiple Layers</source>
         <translation>Supprimer plusieurs calques</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3829"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4292"/>
         <source>Deleted %1 layers</source>
         <translation>%1 calques supprimés</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4346"/>
         <source>Duplicate Multiple Layers</source>
         <translation>Dupliquer plusieurs calques</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3888"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4351"/>
         <source>Duplicated %1 layers</source>
         <translation>%1 calques dupliqués</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3919"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4382"/>
         <source>Reorder Layers</source>
         <translation>Réorganiser les calques</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3935"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4398"/>
         <source>At least two visible layers are required to merge</source>
         <translation>Au moins deux calques visibles sont nécessaires pour fusionner</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3946"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4409"/>
         <source>Merge Visible Layers</source>
         <translation>Fusionner les calques visibles</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
         <source>Visible layers merged</source>
         <translation>Calques visibles fusionnés</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Show Layer</source>
         <translation>Afficher le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Hide Layer</source>
         <translation>Masquer le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Lock Layer</source>
         <translation>Verrouiller le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Unlock Layer</source>
         <translation>Déverrouiller le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4561"/>
         <source>Rename Layer</source>
         <translation>Renommer le calque</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4051"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4584"/>
         <source>Change Blend Mode</source>
         <translation>Changer le mode de fusion</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4108"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4641"/>
         <source>Change Opacity</source>
         <translation>Changer l’opacité</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4165"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4711"/>
         <source>Snap to grid on</source>
         <translation>Alignement sur la grille activé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4166"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4712"/>
         <source>Snap to grid off</source>
         <translation>Alignement sur la grille désactivé</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4186"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4732"/>
         <source>Grid spacing: %1 px</source>
         <translation>Espacement de la grille&#xa0;: %1 px</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4270"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4816"/>
         <source>Cleared the guides on this page</source>
         <translation>Repères effacés sur cette page</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4315"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4861"/>
         <source>Choose Foreground Color</source>
         <translation>Choisir la couleur de premier plan</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4325"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4871"/>
         <source>Choose Background Color</source>
         <translation>Choisir la couleur d’arrière-plan</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4893"/>
         <source>Swapped the foreground and background colors</source>
         <translation>Premier plan et arrière-plan permutés</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4360"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4906"/>
         <source>Restored the default colors (black / white)</source>
         <translation>Couleurs par défaut restaurées (noir / blanc)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4959"/>
         <source>Brightness/Contrast</source>
         <translation>Luminosité/Contraste</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4422"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4968"/>
         <source>Hue/Saturation</source>
         <translation>Teinte/Saturation</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4980"/>
         <source>Curves</source>
         <translation>Courbes</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4447"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4993"/>
         <source>Levels</source>
         <translation>Niveaux</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4547"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5093"/>
         <source>Adjustment failed: no result generated</source>
         <translation>Échec de l’ajustement&#xa0;: aucun résultat généré</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5103"/>
         <source>Applied %1</source>
         <translation>%1 appliqué</translation>
     </message>
-        <message>
-            <source>Navigator</source>
-            <translation>Navigateur</translation>
-        </message>
-        <message>
-            <source>Recover Unsaved Work</source>
-            <translation>Récupérer le travail non enregistré</translation>
-        </message>
-        <message>
-            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
-            <translation>%1 document(s) non enregistré(s) trouvé(s) lors de la session précédente :\n\n%2\n\nLes récupérer ? Les informations de calque ne seront pas conservées.</translation>
-        </message>
-        <message>
-            <source>(Untitled)</source>
-            <translation>(Sans titre)</translation>
-        </message>
-        <message>
-            <source>Recovered</source>
-            <translation>Récupéré</translation>
-        </message>
-        <message>
-            <source>%1 (Recovered)</source>
-            <translation>%1 (récupéré)</translation>
-        </message>
-        <message>
-            <source>Recovered %1 document(s)</source>
-            <translation>%1 document(s) récupéré(s)</translation>
-        </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1667"/>
+        <source>Navigator</source>
+        <translation>Navigateur</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="407"/>
+        <source>Recover Unsaved Work</source>
+        <translation>Récupérer le travail non enregistré</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="403"/>
+        <source>(Untitled)</source>
+        <translation>(Sans titre)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="408"/>
+        <source>Found %1 unsaved document(s) from the previous session:
+
+%2
+
+Recover them? Layer information is not preserved.</source>
+        <translation>%1 document(s) non enregistré(s) trouvé(s) lors de la session précédente :\n\n%2\n\nLes récupérer ? Les informations de calque ne seront pas conservées.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="426"/>
+        <source>Recovered</source>
+        <translation>Récupéré</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="427"/>
+        <source>%1 (Recovered)</source>
+        <translation>%1 (récupéré)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="435"/>
+        <source>Recovered %1 document(s)</source>
+        <translation>%1 document(s) récupéré(s)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
         <source>Undo Steps...</source>
-        <translation>Étapes d'annulation…</translation>
+        <translation>Étapes d&apos;annulation…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
         <source>How many undo steps each document keeps</source>
-        <translation>Combien d'étapes d'annulation chaque document conserve</translation>
+        <translation>Combien d&apos;étapes d&apos;annulation chaque document conserve</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
         <source>Full Screen(&amp;U)</source>
         <translation>Plein écran(&amp;U)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="679"/>
         <source>Toggle full screen (F11)</source>
         <translation>Basculer en plein écran (F11)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>Undo Steps</source>
-        <translation>Étapes d'annulation</translation>
+        <translation>Étapes d&apos;annulation</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>How many undo steps to keep per document:</source>
-        <translation>Combien d'étapes d'annulation conserver par document :</translation>
+        <translation>Combien d&apos;étapes d&apos;annulation conserver par document :</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2392"/>
         <source>Undo steps: %1</source>
-        <translation>Étapes d'annulation : %1</translation>
+        <translation>Étapes d&apos;annulation : %1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="257"/>
         <source>Print(&amp;P)...</source>
         <translation>Imprimer(&amp;P)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="261"/>
         <source>Print the current image</source>
-        <translation>Imprimer l'image actuelle</translation>
+        <translation>Imprimer l&apos;image actuelle</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="266"/>
         <source>Export PDF(&amp;F)...</source>
         <translation>Exporter en PDF(&amp;F)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="269"/>
         <source>Export the current image as a single-page PDF</source>
-        <translation>Exporter l'image actuelle en PDF d'une page</translation>
+        <translation>Exporter l&apos;image actuelle en PDF d&apos;une page</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1470"/>
         <source>Failed to write the PDF file.</source>
-        <translation>Impossible d'écrire le fichier PDF.</translation>
+        <translation>Impossible d&apos;écrire le fichier PDF.</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1504"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1510"/>
         <source>Printing failed</source>
-        <translation>Échec de l'impression</translation>
+        <translation>Échec de l&apos;impression</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
         <source>Sent to printer</source>
-        <translation>Envoyé à l'imprimante</translation>
+        <translation>Envoyé à l&apos;imprimante</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1540"/>
         <source>Export PDF</source>
         <translation>Exporter en PDF</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
         <source>PDF files (*.pdf)</source>
         <translation>Fichiers PDF (*.pdf)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1546"/>
         <source>PDF exported: %1</source>
         <translation>PDF exporté : %1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="612"/>
         <source>Add Layer Mask from Selection(&amp;M)</source>
         <translation>Ajouter un masque de calque depuis la sélection(&amp;M)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="616"/>
         <source>Hide everything outside the current selection without deleting pixels</source>
         <translation>Masquer tout ce qui est hors de la sélection sans supprimer de pixels</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="620"/>
         <source>Remove Layer Mask(&amp;K)</source>
         <translation>Supprimer le masque de calque(&amp;K)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="624"/>
         <source>Delete the mask and show the whole layer again</source>
         <translation>Supprimer le masque et réafficher tout le calque</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4444"/>
         <source>Select an area first; that area becomes the visible part</source>
-        <translation>Sélectionnez d'abord une zone ; elle deviendra la partie visible</translation>
+        <translation>Sélectionnez d&apos;abord une zone ; elle deviendra la partie visible</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4456"/>
         <source>Layer mask added</source>
         <translation>Masque de calque ajouté</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4471"/>
         <source>This layer has no mask</source>
-        <translation>Ce calque n'a pas de masque</translation>
+        <translation>Ce calque n&apos;a pas de masque</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4483"/>
         <source>Layer mask removed</source>
         <translation>Masque de calque supprimé</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4452"/>
         <source>Add Layer Mask</source>
         <translation>Ajouter un masque de calque</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4479"/>
         <source>Remove Layer Mask</source>
         <translation>Supprimer le masque de calque</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1488"/>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
-        <translation>L'impression n'est pas disponible dans cette version ; utilisez Exporter en PDF</translation>
+        <translation>L&apos;impression n&apos;est pas disponible dans cette version ; utilisez Exporter en PDF</translation>
     </message>
 </context>
 <context>
@@ -3360,6 +3427,14 @@ Décoché&#xa0;: déplace toujours le contenu du calque actif</translation>
         <location filename="../src/tools/MoveTool.h" line="80"/>
         <source>Move</source>
         <translation>Déplacer</translation>
+    </message>
+</context>
+<context>
+    <name>zl::NavigatorPanel</name>
+    <message>
+        <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
+        <source>No document</source>
+        <translation>Aucun document</translation>
     </message>
 </context>
 <context>
@@ -3903,11 +3978,4 @@ ICO est un format d’icône dont l’arête ne peut dépasser %3 pixels (Window
 Utilisez Image → Taille de l’image pour réduire l’image à %3 pixels ou moins, puis enregistrez en ICO.</translation>
     </message>
 </context>
-    <context>
-        <name>zl::NavigatorPanel</name>
-        <message>
-            <source>No document</source>
-            <translation>Aucun document</translation>
-        </message>
-    </context>
 </TS>

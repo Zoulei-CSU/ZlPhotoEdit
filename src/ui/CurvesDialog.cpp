@@ -77,7 +77,7 @@ CurvesDialog::CurvesDialog(const QImage &source, QWidget *parent)
         "Right-click a control point: delete it (endpoints cannot be deleted)\n"
         "Arrow keys: fine-tune the selected point (hold Shift for a step of 10)\n"
         "Delete: delete the selected point"), this);
-    m_hintLabel->setStyleSheet(QStringLiteral("color: #666666;"));
+    m_hintLabel->setStyleSheet(QStringLiteral("color: palette(mid);"));
     sideLayout->addWidget(m_hintLabel);
 
     sideLayout->addStretch(1);

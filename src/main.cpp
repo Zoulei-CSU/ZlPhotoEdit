@@ -27,6 +27,9 @@
 // ★ 界面语言 ★ 启动时决定装不装翻译器，必须早于第一个窗口
 //   （tr() 的结果在控件构造那一刻就定下来了）。
 #include "core/UiLanguage.h"
+// ★ 界面主题 ★ 与语言同属"启动时必须先定下来"的观感，
+//   而且必须早于第一个窗口 —— 否则会先闪一下系统配色再跳到所选主题。
+#include "core/UiTheme.h"
 
 #include <QApplication>
 #include <QSettings>
@@ -317,6 +320,25 @@ int main(int argc, char *argv[])
 
     // ── 步骤 4.5：界面语言 ──
     setupUiLanguage(&app);
+
+    // ── 步骤 4.6：界面主题 ──
+    //
+    //  ★ 必须在 MainWindow 之前 ★
+    //    主题是 palette + 样式，MainWindow 构造时会把图标按当时的
+    //    前景色**渲染死**（见 IconLibrary 的上色说明）。晚于建窗口的话，
+    //    图标会先按系统配色渲一遍、再在 PaletteChange 里整批重渲 ——
+    //    多花一次全量光栅化，还会看到明显的一跳。
+    //
+    //  ★ 必须在 captureSystem 之后 ★
+    //    这里的 applyTheme 自己会补 capture，但那记下的是"已经套过一半"的
+    //    状态；显式调用一次成本为零，语义也更清楚。
+    {
+        zl::uitheme::captureSystem();
+        const zl::uitheme::Mode mode = zl::uitheme::preference();
+        zl::uitheme::applyTheme(mode);
+        std::fprintf(stderr, "[ZlPhotoEdit] 界面主题: %s\n",
+                     qPrintable(zl::uitheme::keyOf(mode)));
+    }
 
     // ── 步骤 5：启动日志 ──
     //

@@ -424,6 +424,21 @@
         <source>Keep only the overlap of both (Shift+Alt)</source>
         <translation>両方の重なった部分だけを残します（Shift+Alt）</translation>
     </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="175"/>
+        <source>Light</source>
+        <translation>ライト</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="176"/>
+        <source>Dark</source>
+        <translation>ダーク</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="181"/>
+        <source>Default (Follow System)</source>
+        <translation>既定（システムに従う）</translation>
+    </message>
 </context>
 <context>
     <name>zl::AbstractTool</name>
@@ -776,62 +791,62 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
 <context>
     <name>zl::CanvasView</name>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="1540"/>
+        <location filename="../src/ui/CanvasView.cpp" line="1550"/>
         <source>No document open</source>
         <translation>開いているドキュメントはありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2676"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2686"/>
         <source>Zoom In</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2679"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2689"/>
         <source>Zoom Out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2684"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2694"/>
         <source>Fit to Window</source>
         <translation>画面に合わせる</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2687"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
         <source>Actual Size (100%)</source>
         <translation>実際のサイズ (100%)</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2693"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2703"/>
         <source>Show Grid</source>
         <translation>グリッドを表示</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
         <source>Show Transparency Checkerboard</source>
         <translation>透明部分のチェッカーボードを表示</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2704"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2714"/>
         <source>View Rotation</source>
         <translation>ビューの回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2705"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2715"/>
         <source>No Rotation</source>
         <translation>回転なし</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2706"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2716"/>
         <source>Rotate 90° CW</source>
         <translation>90°時計回りに回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2717"/>
         <source>180°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2708"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2718"/>
         <source>Rotate 90° CCW</source>
         <translation>90°反時計回りに回転</translation>
     </message>
@@ -1006,8 +1021,8 @@ Delete キー: 選択したポイントを削除</translation>
         <translation>統合レイヤー</translation>
     </message>
     <message>
-        <location filename="../src/core/Document.cpp" line="969"/>
-        <location filename="../src/core/Document.cpp" line="973"/>
+        <location filename="../src/core/Document.cpp" line="987"/>
+        <location filename="../src/core/Document.cpp" line="991"/>
         <source>Untitled</source>
         <translation>無題</translation>
     </message>
@@ -1271,62 +1286,62 @@ The lines stay 1 screen pixel wide even when the canvas is zoomed in.</source>
 <context>
     <name>zl::LayerPanel</name>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="510"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="578"/>
         <source>Blend Mode</source>
         <translation>描画モード</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="523"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="591"/>
         <source>Opacity</source>
         <translation>不透明度</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="576"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="646"/>
         <source>New Layer (Ctrl+Shift+N)</source>
         <translation>新規レイヤー (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="579"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="649"/>
         <source>Duplicate Layer (Ctrl+J)</source>
         <translation>レイヤーを複製 (Ctrl+J)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="588"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="658"/>
         <source>Delete Selected Layers</source>
         <translation>選択したレイヤーを削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="596"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="666"/>
         <source>Move Layer Up (Ctrl+])</source>
         <translation>レイヤーを上へ (Ctrl+])</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="599"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="669"/>
         <source>Move Layer Down (Ctrl+[)</source>
         <translation>レイヤーを下へ (Ctrl+[)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="602"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="672"/>
         <source>Merge Down (Ctrl+E)</source>
         <translation>下のレイヤーと統合 (Ctrl+E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="608"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="678"/>
         <source>Merge Visible Layers</source>
         <translation>表示レイヤーを統合</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="611"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="681"/>
         <source>Flatten Image</source>
         <translation>画像を統合</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="899"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="973"/>
         <source>Total %1 layers</source>
         <translation>全 %1 レイヤー</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="901"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="975"/>
         <source> · %1 selected</source>
         <translation> · %1 個を選択</translation>
     </message>
@@ -1547,659 +1562,664 @@ Larger values soften the transition along the selection edge.</source>
 <context>
     <name>zl::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="704"/>
+        <location filename="../src/ui/MainWindow.cpp" line="867"/>
         <source>Current tool: %1</source>
         <translation>現在のツール: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="857"/>
-        <location filename="../src/ui/MainWindow.cpp" line="910"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="271"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1076"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="321"/>
         <source>Undo(&amp;U)</source>
         <translation>元に戻す(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="858"/>
-        <location filename="../src/ui/MainWindow.cpp" line="911"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1024"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1077"/>
         <source>Undo %1(&amp;U)</source>
         <translation>%1 を元に戻す(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="866"/>
-        <location filename="../src/ui/MainWindow.cpp" line="917"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1032"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="329"/>
         <source>Redo(&amp;R)</source>
         <translation>やり直す(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="867"/>
-        <location filename="../src/ui/MainWindow.cpp" line="918"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1084"/>
         <source>Redo %1(&amp;R)</source>
         <translation>%1 をやり直す(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="140"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="145"/>
         <source>New(&amp;N)...</source>
         <translation>新規(&amp;N)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="144"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="149"/>
         <source>Create a new blank image</source>
         <translation>新しい空白画像を作成します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="147"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="152"/>
         <source>Open(&amp;O)...</source>
         <translation>開く(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="151"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="156"/>
         <source>Open an existing image file</source>
         <translation>既存の画像ファイルを開きます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="168"/>
         <source>Open as Layer(&amp;L)...</source>
         <translation>レイヤーとして開く(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="167"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="172"/>
         <source>Add another image as a new layer in the current document (without switching documents)</source>
         <translation>別の画像を現在のドキュメントの新規レイヤーとして追加します（ドキュメントは切り替わりません）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="204"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="209"/>
         <source>Capture Now</source>
         <translation>今すぐキャプチャー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="214"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="219"/>
         <source>Delay 3 Seconds</source>
         <translation>3 秒遅延</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="218"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="223"/>
         <source>Capture after 3 seconds: this window will minimize first, switch to the target screen</source>
         <translation>3 秒後にキャプチャー: このウィンドウが先に最小化されるので、取りたい画面に切り替えてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="222"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="227"/>
         <source>Delay 5 Seconds</source>
         <translation>5 秒遅延</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="226"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="231"/>
         <source>Capture after 5 seconds: this window will minimize first, switch to the target screen</source>
         <translation>5 秒後にキャプチャー: このウィンドウが先に最小化されるので、取りたい画面に切り替えてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="230"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="235"/>
         <source>Delay 10 Seconds</source>
         <translation>10 秒遅延</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="234"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="239"/>
         <source>Capture after 10 seconds: this window will minimize first, switch to the target screen</source>
         <translation>10 秒後にキャプチャー: このウィンドウが先に最小化されるので、取りたい画面に切り替えてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="238"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="243"/>
         <source>Save(&amp;S)</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="242"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="247"/>
         <source>Save to the current file (asks for a path if untitled)</source>
         <translation>現在のファイルに保存します（無題のときはパスを尋ねます）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="245"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="250"/>
         <source>Save As(&amp;A)...</source>
         <translation>名前を付けて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="249"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="254"/>
         <source>Save to a new file; the format is decided by the extension</source>
         <translation>新しいファイルに保存します。形式は拡張子で決まります</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="252"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="272"/>
         <source>Close(&amp;W)</source>
         <translation>閉じる(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="256"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="276"/>
         <source>Close the current image</source>
         <translation>現在の画像を閉じます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="259"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
         <source>Quit(&amp;Q)</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="264"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="284"/>
         <source>Quit %1</source>
         <translation>%1 を終了</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="275"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="325"/>
         <source>Undo the last operation</source>
         <translation>直前の操作を元に戻します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="289"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="339"/>
         <source>Redo the undone operation</source>
         <translation>取り消した操作をやり直します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="293"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="343"/>
         <source>Cut(&amp;T)</source>
         <translation>切り取り(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="297"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="347"/>
         <source>Cut the selection to the clipboard</source>
         <translation>選択範囲をクリップボードに切り取ります</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="301"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
         <source>Copy(&amp;C)</source>
         <translation>コピー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
         <source>Copy the selection to the clipboard (copies the whole layer when there is no selection)</source>
         <translation>選択範囲をクリップボードにコピーします（選択範囲がないときはレイヤー全体をコピー）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="309"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="359"/>
         <source>Paste as New Layer(&amp;P)</source>
         <translation>新規レイヤーに貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="313"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="363"/>
         <source>Paste the clipboard content as a new layer</source>
         <translation>クリップボードの内容を新規レイヤーとして貼り付けます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="316"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="366"/>
         <source>Paste into Current Layer(&amp;I)</source>
         <translation>現在のレイヤーに貼り付け(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="320"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
         <source>Merge the clipboard content into the current layer</source>
         <translation>クリップボードの内容を現在のレイヤーに統合します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="323"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="373"/>
         <source>Delete(&amp;D)</source>
         <translation>削除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="327"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="377"/>
         <source>Delete the content inside the selection (clears the whole layer when there is no selection)</source>
         <translation>選択範囲内の内容を削除します（選択範囲がないときはレイヤー全体を消去）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="334"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="392"/>
         <source>Select All(&amp;A)</source>
         <translation>すべてを選択(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
         <source>Select the whole canvas</source>
         <translation>カンバス全体を選択します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="399"/>
         <source>Deselect(&amp;D)</source>
         <translation>選択解除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="348"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="406"/>
         <source>Cancel the current selection</source>
         <translation>現在の選択範囲を解除します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="409"/>
         <source>Invert Selection(&amp;I)</source>
         <translation>選択範囲を反転(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="413"/>
         <source>Select everything outside the current selection</source>
         <translation>現在の選択範囲の外側すべてを選択します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="362"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
         <source>Desaturate(&amp;G)</source>
         <translation>彩度を下げる(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="367"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="425"/>
         <source>Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)</source>
         <translation>輝度の重み（0.299R + 0.587G + 0.114B）でグレースケールに変換します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="428"/>
         <source>Invert(&amp;I)</source>
         <translation>反転(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="374"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="432"/>
         <source>Invert all color channels (like a negative)</source>
         <translation>すべてのカラーチャンネルを反転します（ネガのような効果）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="440"/>
         <source>Brightness/Contrast(&amp;B)...</source>
         <translation>明るさ/コントラスト(&amp;B)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="443"/>
         <source>Adjust the brightness and contrast of the image</source>
         <translation>画像の明るさとコントラストを調整します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="389"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="447"/>
         <source>Hue/Saturation(&amp;H)...</source>
         <translation>色相/彩度(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="393"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="451"/>
         <source>Adjust the hue, saturation and lightness of colors</source>
         <translation>色の色相、彩度、輝度を調整します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="454"/>
         <source>Curves(&amp;C)...</source>
         <translation>トーンカーブ(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="458"/>
         <source>Finely adjust the per-channel tonal mapping with a control-point curve</source>
         <translation>コントロールポイントの曲線で、チャンネルごとのトーン対応を細かく調整します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="403"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
         <source>Levels(&amp;L)...</source>
         <translation>レベル補正(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="408"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="466"/>
         <source>Adjust the tonal distribution with the histogram black/white points and midtones</source>
         <translation>ヒストグラムの黒点・白点と中間調で、明暗の分布を調整します</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
         <source>Image Size(&amp;I)...</source>
         <translation>画像サイズ(&amp;I)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="424"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="482"/>
         <source>Resample the pixel content (the image becomes softer or sharper)</source>
         <translation>ピクセル内容を再サンプリングします（画像は柔らかく、またはシャープになります）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
         <source>Canvas Size(&amp;C)...</source>
         <translation>カンバスサイズ(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="431"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="489"/>
         <source>Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger</source>
         <translation>カンバスの範囲を変更します。再サンプリングは行いません。小さくすると切り取られ、大きくすると背景色で埋められます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2912"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="496"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3375"/>
         <source>Rotate 90° Clockwise</source>
         <translation>90°時計回りに回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="444"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2918"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="502"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3381"/>
         <source>Rotate 90° Counterclockwise</source>
         <translation>90°反時計回りに回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="450"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2932"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3395"/>
         <source>Rotate 180°</source>
         <translation>180°回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
         <source>Rotate Arbitrary(&amp;A)...</source>
         <translation>任意角度で回転(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="467"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3401"/>
         <source>Flip Horizontal</source>
         <translation>水平方向に反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="473"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2944"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3407"/>
         <source>Flip Vertical</source>
         <translation>垂直方向に反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3410"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="543"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3873"/>
         <source>Crop</source>
         <translation>切り抜き</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="488"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="546"/>
         <source>Crop the canvas to the bounding box of the current selection</source>
         <translation>カンバスを現在の選択範囲の外接枠に切り抜きます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="495"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="553"/>
         <source>New Layer(&amp;N)</source>
         <translation>新規レイヤー(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="501"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="559"/>
         <source>Duplicate Layer(&amp;D)</source>
         <translation>レイヤーを複製(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3547"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3819"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="566"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4010"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4282"/>
         <source>Delete Layer</source>
         <translation>レイヤーを削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="513"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3591"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4054"/>
         <source>Move Layer Up</source>
         <translation>レイヤーを上へ</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3622"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4085"/>
         <source>Move Layer Down</source>
         <translation>レイヤーを下へ</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
         <source>Merge Down(&amp;M)</source>
         <translation>下のレイヤーと統合(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="589"/>
         <source>Flatten Image(&amp;F)</source>
         <translation>画像を統合(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="536"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="594"/>
         <source>Merge Visible Layers(&amp;V)</source>
         <translation>表示レイヤーを統合(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="544"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="602"/>
         <source>Rename Layer(&amp;R)</source>
         <translation>レイヤー名を変更(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="558"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="632"/>
         <source>Zoom In(&amp;I)</source>
         <translation>拡大(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="565"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="639"/>
         <source>Zoom Out(&amp;O)</source>
         <translation>縮小(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="645"/>
         <source>Fit to Window(&amp;F)</source>
         <translation>画面に合わせる(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="651"/>
         <source>Actual Size(&amp;A)</source>
         <translation>実際のサイズ(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
         <source>Show Grid(&amp;G)</source>
         <translation>グリッドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="664"/>
         <source>Show Transparent Background</source>
         <translation>透明部分を表示</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="604"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="688"/>
         <source>Snap to Grid(&amp;S)</source>
         <translation>グリッドにスナップ(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="623"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="707"/>
         <source>%1 px</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="637"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="721"/>
         <source>Custom(&amp;U)...</source>
         <translation>カスタム(&amp;U)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="649"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="733"/>
         <source>Show Ruler(&amp;R)</source>
         <translation>定規を表示(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="741"/>
         <source>Show Guides(&amp;G)</source>
         <translation>ガイドを表示(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="665"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="749"/>
         <source>Lock Guides(&amp;L)</source>
         <translation>ガイドをロック(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="759"/>
         <source>Clear Guides(&amp;C)</source>
         <translation>ガイドを消去(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="711"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="795"/>
         <source>Set Foreground Color...</source>
         <translation>前景色を設定...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="717"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="801"/>
         <source>Set Background Color...</source>
         <translation>背景色を設定...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="732"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="816"/>
         <source>Swap Foreground/Background Color</source>
         <translation>前景色と背景色を入れ替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="737"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="821"/>
         <source>Restore Default Colors</source>
         <translation>デフォルトの色に戻す</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="746"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="830"/>
         <source>About %1(&amp;A)...</source>
         <translation>%1 について(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="845"/>
         <source>About %1</source>
         <translation>%1 について</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="866"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Qt で作られた軽量画像エディター。&lt;/p&gt;&lt;p&gt;&lt;b&gt;バージョン&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;技術スタック&lt;/b&gt;&lt;br&gt;Qt %2（%3 に対してビルド）&lt;br&gt;純粋な Qt 実装、サードパーティ製画像ライブラリなし&lt;/p&gt;&lt;p&gt;&lt;b&gt;主な機能&lt;/b&gt;&lt;br&gt;22 種の描画モードを持つ多レイヤー · グレースケールマスクによる選択（ぼかし対応）&lt;br&gt;トーンカーブ / レベル補正 / 明るさ-コントラスト · 独自のバイキューブとランチョスによる再サンプリング&lt;br&gt;ダーティ矩形とレイヤー全体スナップショットの二段階取り消し戦略 · EXIF 自動回転&lt;/p&gt;&lt;p&gt;&lt;b&gt;プロジェクトページ&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="904"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>Qt について(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="922"/>
         <source>Switch UI Language</source>
         <translation>表示言語を切り替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="923"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>表示言語を %1 に設定しました。次回プログラムを起動したときに有効になります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
         <source>File(&amp;F)</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="958"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>スクリーンキャプチャー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="969"/>
         <source>Recent Files(&amp;R)</source>
         <translation>最近使ったファイル(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="991"/>
         <source>Clear List</source>
         <translation>リストを消去</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1019"/>
+        <source>Theme(&amp;T)</source>
+        <translation>テーマ(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1027"/>
         <source>Edit(&amp;E)</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1044"/>
         <source>Select(&amp;S)</source>
         <translation>選択(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1053"/>
         <source>Adjust(&amp;A)</source>
         <translation>調整(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1067"/>
         <source>Image(&amp;I)</source>
         <translation>画像(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1094"/>
         <source>Layer(&amp;L)</source>
         <translation>レイヤー(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1115"/>
         <source>View(&amp;V)</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1128"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>グリッド間隔(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1141"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>定規の単位(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1155"/>
         <source>Panels(&amp;P)</source>
         <translation>パネル(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1182"/>
         <source>Language(&amp;Y)</source>
         <translation>言語(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1204"/>
         <source>Auto (Follow System)</source>
         <translation>自動（システムに従う）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1230"/>
         <source>Help(&amp;H)</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1245"/>
         <source>Main Toolbar</source>
         <translation>メインツールバー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1274"/>
         <source>Tool Options</source>
         <translation>ツールオプション</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1294"/>
         <source>Toolbox</source>
         <translation>ツールボックス</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1365"/>
         <source>Switch to the %1 tool</source>
         <translation>%1ツールに切り替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1392"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1530"/>
         <source>Foreground color (click to change)</source>
         <translation>前景色（クリックで変更）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1497"/>
         <source>History</source>
         <translation>ヒストリー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1502"/>
         <source>(Already at the initial state)</source>
         <translation>（すでに初期状態です）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1511"/>
         <source>Color</source>
         <translation>色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1536"/>
         <source>Background color (click to change)</source>
         <translation>背景色（クリックで変更）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1548"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>前景色と背景色を入れ替え (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1554"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>デフォルトの色に戻す: 黒 / 白 (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2212,118 +2232,118 @@ Colors picked with the eyedropper become the foreground color.</source>
 スポイトで採取した色は前景色になります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1605"/>
         <source>Layers</source>
         <translation>レイヤー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1720"/>
         <source>Ready</source>
         <translation>準備完了</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1767"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>現在の画面を新しいタブにキャプチャーします（%1。プログラム最小化時も動作します）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1844"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1859"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>優先ショートカット %1 は他のプログラムが使用中のため、今回は %2 を使用します（プログラム最小化時も動作します）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1879"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>グローバルショートカットが使用できません（%1）。プログラム最小化時は押せませんが、前面では %2 が使えます。または「ファイル → スクリーンキャプチャー → 今すぐキャプチャー」をお使いください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="212"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="224"/>
         <source>Create or open an image first</source>
         <translation>先に画像を作成または開いてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="286"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="298"/>
         <source>New Failed</source>
         <translation>新規作成に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="469"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="299"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
         <source>Cannot create the document: %1</source>
         <translation>ドキュメントを作成できません: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="317"/>
         <source>Created a blank %1 × %2 image</source>
         <translation>%1 × %2 の空白画像を作成しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="326"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="760"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
         <source>All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</source>
         <translation>サポートされているすべての画像 (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="327"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="339"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
         <source>PNG Images (*.png)</source>
         <translation>PNG 画像 (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="762"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="340"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="852"/>
         <source>JPEG Images (*.jpg *.jpeg)</source>
         <translation>JPEG 画像 (*.jpg *.jpeg)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="329"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="763"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="853"/>
         <source>Bitmaps (*.bmp)</source>
         <translation>ビットマップ (*.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="330"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="764"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="342"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="854"/>
         <source>TIFF Images (*.tif *.tiff)</source>
         <translation>TIFF 画像 (*.tif *.tiff)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="331"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="765"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="343"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="855"/>
         <source>WebP Images (*.webp)</source>
         <translation>WebP 画像 (*.webp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="332"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="766"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="344"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="856"/>
         <source>All Files (*)</source>
         <translation>すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="335"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="347"/>
         <source>Open Image</source>
         <translation>画像を開く</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="391"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="403"/>
         <source>%1 is already open - switched to its tab</source>
         <translation>%1 はすでに開かれています。そのタブに切り替えました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="407"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="468"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="450"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="480"/>
         <source>Open Failed</source>
         <translation>読み込みに失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="408"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="835"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="925"/>
         <source>Cannot read the image info:
 %1
 
@@ -2335,14 +2355,14 @@ Possible causes: the file is corrupted, the format is unsupported, or there is n
 考えられる原因: ファイルが破損している、形式がサポートされていない、または読み取り権限がありません。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="418"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="857"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="430"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="940"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="947"/>
         <source>Image Too Large</source>
         <translation>画像が大きすぎます</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="431"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2357,8 +2377,8 @@ Try to open it anyway?</source>
 それでも開きますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="439"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="879"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="451"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="969"/>
         <source>Cannot load the image data:
 %1
 
@@ -2370,76 +2390,74 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
 ファイルが破損しているか、画像データがサポートされていない encoding を使っている可能性があります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="493"/>
         <source>Opened %1 (%2 × %3, %4)</source>
         <translation>%1 を開きました（%2 × %3、%4）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="485"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="497"/>
         <source>Unknown Format</source>
         <translation>不明な形式</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="615"/>
         <source>Screenshot failed: no screen content captured (no display may be available)</source>
         <translation>キャプチャー失敗: 画面内容を取得できません（利用できるディスプレイがない可能性があります）</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="593"/>
         <source>Screenshot Unavailable</source>
         <translation>スクリーンショットを利用できません</translation>
     </message>
     <message>
-        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>スクリーンショットを利用できません：この Wayland セッションではアプリケーションが画面を読み取ることが許可されていません。システムのスクリーンショットキーで撮影し、Ctrl+V でここに新しいレイヤーとして貼り付けてください。</translation>
-    </message>
-    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
         <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>この Wayland セッションではアプリケーションが画面を読み取れないため、内蔵のスクリーンショットは使用できません。システムのスクリーンショットショートカットで撮影し、Ctrl+V でここに新しいレイヤーとして貼り付けてください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>キャプチャー-%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="586"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="676"/>
         <source>Screenshot</source>
         <translation>スクリーンショット</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="606"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="696"/>
         <source>Screenshot failed: cannot create the document (%1)</source>
         <translation>キャプチャー失敗: ドキュメントを作成できません（%1）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="617"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="707"/>
         <source>Captured the screen at %1 × %2 and opened it as a new tab</source>
         <translation>画面を %1 × %2 でキャプチャーし、新しいタブで開きました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="661"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="751"/>
         <source>Screenshot in %1 seconds: this window is minimized, switch to the target screen</source>
         <translation>%1 秒後にキャプチャー: このウィンドウは最小化されています。取りたい画面に切り替えてください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="769"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="859"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1073"/>
         <source>Open as Layer</source>
         <translation>レイヤーとして開く</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="834"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="878"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="968"/>
         <source>Import Failed</source>
         <translation>読み込みに失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="941"/>
         <source>Import rejected: the image is about %1 megapixels, above the limit (%2 megapixels)</source>
         <translation>読み込みを拒否しました: 画像は約 %1 メガピクセルで、上限（%2 メガピクセル）を超えています</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="858"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="948"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2454,86 +2472,86 @@ Try to import it anyway?</source>
 それでも読み込みますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1000"/>
         <source>Image Is Larger Than the Canvas</source>
         <translation>画像がカンバスより大きい</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="911"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1001"/>
         <source>The imported image (%1 × %2) is larger than the current canvas (%3 × %4).</source>
         <translation>読み込んだ画像（%1 × %2）は現在のカンバス（%3 × %4）より大きいです。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="915"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1005"/>
         <source>&apos;Grow Canvas to Fit&apos; grows the canvas to %1 × %2, centering both the existing content and the new image;
 &apos;Crop to Canvas&apos; keeps the canvas size, centers the new image, and crops whatever sticks out.</source>
         <translation>「カンバスを拡大して合わせる」はカンバスを %1 × %2 に拡大し、既存の内容と新しい画像の両方を中央に配置します。
 「カンバスに切り抜く」はカンバスサイズを保ち、新しい画像を中央に配置し、はみ出した部分を切り取ります。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="922"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1012"/>
         <source>Grow Canvas to Fit</source>
         <translation>カンバスを拡大して合わせる</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="923"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1013"/>
         <source>Crop to Canvas</source>
         <translation>カンバスに切り抜く</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="956"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1046"/>
         <source>Layer &quot;%1&quot; is locked; the canvas cannot grow. Unlock it before importing.</source>
         <translation>レイヤー「%1」はロックされているため、カンバスを拡大できません。読み込む前にロックを解除してください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1004"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1094"/>
         <source>Failed to grow the canvas - import cancelled</source>
         <translation>カンバスの拡大に失敗したため、読み込みを取り消しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1009"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1099"/>
         <source>Grow Canvas</source>
         <translation>カンバスを拡大</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3475"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1104"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3938"/>
         <source>New Layer</source>
         <translation>新規レイヤー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1113"/>
         <source>Imported %1 (%2 × %3); the canvas grew to %4 × %5</source>
         <translation>%1（%2 × %3）を読み込みました。カンバスを %4 × %5 に拡大しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1118"/>
         <source>Imported %1 (%2 × %3) as a new layer</source>
         <translation>%1（%2 × %3）を新規レイヤーとして読み込みました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1082"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1172"/>
         <source>Saved to %1</source>
         <translation>%1 に保存しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1111"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1201"/>
         <source>Save As</source>
         <translation>名前を付けて保存</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1178"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1268"/>
         <source>Format Does Not Support Transparency</source>
         <translation>形式が透明をサポートしていません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1179"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1269"/>
         <source>The %1 format does not support a transparency channel.
 
 Semi-transparent areas will be filled with white.
@@ -2550,39 +2568,46 @@ Save anyway?</source>
 それでも保存しますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1217"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1307"/>
         <source>Saved as %1</source>
         <translation>%1 として保存しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1266"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1356"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1446"/>
         <source>No image is open.</source>
         <translation>開いている画像はありません。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1350"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1377"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1453"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1598"/>
         <source>Cannot generate the image data (the composite is empty).</source>
         <translation>画像データを生成できません（合成結果が空です）。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1336"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1526"/>
+        <source>Untitled</source>
+        <translation>無題</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1584"/>
         <source>Cannot Save as ICO</source>
         <translation>ICO として保存できません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1585"/>
         <source>Failed to export the ICO icon.</source>
         <translation>ICO アイコンの書き出しに失敗しました。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1349"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1410"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1597"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1658"/>
         <source>Save Failed</source>
         <translation>保存に失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1411"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1659"/>
         <source>Cannot write the file:
 %1
 
@@ -2604,22 +2629,22 @@ Please check:
   · ファイルが他のプログラムに使われていないか</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1763"/>
         <source>Document Closed</source>
         <translation>ドキュメントを閉じました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1516"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1764"/>
         <source>Closed a document (%1 left)</source>
         <translation>ドキュメントを 1 つ閉じました（残り %1）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1551"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1799"/>
         <source>Unsaved Changes</source>
         <translation>未保存の変更</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1552"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1800"/>
         <source>&quot;%1&quot; has unsaved changes.
 
 Save them?</source>
@@ -2628,169 +2653,170 @@ Save them?</source>
 保存しますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2084"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2547"/>
         <source>Nothing to copy</source>
         <translation>コピーする内容がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2137"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2600"/>
         <source>Copied %1 × %2 of content</source>
         <translation>%1 × %2 の内容をコピーしました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2230"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2693"/>
         <source>Cut</source>
         <translation>切り取り</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2233"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2696"/>
         <source>Cut to the clipboard</source>
         <translation>クリップボードに切り取りました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2252"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2715"/>
         <source>The clipboard is empty</source>
         <translation>クリップボードが空です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2279"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2742"/>
         <source>The clipboard has no usable image data</source>
         <translation>クリップボードに使える画像データがありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2323"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2786"/>
         <source>Paste as New Layer</source>
         <translation>新規レイヤーに貼り付け</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
         <source>Pasted Layer</source>
         <translation>貼り付けたレイヤー</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2334"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2797"/>
         <source>Pasted as a new layer (%1 × %2)</source>
         <translation>新規レイヤー（%1 × %2）に貼り付けました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2345"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2808"/>
         <source>No active layer available</source>
         <translation>利用できるアクティブなレイヤーがありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2351"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2814"/>
         <source>The current layer is locked - cannot paste</source>
         <translation>現在のレイヤーはロックされているため貼り付けられません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2883"/>
         <source>Paste</source>
         <translation>貼り付け</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2423"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2886"/>
         <source>Pasted into the current layer</source>
         <translation>現在のレイヤーに貼り付けました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2520"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2691"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2740"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4394"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3203"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4940"/>
         <source>The current layer is not editable</source>
         <translation>現在のレイヤーは編集できません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2569"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3032"/>
         <source>Delete Selection Content</source>
         <translation>選択範囲の内容を削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2575"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3038"/>
         <source>Clear Layer</source>
         <translation>レイヤーを消去</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2594"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
         <source>Already in the select-all state</source>
         <translation>すでに全選択の状態です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3068"/>
         <source>Select All</source>
         <translation>すべてを選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2630"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3093"/>
         <source>Deselect</source>
         <translation>選択解除</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2637"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3100"/>
         <source>Selection cancelled</source>
         <translation>選択を取り消しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2657"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3120"/>
         <source>No selection to invert</source>
         <translation>反転できる選択範囲がありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2668"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3131"/>
         <source>Invert Selection</source>
         <translation>選択範囲を反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2675"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3138"/>
         <source>Selection inverted</source>
         <translation>選択範囲を反転しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2726"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3189"/>
         <source>Desaturate</source>
         <translation>彩度を下げる</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2729"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3192"/>
         <source>Desaturate applied</source>
         <translation>彩度を下げました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2752"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3215"/>
         <source>Invert</source>
         <translation>反転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2755"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3218"/>
         <source>Invert applied</source>
         <translation>反転しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2874"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3113"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3191"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3365"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3520"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3576"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3654"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3828"/>
         <source>No layer to operate on</source>
         <translation>操作できるレイヤーがありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2891"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3354"/>
         <source>The current layer is locked - geometry operations are not allowed</source>
         <translation>現在のレイヤーはロックされているため、幾何操作は行えません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3413"/>
         <source>Geometry operation failed</source>
         <translation>幾何操作に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2991"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3454"/>
         <source>Undo Not Recorded</source>
         <translation>取り消しは記録されません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2992"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3455"/>
         <source>The &quot;%1&quot; operation moved too much data, above the undo memory limit,
 so it &lt;b&gt;cannot be undone&lt;/b&gt;.
 
@@ -2801,121 +2827,121 @@ The image has been modified. To keep the original, do not save - reopen the file
 画像はすでに変更されています。元の画像を残したい場合は保存せず、ファイルを開き直してください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3486"/>
         <source>%1 applied (canvas %2 × %3)</source>
         <translation>%1 を適用しました（カンバス %2 × %3）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3072"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3535"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the image</source>
         <translation>レイヤー「%1」はロックされています。画像サイズを変更する前にロックを解除してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3098"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3561"/>
         <source>Failed to resize the image (the new size may be too large)</source>
         <translation>画像サイズの変更に失敗しました（新しいサイズが大きすぎる可能性があります）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3103"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3566"/>
         <source>Image Size</source>
         <translation>画像サイズ</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3122"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3585"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the canvas</source>
         <translation>レイヤー「%1」はロックされています。カンバスサイズを変更する前にロックを解除してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3149"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3612"/>
         <source>Failed to resize the canvas</source>
         <translation>カンバスサイズの変更に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3617"/>
         <source>Canvas Size</source>
         <translation>カンバスサイズ</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3204"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3667"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before rotating the image</source>
         <translation>レイヤー「%1」はロックされています。画像を回転する前にロックを解除してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3213"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3676"/>
         <source>Cannot generate a preview: the image content is empty</source>
         <translation>プレビューを生成できません: 画像内容が空です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3274"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
         <source>Rotation failed</source>
         <translation>回転に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3280"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3743"/>
         <source>Rotate Image</source>
         <translation>画像を回転</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3378"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3841"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before cropping</source>
         <translation>レイヤー「%1」はロックされています。切り抜く前にロックを解除してください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3388"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3851"/>
         <source>The crop area is empty</source>
         <translation>切り抜く領域が空です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3396"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3859"/>
         <source>The crop area is the whole canvas - nothing to crop</source>
         <translation>切り抜く領域がカンバス全体のため、切り抜くものはありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3406"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3869"/>
         <source>Crop failed</source>
         <translation>切り抜きに失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
         <source>Select the area to keep with a selection tool first</source>
         <translation>先に選択ツールで残す領域を選んでください</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3466"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3929"/>
         <source>Failed to create a layer</source>
         <translation>レイヤーの作成に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3479"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
         <source>Layer created</source>
         <translation>レイヤーを作成しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3494"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3868"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4331"/>
         <source>Failed to duplicate the layer</source>
         <translation>レイヤーの複製に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3503"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3884"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3966"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
         <source>Duplicate Layer</source>
         <translation>レイヤーを複製</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3507"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3970"/>
         <source>Layer duplicated</source>
         <translation>レイヤーを複製しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3521"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3790"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3984"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4253"/>
         <source>Cannot Delete the Layer</source>
         <translation>レイヤーを削除できません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3522"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3985"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4254"/>
         <source>A document must keep at least one layer.
 
 To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
@@ -2924,69 +2950,69 @@ To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
 このレイヤーの内容を消去したいときは「編集 → 削除」を使ってください。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3997"/>
         <source>Failed to delete the layer</source>
         <translation>レイヤーの削除に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4020"/>
         <source>Layer deleted</source>
         <translation>レイヤーを削除しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3574"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4037"/>
         <source>Already the topmost layer</source>
         <translation>すでに一番上のレイヤーです</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3582"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3613"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4045"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4076"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4373"/>
         <source>Failed to move the layer</source>
         <translation>レイヤーの移動に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4068"/>
         <source>Already the bottommost layer</source>
         <translation>すでに一番下のレイヤーです</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3647"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4110"/>
         <source>At least two layers are required to merge</source>
         <translation>統合にはレイヤーが 2 つ以上必要です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3660"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4123"/>
         <source>The bottommost layer cannot be merged down</source>
         <translation>一番下のレイヤーは下のレイヤーと統合できません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3669"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4132"/>
         <source>Merge down failed</source>
         <translation>下のレイヤーとの統合に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3678"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4141"/>
         <source>Merge Down</source>
         <translation>下のレイヤーと統合</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3682"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4145"/>
         <source>Merged down</source>
         <translation>下のレイヤーと統合しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3692"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4155"/>
         <source>Only one layer - nothing to flatten</source>
         <translation>レイヤーが 1 つだけなので、統合するものはありません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3707"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4170"/>
         <source>Flatten Image merges all visible layers into one.</source>
         <translation>「画像を統合」は、表示されているすべてのレイヤーを 1 つに統合します。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3709"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4172"/>
         <source>
 
 Note: %1 hidden layers exist and their content will be discarded.</source>
@@ -2995,7 +3021,7 @@ Note: %1 hidden layers exist and their content will be discarded.</source>
 注意: 非表示のレイヤーが %1 個あり、その内容は破棄されます。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3711"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4174"/>
         <source>
 
 Continue?</source>
@@ -3004,307 +3030,348 @@ Continue?</source>
 続けますか？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3713"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3733"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4176"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4196"/>
         <source>Flatten Image</source>
         <translation>画像を統合</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3724"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4187"/>
         <source>Flatten failed</source>
         <translation>統合に失敗しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4200"/>
         <source>Image flattened</source>
         <translation>画像を統合しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3818"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4281"/>
         <source>Delete Multiple Layers</source>
         <translation>複数レイヤーを削除</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3829"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4292"/>
         <source>Deleted %1 layers</source>
         <translation>%1 個のレイヤーを削除しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4346"/>
         <source>Duplicate Multiple Layers</source>
         <translation>複数レイヤーを複製</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3888"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4351"/>
         <source>Duplicated %1 layers</source>
         <translation>%1 個のレイヤーを複製しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3919"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4382"/>
         <source>Reorder Layers</source>
         <translation>レイヤーを並べ替え</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3935"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4398"/>
         <source>At least two visible layers are required to merge</source>
         <translation>統合には表示レイヤーが 2 つ以上必要です</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3946"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4409"/>
         <source>Merge Visible Layers</source>
         <translation>表示レイヤーを統合</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
         <source>Visible layers merged</source>
         <translation>表示レイヤーを統合しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Show Layer</source>
         <translation>レイヤーを表示</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Hide Layer</source>
         <translation>レイヤーを非表示</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Lock Layer</source>
         <translation>レイヤーをロック</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Unlock Layer</source>
         <translation>レイヤーのロックを解除</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4561"/>
         <source>Rename Layer</source>
         <translation>レイヤー名を変更</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4051"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4584"/>
         <source>Change Blend Mode</source>
         <translation>描画モードを変更</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4108"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4641"/>
         <source>Change Opacity</source>
         <translation>不透明度を変更</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4165"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4711"/>
         <source>Snap to grid on</source>
         <translation>グリッドへのスナップをオンにしました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4166"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4712"/>
         <source>Snap to grid off</source>
         <translation>グリッドへのスナップをオフにしました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4186"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4732"/>
         <source>Grid spacing: %1 px</source>
         <translation>グリッド間隔: %1 px</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4270"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4816"/>
         <source>Cleared the guides on this page</source>
         <translation>このページのガイドを消去しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4315"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4861"/>
         <source>Choose Foreground Color</source>
         <translation>前景色を選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4325"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4871"/>
         <source>Choose Background Color</source>
         <translation>背景色を選択</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4893"/>
         <source>Swapped the foreground and background colors</source>
         <translation>前景色と背景色を入れ替えました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4360"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4906"/>
         <source>Restored the default colors (black / white)</source>
         <translation>デフォルトの色（黒 / 白）に戻しました</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4959"/>
         <source>Brightness/Contrast</source>
         <translation>明るさ/コントラスト</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4422"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4968"/>
         <source>Hue/Saturation</source>
         <translation>色相/彩度</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4980"/>
         <source>Curves</source>
         <translation>トーンカーブ</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4447"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4993"/>
         <source>Levels</source>
         <translation>レベル補正</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4547"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5093"/>
         <source>Adjustment failed: no result generated</source>
         <translation>調整に失敗: 結果が生成されませんでした</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5103"/>
         <source>Applied %1</source>
         <translation>%1 を適用しました</translation>
     </message>
-        <message>
-            <source>Navigator</source>
-            <translation>ナビゲーター</translation>
-        </message>
-        <message>
-            <source>Recover Unsaved Work</source>
-            <translation>未保存の作業を復元</translation>
-        </message>
-        <message>
-            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
-            <translation>前回のセッションで未保存のドキュメントが %1 件見つかりました:\n\n%2\n\n復元しますか？レイヤー情報は保持されません。</translation>
-        </message>
-        <message>
-            <source>(Untitled)</source>
-            <translation>(無題)</translation>
-        </message>
-        <message>
-            <source>Recovered</source>
-            <translation>復元済み</translation>
-        </message>
-        <message>
-            <source>%1 (Recovered)</source>
-            <translation>%1（復元済み）</translation>
-        </message>
-        <message>
-            <source>Recovered %1 document(s)</source>
-            <translation>%1 件のドキュメントを復元しました</translation>
-        </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1667"/>
+        <source>Navigator</source>
+        <translation>ナビゲーター</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="407"/>
+        <source>Recover Unsaved Work</source>
+        <translation>未保存の作業を復元</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="403"/>
+        <source>(Untitled)</source>
+        <translation>(無題)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="408"/>
+        <source>Found %1 unsaved document(s) from the previous session:
+
+%2
+
+Recover them? Layer information is not preserved.</source>
+        <translation>前回のセッションで未保存のドキュメントが %1 件見つかりました:\n\n%2\n\n復元しますか？レイヤー情報は保持されません。</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="426"/>
+        <source>Recovered</source>
+        <translation>復元済み</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="427"/>
+        <source>%1 (Recovered)</source>
+        <translation>%1（復元済み）</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="435"/>
+        <source>Recovered %1 document(s)</source>
+        <translation>%1 件のドキュメントを復元しました</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
         <source>Undo Steps...</source>
         <translation>元に戻す回数…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
         <source>How many undo steps each document keeps</source>
         <translation>各ドキュメントで保持する元に戻す回数</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
         <source>Full Screen(&amp;U)</source>
         <translation>全画面表示(&amp;U)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="679"/>
         <source>Toggle full screen (F11)</source>
         <translation>全画面表示を切り替え (F11)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>Undo Steps</source>
         <translation>元に戻す回数</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>How many undo steps to keep per document:</source>
         <translation>ドキュメントごとに保持する元に戻す回数：</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2392"/>
         <source>Undo steps: %1</source>
         <translation>元に戻す回数：%1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="257"/>
         <source>Print(&amp;P)...</source>
         <translation>印刷(&amp;P)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="261"/>
         <source>Print the current image</source>
         <translation>現在の画像を印刷</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="266"/>
         <source>Export PDF(&amp;F)...</source>
         <translation>PDF を書き出し(&amp;F)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="269"/>
         <source>Export the current image as a single-page PDF</source>
         <translation>現在の画像を 1 ページの PDF に書き出す</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1470"/>
         <source>Failed to write the PDF file.</source>
         <translation>PDF ファイルの書き込みに失敗しました。</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1504"/>
         <source>Print</source>
         <translation>印刷</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1510"/>
         <source>Printing failed</source>
         <translation>印刷に失敗しました</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
         <source>Sent to printer</source>
         <translation>プリンターに送信しました</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1540"/>
         <source>Export PDF</source>
         <translation>PDF 書き出し</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
         <source>PDF files (*.pdf)</source>
         <translation>PDF ファイル (*.pdf)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1546"/>
         <source>PDF exported: %1</source>
         <translation>PDF を書き出しました：%1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="612"/>
         <source>Add Layer Mask from Selection(&amp;M)</source>
         <translation>選択範囲からレイヤーマスクを追加(&amp;M)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="616"/>
         <source>Hide everything outside the current selection without deleting pixels</source>
         <translation>選択範囲の外側を、ピクセルを消さずに隠します</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="620"/>
         <source>Remove Layer Mask(&amp;K)</source>
         <translation>レイヤーマスクを削除(&amp;K)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="624"/>
         <source>Delete the mask and show the whole layer again</source>
         <translation>マスクを削除して、レイヤー全体を再表示します</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4444"/>
         <source>Select an area first; that area becomes the visible part</source>
         <translation>先に選択範囲を作成してください。選択した部分が表示されます</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4456"/>
         <source>Layer mask added</source>
         <translation>レイヤーマスクを追加しました</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4471"/>
         <source>This layer has no mask</source>
         <translation>このレイヤーにはマスクがありません</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4483"/>
         <source>Layer mask removed</source>
         <translation>レイヤーマスクを削除しました</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4452"/>
         <source>Add Layer Mask</source>
         <translation>レイヤーマスクを追加</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4479"/>
         <source>Remove Layer Mask</source>
         <translation>レイヤーマスクを削除</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1488"/>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>このビルドでは印刷できません。PDF 書き出しをお使いください</translation>
     </message>
@@ -3374,6 +3441,14 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/tools/MoveTool.h" line="80"/>
         <source>Move</source>
         <translation>移動</translation>
+    </message>
+</context>
+<context>
+    <name>zl::NavigatorPanel</name>
+    <message>
+        <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
+        <source>No document</source>
+        <translation>ドキュメントがありません</translation>
     </message>
 </context>
 <context>
@@ -3918,11 +3993,4 @@ ICO は 1 辺が最大 %3 ピクセルのアイコン形式です（Windows の�
 「画像 → 画像サイズ」で画像を %3 ピクセル以下にしてから、ICO として保存してください。</translation>
     </message>
 </context>
-    <context>
-        <name>zl::NavigatorPanel</name>
-        <message>
-            <source>No document</source>
-            <translation>ドキュメントがありません</translation>
-        </message>
-    </context>
 </TS>

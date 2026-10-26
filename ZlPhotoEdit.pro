@@ -62,6 +62,7 @@ SOURCES += \
     src/core/ClipboardData.cpp \
     src/core/ImageTypes.cpp \
     src/core/UiLanguage.cpp \
+    src/core/UiTheme.cpp \
     src/engine/Blend.cpp \
     src/engine/Lut.cpp \
     src/engine/Curves.cpp \
@@ -140,6 +141,7 @@ HEADERS += \
     src/core/ClipboardData.h \
     src/core/ImageTypes.h \
     src/core/UiLanguage.h \
+    src/core/UiTheme.h \
     src/engine/Blend.h \
     src/engine/Lut.h \
     src/engine/Curves.h \

@@ -36,6 +36,9 @@
 // ★ 界面语言 ★ 语言菜单的可用项 / 当前项 / 写设置都走它
 //   （"当前是什么语言"这件事只有 core/UiLanguage.cpp 一个出处）。
 #include "core/UiLanguage.h"
+// ★ 界面主题 ★ 主题菜单的三项、当前项、写设置都走它
+//   （"用哪个主题"只有 core/UiTheme.cpp 一个出处；菜单只管转调）。
+#include "core/UiTheme.h"
 
 #include "commands/CommandStack.h"
 
@@ -280,6 +283,36 @@ void MainWindow::setupActions()
     m_actionQuit->setMenuRole(QAction::QuitRole);
     m_actionQuit->setStatusTip(tr("Quit %1").arg(zl::appinfo::displayName()));
     connect(m_actionQuit, &QAction::triggered, this, &QWidget::close);
+
+    // ── 「主题」的 3 个互斥项 ──
+    //
+    //  ★ 为什么自己建动作、不放进 m_actionTheme 之外的地方 ★
+    //    与网格间距、标尺单位同套路：单选项不留 objectName（否则对账规则
+    //    "有名字的菜单动作必须有图标"会牵连出 3 张纯噪音的图标）。
+    //    定位它们靠子菜单本身 + 下标。
+    //
+    //  ★ 勾选态读"偏好"而不是"当前 palette 深浅" ★
+    //    自动主题碰上深色系统时 palette 也是深的 —— 若按深浅勾，用户会看到
+    //    "自动"没勾、"深色"勾着，以为程序擅自改了选择。
+    //    与语言菜单读偏好（而不是 currentLanguage）是同一条道理。
+    {
+        auto *themeGroup = new QActionGroup(this);
+        themeGroup->setExclusive(true);
+
+        const uitheme::Mode pref = uitheme::preference();
+        for (const uitheme::Mode mode : uitheme::allModes()) {
+            QAction *act = new QAction(uitheme::displayName(mode), this);
+            act->setCheckable(true);
+            act->setChecked(mode == pref);
+            // 存的是 Mode 的整数值：退出/外部改设置后要靠它同步勾选态。
+            // 存值而不是比对文本 —— 文本是翻译过的，换语言就失配。
+            act->setData(int(mode));
+            connect(act, &QAction::triggered, this,
+                    [this, mode] { setTheme(mode); });
+            themeGroup->addAction(act);
+            m_actionTheme.append(act);
+        }
+    }
 
     // ─────────────────────────────────────────────────────────────────────
     //  编辑
@@ -971,6 +1004,22 @@ void MainWindow::setupMenus()
     fileMenu->addSeparator();
     fileMenu->addAction(m_actionClose);
     fileMenu->addAction(m_actionQuit);
+
+    // ── 主题（子菜单）──
+    //
+    //  ★ 为什么放在「退出」之后的最后一项 ★
+    //    上面全是"对文件做的事"（新建/打开/存/打印/关），主题与它们无关；
+    //    排在最后，用户找文件操作时不会被它打断。
+    //    与"语言"放在菜单栏末尾同一个位置逻辑 —— 都是应用级偏好，
+    //    不掺进业务动作里。
+    //
+    //  ★ 子菜单也要图标 ★
+    //    它是这个菜单里唯一一个没有图标的条目，不挂的话在"整栏都有图标"
+    //    的菜单里一眼就能看出缺一块。
+    QMenu *themeMenu = fileMenu->addMenu(tr("Theme(&T)"));    themeMenu->setObjectName(QStringLiteral("menuTheme"));
+    setActionIcon(themeMenu->menuAction(), QStringLiteral("menu_theme"));
+    for (QAction *act : m_actionTheme)
+        themeMenu->addAction(act);
 
     // ─────────────────────────────────────────────────────────────────────
     //  编辑

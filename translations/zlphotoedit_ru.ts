@@ -424,6 +424,21 @@
         <source>Keep only the overlap of both (Shift+Alt)</source>
         <translation>Оставляет только общую часть обоих выделений (Shift+Alt)</translation>
     </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="175"/>
+        <source>Light</source>
+        <translation>Светлая</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="176"/>
+        <source>Dark</source>
+        <translation>Тёмная</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="181"/>
+        <source>Default (Follow System)</source>
+        <translation>По умолчанию (как в системе)</translation>
+    </message>
 </context>
 <context>
     <name>zl::AbstractTool</name>
@@ -776,62 +791,62 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
 <context>
     <name>zl::CanvasView</name>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="1540"/>
+        <location filename="../src/ui/CanvasView.cpp" line="1550"/>
         <source>No document open</source>
         <translation>Нет открытых документов</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2676"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2686"/>
         <source>Zoom In</source>
         <translation>Увеличить</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2679"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2689"/>
         <source>Zoom Out</source>
         <translation>Уменьшить</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2684"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2694"/>
         <source>Fit to Window</source>
         <translation>По размеру окна</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2687"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
         <source>Actual Size (100%)</source>
         <translation>Фактический размер (100%)</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2693"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2703"/>
         <source>Show Grid</source>
         <translation>Показать сетку</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
         <source>Show Transparency Checkerboard</source>
         <translation>Показать шахматный фон прозрачности</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2704"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2714"/>
         <source>View Rotation</source>
         <translation>Поворот вида</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2705"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2715"/>
         <source>No Rotation</source>
         <translation>Без поворота</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2706"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2716"/>
         <source>Rotate 90° CW</source>
         <translation>Повернуть на 90° по часовой</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2717"/>
         <source>180°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2708"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2718"/>
         <source>Rotate 90° CCW</source>
         <translation>Повернуть на 90° против часовой</translation>
     </message>
@@ -1006,8 +1021,8 @@ Delete: удалить выбранную точку</translation>
         <translation>Объединённый слой</translation>
     </message>
     <message>
-        <location filename="../src/core/Document.cpp" line="969"/>
-        <location filename="../src/core/Document.cpp" line="973"/>
+        <location filename="../src/core/Document.cpp" line="987"/>
+        <location filename="../src/core/Document.cpp" line="991"/>
         <source>Untitled</source>
         <translation>Безымянный</translation>
     </message>
@@ -1271,62 +1286,62 @@ The lines stay 1 screen pixel wide even when the canvas is zoomed in.</source>
 <context>
     <name>zl::LayerPanel</name>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="510"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="578"/>
         <source>Blend Mode</source>
         <translation>Режим наложения</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="523"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="591"/>
         <source>Opacity</source>
         <translation>Непрозрачность</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="576"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="646"/>
         <source>New Layer (Ctrl+Shift+N)</source>
         <translation>Новый слой (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="579"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="649"/>
         <source>Duplicate Layer (Ctrl+J)</source>
         <translation>Дублировать слой (Ctrl+J)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="588"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="658"/>
         <source>Delete Selected Layers</source>
         <translation>Удалить выделенные слои</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="596"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="666"/>
         <source>Move Layer Up (Ctrl+])</source>
         <translation>Поднять слой (Ctrl+])</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="599"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="669"/>
         <source>Move Layer Down (Ctrl+[)</source>
         <translation>Опустить слой (Ctrl+[)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="602"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="672"/>
         <source>Merge Down (Ctrl+E)</source>
         <translation>Объединить с нижестоящим (Ctrl+E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="608"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="678"/>
         <source>Merge Visible Layers</source>
         <translation>Объединить видимые слои</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="611"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="681"/>
         <source>Flatten Image</source>
         <translation>Выполнить объединение</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="899"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="973"/>
         <source>Total %1 layers</source>
         <translation>Всего слоёв: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="901"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="975"/>
         <source> · %1 selected</source>
         <translation> · выделено: %1</translation>
     </message>
@@ -1547,659 +1562,664 @@ Larger values soften the transition along the selection edge.</source>
 <context>
     <name>zl::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="704"/>
+        <location filename="../src/ui/MainWindow.cpp" line="867"/>
         <source>Current tool: %1</source>
         <translation>Текущий инструмент: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="857"/>
-        <location filename="../src/ui/MainWindow.cpp" line="910"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="271"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1076"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="321"/>
         <source>Undo(&amp;U)</source>
         <translation>Отменить(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="858"/>
-        <location filename="../src/ui/MainWindow.cpp" line="911"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1024"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1077"/>
         <source>Undo %1(&amp;U)</source>
         <translation>Отменить %1(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="866"/>
-        <location filename="../src/ui/MainWindow.cpp" line="917"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1032"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="329"/>
         <source>Redo(&amp;R)</source>
         <translation>Вернуть(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="867"/>
-        <location filename="../src/ui/MainWindow.cpp" line="918"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1084"/>
         <source>Redo %1(&amp;R)</source>
         <translation>Вернуть %1(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="140"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="145"/>
         <source>New(&amp;N)...</source>
         <translation>Создать(&amp;N)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="144"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="149"/>
         <source>Create a new blank image</source>
         <translation>Создаёт новое пустое изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="147"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="152"/>
         <source>Open(&amp;O)...</source>
         <translation>Открыть(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="151"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="156"/>
         <source>Open an existing image file</source>
         <translation>Открывает существующий файл изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="168"/>
         <source>Open as Layer(&amp;L)...</source>
         <translation>Открыть как слой(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="167"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="172"/>
         <source>Add another image as a new layer in the current document (without switching documents)</source>
         <translation>Добавляет другое изображение как новый слой текущего документа (без переключения документа)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="204"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="209"/>
         <source>Capture Now</source>
         <translation>Захватить сейчас</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="214"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="219"/>
         <source>Delay 3 Seconds</source>
         <translation>Задержка 3 секунды</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="218"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="223"/>
         <source>Capture after 3 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Захват через 3 секунды: это окно сначала свернётся — переключитесь на нужный экран</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="222"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="227"/>
         <source>Delay 5 Seconds</source>
         <translation>Задержка 5 секунд</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="226"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="231"/>
         <source>Capture after 5 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Захват через 5 секунд: это окно сначала свернётся — переключитесь на нужный экран</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="230"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="235"/>
         <source>Delay 10 Seconds</source>
         <translation>Задержка 10 секунд</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="234"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="239"/>
         <source>Capture after 10 seconds: this window will minimize first, switch to the target screen</source>
         <translation>Захват через 10 секунд: это окно сначала свернётся — переключитесь на нужный экран</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="238"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="243"/>
         <source>Save(&amp;S)</source>
         <translation>Сохранить(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="242"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="247"/>
         <source>Save to the current file (asks for a path if untitled)</source>
         <translation>Сохраняет в текущий файл (если он безымянный, спросит путь)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="245"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="250"/>
         <source>Save As(&amp;A)...</source>
         <translation>Сохранить как(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="249"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="254"/>
         <source>Save to a new file; the format is decided by the extension</source>
         <translation>Сохраняет в новый файл; формат определяется расширением</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="252"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="272"/>
         <source>Close(&amp;W)</source>
         <translation>Закрыть(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="256"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="276"/>
         <source>Close the current image</source>
         <translation>Закрывает текущее изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="259"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
         <source>Quit(&amp;Q)</source>
         <translation>Выход(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="264"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="284"/>
         <source>Quit %1</source>
         <translation>Выход из %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="275"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="325"/>
         <source>Undo the last operation</source>
         <translation>Отменяет последнюю операцию</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="289"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="339"/>
         <source>Redo the undone operation</source>
         <translation>Возвращает отменённую операцию</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="293"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="343"/>
         <source>Cut(&amp;T)</source>
         <translation>Вырезать(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="297"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="347"/>
         <source>Cut the selection to the clipboard</source>
         <translation>Вырезает выделение в буфер обмена</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="301"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
         <source>Copy(&amp;C)</source>
         <translation>Копировать(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
         <source>Copy the selection to the clipboard (copies the whole layer when there is no selection)</source>
         <translation>Копирует выделение в буфер обмена (без выделения копируется весь слой)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="309"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="359"/>
         <source>Paste as New Layer(&amp;P)</source>
         <translation>Вставить как новый слой(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="313"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="363"/>
         <source>Paste the clipboard content as a new layer</source>
         <translation>Вставляет содержимое буфера обмена как новый слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="316"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="366"/>
         <source>Paste into Current Layer(&amp;I)</source>
         <translation>Вставить в текущий слой(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="320"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
         <source>Merge the clipboard content into the current layer</source>
         <translation>Сливает содержимое буфера обмена с текущим слоем</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="323"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="373"/>
         <source>Delete(&amp;D)</source>
         <translation>Удалить(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="327"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="377"/>
         <source>Delete the content inside the selection (clears the whole layer when there is no selection)</source>
         <translation>Удаляет содержимое выделения (без выделения очищается весь слой)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="334"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="392"/>
         <source>Select All(&amp;A)</source>
         <translation>Выделить всё(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
         <source>Select the whole canvas</source>
         <translation>Выделяет всю канву</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="399"/>
         <source>Deselect(&amp;D)</source>
         <translation>Снять выделение(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="348"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="406"/>
         <source>Cancel the current selection</source>
         <translation>Снимает текущее выделение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="409"/>
         <source>Invert Selection(&amp;I)</source>
         <translation>Инвертировать выделение(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="413"/>
         <source>Select everything outside the current selection</source>
         <translation>Выделяет всё за пределами текущего выделения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="362"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
         <source>Desaturate(&amp;G)</source>
         <translation>Обесцветить(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="367"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="425"/>
         <source>Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)</source>
         <translation>Преобразует в полутоновое по весам яркости (0,299R + 0,587G + 0,114B)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="428"/>
         <source>Invert(&amp;I)</source>
         <translation>Инвертировать(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="374"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="432"/>
         <source>Invert all color channels (like a negative)</source>
         <translation>Инвертирует все цветовые каналы (как негатив)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="440"/>
         <source>Brightness/Contrast(&amp;B)...</source>
         <translation>Яркость/Контрастность(&amp;B)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="443"/>
         <source>Adjust the brightness and contrast of the image</source>
         <translation>Изменяет яркость и контрастность изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="389"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="447"/>
         <source>Hue/Saturation(&amp;H)...</source>
         <translation>Цветовой тон/Насыщенность(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="393"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="451"/>
         <source>Adjust the hue, saturation and lightness of colors</source>
         <translation>Изменяет цветовой тон, насыщенность и яркость цветов</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="454"/>
         <source>Curves(&amp;C)...</source>
         <translation>Кривые(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="458"/>
         <source>Finely adjust the per-channel tonal mapping with a control-point curve</source>
         <translation>Точно настраивает тональное соответствие каждого канала кривой с контрольными точками</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="403"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
         <source>Levels(&amp;L)...</source>
         <translation>Уровни(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="408"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="466"/>
         <source>Adjust the tonal distribution with the histogram black/white points and midtones</source>
         <translation>Настраивает распределение тонов чёрной и белой точками гистограммы и средними тонами</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
         <source>Image Size(&amp;I)...</source>
         <translation>Размер изображения(&amp;I)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="424"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="482"/>
         <source>Resample the pixel content (the image becomes softer or sharper)</source>
         <translation>Пересчитывает пиксели (изображение станет мягче или резче)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
         <source>Canvas Size(&amp;C)...</source>
         <translation>Размер канвы(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="431"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="489"/>
         <source>Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger</source>
         <translation>Меняет границы канвы без пересчёта пикселей: при уменьшении — обрезка, при увеличении — заливка фоновым цветом</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2912"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="496"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3375"/>
         <source>Rotate 90° Clockwise</source>
         <translation>Повернуть на 90° по часовой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="444"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2918"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="502"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3381"/>
         <source>Rotate 90° Counterclockwise</source>
         <translation>Повернуть на 90° против часовой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="450"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2932"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3395"/>
         <source>Rotate 180°</source>
         <translation>Повернуть на 180°</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
         <source>Rotate Arbitrary(&amp;A)...</source>
         <translation>Повернуть на произвольный угол(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="467"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3401"/>
         <source>Flip Horizontal</source>
         <translation>Отразить по горизонтали</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="473"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2944"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3407"/>
         <source>Flip Vertical</source>
         <translation>Отразить по вертикали</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3410"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="543"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3873"/>
         <source>Crop</source>
         <translation>Обрезка</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="488"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="546"/>
         <source>Crop the canvas to the bounding box of the current selection</source>
         <translation>Обрезает канву по рамке текущего выделения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="495"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="553"/>
         <source>New Layer(&amp;N)</source>
         <translation>Новый слой(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="501"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="559"/>
         <source>Duplicate Layer(&amp;D)</source>
         <translation>Дублировать слой(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3547"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3819"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="566"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4010"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4282"/>
         <source>Delete Layer</source>
         <translation>Удалить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="513"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3591"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4054"/>
         <source>Move Layer Up</source>
         <translation>Поднять слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3622"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4085"/>
         <source>Move Layer Down</source>
         <translation>Опустить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
         <source>Merge Down(&amp;M)</source>
         <translation>Объединить с нижестоящим(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="589"/>
         <source>Flatten Image(&amp;F)</source>
         <translation>Выполнить объединение(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="536"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="594"/>
         <source>Merge Visible Layers(&amp;V)</source>
         <translation>Объединить видимые слои(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="544"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="602"/>
         <source>Rename Layer(&amp;R)</source>
         <translation>Переименовать слой(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="558"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="632"/>
         <source>Zoom In(&amp;I)</source>
         <translation>Увеличить(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="565"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="639"/>
         <source>Zoom Out(&amp;O)</source>
         <translation>Уменьшить(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="645"/>
         <source>Fit to Window(&amp;F)</source>
         <translation>По размеру окна(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="651"/>
         <source>Actual Size(&amp;A)</source>
         <translation>Фактический размер(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
         <source>Show Grid(&amp;G)</source>
         <translation>Показать сетку(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="664"/>
         <source>Show Transparent Background</source>
         <translation>Показать прозрачный фон</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="604"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="688"/>
         <source>Snap to Grid(&amp;S)</source>
         <translation>Привязка к сетке(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="623"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="707"/>
         <source>%1 px</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="637"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="721"/>
         <source>Custom(&amp;U)...</source>
         <translation>Другой(&amp;U)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="649"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="733"/>
         <source>Show Ruler(&amp;R)</source>
         <translation>Показать линейку(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="741"/>
         <source>Show Guides(&amp;G)</source>
         <translation>Показать направляющие(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="665"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="749"/>
         <source>Lock Guides(&amp;L)</source>
         <translation>Заблокировать направляющие(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="759"/>
         <source>Clear Guides(&amp;C)</source>
         <translation>Удалить направляющие(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="711"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="795"/>
         <source>Set Foreground Color...</source>
         <translation>Задать цвет переднего плана...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="717"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="801"/>
         <source>Set Background Color...</source>
         <translation>Задать цвет фона...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="732"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="816"/>
         <source>Swap Foreground/Background Color</source>
         <translation>Поменять цвет переднего плана и фона</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="737"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="821"/>
         <source>Restore Default Colors</source>
         <translation>Восстановить цвета по умолчанию</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="746"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="830"/>
         <source>About %1(&amp;A)...</source>
         <translation>О программе %1(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="845"/>
         <source>About %1</source>
         <translation>О программе %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="866"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;Лёгкий редактор изображений на Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Версия&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Технологии&lt;/b&gt;&lt;br&gt;Qt %2 (сборка для %3)&lt;br&gt;Чистая реализация на Qt, без сторонних графических библиотек&lt;/p&gt;&lt;p&gt;&lt;b&gt;Ключевые возможности&lt;/b&gt;&lt;br&gt;Многослойность с 22 режимами наложения · выделение полутоновой маской (с растушёвкой)&lt;br&gt;Кривые / Уровни / Яркость-Контрастность · собственная бикубическая пересчётов и Ланцоша&lt;br&gt;Двойная стратегия отмены: грязный прямоугольник и снимок всего слоя · авто-поворот EXIF&lt;/p&gt;&lt;p&gt;&lt;b&gt;Страница проекта&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="904"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>О Qt(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="922"/>
         <source>Switch UI Language</source>
         <translation>Смена языка интерфейса</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="923"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>Язык интерфейса изменён на %1. Он вступит в силу при следующем запуске программы.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
         <source>File(&amp;F)</source>
         <translation>Файл(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="958"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>Захват экрана(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="969"/>
         <source>Recent Files(&amp;R)</source>
         <translation>Недавние файлы(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="991"/>
         <source>Clear List</source>
         <translation>Очистить список</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1019"/>
+        <source>Theme(&amp;T)</source>
+        <translation>Тема(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1027"/>
         <source>Edit(&amp;E)</source>
         <translation>Правка(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1044"/>
         <source>Select(&amp;S)</source>
         <translation>Выделение(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1053"/>
         <source>Adjust(&amp;A)</source>
         <translation>Коррекция(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1067"/>
         <source>Image(&amp;I)</source>
         <translation>Изображение(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1094"/>
         <source>Layer(&amp;L)</source>
         <translation>Слой(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1115"/>
         <source>View(&amp;V)</source>
         <translation>Вид(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1128"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>Интервал сетки(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1141"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>Единицы линейки(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1155"/>
         <source>Panels(&amp;P)</source>
         <translation>Панели(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1182"/>
         <source>Language(&amp;Y)</source>
         <translation>Язык(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1204"/>
         <source>Auto (Follow System)</source>
         <translation>Авто (как в системе)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1230"/>
         <source>Help(&amp;H)</source>
         <translation>Справка(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1245"/>
         <source>Main Toolbar</source>
         <translation>Главная панель</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1274"/>
         <source>Tool Options</source>
         <translation>Параметры инструмента</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1294"/>
         <source>Toolbox</source>
         <translation>Панель инструментов</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1365"/>
         <source>Switch to the %1 tool</source>
         <translation>Переключиться на инструмент «%1»</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1392"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1530"/>
         <source>Foreground color (click to change)</source>
         <translation>Цвет переднего плана (щелчок — изменить)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1497"/>
         <source>History</source>
         <translation>История</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1502"/>
         <source>(Already at the initial state)</source>
         <translation>(уже в начальном состоянии)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1511"/>
         <source>Color</source>
         <translation>Цвет</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1536"/>
         <source>Background color (click to change)</source>
         <translation>Цвет фона (щелчок — изменить)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1548"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>Поменять цвет переднего плана и фона (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1554"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>Восстановить цвета по умолчанию: чёрный / белый (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2212,118 +2232,118 @@ Colors picked with the eyedropper become the foreground color.</source>
 Цвета, взятые пипеткой, становятся цветом переднего плана.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1605"/>
         <source>Layers</source>
         <translation>Слои</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1720"/>
         <source>Ready</source>
         <translation>Готово</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1767"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>Захватывает текущий экран в новую вкладку (%1; работает даже когда программа свёрнута)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1844"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1859"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>Предпочтительное сочетание %1 занято другой программой; в этот раз используется %2 (работает даже когда программа свёрнута)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1879"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>Глобальное сочетание недоступно (%1). Когда программа свёрнута, оно не сработает, но %2 работает на переднем плане; либо используйте Файл → Захват экрана → Захватить сейчас</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="212"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="224"/>
         <source>Create or open an image first</source>
         <translation>Сначала создайте или откройте изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="286"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="298"/>
         <source>New Failed</source>
         <translation>Не удалось создать</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="469"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="299"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
         <source>Cannot create the document: %1</source>
         <translation>Не удалось создать документ: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="317"/>
         <source>Created a blank %1 × %2 image</source>
         <translation>Создано пустое изображение %1 × %2</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="326"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="760"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
         <source>All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</source>
         <translation>Все поддерживаемые изображения (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="327"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="339"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
         <source>PNG Images (*.png)</source>
         <translation>Изображения PNG (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="762"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="340"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="852"/>
         <source>JPEG Images (*.jpg *.jpeg)</source>
         <translation>Изображения JPEG (*.jpg *.jpeg)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="329"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="763"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="853"/>
         <source>Bitmaps (*.bmp)</source>
         <translation>Растровые изображения (*.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="330"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="764"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="342"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="854"/>
         <source>TIFF Images (*.tif *.tiff)</source>
         <translation>Изображения TIFF (*.tif *.tiff)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="331"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="765"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="343"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="855"/>
         <source>WebP Images (*.webp)</source>
         <translation>Изображения WebP (*.webp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="332"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="766"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="344"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="856"/>
         <source>All Files (*)</source>
         <translation>Все файлы (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="335"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="347"/>
         <source>Open Image</source>
         <translation>Открыть изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="391"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="403"/>
         <source>%1 is already open - switched to its tab</source>
         <translation>%1 уже открыт — переключено на его вкладку</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="407"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="468"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="450"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="480"/>
         <source>Open Failed</source>
         <translation>Не удалось открыть</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="408"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="835"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="925"/>
         <source>Cannot read the image info:
 %1
 
@@ -2335,14 +2355,14 @@ Possible causes: the file is corrupted, the format is unsupported, or there is n
 Возможные причины: файл повреждён, формат не поддерживается или нет разрешения на чтение.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="418"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="857"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="430"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="940"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="947"/>
         <source>Image Too Large</source>
         <translation>Слишком большое изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="431"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2357,8 +2377,8 @@ Try to open it anyway?</source>
 Всё равно открыть?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="439"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="879"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="451"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="969"/>
         <source>Cannot load the image data:
 %1
 
@@ -2370,76 +2390,74 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
 Файл может быть повреждён, или данные изображения используют неподдерживаемую кодировку.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="493"/>
         <source>Opened %1 (%2 × %3, %4)</source>
         <translation>Открыто %1 (%2 × %3, %4)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="485"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="497"/>
         <source>Unknown Format</source>
         <translation>Неизвестный формат</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="615"/>
         <source>Screenshot failed: no screen content captured (no display may be available)</source>
         <translation>Снимок не удался: не получено содержимое экрана (возможно, нет доступного дисплея)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="593"/>
         <source>Screenshot Unavailable</source>
         <translation>Снимок экрана недоступен</translation>
     </message>
     <message>
-        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>Снимок экрана недоступен: этот сеанс Wayland не разрешает приложениям читать экран. Сделайте снимок системным сочетанием клавиш, затем нажмите Ctrl+V, чтобы вставить его сюда как новый слой.</translation>
-    </message>
-    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
         <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>Этот сеанс Wayland не разрешает приложениям читать экран, поэтому встроенный снимок экрана работать не может. Сделайте снимок системным сочетанием клавиш, затем нажмите Ctrl+V, чтобы вставить его сюда как новый слой.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>Снимок-%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="586"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="676"/>
         <source>Screenshot</source>
         <translation>Снимок экрана</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="606"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="696"/>
         <source>Screenshot failed: cannot create the document (%1)</source>
         <translation>Снимок не удался: не удалось создать документ (%1)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="617"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="707"/>
         <source>Captured the screen at %1 × %2 and opened it as a new tab</source>
         <translation>Экран захвачен %1 × %2 и открыт в новой вкладке</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="661"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="751"/>
         <source>Screenshot in %1 seconds: this window is minimized, switch to the target screen</source>
         <translation>Снимок через %1 секунд: это окно свёрнуто — переключитесь на нужный экран</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="769"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="859"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1073"/>
         <source>Open as Layer</source>
         <translation>Открыть как слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="834"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="878"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="968"/>
         <source>Import Failed</source>
         <translation>Не удалось импортировать</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="941"/>
         <source>Import rejected: the image is about %1 megapixels, above the limit (%2 megapixels)</source>
         <translation>Импорт отклонён: изображение около %1 мегапикселей, это выше предела (%2 мегапикселей)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="858"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="948"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2454,86 +2472,86 @@ Try to import it anyway?</source>
 Всё равно импортировать?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1000"/>
         <source>Image Is Larger Than the Canvas</source>
         <translation>Изображение больше канвы</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="911"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1001"/>
         <source>The imported image (%1 × %2) is larger than the current canvas (%3 × %4).</source>
         <translation>Импортированное изображение (%1 × %2) больше текущей канвы (%3 × %4).</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="915"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1005"/>
         <source>&apos;Grow Canvas to Fit&apos; grows the canvas to %1 × %2, centering both the existing content and the new image;
 &apos;Crop to Canvas&apos; keeps the canvas size, centers the new image, and crops whatever sticks out.</source>
         <translation>«Увеличить канву по размеру» увеличивает канву до %1 × %2 и центрирует и старое содержимое, и новое изображение;
 «Обрезать по канве» сохраняет размер канвы, центрирует новое изображение и обрезает всё, что выступает.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="922"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1012"/>
         <source>Grow Canvas to Fit</source>
         <translation>Увеличить канву по размеру</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="923"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1013"/>
         <source>Crop to Canvas</source>
         <translation>Обрезать по канве</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="956"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1046"/>
         <source>Layer &quot;%1&quot; is locked; the canvas cannot grow. Unlock it before importing.</source>
         <translation>Слой «%1» заблокирован; канву нельзя увеличить. Разблокируйте его перед импортом.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1004"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1094"/>
         <source>Failed to grow the canvas - import cancelled</source>
         <translation>Не удалось увеличить канву — импорт отменён</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1009"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1099"/>
         <source>Grow Canvas</source>
         <translation>Увеличить канву</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3475"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1104"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3938"/>
         <source>New Layer</source>
         <translation>Новый слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1113"/>
         <source>Imported %1 (%2 × %3); the canvas grew to %4 × %5</source>
         <translation>Импортировано %1 (%2 × %3); канва увеличена до %4 × %5</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1118"/>
         <source>Imported %1 (%2 × %3) as a new layer</source>
         <translation>Импортировано %1 (%2 × %3) как новый слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1082"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1172"/>
         <source>Saved to %1</source>
         <translation>Сохранено в %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1111"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1201"/>
         <source>Save As</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1178"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1268"/>
         <source>Format Does Not Support Transparency</source>
         <translation>Формат не поддерживает прозрачность</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1179"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1269"/>
         <source>The %1 format does not support a transparency channel.
 
 Semi-transparent areas will be filled with white.
@@ -2550,39 +2568,46 @@ Save anyway?</source>
 Всё равно сохранить?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1217"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1307"/>
         <source>Saved as %1</source>
         <translation>Сохранено как %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1266"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1356"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1446"/>
         <source>No image is open.</source>
         <translation>Нет открытых изображений.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1350"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1377"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1453"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1598"/>
         <source>Cannot generate the image data (the composite is empty).</source>
         <translation>Не удалось сформировать данные изображения (составное изображение пусто).</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1336"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1526"/>
+        <source>Untitled</source>
+        <translation>Безымянный</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1584"/>
         <source>Cannot Save as ICO</source>
         <translation>Не удалось сохранить как ICO</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1585"/>
         <source>Failed to export the ICO icon.</source>
         <translation>Не удалось экспортировать значок ICO.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1349"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1410"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1597"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1658"/>
         <source>Save Failed</source>
         <translation>Не удалось сохранить</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1411"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1659"/>
         <source>Cannot write the file:
 %1
 
@@ -2604,22 +2629,22 @@ Please check:
   · не занят ли файл другой программой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1763"/>
         <source>Document Closed</source>
         <translation>Документ закрыт</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1516"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1764"/>
         <source>Closed a document (%1 left)</source>
         <translation>Закрыт документ (осталось %1)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1551"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1799"/>
         <source>Unsaved Changes</source>
         <translation>Несохранённые изменения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1552"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1800"/>
         <source>&quot;%1&quot; has unsaved changes.
 
 Save them?</source>
@@ -2628,169 +2653,170 @@ Save them?</source>
 Сохранить их?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2084"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2547"/>
         <source>Nothing to copy</source>
         <translation>Нечего копировать</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2137"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2600"/>
         <source>Copied %1 × %2 of content</source>
         <translation>Скопировано содержимого: %1 × %2</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2230"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2693"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2233"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2696"/>
         <source>Cut to the clipboard</source>
         <translation>Вырезано в буфер обмена</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2252"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2715"/>
         <source>The clipboard is empty</source>
         <translation>Буфер обмена пуст</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2279"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2742"/>
         <source>The clipboard has no usable image data</source>
         <translation>В буфере обмена нет пригодных данных изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2323"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2786"/>
         <source>Paste as New Layer</source>
         <translation>Вставить как новый слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
         <source>Pasted Layer</source>
         <translation>Вставленный слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2334"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2797"/>
         <source>Pasted as a new layer (%1 × %2)</source>
         <translation>Вставлено как новый слой (%1 × %2)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2345"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2808"/>
         <source>No active layer available</source>
         <translation>Нет доступного активного слоя</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2351"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2814"/>
         <source>The current layer is locked - cannot paste</source>
         <translation>Текущий слой заблокирован — вставка невозможна</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2883"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2423"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2886"/>
         <source>Pasted into the current layer</source>
         <translation>Вставлено в текущий слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2520"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2691"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2740"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4394"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3203"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4940"/>
         <source>The current layer is not editable</source>
         <translation>Текущий слой недоступен для изменений</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2569"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3032"/>
         <source>Delete Selection Content</source>
         <translation>Удалить содержимое выделения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2575"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3038"/>
         <source>Clear Layer</source>
         <translation>Очистить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2594"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
         <source>Already in the select-all state</source>
         <translation>Уже всё выделено</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3068"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2630"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3093"/>
         <source>Deselect</source>
         <translation>Снять выделение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2637"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3100"/>
         <source>Selection cancelled</source>
         <translation>Выделение отменено</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2657"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3120"/>
         <source>No selection to invert</source>
         <translation>Нет выделения для инвертирования</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2668"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3131"/>
         <source>Invert Selection</source>
         <translation>Инвертировать выделение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2675"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3138"/>
         <source>Selection inverted</source>
         <translation>Выделение инвертировано</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2726"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3189"/>
         <source>Desaturate</source>
         <translation>Обесцветить</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2729"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3192"/>
         <source>Desaturate applied</source>
         <translation>Обесцвечивание применено</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2752"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3215"/>
         <source>Invert</source>
         <translation>Инвертировать</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2755"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3218"/>
         <source>Invert applied</source>
         <translation>Инвертирование применено</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2874"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3113"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3191"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3365"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3520"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3576"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3654"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3828"/>
         <source>No layer to operate on</source>
         <translation>Нет слоя для операции</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2891"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3354"/>
         <source>The current layer is locked - geometry operations are not allowed</source>
         <translation>Текущий слой заблокирован — геометрические операции недопустимы</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3413"/>
         <source>Geometry operation failed</source>
         <translation>Геометрическая операция не удалась</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2991"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3454"/>
         <source>Undo Not Recorded</source>
         <translation>Отмена не записана</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2992"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3455"/>
         <source>The &quot;%1&quot; operation moved too much data, above the undo memory limit,
 so it &lt;b&gt;cannot be undone&lt;/b&gt;.
 
@@ -2801,121 +2827,121 @@ The image has been modified. To keep the original, do not save - reopen the file
 Изображение изменено. Чтобы сохранить оригинал, не сохраняйте — заново откройте файл.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3486"/>
         <source>%1 applied (canvas %2 × %3)</source>
         <translation>Применено: %1 (канва %2 × %3)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3072"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3535"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the image</source>
         <translation>Слой «%1» заблокирован — разблокируйте его перед изменением размера изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3098"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3561"/>
         <source>Failed to resize the image (the new size may be too large)</source>
         <translation>Не удалось изменить размер изображения (новый размер может быть слишком большим)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3103"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3566"/>
         <source>Image Size</source>
         <translation>Размер изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3122"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3585"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the canvas</source>
         <translation>Слой «%1» заблокирован — разблокируйте его перед изменением размера канвы</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3149"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3612"/>
         <source>Failed to resize the canvas</source>
         <translation>Не удалось изменить размер канвы</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3617"/>
         <source>Canvas Size</source>
         <translation>Размер канвы</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3204"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3667"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before rotating the image</source>
         <translation>Слой «%1» заблокирован — разблокируйте его перед поворотом изображения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3213"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3676"/>
         <source>Cannot generate a preview: the image content is empty</source>
         <translation>Не удалось построить просмотр: содержимое изображения пусто</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3274"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
         <source>Rotation failed</source>
         <translation>Поворот не удался</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3280"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3743"/>
         <source>Rotate Image</source>
         <translation>Повернуть изображение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3378"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3841"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before cropping</source>
         <translation>Слой «%1» заблокирован — разблокируйте его перед обрезкой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3388"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3851"/>
         <source>The crop area is empty</source>
         <translation>Область обрезки пуста</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3396"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3859"/>
         <source>The crop area is the whole canvas - nothing to crop</source>
         <translation>Область обрезки совпадает со всей канвой — обрезать нечего</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3406"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3869"/>
         <source>Crop failed</source>
         <translation>Обрезка не удалась</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
         <source>Select the area to keep with a selection tool first</source>
         <translation>Сначала выделите сохраняемую область инструментом выделения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3466"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3929"/>
         <source>Failed to create a layer</source>
         <translation>Не удалось создать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3479"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
         <source>Layer created</source>
         <translation>Слой создан</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3494"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3868"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4331"/>
         <source>Failed to duplicate the layer</source>
         <translation>Не удалось дублировать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3503"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3884"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3966"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
         <source>Duplicate Layer</source>
         <translation>Дублировать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3507"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3970"/>
         <source>Layer duplicated</source>
         <translation>Слой дублирован</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3521"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3790"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3984"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4253"/>
         <source>Cannot Delete the Layer</source>
         <translation>Нельзя удалить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3522"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3985"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4254"/>
         <source>A document must keep at least one layer.
 
 To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
@@ -2924,69 +2950,69 @@ To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
 Чтобы очистить содержимое этого слоя, используйте «Правка → Удалить».</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3997"/>
         <source>Failed to delete the layer</source>
         <translation>Не удалось удалить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4020"/>
         <source>Layer deleted</source>
         <translation>Слой удалён</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3574"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4037"/>
         <source>Already the topmost layer</source>
         <translation>Это уже самый верхний слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3582"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3613"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4045"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4076"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4373"/>
         <source>Failed to move the layer</source>
         <translation>Не удалось переместить слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4068"/>
         <source>Already the bottommost layer</source>
         <translation>Это уже самый нижний слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3647"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4110"/>
         <source>At least two layers are required to merge</source>
         <translation>Для объединения нужно не меньше двух слоёв</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3660"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4123"/>
         <source>The bottommost layer cannot be merged down</source>
         <translation>Самый нижний слой нельзя объединить с нижестоящим</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3669"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4132"/>
         <source>Merge down failed</source>
         <translation>Не удалось объединить с нижестоящим слоем</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3678"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4141"/>
         <source>Merge Down</source>
         <translation>Объединить с нижестоящим</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3682"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4145"/>
         <source>Merged down</source>
         <translation>Объединено с нижестоящим слоем</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3692"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4155"/>
         <source>Only one layer - nothing to flatten</source>
         <translation>Только один слой — объединять нечего</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3707"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4170"/>
         <source>Flatten Image merges all visible layers into one.</source>
         <translation>«Выполнить объединение» сливает все видимые слои в один.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3709"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4172"/>
         <source>
 
 Note: %1 hidden layers exist and their content will be discarded.</source>
@@ -2995,7 +3021,7 @@ Note: %1 hidden layers exist and their content will be discarded.</source>
 Внимание: есть %1 скрытых слоёв, их содержимое будет потеряно.</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3711"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4174"/>
         <source>
 
 Continue?</source>
@@ -3004,307 +3030,348 @@ Continue?</source>
 Продолжить?</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3713"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3733"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4176"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4196"/>
         <source>Flatten Image</source>
         <translation>Выполнить объединение</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3724"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4187"/>
         <source>Flatten failed</source>
         <translation>Объединение не удалось</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4200"/>
         <source>Image flattened</source>
         <translation>Изображение объединено</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3818"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4281"/>
         <source>Delete Multiple Layers</source>
         <translation>Удаление нескольких слоёв</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3829"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4292"/>
         <source>Deleted %1 layers</source>
         <translation>Удалено слоёв: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4346"/>
         <source>Duplicate Multiple Layers</source>
         <translation>Дублировать несколько слоёв</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3888"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4351"/>
         <source>Duplicated %1 layers</source>
         <translation>Продублировано слоёв: %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3919"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4382"/>
         <source>Reorder Layers</source>
         <translation>Изменить порядок слоёв</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3935"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4398"/>
         <source>At least two visible layers are required to merge</source>
         <translation>Для объединения нужно не меньше двух видимых слоёв</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3946"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4409"/>
         <source>Merge Visible Layers</source>
         <translation>Объединить видимые слои</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
         <source>Visible layers merged</source>
         <translation>Видимые слои объединены</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Show Layer</source>
         <translation>Показать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Hide Layer</source>
         <translation>Скрыть слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Lock Layer</source>
         <translation>Заблокировать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Unlock Layer</source>
         <translation>Разблокировать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4561"/>
         <source>Rename Layer</source>
         <translation>Переименовать слой</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4051"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4584"/>
         <source>Change Blend Mode</source>
         <translation>Изменить режим наложения</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4108"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4641"/>
         <source>Change Opacity</source>
         <translation>Изменить непрозрачность</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4165"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4711"/>
         <source>Snap to grid on</source>
         <translation>Привязка к сетке включена</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4166"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4712"/>
         <source>Snap to grid off</source>
         <translation>Привязка к сетке выключена</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4186"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4732"/>
         <source>Grid spacing: %1 px</source>
         <translation>Интервал сетки: %1 px</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4270"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4816"/>
         <source>Cleared the guides on this page</source>
         <translation>Направляющие этой страницы удалены</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4315"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4861"/>
         <source>Choose Foreground Color</source>
         <translation>Выбор цвета переднего плана</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4325"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4871"/>
         <source>Choose Background Color</source>
         <translation>Выбор цвета фона</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4893"/>
         <source>Swapped the foreground and background colors</source>
         <translation>Цвета переднего плана и фона поменяны</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4360"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4906"/>
         <source>Restored the default colors (black / white)</source>
         <translation>Восстановлены цвета по умолчанию (чёрный / белый)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4959"/>
         <source>Brightness/Contrast</source>
         <translation>Яркость/Контрастность</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4422"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4968"/>
         <source>Hue/Saturation</source>
         <translation>Цветовой тон/Насыщенность</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4980"/>
         <source>Curves</source>
         <translation>Кривые</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4447"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4993"/>
         <source>Levels</source>
         <translation>Уровни</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4547"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5093"/>
         <source>Adjustment failed: no result generated</source>
         <translation>Коррекция не удалась: результат не получен</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5103"/>
         <source>Applied %1</source>
         <translation>Применено: %1</translation>
     </message>
-        <message>
-            <source>Navigator</source>
-            <translation>Навигатор</translation>
-        </message>
-        <message>
-            <source>Recover Unsaved Work</source>
-            <translation>Восстановление несохранённой работы</translation>
-        </message>
-        <message>
-            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
-            <translation>В предыдущем сеансе найдено несохранённых документов: %1\n\n%2\n\nВосстановить? Информация о слоях не сохранится.</translation>
-        </message>
-        <message>
-            <source>(Untitled)</source>
-            <translation>(Без названия)</translation>
-        </message>
-        <message>
-            <source>Recovered</source>
-            <translation>Восстановлено</translation>
-        </message>
-        <message>
-            <source>%1 (Recovered)</source>
-            <translation>%1 (восстановлено)</translation>
-        </message>
-        <message>
-            <source>Recovered %1 document(s)</source>
-            <translation>Восстановлено документов: %1</translation>
-        </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1667"/>
+        <source>Navigator</source>
+        <translation>Навигатор</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="407"/>
+        <source>Recover Unsaved Work</source>
+        <translation>Восстановление несохранённой работы</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="403"/>
+        <source>(Untitled)</source>
+        <translation>(Без названия)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="408"/>
+        <source>Found %1 unsaved document(s) from the previous session:
+
+%2
+
+Recover them? Layer information is not preserved.</source>
+        <translation>В предыдущем сеансе найдено несохранённых документов: %1\n\n%2\n\nВосстановить? Информация о слоях не сохранится.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="426"/>
+        <source>Recovered</source>
+        <translation>Восстановлено</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="427"/>
+        <source>%1 (Recovered)</source>
+        <translation>%1 (восстановлено)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="435"/>
+        <source>Recovered %1 document(s)</source>
+        <translation>Восстановлено документов: %1</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
         <source>Undo Steps...</source>
         <translation>Шагов отмены…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
         <source>How many undo steps each document keeps</source>
         <translation>Сколько шагов отмены хранит каждый документ</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
         <source>Full Screen(&amp;U)</source>
         <translation>Полноэкранный режим(&amp;U)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="679"/>
         <source>Toggle full screen (F11)</source>
         <translation>Переключить полноэкранный режим (F11)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>Undo Steps</source>
         <translation>Шаги отмены</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>How many undo steps to keep per document:</source>
         <translation>Сколько шагов отмены хранить для каждого документа:</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2392"/>
         <source>Undo steps: %1</source>
         <translation>Шагов отмены: %1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="257"/>
         <source>Print(&amp;P)...</source>
         <translation>Печать(&amp;P)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="261"/>
         <source>Print the current image</source>
         <translation>Печать текущего изображения</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="266"/>
         <source>Export PDF(&amp;F)...</source>
         <translation>Экспорт в PDF(&amp;F)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="269"/>
         <source>Export the current image as a single-page PDF</source>
         <translation>Экспортировать текущее изображение в PDF из одной страницы</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1470"/>
         <source>Failed to write the PDF file.</source>
         <translation>Не удалось записать файл PDF.</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1504"/>
         <source>Print</source>
         <translation>Печать</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1510"/>
         <source>Printing failed</source>
         <translation>Ошибка печати</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
         <source>Sent to printer</source>
         <translation>Отправлено на принтер</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1540"/>
         <source>Export PDF</source>
         <translation>Экспорт в PDF</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
         <source>PDF files (*.pdf)</source>
         <translation>Файлы PDF (*.pdf)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1546"/>
         <source>PDF exported: %1</source>
         <translation>PDF экспортирован: %1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="612"/>
         <source>Add Layer Mask from Selection(&amp;M)</source>
         <translation>Добавить маску слоя из выделения(&amp;M)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="616"/>
         <source>Hide everything outside the current selection without deleting pixels</source>
         <translation>Скрыть всё за пределами выделения, не удаляя пиксели</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="620"/>
         <source>Remove Layer Mask(&amp;K)</source>
         <translation>Удалить маску слоя(&amp;K)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="624"/>
         <source>Delete the mask and show the whole layer again</source>
         <translation>Удалить маску и снова показать весь слой</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4444"/>
         <source>Select an area first; that area becomes the visible part</source>
         <translation>Сначала выделите область — она станет видимой частью</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4456"/>
         <source>Layer mask added</source>
         <translation>Маска слоя добавлена</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4471"/>
         <source>This layer has no mask</source>
         <translation>У этого слоя нет маски</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4483"/>
         <source>Layer mask removed</source>
         <translation>Маска слоя удалена</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4452"/>
         <source>Add Layer Mask</source>
         <translation>Добавить маску слоя</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4479"/>
         <source>Remove Layer Mask</source>
         <translation>Удалить маску слоя</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1488"/>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>Печать недоступна в этой сборке; используйте экспорт в PDF</translation>
     </message>
@@ -3374,6 +3441,14 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/tools/MoveTool.h" line="80"/>
         <source>Move</source>
         <translation>Перемещение</translation>
+    </message>
+</context>
+<context>
+    <name>zl::NavigatorPanel</name>
+    <message>
+        <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
+        <source>No document</source>
+        <translation>Нет документа</translation>
     </message>
 </context>
 <context>
@@ -3918,11 +3993,4 @@ ICO — формат значков с максимальной стороной
 С помощью «Изображение → Размер изображения» уменьшите изображение до %3 пикселей или менее, затем сохраните как ICO.</translation>
     </message>
 </context>
-    <context>
-        <name>zl::NavigatorPanel</name>
-        <message>
-            <source>No document</source>
-            <translation>Нет документа</translation>
-        </message>
-    </context>
 </TS>

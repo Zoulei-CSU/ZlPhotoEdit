@@ -46,6 +46,8 @@
 //   前置声明不够 —— 报错是 C2027「使用了未定义类型」。
 #include "ui/DocumentTabs.h"
 #include "ui/RulerWidget.h"
+// ★ 界面主题 ★ setTheme() 要转调它（应用 + 落盘）。
+#include "core/UiTheme.h"
 
 // 调整对话框（Phase 4）。
 // ★ 必须包含完整定义而不能只前置声明 ★
@@ -1919,10 +1921,40 @@ void MainWindow::setActionIcon(QAction *action, const QString &name)
 }
 
 // ----------------------------------------------------------------------------
+//  setTheme —— 切换界面主题
+// ----------------------------------------------------------------------------
+//
+//  ★ 为什么这里不调 refreshAllIcons ★
+//    换 palette 会由 Qt 广播 QEvent::PaletteChange 到每个窗口，changeEvent
+//    自己会走 refreshAllIcons —— 在这里再调一次是白刷两遍。
+//    只有一种情况要补：目标主题与当前配色**恰好相同**（用户点了已经勾着的
+//    那一项）。那时 palette 没变，不会来事件，但勾选态仍要同步回来。
+void MainWindow::setTheme(uitheme::Mode mode)
+{
+    uitheme::setPreference(mode);     // 先落盘：用户可能点完就 Alt+F4
+    uitheme::applyTheme(mode);
+
+    // 勾选态无条件按"偏好"重来一遍。
+    // ★ 不能只在变化时改 ★ QActionGroup 自己会把点击项设成 checked，
+    //   但"自动"在深色系统下点一次会看不出勾到哪 —— 统一按偏好写，
+    //   菜单与设置永远一致。
+    for (QAction *act : m_actionTheme) {
+        if (!act)
+            continue;
+        act->setChecked(act->data().toInt() == int(mode));
+    }
+
+    // 兜底：目标配色与当前相同时不会来 PaletteChange，图标要自己刷一次。
+    // refreshAllIcons 内部先比颜色，没变就直接返回 —— 不会白刷。
+    refreshAllIcons();
+}
+
+// ----------------------------------------------------------------------------
 //  refreshAllIcons —— 按当前 palette 重取全部图标
 // ----------------------------------------------------------------------------
 //
-//  调用时机只有一处：changeEvent() 收到 PaletteChange 且颜色真的变了。
+//  调用时机只有两处：changeEvent() 收到 PaletteChange 且颜色真的变了；
+//  setTheme()（同一主题重选时没有事件可等）。
 //
 //  ★ 为什么必须"重设"而不是只清缓存 ★
 //    图标是渲染时刻染色的（见 IconLibrary.h 的说明）。清缓存只影响下次取图，

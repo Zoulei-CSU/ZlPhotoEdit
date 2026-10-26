@@ -54,6 +54,17 @@
 //   直接把 compat 头文件引进来：它只依赖 QImage，代价极小。
 #include "compat/ScreenCapture.h"
 
+// ★ uitheme::Mode 是 enum class，理由与上面的 CaptureBlock 完全一样 ★
+//   前置声明枚举要么得写死底层类型（与实际定义脱节就成了"形参不匹配"
+//   的怪报错），要么逼每个包含者去猜。UiTheme.h 只依赖 QList/QString，很轻。
+//
+// ★ 必须放在 include 区（`namespace zl {` 之外）★
+//   放进 namespace 里的话，若别处已先 include 过它，这里会被 include guard
+//   整体跳过 —— zl 里就没有 uitheme，报 "`uitheme` has not been declared"；
+//   而没被跳过的那次又会套成 zl::zl::uitheme。两种错一起冒出来，
+//   很难看出是同一行引起的。
+#include "core/UiTheme.h"
+
 // ★ 需要完整定义，而不是前置声明 ★
 //   commitGeometryChange() 的参数用到了 GeometryChangeCommand 的两个
 //   **嵌套类型**（Snapshot / Kind），嵌套类型无法前置声明。
@@ -359,6 +370,15 @@ private:
     //   一块已销毁的栈内存。而"点了没反应/直接崩"要等到真去点才现形，
     //   双构建 0 错 0 警。成员函数的寿命跟对象一样长，没有这个问题。
     void promptRestartForLanguage(const QString &displayNameText);
+
+    /// 切换界面主题：应用 + 落盘 + 同步菜单勾选态。
+    ///
+    /// ★ 为什么不像语言那样"重启生效" ★
+    ///   语言要重翻译整个 UI（每个控件都得响应 LanguageChange），那是未做的
+    ///   课题；主题只是换 palette，Qt 本来就会广播 PaletteChange，
+    ///   图标重上色也已经接好了（refreshAllIcons）。能即时生效的事没有理由
+    ///   拖到下次启动。
+    void setTheme(uitheme::Mode mode);
     void setupToolBars();
     void setupDocks();
     void setupStatusBar();
@@ -941,6 +961,10 @@ private:
 
     QAction *m_actionAbout = nullptr;
     QAction *m_actionAboutQt = nullptr;
+
+    // 「文件 → 主题」子菜单的 3 个互斥项（默认 / 浅色 / 深色）。
+    // 顺序与 uitheme::allModes() 一致，切换时按下标直接转成 Mode。
+    QList<QAction *> m_actionTheme;
 
     // 面板显隐动作在 setupDocks 里通过 dock->toggleViewAction() 生成，
     // 不需要额外成员 —— 菜单项直接引用它们。

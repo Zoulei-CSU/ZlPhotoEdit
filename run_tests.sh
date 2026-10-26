@@ -1305,6 +1305,7 @@ run_one() {
                 src/core/ClipboardData.cpp \
                 src/core/ImageTypes.cpp \
                 src/core/UiLanguage.cpp \
+                src/core/UiTheme.cpp \
                 src/engine/Blend.cpp \
                 src/engine/Lut.cpp \
                 src/engine/Curves.cpp \

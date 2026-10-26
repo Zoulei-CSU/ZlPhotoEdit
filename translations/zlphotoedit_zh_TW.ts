@@ -424,6 +424,21 @@
         <source>Keep only the overlap of both (Shift+Alt)</source>
         <translation>只保留兩者的重疊部分（Shift+Alt）</translation>
     </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="175"/>
+        <source>Light</source>
+        <translation>淺色</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="176"/>
+        <source>Dark</source>
+        <translation>深色</translation>
+    </message>
+    <message>
+        <location filename="../src/core/UiTheme.cpp" line="181"/>
+        <source>Default (Follow System)</source>
+        <translation>預設（跟隨系統）</translation>
+    </message>
 </context>
 <context>
     <name>zl::AbstractTool</name>
@@ -775,62 +790,62 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
 <context>
     <name>zl::CanvasView</name>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="1540"/>
+        <location filename="../src/ui/CanvasView.cpp" line="1550"/>
         <source>No document open</source>
         <translation>沒有開啟的檔案</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2676"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2686"/>
         <source>Zoom In</source>
         <translation>放大</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2679"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2689"/>
         <source>Zoom Out</source>
         <translation>縮小</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2684"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2694"/>
         <source>Fit to Window</source>
         <translation>適合視窗</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2687"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
         <source>Actual Size (100%)</source>
         <translation>實際大小 (100%)</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2693"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2703"/>
         <source>Show Grid</source>
         <translation>顯示格線</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2697"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
         <source>Show Transparency Checkerboard</source>
         <translation>顯示透明背景棋盤格</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2704"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2714"/>
         <source>View Rotation</source>
         <translation>檢視旋轉</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2705"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2715"/>
         <source>No Rotation</source>
         <translation>不旋轉</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2706"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2716"/>
         <source>Rotate 90° CW</source>
         <translation>順時針 90°</translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2707"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2717"/>
         <source>180°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/ui/CanvasView.cpp" line="2708"/>
+        <location filename="../src/ui/CanvasView.cpp" line="2718"/>
         <source>Rotate 90° CCW</source>
         <translation>逆時針 90°</translation>
     </message>
@@ -1004,8 +1019,8 @@ Delete：刪除選取點</translation>
         <translation>合併圖層</translation>
     </message>
     <message>
-        <location filename="../src/core/Document.cpp" line="969"/>
-        <location filename="../src/core/Document.cpp" line="973"/>
+        <location filename="../src/core/Document.cpp" line="987"/>
+        <location filename="../src/core/Document.cpp" line="991"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
@@ -1264,62 +1279,62 @@ The lines stay 1 screen pixel wide even when the canvas is zoomed in.</source>
 <context>
     <name>zl::LayerPanel</name>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="510"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="578"/>
         <source>Blend Mode</source>
         <translation>混合模式</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="523"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="591"/>
         <source>Opacity</source>
         <translation>不透明度</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="576"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="646"/>
         <source>New Layer (Ctrl+Shift+N)</source>
         <translation>新增圖層 (Ctrl+Shift+N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="579"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="649"/>
         <source>Duplicate Layer (Ctrl+J)</source>
         <translation>複製圖層 (Ctrl+J)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="588"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="658"/>
         <source>Delete Selected Layers</source>
         <translation>刪除選取的圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="596"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="666"/>
         <source>Move Layer Up (Ctrl+])</source>
         <translation>上移圖層 (Ctrl+])</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="599"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="669"/>
         <source>Move Layer Down (Ctrl+[)</source>
         <translation>下移圖層 (Ctrl+[)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="602"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="672"/>
         <source>Merge Down (Ctrl+E)</source>
         <translation>向下合併 (Ctrl+E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="608"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="678"/>
         <source>Merge Visible Layers</source>
         <translation>合併可見圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="611"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="681"/>
         <source>Flatten Image</source>
         <translation>平整化影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="899"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="973"/>
         <source>Total %1 layers</source>
         <translation>共 %1 個圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/LayerPanel.cpp" line="901"/>
+        <location filename="../src/ui/LayerPanel.cpp" line="975"/>
         <source> · %1 selected</source>
         <translation> · 選取 %1 個</translation>
     </message>
@@ -1537,659 +1552,664 @@ Larger values soften the transition along the selection edge.</source>
 <context>
     <name>zl::MainWindow</name>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="704"/>
+        <location filename="../src/ui/MainWindow.cpp" line="867"/>
         <source>Current tool: %1</source>
         <translation>目前工具：%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="857"/>
-        <location filename="../src/ui/MainWindow.cpp" line="910"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="271"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1076"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="321"/>
         <source>Undo(&amp;U)</source>
         <translation>復原(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="858"/>
-        <location filename="../src/ui/MainWindow.cpp" line="911"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1024"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1077"/>
         <source>Undo %1(&amp;U)</source>
         <translation>復原 %1(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="866"/>
-        <location filename="../src/ui/MainWindow.cpp" line="917"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1032"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1083"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="329"/>
         <source>Redo(&amp;R)</source>
         <translation>取消復原(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindow.cpp" line="867"/>
-        <location filename="../src/ui/MainWindow.cpp" line="918"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindow.cpp" line="1084"/>
         <source>Redo %1(&amp;R)</source>
         <translation>取消復原 %1(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="140"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="145"/>
         <source>New(&amp;N)...</source>
         <translation>新增(&amp;N)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="144"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="149"/>
         <source>Create a new blank image</source>
         <translation>建立一個新的空白影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="147"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="152"/>
         <source>Open(&amp;O)...</source>
         <translation>開啟(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="151"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="156"/>
         <source>Open an existing image file</source>
         <translation>開啟一個已存在的影像檔案</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="168"/>
         <source>Open as Layer(&amp;L)...</source>
         <translation>開啟為圖層(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="167"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="172"/>
         <source>Add another image as a new layer in the current document (without switching documents)</source>
         <translation>把另一張圖片作為新圖層加入目前影像（不切換檔案）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="204"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="209"/>
         <source>Capture Now</source>
         <translation>立即擷圖</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="214"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="219"/>
         <source>Delay 3 Seconds</source>
         <translation>延遲 3 秒</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="218"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="223"/>
         <source>Capture after 3 seconds: this window will minimize first, switch to the target screen</source>
         <translation>3 秒後擷圖：本視窗會先最小化，請切到要擷取的畫面</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="222"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="227"/>
         <source>Delay 5 Seconds</source>
         <translation>延遲 5 秒</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="226"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="231"/>
         <source>Capture after 5 seconds: this window will minimize first, switch to the target screen</source>
         <translation>5 秒後擷圖：本視窗會先最小化，請切到要擷取的畫面</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="230"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="235"/>
         <source>Delay 10 Seconds</source>
         <translation>延遲 10 秒</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="234"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="239"/>
         <source>Capture after 10 seconds: this window will minimize first, switch to the target screen</source>
         <translation>10 秒後擷圖：本視窗會先最小化，請切到要擷取的畫面</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="238"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="243"/>
         <source>Save(&amp;S)</source>
         <translation>儲存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="242"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="247"/>
         <source>Save to the current file (asks for a path if untitled)</source>
         <translation>儲存到目前檔案（未命名時會先詢問路徑）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="245"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="250"/>
         <source>Save As(&amp;A)...</source>
         <translation>另存新檔(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="249"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="254"/>
         <source>Save to a new file; the format is decided by the extension</source>
         <translation>儲存到新檔案，格式由副檔名決定</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="252"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="272"/>
         <source>Close(&amp;W)</source>
         <translation>關閉(&amp;W)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="256"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="276"/>
         <source>Close the current image</source>
         <translation>關閉目前影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="259"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="279"/>
         <source>Quit(&amp;Q)</source>
         <translation>結束(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="264"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="284"/>
         <source>Quit %1</source>
         <translation>結束 %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="275"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="325"/>
         <source>Undo the last operation</source>
         <translation>復原上一步操作</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="289"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="339"/>
         <source>Redo the undone operation</source>
         <translation>取消剛剛的復原</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="293"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="343"/>
         <source>Cut(&amp;T)</source>
         <translation>剪下(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="297"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="347"/>
         <source>Cut the selection to the clipboard</source>
         <translation>剪下選取區內容到剪貼簿</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="301"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
         <source>Copy(&amp;C)</source>
         <translation>複製(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
         <source>Copy the selection to the clipboard (copies the whole layer when there is no selection)</source>
         <translation>複製選取區內容到剪貼簿（無選取區時複製整個圖層）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="309"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="359"/>
         <source>Paste as New Layer(&amp;P)</source>
         <translation>貼上為新圖層(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="313"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="363"/>
         <source>Paste the clipboard content as a new layer</source>
         <translation>把剪貼簿內容貼上為一個新圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="316"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="366"/>
         <source>Paste into Current Layer(&amp;I)</source>
         <translation>貼上到目前圖層(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="320"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
         <source>Merge the clipboard content into the current layer</source>
         <translation>把剪貼簿內容合併到目前圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="323"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="373"/>
         <source>Delete(&amp;D)</source>
         <translation>刪除(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="327"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="377"/>
         <source>Delete the content inside the selection (clears the whole layer when there is no selection)</source>
         <translation>刪除選取區內的內容（無選取區時清空整個圖層）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="334"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="392"/>
         <source>Select All(&amp;A)</source>
         <translation>全選(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
         <source>Select the whole canvas</source>
         <translation>選取整個畫布</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="399"/>
         <source>Deselect(&amp;D)</source>
         <translation>取消選取(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="348"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="406"/>
         <source>Cancel the current selection</source>
         <translation>取消目前選取區</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="351"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="409"/>
         <source>Invert Selection(&amp;I)</source>
         <translation>反轉選取(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="355"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="413"/>
         <source>Select everything outside the current selection</source>
         <translation>選取目前選取區之外的全部區域</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="362"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
         <source>Desaturate(&amp;G)</source>
         <translation>去色(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="367"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="425"/>
         <source>Convert to grayscale by luminance weights (0.299R + 0.587G + 0.114B)</source>
         <translation>按亮度權重轉換為灰階（0.299R + 0.587G + 0.114B）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="370"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="428"/>
         <source>Invert(&amp;I)</source>
         <translation>反相(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="374"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="432"/>
         <source>Invert all color channels (like a negative)</source>
         <translation>反轉所有顏色色版（如同底片）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="440"/>
         <source>Brightness/Contrast(&amp;B)...</source>
         <translation>亮度/對比(&amp;B)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="443"/>
         <source>Adjust the brightness and contrast of the image</source>
         <translation>調整影像的明暗與反差</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="389"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="447"/>
         <source>Hue/Saturation(&amp;H)...</source>
         <translation>色相/飽和度(&amp;H)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="393"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="451"/>
         <source>Adjust the hue, saturation and lightness of colors</source>
         <translation>調整顏色的色相、飽和度與明度</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="396"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="454"/>
         <source>Curves(&amp;C)...</source>
         <translation>曲線(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="458"/>
         <source>Finely adjust the per-channel tonal mapping with a control-point curve</source>
         <translation>用控制點曲線精細調整各色版的明暗對映</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="403"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
         <source>Levels(&amp;L)...</source>
         <translation>色階(&amp;L)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="408"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="466"/>
         <source>Adjust the tonal distribution with the histogram black/white points and midtones</source>
         <translation>用直方圖的黑白場與中間調調整明暗分佈</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
         <source>Image Size(&amp;I)...</source>
         <translation>影像大小(&amp;I)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="424"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="482"/>
         <source>Resample the pixel content (the image becomes softer or sharper)</source>
         <translation>縮放像素內容（需要重新取樣，影像會變軟或變銳）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="427"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
         <source>Canvas Size(&amp;C)...</source>
         <translation>畫布大小(&amp;C)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="431"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="489"/>
         <source>Change the canvas extent: no resampling; crops when smaller, pads with the background color when larger</source>
         <translation>改變畫布範圍：不縮放像素，縮小時裁切、放大時補底色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2912"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="496"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3375"/>
         <source>Rotate 90° Clockwise</source>
         <translation>順時針旋轉 90°</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="444"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2918"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="502"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3381"/>
         <source>Rotate 90° Counterclockwise</source>
         <translation>逆時針旋轉 90°</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="450"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2932"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3395"/>
         <source>Rotate 180°</source>
         <translation>旋轉 180°</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="461"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
         <source>Rotate Arbitrary(&amp;A)...</source>
         <translation>任意角度旋轉(&amp;A)…</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="467"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2938"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3401"/>
         <source>Flip Horizontal</source>
         <translation>水平翻轉</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="473"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2944"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3407"/>
         <source>Flip Vertical</source>
         <translation>垂直翻轉</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="485"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3410"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="543"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3873"/>
         <source>Crop</source>
         <translation>裁剪</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="488"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="546"/>
         <source>Crop the canvas to the bounding box of the current selection</source>
         <translation>把畫布裁剪到目前選取區的外框</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="495"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="553"/>
         <source>New Layer(&amp;N)</source>
         <translation>新增圖層(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="501"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="559"/>
         <source>Duplicate Layer(&amp;D)</source>
         <translation>複製圖層(&amp;D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="508"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3547"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3819"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="566"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4010"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4282"/>
         <source>Delete Layer</source>
         <translation>刪除圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="513"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3591"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4054"/>
         <source>Move Layer Up</source>
         <translation>上移圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="519"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3622"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4085"/>
         <source>Move Layer Down</source>
         <translation>下移圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="525"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
         <source>Merge Down(&amp;M)</source>
         <translation>向下合併(&amp;M)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="531"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="589"/>
         <source>Flatten Image(&amp;F)</source>
         <translation>平整化影像(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="536"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="594"/>
         <source>Merge Visible Layers(&amp;V)</source>
         <translation>合併可見圖層(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="544"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="602"/>
         <source>Rename Layer(&amp;R)</source>
         <translation>重新命名圖層(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="558"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="632"/>
         <source>Zoom In(&amp;I)</source>
         <translation>放大(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="565"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="639"/>
         <source>Zoom Out(&amp;O)</source>
         <translation>縮小(&amp;O)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="645"/>
         <source>Fit to Window(&amp;F)</source>
         <translation>適合視窗(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="651"/>
         <source>Actual Size(&amp;A)</source>
         <translation>實際大小(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="583"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
         <source>Show Grid(&amp;G)</source>
         <translation>顯示格線(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="664"/>
         <source>Show Transparent Background</source>
         <translation>顯示透明背景</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="604"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="688"/>
         <source>Snap to Grid(&amp;S)</source>
         <translation>貼齊格線(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="623"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="707"/>
         <source>%1 px</source>
         <translation>%1 像素</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="637"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="721"/>
         <source>Custom(&amp;U)...</source>
         <translation>自訂(&amp;U)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="649"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="733"/>
         <source>Show Ruler(&amp;R)</source>
         <translation>顯示尺規(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="657"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="741"/>
         <source>Show Guides(&amp;G)</source>
         <translation>顯示參考線(&amp;G)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="665"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="749"/>
         <source>Lock Guides(&amp;L)</source>
         <translation>鎖定參考線(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="759"/>
         <source>Clear Guides(&amp;C)</source>
         <translation>清除參考線(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="711"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="795"/>
         <source>Set Foreground Color...</source>
         <translation>設定前景色...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="717"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="801"/>
         <source>Set Background Color...</source>
         <translation>設定背景色...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="732"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="816"/>
         <source>Swap Foreground/Background Color</source>
         <translation>交換前景/背景色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="737"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="821"/>
         <source>Restore Default Colors</source>
         <translation>恢復預設顏色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="746"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="830"/>
         <source>About %1(&amp;A)...</source>
         <translation>關於 %1(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="845"/>
         <source>About %1</source>
         <translation>關於 %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="782"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="866"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;A lightweight image editor built with Qt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Version&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;Tech Stack&lt;/b&gt;&lt;br&gt;Qt %2 (built against %3)&lt;br&gt;Pure Qt implementation, no third-party image libraries&lt;/p&gt;&lt;p&gt;&lt;b&gt;Key Features&lt;/b&gt;&lt;br&gt;Multiple layers with 22 blend modes · grayscale mask selection (with feathering)&lt;br&gt;Curves / Levels / Brightness-Contrast · custom bicubic and Lanczos resampling&lt;br&gt;Dirty-rect and full-layer snapshot dual undo strategy · EXIF auto-rotation&lt;/p&gt;&lt;p&gt;&lt;b&gt;Project Home&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;p&gt;一個基於 Qt 的輕量級圖片編輯器。&lt;/p&gt;&lt;p&gt;&lt;b&gt;版本&lt;/b&gt; %4&lt;/p&gt;&lt;p&gt;&lt;b&gt;技術堆疊&lt;/b&gt;&lt;br&gt;Qt %2（編譯期版本 %3）&lt;br&gt;純 Qt 實現，不依賴任何第三方影像庫&lt;/p&gt;&lt;p&gt;&lt;b&gt;核心特性&lt;/b&gt;&lt;br&gt;多圖層與 22 種混合模式 · 灰階蒙版選取區（支援羽化）&lt;br&gt;曲線 / 色階 / 亮度對比 · 自實現二次立方與 Lanczos 重新取樣&lt;br&gt;髒矩形與整層快照雙復原策略 · EXIF 自動旋轉&lt;/p&gt;&lt;p&gt;&lt;b&gt;專案首頁&lt;/b&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/Zoulei-CSU/ZlPhotoEdit&quot;&gt;github.com/Zoulei-CSU/ZlPhotoEdit&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="820"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="904"/>
         <source>About Qt(&amp;Q)...</source>
         <translation>關於 Qt(&amp;Q)...</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="838"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="922"/>
         <source>Switch UI Language</source>
         <translation>切換介面語言</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="839"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="923"/>
         <source>The UI language has been set to %1. It takes effect the next time the program starts.</source>
         <translation>介面語言已設定為「%1」，下次啟動程式時生效。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="854"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="938"/>
         <source>File(&amp;F)</source>
         <translation>檔案(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="874"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="958"/>
         <source>Screen Capture(&amp;C)</source>
         <translation>螢幕擷圖(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="885"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="969"/>
         <source>Recent Files(&amp;R)</source>
         <translation>最近開啟(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="907"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="991"/>
         <source>Clear List</source>
         <translation>清空列表</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1019"/>
+        <source>Theme(&amp;T)</source>
+        <translation>主題(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1027"/>
         <source>Edit(&amp;E)</source>
         <translation>編輯(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="939"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1044"/>
         <source>Select(&amp;S)</source>
         <translation>選取(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="948"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1053"/>
         <source>Adjust(&amp;A)</source>
         <translation>調整(&amp;A)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="962"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1067"/>
         <source>Image(&amp;I)</source>
         <translation>影像(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="989"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1094"/>
         <source>Layer(&amp;L)</source>
         <translation>圖層(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1007"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1115"/>
         <source>View(&amp;V)</source>
         <translation>檢視(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1020"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1128"/>
         <source>Grid Spacing(&amp;Z)</source>
         <translation>格線間距(&amp;Z)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1033"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1141"/>
         <source>Ruler Units(&amp;N)</source>
         <translation>尺規單位(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1047"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1155"/>
         <source>Panels(&amp;P)</source>
         <translation>面板(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1071"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1182"/>
         <source>Language(&amp;Y)</source>
         <translation>語言(&amp;Y)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1093"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1204"/>
         <source>Auto (Follow System)</source>
         <translation>自動（跟隨系統）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1119"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1230"/>
         <source>Help(&amp;H)</source>
         <translation>說明(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1134"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1245"/>
         <source>Main Toolbar</source>
         <translation>主工具列</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1163"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1274"/>
         <source>Tool Options</source>
         <translation>工具選項</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1183"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1294"/>
         <source>Toolbox</source>
         <translation>工具箱</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1254"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1365"/>
         <source>Switch to the %1 tool</source>
         <translation>切換到%1工具</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1281"/>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1419"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1392"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1530"/>
         <source>Foreground color (click to change)</source>
         <translation>前景色（點選修改）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1386"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1497"/>
         <source>History</source>
         <translation>歷史紀錄</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1391"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1502"/>
         <source>(Already at the initial state)</source>
         <translation>（已經是初始狀態）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1400"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1511"/>
         <source>Color</source>
         <translation>顏色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1425"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1536"/>
         <source>Background color (click to change)</source>
         <translation>背景色（點選修改）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1437"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1548"/>
         <source>Swap foreground and background colors (X)</source>
         <translation>交換前景色與背景色 (X)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1443"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1554"/>
         <source>Restore default colors: black / white (D)</source>
         <translation>恢復預設顏色：黑 / 白 (D)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1469"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1580"/>
         <source>Hotkeys
   X    Swap foreground / background color
   D    Restore default colors (black / white)
@@ -2202,118 +2222,118 @@ Colors picked with the eyedropper become the foreground color.</source>
 吸管工具取到的顏色會進入前景色。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1494"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1605"/>
         <source>Layers</source>
         <translation>圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1590"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1720"/>
         <source>Ready</source>
         <translation>就緒</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1624"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1767"/>
         <source>Capture the current screen into a new tab (%1; works even while the program is minimized)</source>
         <translation>抓取目前螢幕並開為新標籤頁（%1；程式最小化時也有效）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1678"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1844"/>
         <source>%1 (%2)</source>
         <translation>%1（%2）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1693"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1859"/>
         <source>The preferred hotkey %1 is occupied by another program; using %2 this time (works even while the program is minimized)</source>
         <translation>首選快速鍵 %1 已被其他程式佔用，本次改用 %2（程式最小化時也有效）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowActions.cpp" line="1713"/>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1879"/>
         <source>Global hotkey unavailable (%1). It will not work while the program is minimized, but %2 still works in the foreground, or use File → Screen Capture → Capture Now</source>
         <translation>全域快速鍵不可用（%1）。程式最小化時按不了，但程式在前景時仍可用 %2，或走「檔案 → 螢幕擷圖 → 立即擷圖」</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="212"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="224"/>
         <source>Create or open an image first</source>
         <translation>請先新增或開啟一個影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="286"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="298"/>
         <source>New Failed</source>
         <translation>新增失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="469"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="299"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
         <source>Cannot create the document: %1</source>
         <translation>無法建立檔案：%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="305"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="317"/>
         <source>Created a blank %1 × %2 image</source>
         <translation>已新增 %1 × %2 的空白影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="326"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="760"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="338"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
         <source>All Supported Images (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</source>
         <translation>所有支援的影像 (*.png *.jpg *.jpeg *.bmp *.gif *.tif *.tiff *.webp *.ico *.ppm *.xbm *.xpm)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="327"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="761"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="339"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
         <source>PNG Images (*.png)</source>
         <translation>PNG 影像 (*.png)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="762"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="340"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="852"/>
         <source>JPEG Images (*.jpg *.jpeg)</source>
         <translation>JPEG 影像 (*.jpg *.jpeg)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="329"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="763"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="341"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="853"/>
         <source>Bitmaps (*.bmp)</source>
         <translation>點陣圖 (*.bmp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="330"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="764"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="342"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="854"/>
         <source>TIFF Images (*.tif *.tiff)</source>
         <translation>TIFF 影像 (*.tif *.tiff)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="331"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="765"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="343"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="855"/>
         <source>WebP Images (*.webp)</source>
         <translation>WebP 影像 (*.webp)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="332"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="766"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="344"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="856"/>
         <source>All Files (*)</source>
         <translation>所有檔案 (*)</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="335"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="347"/>
         <source>Open Image</source>
         <translation>開啟影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="391"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="403"/>
         <source>%1 is already open - switched to its tab</source>
         <translation>%1 已經開啟，已切換到該標籤頁</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="407"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="438"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="468"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="450"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="480"/>
         <source>Open Failed</source>
         <translation>開啟失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="408"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="835"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="925"/>
         <source>Cannot read the image info:
 %1
 
@@ -2324,14 +2344,14 @@ Possible causes: the file is corrupted, the format is unsupported, or there is n
 可能原因：檔案損壞、格式不受支援，或沒有讀取許可權。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="418"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="850"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="857"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="430"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="940"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="947"/>
         <source>Image Too Large</source>
         <translation>影像過大</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="419"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="431"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2346,8 +2366,8 @@ Try to open it anyway?</source>
 是否仍要嘗試開啟？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="439"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="879"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="451"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="969"/>
         <source>Cannot load the image data:
 %1
 
@@ -2358,76 +2378,74 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
 檔案可能已損壞，或影像資料使用了不受支援的編碼。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="481"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="493"/>
         <source>Opened %1 (%2 × %3, %4)</source>
         <translation>已開啟 %1（%2 × %3，%4）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="485"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="497"/>
         <source>Unknown Format</source>
         <translation>未知格式</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="577"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="615"/>
         <source>Screenshot failed: no screen content captured (no display may be available)</source>
         <translation>擷圖失敗：抓不到螢幕內容（可能沒有可用的顯示器）</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="593"/>
         <source>Screenshot Unavailable</source>
         <translation>無法截圖</translation>
     </message>
     <message>
-        <source>Screenshot unavailable: this Wayland session does not allow applications to read the screen. Use the system screenshot key, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>無法截圖：目前 Wayland 工作階段不允許應用程式讀取螢幕內容。請先用系統截圖鍵截圖，再按 Ctrl+V 貼到這裡作為新圖層。</translation>
-    </message>
-    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
         <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
         <translation>目前 Wayland 工作階段不允許應用程式讀取螢幕內容，程式內建的截圖無法使用。請用系統截圖快速鍵截圖，再按 Ctrl+V 貼到這裡作為新圖層。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="582"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>螢幕擷圖-%1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="586"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="676"/>
         <source>Screenshot</source>
         <translation>螢幕擷圖</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="606"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="696"/>
         <source>Screenshot failed: cannot create the document (%1)</source>
         <translation>擷圖失敗：無法建立檔案（%1）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="617"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="707"/>
         <source>Captured the screen at %1 × %2 and opened it as a new tab</source>
         <translation>已擷取螢幕 %1 × %2，已開為新標籤頁</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="661"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="751"/>
         <source>Screenshot in %1 seconds: this window is minimized, switch to the target screen</source>
         <translation>%1 秒後擷圖：本視窗已最小化，請切到要擷取的畫面</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="769"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="859"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1073"/>
         <source>Open as Layer</source>
         <translation>開啟為圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="834"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="878"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="968"/>
         <source>Import Failed</source>
         <translation>匯入失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="851"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="941"/>
         <source>Import rejected: the image is about %1 megapixels, above the limit (%2 megapixels)</source>
         <translation>匯入已拒絕：影像約 %1 百萬像素，超過上限（%2 百萬像素）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="858"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="948"/>
         <source>This image is %1 × %2 (about %3 megapixels),
 above the recommended limit (%4 megapixels).
 
@@ -2442,86 +2460,86 @@ Try to import it anyway?</source>
 是否仍要嘗試匯入？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1000"/>
         <source>Image Is Larger Than the Canvas</source>
         <translation>影像比畫布大</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="911"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1001"/>
         <source>The imported image (%1 × %2) is larger than the current canvas (%3 × %4).</source>
         <translation>匯入的影像（%1 × %2）比目前畫布（%3 × %4）大。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="915"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1005"/>
         <source>&apos;Grow Canvas to Fit&apos; grows the canvas to %1 × %2, centering both the existing content and the new image;
 &apos;Crop to Canvas&apos; keeps the canvas size, centers the new image, and crops whatever sticks out.</source>
         <translation>「擴大畫布以容納」把畫布擴到 %1 × %2，原有內容與新影像都居中；
 「裁剪到畫布」保持畫布尺寸不變，新影像居中放置，超出畫布的部分會被裁掉。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="922"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1012"/>
         <source>Grow Canvas to Fit</source>
         <translation>擴大畫布以容納</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="923"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1013"/>
         <source>Crop to Canvas</source>
         <translation>裁剪到畫布</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="924"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="956"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1046"/>
         <source>Layer &quot;%1&quot; is locked; the canvas cannot grow. Unlock it before importing.</source>
         <translation>圖層“%1”已鎖定，無法擴大畫布。請先解鎖再匯入。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1004"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1094"/>
         <source>Failed to grow the canvas - import cancelled</source>
         <translation>擴大畫布失敗，已取消匯入</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1009"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1099"/>
         <source>Grow Canvas</source>
         <translation>擴大畫布</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1014"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3475"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1104"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3938"/>
         <source>New Layer</source>
         <translation>新增圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1113"/>
         <source>Imported %1 (%2 × %3); the canvas grew to %4 × %5</source>
         <translation>已匯入 %1（%2 × %3），畫布已擴大至 %4 × %5</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1118"/>
         <source>Imported %1 (%2 × %3) as a new layer</source>
         <translation>已匯入 %1（%2 × %3）為新圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1082"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1172"/>
         <source>Saved to %1</source>
         <translation>已儲存到 %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1111"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1201"/>
         <source>Save As</source>
         <translation>另存新檔</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1178"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1268"/>
         <source>Format Does Not Support Transparency</source>
         <translation>格式不支援透明</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1179"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1269"/>
         <source>The %1 format does not support a transparency channel.
 
 Semi-transparent areas will be filled with white.
@@ -2538,39 +2556,46 @@ Save anyway?</source>
 是否繼續儲存？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1217"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1307"/>
         <source>Saved as %1</source>
         <translation>已另存新檔 %1</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1266"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1356"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1446"/>
         <source>No image is open.</source>
         <translation>沒有開啟的影像。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1287"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1350"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1377"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1453"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1598"/>
         <source>Cannot generate the image data (the composite is empty).</source>
         <translation>無法生成影像資料（合成結果為空）。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1336"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1526"/>
+        <source>Untitled</source>
+        <translation>未命名</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1584"/>
         <source>Cannot Save as ICO</source>
         <translation>無法儲存為 ICO</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1585"/>
         <source>Failed to export the ICO icon.</source>
         <translation>匯出 ICO 圖示失敗。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1349"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1410"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1597"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1658"/>
         <source>Save Failed</source>
         <translation>儲存失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1411"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1659"/>
         <source>Cannot write the file:
 %1
 
@@ -2591,22 +2616,22 @@ Please check:
   · 檔案是否被其他程式佔用</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1763"/>
         <source>Document Closed</source>
         <translation>檔案已關閉</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1516"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1764"/>
         <source>Closed a document (%1 left)</source>
         <translation>已關閉一個檔案（還有 %1 個）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1551"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1799"/>
         <source>Unsaved Changes</source>
         <translation>未儲存的修改</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="1552"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1800"/>
         <source>&quot;%1&quot; has unsaved changes.
 
 Save them?</source>
@@ -2615,169 +2640,170 @@ Save them?</source>
 是否儲存？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2084"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2547"/>
         <source>Nothing to copy</source>
         <translation>沒有可複製的內容</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2137"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2600"/>
         <source>Copied %1 × %2 of content</source>
         <translation>已複製 %1 × %2 的內容</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2230"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2693"/>
         <source>Cut</source>
         <translation>剪下</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2233"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2696"/>
         <source>Cut to the clipboard</source>
         <translation>已剪下到剪貼簿</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2252"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2715"/>
         <source>The clipboard is empty</source>
         <translation>剪貼簿為空</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2279"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2742"/>
         <source>The clipboard has no usable image data</source>
         <translation>剪貼簿中沒有可用的影像資料</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2323"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2786"/>
         <source>Paste as New Layer</source>
         <translation>貼上為新圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2328"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2791"/>
         <source>Pasted Layer</source>
         <translation>貼上的圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2334"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2797"/>
         <source>Pasted as a new layer (%1 × %2)</source>
         <translation>已貼上為新圖層（%1 × %2）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2345"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2808"/>
         <source>No active layer available</source>
         <translation>沒有可用的活動圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2351"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2814"/>
         <source>The current layer is locked - cannot paste</source>
         <translation>目前圖層已鎖定，無法貼上</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2883"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2423"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2886"/>
         <source>Pasted into the current layer</source>
         <translation>已貼上到目前圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2520"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2691"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2740"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4394"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2983"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3203"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4940"/>
         <source>The current layer is not editable</source>
         <translation>目前圖層不可編輯</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2569"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3032"/>
         <source>Delete Selection Content</source>
         <translation>刪除選取區內容</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2575"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3038"/>
         <source>Clear Layer</source>
         <translation>清空圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2594"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
         <source>Already in the select-all state</source>
         <translation>已經處於全選狀態</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3068"/>
         <source>Select All</source>
         <translation>全選</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2630"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3093"/>
         <source>Deselect</source>
         <translation>取消選取</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2637"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3100"/>
         <source>Selection cancelled</source>
         <translation>已取消選取</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2657"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3120"/>
         <source>No selection to invert</source>
         <translation>沒有選取區可以反轉選取</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2668"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3131"/>
         <source>Invert Selection</source>
         <translation>反轉選取</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2675"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3138"/>
         <source>Selection inverted</source>
         <translation>已反轉選取</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2726"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3189"/>
         <source>Desaturate</source>
         <translation>去色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2729"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3192"/>
         <source>Desaturate applied</source>
         <translation>已套用去色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2752"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3215"/>
         <source>Invert</source>
         <translation>反相</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2755"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3218"/>
         <source>Invert applied</source>
         <translation>已套用反相</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2874"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3057"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3113"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3191"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3365"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3337"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3520"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3576"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3654"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3828"/>
         <source>No layer to operate on</source>
         <translation>沒有可操作的圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2891"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3354"/>
         <source>The current layer is locked - geometry operations are not allowed</source>
         <translation>目前圖層已鎖定，無法執行幾何操作</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3413"/>
         <source>Geometry operation failed</source>
         <translation>幾何操作失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2991"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3454"/>
         <source>Undo Not Recorded</source>
         <translation>未記錄復原</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="2992"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3455"/>
         <source>The &quot;%1&quot; operation moved too much data, above the undo memory limit,
 so it &lt;b&gt;cannot be undone&lt;/b&gt;.
 
@@ -2788,121 +2814,121 @@ The image has been modified. To keep the original, do not save - reopen the file
 影像已經被修改。如果需要保留原圖，請勿儲存並重新開啟檔案。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3023"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3486"/>
         <source>%1 applied (canvas %2 × %3)</source>
         <translation>已%1（畫布 %2 × %3）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3072"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3535"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the image</source>
         <translation>圖層“%1”已鎖定，請先解鎖再調整影像大小</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3098"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3561"/>
         <source>Failed to resize the image (the new size may be too large)</source>
         <translation>影像大小調整失敗（新尺寸可能過大）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3103"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3566"/>
         <source>Image Size</source>
         <translation>影像大小</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3122"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3585"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before resizing the canvas</source>
         <translation>圖層“%1”已鎖定，請先解鎖再調整畫布大小</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3149"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3612"/>
         <source>Failed to resize the canvas</source>
         <translation>畫布大小調整失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3154"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3617"/>
         <source>Canvas Size</source>
         <translation>畫布大小</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3204"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3667"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before rotating the image</source>
         <translation>圖層“%1”已鎖定，請先解鎖再旋轉影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3213"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3676"/>
         <source>Cannot generate a preview: the image content is empty</source>
         <translation>無法生成預覽：影像內容為空</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3274"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
         <source>Rotation failed</source>
         <translation>旋轉失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3280"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3743"/>
         <source>Rotate Image</source>
         <translation>旋轉影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3378"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3841"/>
         <source>Layer &quot;%1&quot; is locked - unlock it before cropping</source>
         <translation>圖層“%1”已鎖定，請先解鎖再裁剪</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3388"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3851"/>
         <source>The crop area is empty</source>
         <translation>裁剪區域為空</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3396"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3859"/>
         <source>The crop area is the whole canvas - nothing to crop</source>
         <translation>裁剪區域就是整幅畫布，無需裁剪</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3406"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3869"/>
         <source>Crop failed</source>
         <translation>裁剪失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3420"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
         <source>Select the area to keep with a selection tool first</source>
         <translation>請先用選取框工具選取要保留的區域</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3466"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3929"/>
         <source>Failed to create a layer</source>
         <translation>新增圖層失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3479"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
         <source>Layer created</source>
         <translation>已新增圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3494"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3868"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4331"/>
         <source>Failed to duplicate the layer</source>
         <translation>複製圖層失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3503"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3884"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3966"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
         <source>Duplicate Layer</source>
         <translation>複製圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3507"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3970"/>
         <source>Layer duplicated</source>
         <translation>已複製圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3521"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3790"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3984"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4253"/>
         <source>Cannot Delete the Layer</source>
         <translation>無法刪除圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3522"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3791"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3985"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4254"/>
         <source>A document must keep at least one layer.
 
 To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
@@ -2911,69 +2937,69 @@ To clear this layer&apos;s content, use &quot;Edit → Delete&quot;.</source>
 如果要清空這個圖層的內容，請使用“編輯 → 刪除”。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3997"/>
         <source>Failed to delete the layer</source>
         <translation>刪除圖層失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4020"/>
         <source>Layer deleted</source>
         <translation>已刪除圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3574"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4037"/>
         <source>Already the topmost layer</source>
         <translation>已經是最上面的圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3582"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3613"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3910"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4045"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4076"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4373"/>
         <source>Failed to move the layer</source>
         <translation>移動圖層失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3605"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4068"/>
         <source>Already the bottommost layer</source>
         <translation>已經是最下面的圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3647"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4110"/>
         <source>At least two layers are required to merge</source>
         <translation>至少需要兩個圖層才能合併</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3660"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4123"/>
         <source>The bottommost layer cannot be merged down</source>
         <translation>最底部的圖層無法向下合併</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3669"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4132"/>
         <source>Merge down failed</source>
         <translation>向下合併失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3678"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4141"/>
         <source>Merge Down</source>
         <translation>向下合併</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3682"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4145"/>
         <source>Merged down</source>
         <translation>已向下合併</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3692"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4155"/>
         <source>Only one layer - nothing to flatten</source>
         <translation>只有一個圖層，無需平整化</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3707"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4170"/>
         <source>Flatten Image merges all visible layers into one.</source>
         <translation>平整化影像會把所有可見圖層合併為一個圖層。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3709"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4172"/>
         <source>
 
 Note: %1 hidden layers exist and their content will be discarded.</source>
@@ -2982,7 +3008,7 @@ Note: %1 hidden layers exist and their content will be discarded.</source>
 注意：有 %1 個隱藏圖層，它們的內容將被丟棄。</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3711"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4174"/>
         <source>
 
 Continue?</source>
@@ -2991,307 +3017,348 @@ Continue?</source>
 是否繼續？</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3713"/>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3733"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4176"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4196"/>
         <source>Flatten Image</source>
         <translation>平整化影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3724"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4187"/>
         <source>Flatten failed</source>
         <translation>平整化失敗</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3737"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4200"/>
         <source>Image flattened</source>
         <translation>已平整化影像</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3818"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4281"/>
         <source>Delete Multiple Layers</source>
         <translation>刪除多個圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3829"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4292"/>
         <source>Deleted %1 layers</source>
         <translation>已刪除 %1 個圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3883"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4346"/>
         <source>Duplicate Multiple Layers</source>
         <translation>複製多個圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3888"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4351"/>
         <source>Duplicated %1 layers</source>
         <translation>已複製 %1 個圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3919"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4382"/>
         <source>Reorder Layers</source>
         <translation>調整圖層順序</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3935"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4398"/>
         <source>At least two visible layers are required to merge</source>
         <translation>至少需要兩個可見圖層才能合併</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3946"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4409"/>
         <source>Merge Visible Layers</source>
         <translation>合併可見圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3950"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
         <source>Visible layers merged</source>
         <translation>已合併可見圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Show Layer</source>
         <translation>顯示圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="3986"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4519"/>
         <source>Hide Layer</source>
         <translation>隱藏圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Lock Layer</source>
         <translation>鎖定圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4005"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4538"/>
         <source>Unlock Layer</source>
         <translation>解鎖圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4028"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4561"/>
         <source>Rename Layer</source>
         <translation>重新命名圖層</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4051"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4584"/>
         <source>Change Blend Mode</source>
         <translation>更改混合模式</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4108"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4641"/>
         <source>Change Opacity</source>
         <translation>更改不透明度</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4165"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4711"/>
         <source>Snap to grid on</source>
         <translation>已開啟貼齊格線</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4166"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4712"/>
         <source>Snap to grid off</source>
         <translation>已關閉貼齊格線</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4186"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4732"/>
         <source>Grid spacing: %1 px</source>
         <translation>格線間距：%1 像素</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4270"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4816"/>
         <source>Cleared the guides on this page</source>
         <translation>已清除本頁參考線</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4315"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4861"/>
         <source>Choose Foreground Color</source>
         <translation>選取前景色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4325"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4871"/>
         <source>Choose Background Color</source>
         <translation>選取背景色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4347"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4893"/>
         <source>Swapped the foreground and background colors</source>
         <translation>已交換前景色與背景色</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4360"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4906"/>
         <source>Restored the default colors (black / white)</source>
         <translation>已恢復預設顏色（黑 / 白）</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4413"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4959"/>
         <source>Brightness/Contrast</source>
         <translation>亮度/對比</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4422"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4968"/>
         <source>Hue/Saturation</source>
         <translation>色相/飽和度</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4434"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4980"/>
         <source>Curves</source>
         <translation>曲線</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4447"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4993"/>
         <source>Levels</source>
         <translation>色階</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4547"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5093"/>
         <source>Adjustment failed: no result generated</source>
         <translation>調整失敗：未能生成結果</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="4557"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5103"/>
         <source>Applied %1</source>
         <translation>已套用%1</translation>
     </message>
-        <message>
-            <source>Navigator</source>
-            <translation>導覽器</translation>
-        </message>
-        <message>
-            <source>Recover Unsaved Work</source>
-            <translation>恢復未儲存的內容</translation>
-        </message>
-        <message>
-            <source>Found %1 unsaved document(s) from the previous session:\n\n%2\n\nRecover them? Layer information is not preserved.</source>
-            <translation>上次工作階段中發現 %1 個未儲存的文件：\n\n%2\n\n是否恢復？圖層資訊不會保留。</translation>
-        </message>
-        <message>
-            <source>(Untitled)</source>
-            <translation>(無標題)</translation>
-        </message>
-        <message>
-            <source>Recovered</source>
-            <translation>已恢復</translation>
-        </message>
-        <message>
-            <source>%1 (Recovered)</source>
-            <translation>%1（已恢復）</translation>
-        </message>
-        <message>
-            <source>Recovered %1 document(s)</source>
-            <translation>已恢復 %1 個文件</translation>
-        </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="1667"/>
+        <source>Navigator</source>
+        <translation>導覽器</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="407"/>
+        <source>Recover Unsaved Work</source>
+        <translation>恢復未儲存的內容</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="403"/>
+        <source>(Untitled)</source>
+        <translation>(無標題)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="408"/>
+        <source>Found %1 unsaved document(s) from the previous session:
+
+%2
+
+Recover them? Layer information is not preserved.</source>
+        <translation>上次工作階段中發現 %1 個未儲存的文件：\n\n%2\n\n是否恢復？圖層資訊不會保留。</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="426"/>
+        <source>Recovered</source>
+        <translation>已恢復</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="427"/>
+        <source>%1 (Recovered)</source>
+        <translation>%1（已恢復）</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindow.cpp" line="435"/>
+        <source>Recovered %1 document(s)</source>
+        <translation>已恢復 %1 個文件</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="382"/>
         <source>Undo Steps...</source>
         <translation>復原步數…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="385"/>
         <source>How many undo steps each document keeps</source>
         <translation>每個文件保留多少步復原記錄</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="675"/>
         <source>Full Screen(&amp;U)</source>
         <translation>全螢幕(&amp;U)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="679"/>
         <source>Toggle full screen (F11)</source>
         <translation>切換全螢幕（F11）</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>Undo Steps</source>
         <translation>復原步數</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2378"/>
         <source>How many undo steps to keep per document:</source>
         <translation>每個文件保留多少步復原記錄：</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="2392"/>
         <source>Undo steps: %1</source>
         <translation>復原步數：%1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="257"/>
         <source>Print(&amp;P)...</source>
         <translation>列印(&amp;P)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="261"/>
         <source>Print the current image</source>
         <translation>列印目前影像</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="266"/>
         <source>Export PDF(&amp;F)...</source>
         <translation>匯出 PDF(&amp;F)…</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="269"/>
         <source>Export the current image as a single-page PDF</source>
         <translation>將目前影像匯出為單頁 PDF</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1470"/>
         <source>Failed to write the PDF file.</source>
         <translation>寫入 PDF 檔案失敗。</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1504"/>
         <source>Print</source>
         <translation>列印</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1510"/>
         <source>Printing failed</source>
         <translation>列印失敗</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1515"/>
         <source>Sent to printer</source>
         <translation>已傳送到印表機</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1540"/>
         <source>Export PDF</source>
         <translation>匯出 PDF</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1534"/>
         <source>PDF files (*.pdf)</source>
         <translation>PDF 檔案 (*.pdf)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1546"/>
         <source>PDF exported: %1</source>
         <translation>PDF 已匯出：%1</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="612"/>
         <source>Add Layer Mask from Selection(&amp;M)</source>
         <translation>從選取範圍新增圖層遮色片(&amp;M)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="616"/>
         <source>Hide everything outside the current selection without deleting pixels</source>
         <translation>隱藏選取範圍外的內容，但不刪除像素</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="620"/>
         <source>Remove Layer Mask(&amp;K)</source>
         <translation>刪除圖層遮色片(&amp;K)</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="624"/>
         <source>Delete the mask and show the whole layer again</source>
         <translation>刪除遮色片，重新顯示整個圖層</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4444"/>
         <source>Select an area first; that area becomes the visible part</source>
         <translation>請先建立選取範圍，選取的部分會成為可見區域</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4456"/>
         <source>Layer mask added</source>
         <translation>已新增圖層遮色片</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4471"/>
         <source>This layer has no mask</source>
         <translation>該圖層沒有遮色片</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4483"/>
         <source>Layer mask removed</source>
         <translation>已刪除圖層遮色片</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4452"/>
         <source>Add Layer Mask</source>
         <translation>新增圖層遮色片</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="4479"/>
         <source>Remove Layer Mask</source>
         <translation>刪除圖層遮色片</translation>
     </message>
     <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="1488"/>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>此版本不支援直接列印，請改用匯出 PDF</translation>
     </message>
@@ -3361,6 +3428,14 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/tools/MoveTool.h" line="80"/>
         <source>Move</source>
         <translation>移動</translation>
+    </message>
+</context>
+<context>
+    <name>zl::NavigatorPanel</name>
+    <message>
+        <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
+        <source>No document</source>
+        <translation>無文件</translation>
     </message>
 </context>
 <context>
@@ -3904,11 +3979,4 @@ ICO 是圖示格式，邊長上限為 %3 像素（Windows 官方口徑是 256，
 請先用「影像 → 影像大小」把影像縮小到 %3 像素以內，再另存新檔 ICO。</translation>
     </message>
 </context>
-    <context>
-        <name>zl::NavigatorPanel</name>
-        <message>
-            <source>No document</source>
-            <translation>無文件</translation>
-        </message>
-    </context>
 </TS>

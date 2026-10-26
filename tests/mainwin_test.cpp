@@ -85,6 +85,9 @@
 //   注意本组**不编 i18n.qrc**（翻译只由主程序内嵌），所以断言必须
 //   在"没有 .qm"的环境下也成立 —— 这本身就是被测性质的一部分。
 #include "core/UiLanguage.h"
+// ★ 界面主题 ★ 主题菜单三项的取值、持久化、应用都在这里；
+//   本组要钉"切了真的生效"，所以既要用它的 Mode，也要量 palette 与图标。
+#include "core/UiTheme.h"
 #include "engine/Geometry.h"   // 打开为图层：unionSize / centeredOffset（放置与尺寸的判据）
 // ★ 另存为 ICO ★ 512 上限的判据在引擎层，界面层只负责"把它弹给用户"；
 //   本组要同时钉住"引擎拒绝"与"界面真的调到了引擎"。
@@ -3781,6 +3784,150 @@ static void testLanguageMenuAssembly()
 }
 
 // ---------------------------------------------------------------------------
+//  [7c] 主题菜单：装配 / 互斥 / 真的生效 / 持久化
+// ---------------------------------------------------------------------------
+//
+//  ★ 为什么这组必须存在 ★
+//    主题有三个环节，每一个失效都是静默的：
+//      ① 菜单没接上 → 用户找不到入口（对账脚本只看"有没有图标"，看不到
+//         三项是否在菜单里、是否互斥）；
+//      ② 接了但没真的换 palette → 勾选态变了、界面纹丝不动；
+//      ③ 换了但没落盘 → 下次启动回到默认，用户以为设置不记住。
+//    ②③ 都不会报错，只能靠"点一下再量"。
+//
+//  ★ 判据是 palette 与图标像素，不是 isChecked ★
+//    "勾上了"只说明 QActionGroup 工作了，不代表配色真的换了 ——
+//    这两件事必须分开验，否则一个只改了勾选态的假实现也能全绿。
+//
+//  ★ 同时钉住"自动"能还原 ★
+//    auto 不是第四套配色，是"撤销到系统原样"。这条最容易在重构里丢掉
+//    （例如把 auto 也做成一套写死的浅色），所以要断样式也回到原值。
+static void testThemeMenu()
+{
+    beginGroup("主题菜单：装配 / 互斥单选 / 切换真的生效 / 持久化");
+
+    const QPalette systemPalette = QApplication::palette();
+    const QString systemStyle =
+        QApplication::style() ? QApplication::style()->objectName() : QString();
+
+    QSettings s;
+    s.remove(QStringLiteral("ui/theme"));
+    s.sync();
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    QMenu *tm = w->findChild<QMenu *>(QStringLiteral("menuTheme"));
+
+    check(tm != nullptr, "文件菜单里有「主题」子菜单（menuTheme）");
+    if (!tm) {
+        delete w;
+        return;
+    }
+
+    // ── 装配：三项、顺序、互斥、默认勾"自动" ──
+    const QList<QAction *> acts = tm->actions();
+    check(acts.size() == 3, "★ 恰好三项（默认 / 浅色 / 深色）");
+    check(acts.size() == 3
+              && acts[0]->data().toInt() == int(uitheme::Mode::Auto)
+              && acts[1]->data().toInt() == int(uitheme::Mode::Light)
+              && acts[2]->data().toInt() == int(uitheme::Mode::Dark),
+          "★ 顺序是 默认 / 浅色 / 深色，且 data() 存的是 Mode");
+    check(acts.size() == 3 && acts[0]->isChecked(), "★ 未设置过时勾「默认」");
+    bool allCheckable = true;
+    for (QAction *a : acts)
+        if (!a->isCheckable())
+            allCheckable = false;
+    check(allCheckable, "三项都可勾选（互斥组）");
+
+    QAction *aNew = w->findChild<QAction *>(QStringLiteral("actionNew"));
+    check(aNew != nullptr, "拿得到一个带图标的菜单动作");
+    if (!aNew) {
+        delete w;
+        return;
+    }
+
+    // ── 切深色：palette 真的变深、图标真的变浅 ──
+    acts[2]->trigger();
+    QApplication::processEvents();
+    check(QApplication::palette().color(QPalette::Window).lightness() < 128,
+          "★ 切深色后窗口底色真的变深");
+    check(uitheme::isDark(), "★ 深色判据跟着亮（图标上色依赖它）");
+    const QRgb darkInk = sampleOpaqueInk(aNew->icon());
+    check(qRed(darkInk) > 0xC0, "★ 深色下图标被染成浅色");
+    if (!(qRed(darkInk) > 0xC0))
+        std::printf("       实测深色图标=%08x\n", darkInk);
+
+    // ── 切浅色：反向，且只有一项勾中 ──
+    acts[1]->trigger();
+    QApplication::processEvents();
+    check(QApplication::palette().color(QPalette::Window).lightness() >= 128,
+          "★ 切浅色后窗口底色真的变浅");
+    const QRgb lightInk = sampleOpaqueInk(aNew->icon());
+    check(qRed(lightInk) < 0x80, "★ 浅色下图标被染成深色");
+    int checkedCount = 0;
+    for (QAction *a : acts)
+        if (a->isChecked())
+            ++checkedCount;
+    check(checkedCount == 1 && acts[1]->isChecked(),
+          "★ 互斥：只有「浅色」一项勾着");
+    check(uitheme::preference() == uitheme::Mode::Light,
+          "★ 选择已写进偏好（落盘）");
+
+    // ── 落盘要能跨实例读回来（不只是同一个进程里的内存） ──
+    {
+        QSettings again;
+        check(again.value(QStringLiteral("ui/theme")).toString()
+                  == uitheme::keyOf(uitheme::Mode::Light),
+              "★ QSettings 里存的是 light（重启后才记得住）");
+    }
+
+    // ── 自动：撤销回系统配色与系统样式 ──
+    acts[0]->trigger();
+    QApplication::processEvents();
+    check(QApplication::palette().color(QPalette::Window)
+              == systemPalette.color(QPalette::Window),
+          "★ 选「默认」后底色回到系统原值");
+    check(QApplication::style()
+              && QApplication::style()->objectName().compare(
+                     systemStyle, Qt::CaseInsensitive) == 0,
+          "★ 选「默认」后样式也回到系统原样式（不是停在 Fusion）");
+    check(uitheme::preference() == uitheme::Mode::Auto,
+          "★ 偏好回到 auto");
+
+    // ── 垃圾偏好按"默认"读取（用户手改坏设置文件） ──
+    {
+        QSettings bad;
+        bad.setValue(QStringLiteral("ui/theme"), QStringLiteral("purple"));
+        bad.sync();
+    }
+    check(uitheme::preference() == uitheme::Mode::Auto,
+          "★ 设置文件里是垃圾值时按「默认」处理");
+
+    // ── 垃圾偏好下的菜单勾选也要一致（不能一项都不勾） ──
+    {
+        MainWindow *w2 = newWindow(QStringLiteral("move"));
+        if (QMenu *tm2 = w2->findChild<QMenu *>(QStringLiteral("menuTheme"))) {
+            check(!tm2->actions().isEmpty() && tm2->actions().first()->isChecked(),
+                  "★ 垃圾偏好 → 菜单勾「默认」，与读取口径一致");
+        } else {
+            check(false, "菜单在新窗口里也在");
+        }
+        delete w2;
+    }
+
+    // 恢复现场
+    {
+        QSettings cleanup;
+        cleanup.remove(QStringLiteral("ui/theme"));
+        cleanup.sync();
+    }
+    uitheme::applyTheme(uitheme::Mode::Auto);
+    QApplication::processEvents();
+
+    delete w;
+}
+
+
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 //  历史面板跳转必须刷新画布（2026-10-16 修复的回归钉）
@@ -4645,6 +4792,7 @@ int main(int argc, char **argv)
     testAppIdentityAndIcon();
     testUiLanguage();
     testLanguageMenuAssembly();
+    testThemeMenu();
     testLayerPanelAssembly();
     testMergeVisibleKeepsHiddenLayers();
     testRenameActiveLayerAction();

@@ -246,18 +246,29 @@ inline QString qtVersionString()
 //  ★ 判据是亮度，不是"颜色相等" ★
 //    主题可能不是纯黑纯白（深色主题的背景常是 #2b2b2b 这类），
 //    所以只能用亮度阈值，不能比字符串。
+//
+//  ★ Qt6 下 colorScheme() 只作首选，Unknown 时必须回落到亮度 ★
+//    实测（Qt 6.8.3 + offscreen）：setColorScheme(Dark) 之后
+//    colorScheme() 仍返回 Unknown —— 平台插件不实现就不生效。
+//    只认 colorScheme() 的话，程序里选了深色主题、palette 也确实变深了，
+//    但图标判断"不深"仍按浅色染成黑的，压在深灰底上看不清（正是本函数
+//    要解决的问题复发了）。所以顺序是：系统给出了明确答案就采信它
+//    （它能覆盖"系统深色但应用被强制浅色"这种反差），否则退回亮度。
 inline bool isDarkTheme()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-    return QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark;
-#else
-    // 取应用的 palette（不是某个部件的）：部件的 palette 可能被
-    // 局部改过，拿它判断会得出"这个按钮所在的地方是深色"这种局部结论。
     if (!qApp)
         return false;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    const Qt::ColorScheme scheme = QGuiApplication::styleHints()->colorScheme();
+    if (scheme != Qt::ColorScheme::Unknown)
+        return scheme == Qt::ColorScheme::Dark;
+#endif
+
+    // 取应用的 palette（不是某个部件的）：部件的 palette 可能被
+    // 局部改过，拿它判断会得出"这个按钮所在的地方是深色"这种局部结论。
     const QColor bg = QGuiApplication::palette().color(QPalette::Window);
     return bg.lightness() < 128;
-#endif
 }
 
 } // namespace zl
