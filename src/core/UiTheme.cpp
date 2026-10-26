@@ -28,13 +28,17 @@ constexpr const char *kDark  = "dark";
 // ---------------------------------------------------------------------------
 //  系统原始状态（captureSystem 记下，"默认"靠它还原）
 // ---------------------------------------------------------------------------
+//  ★ 只记样式名，不记 palette ★
+//    palette 有更好的还原手段：传空 palette 让 Qt 重新向平台要（见 applyTheme
+//    的 auto 分支）。快照是"启动那一刻"的，用户之后改了系统配色就过期；
+//    而样式名没有查询接口，只能靠记。
+//
 //  ★ 必须记样式名，不是记 QStyle 指针 ★
 //    QApplication::setStyle() 如果传的对象与新样式同类，Qt 会直接复用；
 //    而传进来的指针所有权归 QApplication，存着不用管释放。
 //    记名字则与"谁持有对象"彻底无关，也不会因为有指针就以为能改它。
-QString  g_systemStyleName;
-QPalette g_systemPalette;
-bool     g_captured = false;
+QString g_systemStyleName;
+bool    g_captured = false;
 
 QString keyOf(const QColor &c)
 {
@@ -221,7 +225,6 @@ void captureSystem()
     if (g_captured || !qApp)
         return;
     g_captured = true;
-    g_systemPalette = qApp->palette();
     if (qApp->style())
         g_systemStyleName = qApp->style()->objectName();
 }
@@ -247,7 +250,13 @@ void applyTheme(Mode mode)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         QGuiApplication::styleHints()->unsetColorScheme();
 #endif
-        qApp->setPalette(g_systemPalette);
+        // ★ 传空 palette，而不是塞回 captureSystem() 存的那份 ★
+        //   快照是**启动那一刻**的。用户之后在系统里改了配色，快照就过期了，
+        //   塞回去等于"退回到开机时的样子"，而不是"跟随现在的系统" ——
+        //   实测：系统转深色后点默认，界面退回浅色，跟系统正好相反。
+        //   传空 palette 是把覆盖整个扔掉，Qt 会重新向平台要当前配色，
+        //   这才是"跟随系统"的字面意思。
+        qApp->setPalette(QPalette());
         if (!g_systemStyleName.isEmpty())
             useStyle(g_systemStyleName);
         return;

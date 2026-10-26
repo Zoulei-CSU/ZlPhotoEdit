@@ -3886,6 +3886,19 @@ static void testThemeMenu()
     check(QApplication::palette().color(QPalette::Window)
               == systemPalette.color(QPalette::Window),
           "★ 选「默认」后底色回到系统原值");
+    // ★ 覆盖必须被**整个清掉**，而不是只清一部分 ★
+    //   ⚠ offscreen 平台没有实时系统配色，"清空覆盖"与"塞回启动快照"在这里
+    //   结果相同（都是平台默认），光靠断言分不出来，所以多点采样几个角色，
+    //   至少能抓住"只清了 Window 而漏了其余"这类写一半的还原。
+    //   真正的差别在 Windows 上人工验：系统转深色 → 点默认 → 界面应变深
+    //   （快照版会退回浅色，跟系统正好相反）。
+    check(QApplication::palette().color(QPalette::Highlight)
+              == systemPalette.color(QPalette::Highlight)
+          && QApplication::palette().color(QPalette::Base)
+              == systemPalette.color(QPalette::Base)
+          && QApplication::palette().color(QPalette::WindowText)
+              == systemPalette.color(QPalette::WindowText),
+          "★ 其余角色（强调色 / 底色 / 正文）也一并还原，不是只还原窗口色");
     check(QApplication::style()
               && QApplication::style()->objectName().compare(
                      systemStyle, Qt::CaseInsensitive) == 0,
