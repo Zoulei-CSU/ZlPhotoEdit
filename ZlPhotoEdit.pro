@@ -17,6 +17,11 @@ QT += svg concurrent printsupport
 TEMPLATE = app
 TARGET   = ZlPhotoEdit
 
+# 版本号。与 CMakeLists.txt 的 project(VERSION)、src/main.cpp 的
+# kApplicationVer、release.yml 的 APP_VERSION 同步（四处，改一起改）。
+# macOS 的 Info.plist 从这里取值填 CFBundleShortVersionString。
+VERSION = 1.0.2
+
 # C++17：Qt6 强制要求该标准，Qt5 也完全支持，因此统一用 C++17 两版都安全
 CONFIG += c++17
 
@@ -360,6 +365,38 @@ win32 {
     # （见 CMakeLists.txt 的 target_compile_definitions），两边必须一致 ——
     # 否则自检在一条构建路径上断言"有 exe 图标"、另一条上断言"没有".
     DEFINES += ZLPE_HAS_EXE_ICON=1
+}
+
+# ── macOS ───────────────────────────────────────────────────────────
+# ★ 必须指定自己的 Info.plist 模板 ★
+#   默认模板没有 CFBundleLocalizations，而系统只会把"应用声明支持的
+#   语言"里的哪一种传给进程。不声明时，用户即便把简体中文排在系统
+#   首选语言第一位，CFLocaleCopyCurrent() 仍给 en_US，程序判成英文 ——
+#   这就是"自动跟随系统却跟到英文"的根因。
+#   模板与 CMake 侧共用一份，占位符是 @VAR@（qmake 原生替换形式）。
+macx {
+    QMAKE_INFO_PLIST = packaging/macos/Info.plist.in
+    ICON = packaging/macos/logo.icns
+
+    EXECUTABLE_NAME = ZlPhotoEdit
+    PRODUCT_BUNDLE_IDENTIFIER = cn.zlstudio.ZlPhotoEdit
+    QMAKE_PKGINFO_TYPEINFO = ????
+    ASSETCATALOG_COMPILER_APPICON_NAME = logo.icns
+    ZLPE_APP_VERSION = $$VERSION
+
+    # 语言清单与 UiLanguage.cpp 的 kEmbeddedLanguages、CMake 的
+    # ZLPE_LANG_CODES 必须是同一批（三处对账，新增语言时一起改）。
+    # Apple 认 zh-Hans / zh-Hant，工程内部用 zh_CN / zh_TW。
+    ZLPE_MAC_LOCALES_XML =
+    ZLPE_MAC_LOCALES_XML += "        <string>en</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>zh-Hans</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>zh-Hant</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>fr</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>es</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>ja</string>"
+    ZLPE_MAC_LOCALES_XML += "        <string>ru</string>"
+    # 每行要带换行，否则会挤成一行仍能解析、但不好读
+    for(loc, ZLPE_MAC_LOCALES_XML): ZLPE_MAC_LOCALES_XML = "$${ZLPE_MAC_LOCALES_XML}\n"
 }
 
 

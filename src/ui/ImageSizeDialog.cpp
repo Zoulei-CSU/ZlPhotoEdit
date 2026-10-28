@@ -4,6 +4,9 @@
 
 #include "ui/ImageSizeDialog.h"
 
+// 富文本里的提示色（深浅两套在 core/UiTheme.cpp 里成对维护）
+#include "core/UiTheme.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QHBoxLayout>
@@ -160,8 +163,9 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
     //  这里用的是**语义色而不是涨跌色** —— 中文语境里"红"在股票里表示涨，
     //  但在这个对话框里它表示"要变大/有风险"，两者不冲突：缩小时用绿色
     //  是"省资源"的好消息，放大时用橙色是"会变软"的提醒。
-    const QString percentColor = (percent > 100.0) ? QStringLiteral("#c86400")
-                                                   : QStringLiteral("#1f7a1f");
+    const QString percentColor =
+        uitheme::semanticColor(percent > 100.0 ? uitheme::Semantic::Warning
+                                               : uitheme::Semantic::Success);
     // 两轴一致（锁定长宽比时的常态）只写一个数；不一致就写明是哪一维。
     if (qAbs(pw - ph) < 0.05) {
         html += QStringLiteral("　<span style='color:%1'><b>%2%</b></span>")
@@ -181,7 +185,8 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
         // ★ 放大不是"更清晰" ★
         //   这是最需要主动说明的一条：大量用户认为把图放大 200% 会让它
         //   更清楚。重采样只能插值，无法凭空造出细节。
-        html += QStringLiteral("<br><span style='color:#c86400'>")
+        html += QStringLiteral("<br><span style='color:%1'>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Warning))
               + tr("Enlarging: resampling cannot invent detail; the image "
                    "will soften. When you need more resolution, look for "
                    "the original source material.")
@@ -192,7 +197,8 @@ QString ImageSizeDialog::infoText(const QSize &newSize) const
     const qint64 totalBytes = bytesPerLayer * m_layerCount;
 
     if (totalBytes >= kMemoryWarnBytes) {
-        html += QStringLiteral("<br><span style='color:#b00000'>")
+        html += QStringLiteral("<br><span style='color:%1'>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Danger))
               + tr("Memory note: %1 layers need about %2 in total, and "
                    "undo will store another compressed snapshot before "
                    "and after, so operations may slow noticeably.")

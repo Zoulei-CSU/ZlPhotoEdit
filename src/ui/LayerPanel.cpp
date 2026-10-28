@@ -4,6 +4,7 @@
 #include "core/Layer.h"
 #include "core/LayerList.h"
 #include "ui/IconLibrary.h"
+#include "compat/QtCompat.h"   // isDarkTheme：缩略图棋盘格按深浅取色
 
 #include <QAbstractItemView>
 #include <QApplication>
@@ -72,14 +73,22 @@ QString subtitleFor(const Layer &layer)
 /// 不做这一步的话，透明图层在浅色面板上就是一片白，和"白色图层"分不出来。
 const QPixmap &checkerTile()
 {
+    // 深色主题下换成中灰双色：白格子在大片深灰面板里太跳出，
+    // 缩略图整排看过去像一串白斑。取值与画布的透明棋盘格同一路数。
     static QPixmap tile;
-    if (tile.isNull()) {
+    static bool builtDark = false;
+
+    const bool dark = isDarkTheme();
+    if (tile.isNull() || builtDark != dark) {
+        builtDark = dark;
+        const QColor a = dark ? QColor(96, 96, 99) : QColor(255, 255, 255);
+        const QColor b = dark ? QColor(72, 72, 75)  : QColor(214, 214, 214);
         const int cell = 6;
         tile = QPixmap(cell * 2, cell * 2);
-        tile.fill(QColor(255, 255, 255));
+        tile.fill(a);
         QPainter p(&tile);
-        p.fillRect(0, 0, cell, cell, QColor(214, 214, 214));
-        p.fillRect(cell, cell, cell, cell, QColor(214, 214, 214));
+        p.fillRect(0, 0, cell, cell, b);
+        p.fillRect(cell, cell, cell, cell, b);
         p.end();
     }
     return tile;
@@ -430,6 +439,14 @@ void LayerListWidget::mousePressEvent(QMouseEvent *event)
     }
 
     QListWidget::mousePressEvent(event);
+}
+
+void LayerListWidget::changeEvent(QEvent *event)
+{
+    QListWidget::changeEvent(event);
+    // 缩略图的棋盘格按深浅取色，换主题后要重绘整列
+    if (event->type() == QEvent::PaletteChange)
+        viewport()->update();
 }
 
 void LayerListWidget::dragEnterEvent(QDragEnterEvent *event)

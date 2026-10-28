@@ -3671,6 +3671,64 @@ static void testUiLanguage()
     check(!uilang::installTranslator(qApp, src),
           "★ 源码语言不安装翻译器：返回 false 且不留已装的翻译");
 
+    // ── locale 名 → 语言代码的分流 ──
+    //
+    //  ★ 这一段是本组最值钱的部分 ★
+    //    本机是 Windows，造不出 macOS 的"首选语言列表"。而 macOS 那个
+    //    bug 的根因正是**分流没被钉住**：QLocale::system() 在系统语言
+    //    列表有多条时给 en_US，程序于是判成英文。分流规则一旦写成纯函数
+    //    并逐条断言，"简体中文被判成英文"就不可能悄悄回来。
+    struct { const char *locale; const char *want; } kCases[] = {
+        // 简体：带 Hans、带地区、裸 zh 都要落到 zh_CN
+        {"zh-Hans-CN",        "zh_CN"},
+        {"zh-Hans",           "zh_CN"},
+        {"zh_CN",             "zh_CN"},
+        {"zh",                "zh_CN"},
+        {"zh-Hans-SG",        "zh_CN"},
+        // 繁体：只有带 Hant 才分流到 zh_TW
+        {"zh-Hant-TW",        "zh_TW"},
+        {"zh_Hant",           "zh_TW"},
+        {"zh-Hant-HK",        "zh_TW"},
+        // 其它已翻译语言，地区不影响
+        {"fr",                "fr"},
+        {"fr-CA",             "fr"},
+        {"ja-JP",             "ja"},
+        {"ru-RU",             "ru"},
+        {"es-419",            "es"},
+        {"en-US",             "en"},
+        // 无翻译语言 → 空串（由调用方继续往下找/兜底）
+        {"de-DE",             ""},
+        {"it",                ""},
+        {"",                  ""},
+    };
+    for (const auto &c : kCases) {
+        const QString got = uilang::codeFromLocaleName(QString::fromLatin1(c.locale));
+        // 描述串是 QString，checkStr 只要 const char* —— 先落到局部对象再取，
+        // 别用 qPrintable(临时) 那种悬空指针的写法。
+        const QByteArray what =
+            QStringLiteral("★ locale \"%1\" → \"%2\"")
+                .arg(QString::fromLatin1(c.locale),
+                     QString::fromLatin1(c.want)).toUtf8();
+        checkStr(got, QString::fromLatin1(c.want), what.constData());
+    }
+
+    // ── 顺序意义：列表里第一条认得的语言说了算 ──
+    //   macOS 的 uiLanguages() 就是按用户偏好顺序返回；这里模拟
+    //   "首选简体中文、次选英文"必须给 zh_CN，而不是被后面的 en 抢走。
+    {
+        const QStringList pref = {QStringLiteral("zh-Hans-CN"),
+                                  QStringLiteral("en-US"),
+                                  QStringLiteral("fr")};
+        QString first;
+        for (const QString &n : pref) {
+            first = uilang::codeFromLocaleName(n);
+            if (!first.isEmpty())
+                break;
+        }
+        checkStr(first, QStringLiteral("zh_CN"),
+                 "★ 多语言偏好取第一条认得的（简体优先于其后的英文）");
+    }
+
     // 恢复现场：本组写过的设置清干净，别影响后面的组
     //（AppInfo 的标题断言会读 currentLanguage()）。
     {

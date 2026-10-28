@@ -1450,24 +1450,29 @@ QIcon MainWindow::makeLetterIcon(const QString &text) const
 //    用户会以为颜色没改成功。
 void MainWindow::updateColorIndicators()
 {
+    // 边框走 palette(mid)：浅色主题下是深灰、深色主题下自动提亮，
+    // 写死 #666 的话深色底上边框基本消失，色块看不出轮廓。
+    // 边框是"框"而不是"底色"，所以不随前景色变化。
+    const QString borderColor = QStringLiteral("palette(mid)");
+
     // 工具箱指示器
     if (auto *btn = findChild<QToolButton *>(QStringLiteral("toolBoxColorIndicator"))) {
         const QColor c = m_foregroundColor;
         btn->setStyleSheet(QStringLiteral(
-            "QToolButton { background-color: %1; border: 2px solid #666; border-radius: 3px; }")
-                .arg(c.name(QColor::HexRgb)));
+            "QToolButton { background-color: %1; border: 2px solid %2; border-radius: 3px; }")
+                .arg(c.name(QColor::HexRgb), borderColor));
     }
 
     // 颜色面板的前景/背景色块
     if (auto *fg = findChild<QPushButton *>(QStringLiteral("foregroundSwatch"))) {
         fg->setStyleSheet(QStringLiteral(
-            "QPushButton { background-color: %1; border: 2px solid #666; }")
-                .arg(m_foregroundColor.name(QColor::HexRgb)));
+            "QPushButton { background-color: %1; border: 2px solid %2; }")
+                .arg(m_foregroundColor.name(QColor::HexRgb), borderColor));
     }
     if (auto *bg = findChild<QPushButton *>(QStringLiteral("backgroundSwatch"))) {
         bg->setStyleSheet(QStringLiteral(
-            "QPushButton { background-color: %1; border: 2px solid #666; }")
-                .arg(m_backgroundColor.name(QColor::HexRgb)));
+            "QPushButton { background-color: %1; border: 2px solid %2; }")
+                .arg(m_backgroundColor.name(QColor::HexRgb), borderColor));
     }
 }
 

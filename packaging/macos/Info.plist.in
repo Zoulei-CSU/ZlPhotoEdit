@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- ★ 占位符统一用 @VAR@ ★
+         qmake 处理 QMAKE_INFO_PLIST 时替换的就是这种形式；CMake 侧显式
+         调 configure_file(... @ONLY) 生成到构建目录后再交给
+         MACOSX_BUNDLE_INFO_PLIST。两条构建路径共用这一份模板，
+         不会出现"只改到一条路"的情况。 -->
+    <key>CFBundleExecutable</key>
+    <string>@EXECUTABLE_NAME@</string>
+
+    <key>CFBundleName</key>
+    <string>ZlPhotoEdit</string>
+    <key>CFBundleDisplayName</key>
+    <string>ZlPhotoEdit</string>
+
+    <key>CFBundleIdentifier</key>
+    <string>@PRODUCT_BUNDLE_IDENTIFIER@</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>@QMAKE_PKGINFO_TYPEINFO@</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@ZLPE_APP_VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@ZLPE_APP_VERSION@</string>
+
+    <key>CFBundleIconFile</key>
+    <string>@ASSETCATALOG_COMPILER_APPICON_NAME@</string>
+
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <!-- 允许混合本地化：系统语言不在声明列表里时仍按各自资源取本地化，
+         而不是整包回落到 DevelopmentRegion。 -->
+    <key>CFBundleAllowMixedLocalizations</key>
+    <true/>
+
+    <!-- 本应用声明的界面语言。
+         这是「跟随系统」在 macOS 上能生效的前提：系统只会把**应用声明
+         支持的语言**里的哪一种传给进程。不声明的话，即便用户在系统里把
+         简体中文排第一，CFLocaleCopyCurrent() 也会给出 en_US ——
+         程序于是判成英文，这正是"自动跟随系统不跟随简体中文"的根因。
+         清单由构建设置里的语言表生成，不要手改。 -->
+    <key>CFBundleLocalizations</key>
+    <array>
+@ZLPE_MAC_LOCALES_XML@    </array>
+
+    <!-- 最低系统版本，与部署目标一致 -->
+    <key>LSMinimumSystemVersion</key>
+    <string>@MACOSX_DEPLOYMENT_TARGET@</string>
+
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+</dict>
+</plist>

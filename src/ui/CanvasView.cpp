@@ -1545,8 +1545,11 @@ void CanvasView::paintEvent(QPaintEvent *event)
     drawBackground(painter, rect());
 
     if (effectiveCanvasSize().isEmpty()) {
-        // 没有文档时画一句提示，比一片空白友好
-        painter.setPen(QColor(150, 150, 150));
+        // 没有文档时画一句提示，比一片空白友好。
+        // 颜色跟着画布外围色提亮/压暗一档：深底上固定 150 会偏亮刺眼，
+        // 而浅底上又刚好够用，所以按同一档偏移走。
+        const int hint = isDarkTheme() ? 130 : 150;
+        painter.setPen(QColor(hint, hint, hint));
         painter.drawText(rect(), Qt::AlignCenter, tr("No document open"));
         return;
     }
@@ -1661,11 +1664,16 @@ void CanvasView::drawCheckerboard(QPainter &painter, const QRectF &clipRect)
 {
     // ★ 本函数在**控件坐标**下执行（调用者已 resetTransform）★
     //
-    //  棋盘格的两个颜色是透明背景的行业标准配色。
-    //  用固有色而不是 palette 的颜色：棋盘格是"图像内容的一部分语义"，
-    //  不应该随系统主题变色（否则同一个文件在不同主题下看起来不一样）。
-    const QColor light(255, 255, 255);
-    const QColor dark(204, 204, 204);
+    //  棋盘格的颜色**要跟主题走**，不能恒为白灰。
+    //  浅色主题下白 + 浅灰是行业标准；但深色主题里那块白（255）比
+    //  周围的深灰外壳亮两百多级，缩小的图整个淹没在一块刺眼的白斑里，
+    //  眼睛要从暗环境反复适应高亮区。
+    //  深色下改成中灰 + 稍深灰（约 96/72）：仍能一眼看出是"透明"的棋盘格，
+    //  又不会跳出色阶。两者都保持"低对比、双色交替"这个透明语义，
+    //  只是整体压到与深色界面相称的亮度。
+    const bool dark_theme = isDarkTheme();
+    const QColor light = dark_theme ? QColor(96, 96, 99) : QColor(255, 255, 255);
+    const QColor dark  = dark_theme ? QColor(72, 72, 75)  : QColor(204, 204, 204);
 
     const int cell = m_checkerboardSize;
 
@@ -2602,6 +2610,15 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event)
 // ============================================================================
 //  输入：窗口尺寸变化
 // ============================================================================
+
+void CanvasView::changeEvent(QEvent *event)
+{
+    QWidget::changeEvent(event);
+    // 棋盘格与画布外围色都按深浅取值，换主题后必须重绘一次。
+    // 只认 PaletteChange：主题切换走的就是这条（见 uitheme::applyTheme）。
+    if (event->type() == QEvent::PaletteChange)
+        update();
+}
 
 void CanvasView::resizeEvent(QResizeEvent *event)
 {

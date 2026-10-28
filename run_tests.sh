@@ -40,6 +40,12 @@
 #         在 moc_headers_for / extra_libs_for / needs_resources_for 里各加一行；
 #      ③ 文件末尾那段"全量清单"里加一句 run_one <短名>，
 #         否则 ./run_tests.sh（不带参数）不会跑它。
+#
+#  ★ 改源码让某个 .cpp 多了一句跨文件调用，要回头补依赖清单 ★
+#    LNK2019 只会在**该组测试真的链接到那个 .obj** 时才冒出来 ——
+#    而被调用者不在清单里，症状是"程序编得好好的、某一组测试挂掉"。
+#    找它的办法不是猜：把报错里提到的那两个符号反查回 .cpp，再补给
+#    所有链接了调用方的组。
 # ============================================================================
 
 set -e
@@ -802,6 +808,7 @@ run_one() {
                 src/ui/ImageSizeDialog.cpp \
                 src/ui/CanvasSizeDialog.cpp \
                 src/ui/RotateImageDialog.cpp \
+                src/core/UiTheme.cpp \
                 src/engine/Adjust.cpp \
                 src/engine/Curves.cpp \
                 src/engine/Lut.cpp \

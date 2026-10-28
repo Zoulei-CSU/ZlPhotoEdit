@@ -13,6 +13,11 @@
 namespace zl {
 namespace uilang {
 
+// codeFromLocaleName 的定义在文件后半 —— 刻意放在匿名 namespace 之外，
+// 因为它是对外接口（测试要调）。deriveFromLocale 在它之前，先声明一下；
+// 这句必须写在匿名 namespace 外，否则声明成内部链接、与外面的定义打架。
+QString codeFromLocaleName(const QString &name);
+
 namespace {
 
 // ---------------------------------------------------------------------------
@@ -69,22 +74,34 @@ const QStringList kEmbeddedLanguages = {
 
 QString deriveFromLocale()
 {
-    // 中文环境按字形分流：繁体（台/港/澳）→ zh_TW，其余（简体）→ zh_CN。
-    // （用 script 而非 language 判：zh_HK / zh_MO 的 language 都是 Chinese，
-    //   只有字形是繁体；2026-10-14 加 zh_TW 翻译时补的这一支。）
-    if (QLocale::system().language() == QLocale::Chinese) {
-        if (QLocale::system().script() == QLocale::TraditionalChineseScript)
+    // ★ 先走 uiLanguages()，再回落 language() ★
+    //    macOS 上 QLocale::system() 读的是 CFLocaleCopyCurrent()，在系统的
+    //    "首选语言"列表里有多条时，它经常给出 en_US 而不是排第一的语言 ——
+    //    表现为系统明明是简体中文、程序却判成英文。uiLanguages() 按用户
+    //    偏好顺序返回整个列表，取第一个认得的才是"跟随系统"的本意。
+    //    其它平台（Win/Linux）uiLanguages() 也正确实现，两条路一致。
+    const QStringList preferred = QLocale::system().uiLanguages();
+    for (const QString &name : preferred) {
+        const QString code = codeFromLocaleName(name);
+        if (!code.isEmpty())
+            return code;
+    }
+
+    // uiLanguages() 为空（极旧平台 / 被裁掉的构建）时回落到 language()。
+    // 中文按字形分流：繁体（台/港/澳）→ zh_TW，其余（简体）→ zh_CN。
+    const QLocale sys = QLocale::system();
+    if (sys.language() == QLocale::Chinese) {
+        if (sys.script() == QLocale::TraditionalChineseScript)
             return QLatin1String("zh_TW");
         return QLatin1String("zh_CN");
     }
-    // 法 / 西 / 日 / 俄环境 → 各自语言（2026-10-15 加翻译时补）
-    if (QLocale::system().language() == QLocale::French)
+    if (sys.language() == QLocale::French)
         return QLatin1String("fr");
-    if (QLocale::system().language() == QLocale::Spanish)
+    if (sys.language() == QLocale::Spanish)
         return QLatin1String("es");
-    if (QLocale::system().language() == QLocale::Japanese)
+    if (sys.language() == QLocale::Japanese)
         return QLatin1String("ja");
-    if (QLocale::system().language() == QLocale::Russian)
+    if (sys.language() == QLocale::Russian)
         return QLatin1String("ru");
     // 其余语言（德语/意大利语/...）没有翻译 —— 英文兜底，
     // 与 currentLanguage() 第 ③ 步同一个来源（kSourceLanguage）。
@@ -92,6 +109,41 @@ QString deriveFromLocale()
 }
 
 } // anonymous namespace
+
+// ---------------------------------------------------------------------------
+//  locale 名 → 语言代码
+// ---------------------------------------------------------------------------
+//  ★ 定义放在匿名 namespace **外面** ★
+//    它在 UiLanguage.h 里有声明，必须是对外可见的符号 —— 放进匿名 namespace
+//    就成了内部链接，测试程序那边链接时看不到定义（LNK2019）。
+//    而 deriveFromLocale 只是内部用，留在匿名 namespace 里没问题。
+
+QString codeFromLocaleName(const QString &name)
+{
+    const QString lower = name.toLower();
+    // 形式可能是 "zh-hans-cn" / "zh_cn" / "zh" —— 取第一个分隔符前的一段
+    QString lang = lower.section(QLatin1Char('-'), 0, 0);
+    lang = lang.section(QLatin1Char('_'), 0, 0);
+
+    if (lang == QLatin1String("zh")) {
+        // 带 hant 的才是繁体；未标注字形的（macOS 的 "zh"）按简体，
+        // 与系统"中文（简体）"为默认的实际情况一致。
+        if (lower.contains(QLatin1String("hant")))
+            return QLatin1String("zh_TW");
+        return QLatin1String("zh_CN");
+    }
+    if (lang == QLatin1String("fr"))
+        return QLatin1String("fr");
+    if (lang == QLatin1String("es"))
+        return QLatin1String("es");
+    if (lang == QLatin1String("ja"))
+        return QLatin1String("ja");
+    if (lang == QLatin1String("ru"))
+        return QLatin1String("ru");
+    if (lang == QLatin1String("en"))
+        return QLatin1String("en");
+    return QString();
+}
 
 // ---------------------------------------------------------------------------
 //  查询

@@ -708,8 +708,8 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="417"/>
-        <source>&lt;span style=&apos;color:#333333&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; will be cropped</source>
-        <translation>&lt;span style=&apos;color:#333333&apos;&gt;實線&lt;/span&gt; = 新畫布&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;虛線&lt;/span&gt; = 原畫布範圍&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; 內容&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; 將被裁掉</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:%2&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; will be cropped</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;實線&lt;/span&gt; = 新畫布&#x3000;&lt;span style=&apos;color:%2&apos;&gt;虛線&lt;/span&gt; = 原畫布範圍&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; 內容&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; 將被裁掉</translation>
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="484"/>
@@ -3530,8 +3530,8 @@ Unchecked: always move the content of the active layer</source>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="239"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;輸入角度後畫布會自動擴大，內容不會被裁切。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;輸入角度後畫布會自動擴大，內容不會被裁切。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="247"/>
@@ -3541,18 +3541,18 @@ Unchecked: always move the content of the active layer</source>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="250"/>
-        <source>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° 是 90° 的整數倍：整數座標重排，&lt;b&gt;像素無損&lt;/b&gt;，也沒有需要填充的區域。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;%2° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;%2° 是 90° 的整數倍：整數座標重排，&lt;b&gt;像素無損&lt;/b&gt;，也沒有需要填充的區域。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="268"/>
-        <source>&lt;span style=&apos;color:#c86400&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%1%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#c86400&apos;&gt;畫布自動擴大到能容納旋轉結果，內容不會被裁切；四角約 &lt;b&gt;%1%&lt;/b&gt; 的面積需要填充。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%2%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;畫布自動擴大到能容納旋轉結果，內容不會被裁切；四角約 &lt;b&gt;%2%&lt;/b&gt; 的面積需要填充。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="273"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;任意角度會重新取樣，&lt;b&gt;不可逆&lt;/b&gt;：轉過去再轉回來，像素回不到原樣。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;任意角度會重新取樣，&lt;b&gt;不可逆&lt;/b&gt;：轉過去再轉回來，像素回不到原樣。&lt;/span&gt;</translation>
     </message>
 </context>
 <context>

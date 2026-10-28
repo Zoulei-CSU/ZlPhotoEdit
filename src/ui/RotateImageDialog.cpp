@@ -4,6 +4,9 @@
 
 #include "ui/RotateImageDialog.h"
 
+// 富文本里的提示色（深浅两套在 core/UiTheme.cpp 里成对维护）
+#include "core/UiTheme.h"
+
 #include "engine/Geometry.h"
 
 #include <QComboBox>
@@ -236,9 +239,10 @@ QString RotateImageDialog::infoText() const
     if (qFuzzyIsNull(m_angle)) {
         html += tr("<b>Not rotated</b>: neither the canvas nor the content changes.");
         html += QStringLiteral("<br>");
-        html += tr("<span style='color:#666666'>Once you enter an angle the "
+        html += tr("<span style='color:%1'>Once you enter an angle the "
                    "canvas grows automatically, and the content is not "
-                   "cropped.</span>");
+                   "cropped.</span>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Secondary));
         return html;
     }
 
@@ -247,9 +251,10 @@ QString RotateImageDialog::infoText() const
         html += tr("<b>Canvas after rotation: %1 × %2 px</b>")
                     .arg(newSize.width()).arg(newSize.height());
         html += QStringLiteral("<br>");
-        html += tr("<span style='color:#1f7a1f'>%1° is a multiple of 90°: "
+        html += tr("<span style='color:%1'>%2° is a multiple of 90°: "
                    "integer coordinates are rearranged, <b>pixels are "
                    "lossless</b>, and there is nothing to fill.</span>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Success))
                     .arg(QString::number(m_angle, 'f', 1));
         return html;
     }
@@ -265,14 +270,16 @@ QString RotateImageDialog::infoText() const
     html += tr("<b>Canvas after rotation: %1 × %2 px</b>")
                 .arg(newSize.width()).arg(newSize.height());
     html += QStringLiteral("<br>");
-    html += tr("<span style='color:#c86400'>The canvas grows automatically to "
+    html += tr("<span style='color:%1'>The canvas grows automatically to "
                "hold the rotated result, and the content is not cropped; "
-               "about <b>%1%</b> of the area in the corners needs filling.</span>")
+               "about <b>%2%</b> of the area in the corners needs filling.</span>")
+                .arg(uitheme::semanticColor(uitheme::Semantic::Warning))
                 .arg(QString::number(fillPercent, 'f', 1));
     html += QStringLiteral("<br>");
-    html += tr("<span style='color:#666666'>Arbitrary angles resample and are "
+    html += tr("<span style='color:%1'>Arbitrary angles resample and are "
                "<b>irreversible</b>: rotate back and the pixels will not "
-               "match the original.</span>");
+               "match the original.</span>")
+                .arg(uitheme::semanticColor(uitheme::Semantic::Secondary));
     return html;
 }
 

@@ -709,8 +709,8 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="417"/>
-        <source>&lt;span style=&apos;color:#333333&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; will be cropped</source>
-        <translation>&lt;span style=&apos;color:#333333&apos;&gt;実線&lt;/span&gt; = 新しいカンバス&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;破線&lt;/span&gt; = 元のカンバスの範囲&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; 内容&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; 切り取られます</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:%2&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; will be cropped</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;実線&lt;/span&gt; = 新しいカンバス&#x3000;&lt;span style=&apos;color:%2&apos;&gt;破線&lt;/span&gt; = 元のカンバスの範囲&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; 内容&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; 切り取られます</translation>
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="484"/>
@@ -3543,8 +3543,8 @@ Unchecked: always move the content of the active layer</source>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="239"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;角度を入力すると、カンバスは自動的に拡大し、内容は切り取られません。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;角度を入力すると、カンバスは自動的に拡大し、内容は切り取られません。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="247"/>
@@ -3554,18 +3554,18 @@ Unchecked: always move the content of the active layer</source>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="250"/>
-        <source>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° は 90° の倍数です。整数座標が並べ替えられるだけで、&lt;b&gt;ピクセルは劣化せず&lt;/b&gt;、埋める領域もありません。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;%2° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;%2° は 90° の倍数です。整数座標が並べ替えられるだけで、&lt;b&gt;ピクセルは劣化せず&lt;/b&gt;、埋める領域もありません。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="268"/>
-        <source>&lt;span style=&apos;color:#c86400&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%1%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#c86400&apos;&gt;回転結果を収めるためカンバスは自動的に拡大し、内容は切り取られません。隅の約 &lt;b&gt;%1%&lt;/b&gt; の面積を埋める必要があります。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%2%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;回転結果を収めるためカンバスは自動的に拡大し、内容は切り取られません。隅の約 &lt;b&gt;%2%&lt;/b&gt; の面積を埋める必要があります。&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="273"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;任意角度は再サンプリングを行い、&lt;b&gt;元に戻せません&lt;/b&gt;。戻してもピクセルは元の状態になりません。&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;任意角度は再サンプリングを行い、&lt;b&gt;元に戻せません&lt;/b&gt;。戻してもピクセルは元の状態になりません。&lt;/span&gt;</translation>
     </message>
 </context>
 <context>

@@ -108,6 +108,16 @@ bool installTranslator(QCoreApplication *app, const QString &code);
 ///   浏览器一致。若把语言名也翻译成当前语言，反而要用户先认字。
 QString displayName(const QString &code);
 
+/// 把一个 locale 名（"zh-Hans-CN" / "zh_CN" / "fr-CA" …）归到语言代码。
+/// 认不出来（德语等无翻译的语言）返回空串。
+///
+/// 公开是为了自检：系统 locale 在本机没法造，macOS 的
+/// "首选语言列表"行为更是只能在真机上复现 —— 但分流规则本身是纯字符串
+/// 判断，可以逐条钉死。见 mainwin_test 的"语言：locale 分流"组。
+///
+/// 只按语言前缀判；繁体由 hant 标记识别。
+QString codeFromLocaleName(const QString &localeName);
+
 } // namespace uilang
 } // namespace zl
 

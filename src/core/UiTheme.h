@@ -83,6 +83,27 @@ void applyTheme(Mode mode);
 /// 当前生效的是不是深色（供自检断言用，不参与绘制决策）。
 bool isDark();
 
+/// 富文本里用的语义色。
+///
+/// ★ 为什么需要这一组，而不是直接写 #666666 ★
+///   富文本（QLabel 的 RichText）里写不了 palette(mid) 这类**动态引用**，
+///   样式表才支持。写死一个灰在深色底上就几乎看不见。
+///   这里按当前主题返回深浅两套里的那一套，调用方拼进 HTML 即可。
+///
+/// ★ 深浅两套必须成对改 ★
+///   只改一个主题下的取值，症状是"某个主题下这段提示字看不清"。
+enum class Semantic {
+    Primary,    ///< 正文（与 WindowText 同义，供图例等与正文并排的场合）
+    Secondary,  ///< 次要说明（等价于 palette(mid)）
+    Info,       ///< 中性提示
+    Success,    ///< 保留、无损失
+    Warning,    ///< 变化、需留意
+    Danger,     ///< 裁切、破坏性
+};
+
+/// 语义色 → "#RRGGBB"（可直接拼进富文本）。
+QString semanticColor(Semantic role);
+
 } // namespace uitheme
 } // namespace zl
 

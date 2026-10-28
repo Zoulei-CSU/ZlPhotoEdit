@@ -4,6 +4,9 @@
 
 #include "ui/CanvasSizeDialog.h"
 
+// 富文本里的提示色（深浅两套在 core/UiTheme.cpp 里成对维护）
+#include "core/UiTheme.h"
+
 #include <QAbstractButton>
 #include <QButtonGroup>
 #include <QColorDialog>
@@ -414,10 +417,16 @@ CanvasSizeDialog::CanvasSizeDialog(const QSize &original,
     m_legend = new QLabel(extra);
     m_legend->setObjectName(QStringLiteral("labelLegend"));
     m_legend->setTextFormat(Qt::RichText);
-    m_legend->setText(tr("<span style='color:#333333'>Solid</span> = new canvas　"
-                         "<span style='color:#5a5a5a'>Dashed</span> = original canvas extent　"
-                         "<span style='color:#2a6eb4'>■</span> content　"
-                         "<span style='color:#c82828'>■</span> will be cropped"));
+    // 富文本里写不了 palette(mid)，颜色一律走 uitheme 的语义色
+    //（深浅两套都在那一处维护，这里不写死）。
+    m_legend->setText(tr("<span style='color:%1'>Solid</span> = new canvas　"
+                         "<span style='color:%2'>Dashed</span> = original canvas extent　"
+                         "<span style='color:%3'>■</span> content　"
+                         "<span style='color:%4'>■</span> will be cropped")
+                          .arg(uitheme::semanticColor(uitheme::Semantic::Primary),
+                               uitheme::semanticColor(uitheme::Semantic::Secondary),
+                               uitheme::semanticColor(uitheme::Semantic::Info),
+                               uitheme::semanticColor(uitheme::Semantic::Danger)));
     v->addWidget(m_legend);
 
     // ── 交给基类完成整体布局 ──
@@ -497,10 +506,11 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
     // 半个百分点以下不值得一说：那只是取整带来的抖动
     if (oldArea > 0.0 && qAbs(newArea - oldArea) > 0.005 * oldArea) {
         const double pct = 100.0 * (newArea - oldArea) / oldArea;
-        const QString color = (pct > 0.0) ? QStringLiteral("#c86400")
-                                          : QStringLiteral("#1f7a1f");
+        // 变色只在这里拼值：富文本不认 palette 引用，统一走语义色
         html += QStringLiteral("　<span style='color:%1'>（面积%2 %3%）</span>")
-                    .arg(color)
+                    .arg(uitheme::semanticColor(pct > 0.0
+                                                    ? uitheme::Semantic::Warning
+                                                    : uitheme::Semantic::Success))
                     .arg(pct > 0.0 ? tr("Enlarge") : tr("Shrink"))
                     .arg(QString::number(qAbs(pct), 'f', 0));
     }
@@ -512,7 +522,8 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
     //   用户会先学会忽略这句话 —— 而它恰恰是最需要被看见的一条。
     const QPoint naive = anchorOffset(anchor(), oldSize, newSize);
     if (offset != naive) {
-        html += QStringLiteral("<br><span style='color:#1f5fa9'>")
+        html += QStringLiteral("<br><span style='color:%1'>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Info))
               + tr("Smart fit: the content will be offset by (%1, %2) pixels "
                    "so that nothing sticking out gets cropped.")
                     .arg(offset.x() - naive.x())
@@ -529,15 +540,18 @@ QString CanvasSizeDialog::infoText(const QSize &newSize) const
         if (crop.top)    parts << tr("Top %1 px").arg(crop.top);
         if (crop.bottom) parts << tr("Bottom %1 px").arg(crop.bottom);
 
-        html += QStringLiteral("<br><span style='color:#b00000'><b>")
+        html += QStringLiteral("<br><span style='color:%1'><b>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Danger))
               + tr("Crop: content will be cropped (%1)").arg(parts.join(tr(", ")))
               + QStringLiteral("</b></span>");
     } else if (m_contentBounds.isEmpty()) {
-        html += QStringLiteral("<br><span style='color:#666666'>")
+        html += QStringLiteral("<br><span style='color:%1'>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Secondary))
               + tr("There is no visible content in the current canvas; resizing will not crop anything.")
               + QStringLiteral("</span>");
     } else {
-        html += QStringLiteral("<br><span style='color:#1f7a1f'>")
+        html += QStringLiteral("<br><span style='color:%1'>")
+                    .arg(uitheme::semanticColor(uitheme::Semantic::Success))
               + tr("The content is fully preserved.")
               + QStringLiteral("</span>");
     }

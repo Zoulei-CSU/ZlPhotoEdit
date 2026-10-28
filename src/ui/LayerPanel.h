@@ -174,6 +174,9 @@ signals:
     void filesDropped(const QStringList &paths);
 
 protected:
+    /// 换主题要重绘：缩略图棋盘格按深浅取色（见 checkerTile）。
+    void changeEvent(QEvent *event) override;
+
     // 外部文件拖放。★ 必须在这里接住，否则文件永远打不开 ★
     //   Qt 找拖放目标时从鼠标下最内层控件往上找第一个 acceptDrops() 的控件，
     //   找到就只发给它 —— 它在 dropEvent 里 ignore() 也不会回退给父控件。

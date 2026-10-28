@@ -11,6 +11,8 @@
 #include <QPixmap>
 #include <QFontMetrics>
 #include <QLineEdit>   // QComboBox 处于可编辑状态时用它才是输入控件，需要完整类型
+#include <QGuiApplication>   // makeColorSwatch 取应用 palette 定边框色
+#include <QPalette>
 
 namespace zl {
 
@@ -29,7 +31,10 @@ QPixmap makeColorSwatch(const QColor &c, int size = kSwatchSize)
 
     QPainter p(&pm);
     // 不抗锯齿：色块是正方形，抗锯齿只会让边缘变糊
-    p.setPen(QColor(110, 110, 110));
+    // 边框取 palette(mid)：写死 110 的灰在深色状态栏上没有轮廓，
+    // 色块会与底色连成一片。这里是自由函数，取应用级 palette。
+    const QColor border = QGuiApplication::palette().color(QPalette::Mid);
+    p.setPen(border.isValid() ? border : QColor(110, 110, 110));
     // 背景透明时用棋盘格表示 —— 否则用户看不出"这是透明而不是白色"
     if (!c.isValid() || c.alpha() == 0) {
         const int half = size / 2;

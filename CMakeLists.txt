@@ -332,8 +332,49 @@ if(APPLE)
     #   裸可执行文件它直接报错退出 —— 所以 MACOSX_BUNDLE 不是可选项。
     #
     #   qmake 侧（.pro）默认就是 bundle，所以这里只是把 CMake 侧对齐。
+    # ★ plist 里的语言清单由 ZLPE_LANG_CODES 推导，不再手抄一份 ★
+    #   Apple 认 "zh-Hans" / "zh-Hant"，工程内部用 "zh_CN" / "zh_TW"，
+    #   这里做一次映射；其余语言代码 Apple 与内部写法一致。
+    #   末尾补 en —— 源码语言，也是 CFBundleDevelopmentRegion。
+    set(ZLPE_MAC_LOCALES "en")
+    foreach(_lang IN LISTS ZLPE_LANG_CODES)
+        if(_lang STREQUAL "zh_CN")
+            list(APPEND ZLPE_MAC_LOCALES "zh-Hans")
+        elseif(_lang STREQUAL "zh_TW")
+            list(APPEND ZLPE_MAC_LOCALES "zh-Hant")
+        else()
+            list(APPEND ZLPE_MAC_LOCALES "${_lang}")
+        endif()
+    endforeach()
+    # plist 里是一个 <array>，需要 "<string>x</string>" 逐条拼成一段文本
+    set(ZLPE_MAC_LOCALES_XML "")
+    foreach(_loc IN LISTS ZLPE_MAC_LOCALES)
+        string(APPEND ZLPE_MAC_LOCALES_XML "        <string>${_loc}</string>\n")
+    endforeach()
+
+    # 模板占位符是 @VAR@（与 qmake 侧共用一份），所以这里补上 qmake 的
+    # 那套变量名，并用 configure_file(@ONLY) 生成到构建目录。
+    set(EXECUTABLE_NAME "ZlPhotoEdit")
+    set(PRODUCT_BUNDLE_IDENTIFIER "cn.zlstudio.ZlPhotoEdit")
+    set(QMAKE_PKGINFO_TYPEINFO "????")
+    set(ASSETCATALOG_COMPILER_APPICON_NAME "logo.icns")
+    set(ZLPE_APP_VERSION "${PROJECT_VERSION}")
+    set(MACOSX_DEPLOYMENT_TARGET "${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/packaging/macos/Info.plist.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
+        @ONLY
+    )
+
     set_target_properties(ZlPhotoEdit PROPERTIES
         MACOSX_BUNDLE TRUE
+        # ★ 自定义 Info.plist 模板 ★
+        #   默认模板里没有 CFBundleLocalizations，而系统只会把"应用声明
+        #   支持的语言"里的哪一种传给进程 —— 不声明时，即便用户把简体
+        #   中文排在首位，CFLocaleCopyCurrent() 也给 en_US，程序判成英文。
+        #   这就是"自动跟随系统却跟到英文"的根因。
+        MACOSX_BUNDLE_INFO_PLIST
+            "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
         MACOSX_BUNDLE_BUNDLE_NAME "ZlPhotoEdit"
         # ★ CFBundleIdentifier 必须写成反向域名；macdeployqt / codesign 都读它。
         MACOSX_BUNDLE_GUI_IDENTIFIER "cn.zlstudio.ZlPhotoEdit"

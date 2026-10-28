@@ -709,8 +709,8 @@ Desactivado: rellena todos los píxeles dentro de la tolerancia de toda la image
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="417"/>
-        <source>&lt;span style=&apos;color:#333333&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; will be cropped</source>
-        <translation>&lt;span style=&apos;color:#333333&apos;&gt;Continuo&lt;/span&gt; = lienzo nuevo&#x3000;&lt;span style=&apos;color:#5a5a5a&apos;&gt;Discontinuo&lt;/span&gt; = extensión del lienzo original&#x3000;&lt;span style=&apos;color:#2a6eb4&apos;&gt;■&lt;/span&gt; contenido&#x3000;&lt;span style=&apos;color:#c82828&apos;&gt;■&lt;/span&gt; se recortará</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Solid&lt;/span&gt; = new canvas&#x3000;&lt;span style=&apos;color:%2&apos;&gt;Dashed&lt;/span&gt; = original canvas extent&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; content&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; will be cropped</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;Continuo&lt;/span&gt; = lienzo nuevo&#x3000;&lt;span style=&apos;color:%2&apos;&gt;Discontinuo&lt;/span&gt; = extensión del lienzo original&#x3000;&lt;span style=&apos;color:%3&apos;&gt;■&lt;/span&gt; contenido&#x3000;&lt;span style=&apos;color:%4&apos;&gt;■&lt;/span&gt; se recortará</translation>
     </message>
     <message>
         <location filename="../src/ui/CanvasSizeDialog.cpp" line="484"/>
@@ -3543,8 +3543,8 @@ Desactivado: mueve siempre el contenido de la capa activa</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="239"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;En cuanto introduzcas un ángulo, el lienzo crece automáticamente y el contenido no se recorta.&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Once you enter an angle the canvas grows automatically, and the content is not cropped.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;En cuanto introduzcas un ángulo, el lienzo crece automáticamente y el contenido no se recorta.&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="247"/>
@@ -3554,18 +3554,18 @@ Desactivado: mueve siempre el contenido de la capa activa</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="250"/>
-        <source>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#1f7a1f&apos;&gt;%1° es múltiplo de 90°: se reordenan las coordenadas enteras, &lt;b&gt;los píxeles no sufren pérdidas&lt;/b&gt; y no hay nada que rellenar.&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;%2° is a multiple of 90°: integer coordinates are rearranged, &lt;b&gt;pixels are lossless&lt;/b&gt;, and there is nothing to fill.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;%2° es múltiplo de 90°: se reordenan las coordenadas enteras, &lt;b&gt;los píxeles no sufren pérdidas&lt;/b&gt; y no hay nada que rellenar.&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="268"/>
-        <source>&lt;span style=&apos;color:#c86400&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%1%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#c86400&apos;&gt;El lienzo crece automáticamente para alojar el resultado rotado y el contenido no se recorta; alrededor del &lt;b&gt;%1%&lt;/b&gt; del área de las esquinas necesita relleno.&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;The canvas grows automatically to hold the rotated result, and the content is not cropped; about &lt;b&gt;%2%&lt;/b&gt; of the area in the corners needs filling.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;El lienzo crece automáticamente para alojar el resultado rotado y el contenido no se recorta; alrededor del &lt;b&gt;%2%&lt;/b&gt; del área de las esquinas necesita relleno.&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../src/ui/RotateImageDialog.cpp" line="273"/>
-        <source>&lt;span style=&apos;color:#666666&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
-        <translation>&lt;span style=&apos;color:#666666&apos;&gt;Los ángulos arbitrarios remuestrean y son &lt;b&gt;irreversibles&lt;/b&gt;: si vuelves a rotar, los píxeles no coincidirán con los originales.&lt;/span&gt;</translation>
+        <source>&lt;span style=&apos;color:%1&apos;&gt;Arbitrary angles resample and are &lt;b&gt;irreversible&lt;/b&gt;: rotate back and the pixels will not match the original.&lt;/span&gt;</source>
+        <translation>&lt;span style=&apos;color:%1&apos;&gt;Los ángulos arbitrarios remuestrean y son &lt;b&gt;irreversibles&lt;/b&gt;: si vuelves a rotar, los píxeles no coincidirán con los originales.&lt;/span&gt;</translation>
     </message>
 </context>
 <context>

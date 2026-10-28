@@ -343,6 +343,9 @@ signals:
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+    /// 主题切换要重取棋盘格颜色（它跟深浅走），见 drawCheckerboard。
+    void changeEvent(QEvent *event) override;
+
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;

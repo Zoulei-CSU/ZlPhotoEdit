@@ -84,6 +84,12 @@ QPalette lightPalette()
     p.setColor(QPalette::HighlightedText, QColor(0xFF, 0xFF, 0xFF));
     p.setColor(QPalette::Link,            accent);
     p.setColor(QPalette::Mid,             mid);
+    // 派生边框/分隔用的三档明度。不设的话全靠 Fusion 从 Button 推，
+    // 取值不受控；标尺用 Midlight 画分界线，必须给准。
+    p.setColor(QPalette::Midlight,        QColor(0xD4, 0xD4, 0xD4));
+    p.setColor(QPalette::Light,           QColor(0xFF, 0xFF, 0xFF));
+    p.setColor(QPalette::Dark,            QColor(0xB8, 0xB8, 0xB8));
+    p.setColor(QPalette::Shadow,          QColor(0x70, 0x70, 0x70));
 
     // 禁用态：三组都要给，漏一组就有控件在禁用时仍是黑字
     p.setColor(QPalette::Disabled, QPalette::WindowText,      disabled);
@@ -121,6 +127,13 @@ QPalette darkPalette()
     p.setColor(QPalette::HighlightedText, QColor(0xFF, 0xFF, 0xFF));
     p.setColor(QPalette::Link,            QColor(0x6E, 0xAF, 0xEF));
     p.setColor(QPalette::Mid,             mid);
+    // 与浅色同构，但方向全靠"窗口底之上/之下"重新排：
+    // Light 比底亮、Midlight 介于底与 Mid 之间、Dark/Shadow 更暗。
+    // 深色下 Midlight 必须**亮于**窗口（53），否则分界线看不见。
+    p.setColor(QPalette::Midlight,        QColor(0x4A, 0x4A, 0x4E));
+    p.setColor(QPalette::Light,           QColor(0x62, 0x62, 0x66));
+    p.setColor(QPalette::Dark,            QColor(0x1E, 0x1E, 0x21));
+    p.setColor(QPalette::Shadow,          QColor(0x10, 0x10, 0x12));
 
     p.setColor(QPalette::Disabled, QPalette::WindowText,      disabled);
     p.setColor(QPalette::Disabled, QPalette::Text,            disabled);
@@ -232,6 +245,37 @@ void captureSystem()
 bool isDark()
 {
     return zl::isDarkTheme();
+}
+
+// ---------------------------------------------------------------------------
+//  富文本语义色
+// ---------------------------------------------------------------------------
+//  ★ 与上面两套 palette 分开，是为了"给富文本用"这一个目的 ★
+//    palette 里的角色不能直接拼进 HTML（那里只认字面色值），
+//    所以照两个主题各备一套同构的色值。
+//
+//  ★ 深浅两套一一对应、成对维护 ★
+//    只改一边的症状是"某个主题下这段提示字糊在底色里"。
+//    深色一侧统一提亮、降饱和：原样的 #666 压在 #252528 上等于没有。
+QString semanticColor(Semantic role)
+{
+    const bool dark = isDark();
+
+    switch (role) {
+    case Semantic::Primary:
+        return dark ? QStringLiteral("#E6E6E6") : QStringLiteral("#333333");
+    case Semantic::Secondary:
+        return dark ? QStringLiteral("#A0A0A4") : QStringLiteral("#666666");
+    case Semantic::Info:
+        return dark ? QStringLiteral("#6FA8DC") : QStringLiteral("#1F5FA9");
+    case Semantic::Success:
+        return dark ? QStringLiteral("#6FBF73") : QStringLiteral("#1F7A1F");
+    case Semantic::Warning:
+        return dark ? QStringLiteral("#E0A24C") : QStringLiteral("#C86400");
+    case Semantic::Danger:
+        return dark ? QStringLiteral("#E06C6C") : QStringLiteral("#B00000");
+    }
+    return dark ? QStringLiteral("#E6E6E6") : QStringLiteral("#333333");
 }
 
 void applyTheme(Mode mode)
