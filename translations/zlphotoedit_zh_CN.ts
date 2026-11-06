@@ -926,7 +926,7 @@ Unchecked: fill every pixel within tolerance in the whole image, connected or no
     <message>
         <location filename="../src/tools/CropTool.cpp" line="781"/>
         <source>%1 × %2 px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 × %2 像素</translation>
     </message>
     <message>
         <location filename="../src/tools/CropTool.cpp" line="866"/>

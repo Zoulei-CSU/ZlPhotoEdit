@@ -926,7 +926,7 @@ Décoché&#xa0;: remplit tous les pixels dans la tolérance de toute l’image, 
     <message>
         <location filename="../src/tools/CropTool.cpp" line="781"/>
         <source>%1 × %2 px</source>
-        <translation></translation>
+        <translation>%1 × %2 px</translation>
     </message>
     <message>
         <location filename="../src/tools/CropTool.cpp" line="866"/>
