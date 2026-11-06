@@ -610,10 +610,18 @@ QString MainWindow::captureFailureText(CaptureBlock block)
     //   而译文散开之后，改一处忘一处几乎是必然的。
     if (block == CaptureBlock::Wayland) {
         return tr("This Wayland session does not allow applications to read the "
-                  "screen, so the built-in capture cannot work. Take a screenshot "
-                  "with the system shortcut, then press Ctrl+V to paste it here "
-                  "as a new layer.");
+                  "screen and offers no desktop portal, so the built-in capture "
+                  "cannot work. Take a screenshot with the system shortcut, then "
+                  "press Ctrl+V to paste it here as a new layer.");
     }
+
+    // ★ 走门户失败时，原因是可以问出来的 ★
+    //   "用户点了拒绝"和"等了 20 秒没人应答"对用户是两件事：前者重试无用，
+    //   后者重试有用。都压成一句"没抓到内容"，用户只能反复点。
+    const QString detail = screenCaptureLastFailure();
+    if (!detail.isEmpty())
+        return detail;
+
     return tr("Screenshot failed: no screen content captured "
               "(no display may be available)");
 }
@@ -625,6 +633,22 @@ void MainWindow::setScreenCaptureDialogsEnabled(bool enabled)
 
 bool MainWindow::captureScreenNow()
 {
+    // ── ⓪ 走桌面门户时先说一声 ──
+    //
+    // ★ 这条路会**阻塞**到图回来为止（最长 20 秒）★
+    //   菜单点下去之后界面上如果一点动静都没有，用户的第一反应是"没点上"，
+    //   于是再点一次 —— 而重入保护会让第二次什么都不做，于是"点了没反应"
+    //   变成确定的事实。
+    //   状态栏这条消息是在下面那个嵌套事件循环里被真正刷出来的：
+    //   showMessage 只是排进队列，需要事件循环转一圈才可见 —— 而门户
+    //   等待期间恰好有一整个事件循环在转。
+    //
+    //   自检注入 m_screenGrabber 时不走门户，不该出现这条提示。
+    if (!m_screenGrabber && m_statusBar && screenCaptureUsesPortal()) {
+        m_statusBar->showMessage(
+            tr("Waiting for the desktop portal to return the screen…"), 0);
+    }
+
     // ── ① 取图：默认真的抓屏，自检/截图工具可以换成造好的图 ──
     const QImage shot = m_screenGrabber ? m_screenGrabber() : grabScreen();
 

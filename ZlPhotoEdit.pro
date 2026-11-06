@@ -14,6 +14,26 @@
 QT += core gui widgets
 QT += svg concurrent printsupport
 
+# ---------------------------------------------------------------------------
+#  QtDBus —— 只在 Linux / BSD 上要（Wayland 截图与全局热键走桌面门户）
+# ---------------------------------------------------------------------------
+#  ★ 用 qtHaveModule 而不是无条件加 ★
+#    没装该模块时 `QT += dbus` 会让 qmake 直接报错退出；
+#    用 qtHaveModule 判断后，缺模块只是少一个可选能力，工程照常构建。
+#    与 CMakeLists.txt 里那段 `find_package(... QUIET COMPONENTS DBus)`
+#    是同一个意思，两套构建必须给出同一个结论。
+unix:!macx:qtHaveModule(dbus) {
+    QT += dbus
+    DEFINES += ZLPE_HAVE_QTDBUS=1
+}
+
+# Xlib：只给 X11 会话下的全局热键用（XGrabKey）。
+# 与上面那段互不牵连 —— 缺哪一个都只影响自己那条路。
+unix:!macx:packagesExist(x11) {
+    LIBS += -lX11
+    DEFINES += ZLPE_HAVE_X11=1
+}
+
 TEMPLATE = app
 TARGET   = ZlPhotoEdit
 
@@ -59,6 +79,7 @@ SOURCES += \
     src/main.cpp \
     src/compat/GlobalHotkey.cpp \
     src/compat/ScreenCapture.cpp \
+    src/compat/ScreenCapturePortal.cpp \
     src/core/Layer.cpp \
     src/core/LayerList.cpp \
     src/core/Document.cpp \
@@ -141,6 +162,7 @@ HEADERS += \
     src/compat/QtCompat.h \
     src/compat/GlobalHotkey.h \
     src/compat/ScreenCapture.h \
+    src/compat/PortalRequest_p.h \
     src/core/Layer.h \
     src/core/LayerList.h \
     src/core/Document.h \

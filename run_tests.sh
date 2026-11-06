@@ -1322,6 +1322,7 @@ run_one() {
                 tests/mainwin_test.cpp \
                 src/compat/GlobalHotkey.cpp \
                 src/compat/ScreenCapture.cpp \
+                src/compat/ScreenCapturePortal.cpp \
                 src/core/Layer.cpp \
                 src/core/LayerList.cpp \
                 src/core/Document.cpp \

@@ -32,6 +32,17 @@
 #include <QString>
 #include <QtGlobal>
 
+// 只在 X11 分支里用到，且只用指针 —— 前向声明即可，不必把
+// QtCore 的头部再拉一份进来。
+class QSocketNotifier;
+
+#if defined(Q_OS_LINUX) && defined(ZLPE_HAVE_QTDBUS)
+// 门户信号的槽参数要用到它们的完整类型（Qt 要据此做 D-Bus 类型转换），
+// 前向声明在 moc 生成的胶水代码里不够用。
+#  include <QDBusObjectPath>
+#  include <QVariantMap>
+#endif
+
 namespace zl {
 
 // ★ 唯一的版本判断，且就在 compat 里 ★
@@ -97,6 +108,15 @@ public:
     //   没有这条通路，这个不确定性就只能靠"用户按一下试试"来验证。
     bool simulateActivation(int id);
 
+    // 当前平台能不能伪造一次"热键被按下"。
+    //
+    // ★ 为什么要把这件事做成查询，而不是让调用方自己去猜 ★
+    //   simulateActivation() 在不能伪造的平台上**如实返回 false**（见 .cpp），
+    //   于是"返回 false"有两种含义：真的失败，或这个平台做不到。
+    //   自检拿到后者时会把它当成失败去报 —— 一条永远红着的用例比没有更糟。
+    //   有了这个查询，自检能明确区分"没通过"与"这里不适用"。
+    static bool supportsActivationSimulation();
+
 signals:
     // 某个已登记的热键被按下（系统投来了 WM_HOTKEY）。
     // 参数是登记时给的 id —— 调用方据此区分是哪一个热键。
@@ -111,6 +131,67 @@ private:
     QHash<int, QKeySequence> m_regs;
 
     QString m_lastError;
+
+#if defined(Q_OS_LINUX)
+    // Linux 有两条完全不同的路：X11 用 XGrabKey，Wayland 必须走桌面门户。
+    // 选哪条由**运行时**的会话类型决定，不是编译期 —— 同一份二进制
+    // 既可能在 X11 上跑也可能在 Wayland 上跑。
+    static bool isWaylandSession();
+#endif
+
+#if defined(Q_OS_LINUX) && defined(ZLPE_HAVE_QTDBUS)
+    // ── Wayland：org.freedesktop.portal.GlobalShortcuts ──
+    bool registerViaPortal(const QKeySequence &sequence, int id);
+    bool ensurePortalSession(QString *error);
+    void closePortalSession();
+
+    QString m_portalSession;                 // session handle（对象路径）
+    QHash<QString, int> m_portalShortcuts;   // shortcut_id → 调用方的 id
+    bool m_portalSubscribed = false;         // Activated 信号是否已接上
+    bool m_portalSessionActive = false;      // session 是否已建好并可用
+
+private slots:
+    // ★ 参数类型必须与门户信号的签名逐个对上，否则 Qt 会把事件丢掉 ★
+    //   Activated(o session_handle, s shortcut_id, t timestamp, a{sv} options)
+    //   —— t 是无符号 64 位，在 C++ 侧就是 qulonglong。
+    void onPortalActivated(const QDBusObjectPath &session,
+                           const QString &shortcutId,
+                           qulonglong timestamp,
+                           const QVariantMap &options);
+
+private:
+#endif
+
+#if defined(Q_OS_LINUX) && defined(ZLPE_HAVE_X11)
+    // ── X11：XGrabKey ──
+    bool registerViaX11(const QKeySequence &sequence, int id);
+
+    // ------------------------------------------------------------------
+    //  X11 实现用到的状态
+    // ------------------------------------------------------------------
+    //  ★ 这里用 `void *` 存 Display，而不是 include <X11/Xlib.h> ★
+    //    这个头在 Windows / macOS 上根本不存在；把它引进来会把一份
+    //    "只属于 Linux"的依赖泄漏到所有翻译单元里（X11 的宏出了名地
+    //    爱和别的头冲突，`Bool` / `None` / `Status` 都是常见撞车点）。
+    //    代价只是每次用时 cast 一下，而这个文件里只有三处。
+    void *m_x11Display = nullptr;
+
+    // 独立 X 连接上的"有事件可读"提醒。
+    // ★ 必须是**另一个**连接 ★ 用 Qt 自己那条会与 Qt 的事件循环抢事件，
+    //   抢输的那一方表现为"快捷键偶尔不灵"。
+    QSocketNotifier *m_x11Notifier = nullptr;
+
+    // id → 当前键码。键盘布局一改键码就会变，所以它必须能和 m_regs 分开
+    // 重算（MappingNotify 到了就整体重抓，见 .cpp）。
+    QHash<int, quint32> m_x11KeyCodes;
+
+    bool openX11();
+    void closeX11();
+    void pumpX11Events();
+    void regrabAllX11();
+    void grabX11Key(quint32 keySym, quint32 mods);
+    void ungrabX11Key(quint32 keySym, quint32 mods);
+#endif
 
     Q_DISABLE_COPY(GlobalHotkey)
 };

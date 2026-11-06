@@ -35,12 +35,54 @@ if(NOT QT_VERSION_MAJOR)
     set(QT_VERSION_MAJOR 5)
 endif()
 
+# ---------------------------------------------------------------------------
+#  QtDBus —— 只在 Linux / BSD 上用（Wayland 截图与全局热键都走桌面门户）
+# ---------------------------------------------------------------------------
+#  ★ 用 QUIET 且允许缺席 ★
+#    这条链路是**可选增强**：没有 QtDBus 时程序照常编译、照常在 X11 与
+#    Windows 上截屏，只是 Wayland 下退回"请用系统截图键"的提示。
+#    写成 REQUIRED 会把"某个发行版没装 qt6-base-dev 的 dbus 部分"变成
+#    一次编译失败 —— 那是把一个可选功能变成了整个工程的阻塞项。
+#
+#  ★ 判断里带 `UNIX AND NOT APPLE` ★
+#    macOS 也有 QtDBus（部分 Homebrew 包会带），但那里既不是 Wayland
+#    也没有 xdg-desktop-portal。让它掺进来只会多链接一个用不上的库。
+find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS DBus)
+set(ZLPE_HAVE_QTDBUS OFF)
+if((UNIX AND NOT APPLE) AND TARGET Qt${QT_VERSION_MAJOR}::DBus)
+    set(ZLPE_HAVE_QTDBUS ON)
+endif()
+
+# ---------------------------------------------------------------------------
+#  Xlib —— 只用来做 X11 下的全局热键（XGrabKey）
+# ---------------------------------------------------------------------------
+#  ★ 同样 QUIET + 缺席可接受 ★
+#    没有 Xlib 时 X11 全局热键那一支编空，程序照常跑（只是回到"点菜单
+#    截图"）。而 Wayland 那条路走的是 D-Bus，与 Xlib 无关 —— 两个依赖
+#    互不牵连，缺一个不会把另一个也带走。
+find_package(X11 QUIET)
+set(ZLPE_HAVE_X11 OFF)
+if((UNIX AND NOT APPLE) AND X11_FOUND AND TARGET X11::X11)
+    set(ZLPE_HAVE_X11 ON)
+endif()
+
+
 message(STATUS "========================================")
 message(STATUS " ZlPhotoEdit 构建配置")
 message(STATUS " Qt 版本   : ${QT_VERSION}")
 message(STATUS " 主版本号  : Qt${QT_VERSION_MAJOR}")
 message(STATUS " 构建类型  : ${CMAKE_BUILD_TYPE}")
 message(STATUS " 编译器    : ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+if(ZLPE_HAVE_QTDBUS)
+    message(STATUS " QtDBus    : 已启用（Wayland 截图 / 全局热键走 xdg-desktop-portal）")
+elseif(UNIX AND NOT APPLE)
+    message(STATUS " QtDBus    : 未找到 —— Wayland 截图与全局热键将退回不支持提示")
+endif()
+if(ZLPE_HAVE_X11)
+    message(STATUS " X11       : 已启用（X11 会话下的全局热键）")
+elseif(UNIX AND NOT APPLE)
+    message(STATUS " X11       : 未找到 —— X11 会话下的全局热键不可用")
+endif()
 message(STATUS "========================================")
 
 # ---------------------------------------------------------------------------
@@ -122,6 +164,19 @@ target_link_libraries(ZlPhotoEdit PRIVATE
     Qt${QT_VERSION_MAJOR}::Concurrent
     Qt${QT_VERSION_MAJOR}::PrintSupport
 )
+
+# Linux 的可选增强：桌面门户。宏定义与链接同时给，缺一不可 ——
+# 只给宏不给库会在链接期报一堆 QDBusMessage 未定义，只给库不给宏则
+# ScreenCapturePortal.cpp 整个编空、功能静默消失。
+if(ZLPE_HAVE_QTDBUS)
+    target_link_libraries(ZlPhotoEdit PRIVATE Qt${QT_VERSION_MAJOR}::DBus)
+    target_compile_definitions(ZlPhotoEdit PRIVATE ZLPE_HAVE_QTDBUS=1)
+endif()
+
+if(ZLPE_HAVE_X11)
+    target_link_libraries(ZlPhotoEdit PRIVATE X11::X11)
+    target_compile_definitions(ZlPhotoEdit PRIVATE ZLPE_HAVE_X11=1)
+endif()
 
 # ---------------------------------------------------------------------------
 #  多语言：.ts → lrelease → .qm → 生成 i18n.qrc → AUTORCC 内嵌

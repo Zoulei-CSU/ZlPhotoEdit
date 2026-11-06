@@ -32,11 +32,12 @@ static QScreen *screenUnderCursor()
 //  会话层面能不能抓屏
 // ---------------------------------------------------------------------------
 //  Qt 明写：Wayland 下 screen capturing 不被 grabWindow() 支持，恒返回
-//  空 pixmap，官方指路 xdg-desktop-portal（那是另一套异步 D-Bus 流程）。
-//  在当前架构里接 portal 的代价远大于收益（要弹系统授权框、要把同步接口
-//  改成回调、还要改打包依赖），所以这里只做**识别**，由上层把"为什么"
-//  和"改怎么做"讲清楚 —— 系统截图键 + Ctrl+V 粘贴这条路在 Wayland 上
-//  完全可用（粘贴走 Qt 剪贴板，不受抓屏限制）。
+//  空 pixmap，官方指路 xdg-desktop-portal。
+//
+//  ★ 所以 Wayland 不等于"抓不了"，而是"不能自己抓" ★
+//    桌面门户可用时这条路是通的（由合成器替我们抓），此时**不报阻塞** ——
+//    上层拿到的就是一条能用的功能，菜单不该写着"这里截不了图"。
+//    只有门户也问不到（没装 portal、后端没实现 Screenshot）时才算真的堵死。
 CaptureBlock screenCaptureBlock()
 {
     if (!QGuiApplication::instance())
@@ -46,10 +47,66 @@ CaptureBlock screenCaptureBlock()
     //    实际插件名可能是 "wayland"、"wayland-egl"、"wayland-origin"……
     //    精确相等会漏判，而漏判的表现是"该提示的时候沉默"。
     const QString platform = QGuiApplication::platformName();
-    if (platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive))
-        return CaptureBlock::Wayland;
+    if (platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive)) {
+        return screenCapturePortalAvailable() ? CaptureBlock::None
+                                              : CaptureBlock::Wayland;
+    }
 
     return CaptureBlock::None;
+}
+
+bool screenCaptureUsesPortal()
+{
+    if (!QGuiApplication::instance())
+        return false;
+    if (!QGuiApplication::platformName().contains(QStringLiteral("wayland"),
+                                                  Qt::CaseInsensitive))
+        return false;
+    return screenCapturePortalAvailable();
+}
+
+// ---------------------------------------------------------------------------
+//  对账：抓回来的是"这一块屏"还是"整块虚拟桌面"
+// ---------------------------------------------------------------------------
+//  ★ 这里刻意不猜抓取 API 的行为 ★
+//    Qt 没有承诺 `grabWindow(0)` 在 `window == 0` 时抓的是
+//    "这个 QScreen 那一块" 还是 "所有屏幕拼成的虚拟桌面"，
+//    实测这段语义随平台与版本而变（Windows 上多屏时常常是整块桌面）。
+//    桌面门户更没承诺 —— 它只说"截屏"，多屏时给什么完全看后端。
+//    猜错的后果不是崩溃，而是**截出来的图比屏幕大一圈、边上多出别的
+//    显示器的内容** —— 用户只会觉得"这工具怎么老是截错"。
+//
+//    所以：抓完之后**量一次尺寸**，只有确实抓回了整块桌面时才裁。
+//    两条路径（抓单屏 / 抓整桌面）因此都落到同一个结果上。
+static QImage cropToScreenIfNeeded(QImage img, QScreen *screen)
+{
+    if (!screen || img.isNull())
+        return img;
+
+    const qreal dpr = img.devicePixelRatio() > 0.0 ? img.devicePixelRatio() : 1.0;
+
+    const QSize grabbedLogical(qRound(img.width()  / dpr),
+                               qRound(img.height() / dpr));
+
+    if (grabbedLogical == screen->geometry().size()
+        || grabbedLogical != screen->virtualGeometry().size()) {
+        return img;
+    }
+
+    // 整块桌面的原点 = virtualGeometry().topLeft()，
+    // 目标屏那块是它内部的一个偏移矩形（逻辑坐标），再乘 dpr 换成设备像素。
+    const QRect logical = screen->geometry().translated(
+        -screen->virtualGeometry().topLeft());
+    const QRect device(qRound(logical.x()      * dpr),
+                       qRound(logical.y()      * dpr),
+                       qRound(logical.width()  * dpr),
+                       qRound(logical.height() * dpr));
+
+    const QImage cropped = img.copy(device);
+    // 裁不出来（尺寸对不上到连 copy 都失败）也照样往下走：
+    // ★ 宁可给一张"大了一圈但内容完整"的图，也不要给一张空的 ★
+    //   大图用户能自己裁，空图只能重来。
+    return cropped.isNull() ? img : cropped;
 }
 
 QImage grabScreen()
@@ -57,6 +114,19 @@ QImage grabScreen()
     QScreen *screen = screenUnderCursor();
     if (!screen)
         return QImage();          // 没有屏幕：契约③ —— 空图，由调用方报
+
+    // ── Wayland：自己抓不了，交给桌面门户 ──
+    //   门户回来的是"原始像素"的图（QImage 从文件读，dpr 恒为 1），
+    //   直接交给下面同一套对账逻辑，与本地抓屏走同一条收尾。
+    if (QGuiApplication::instance()
+        && QGuiApplication::platformName().contains(QStringLiteral("wayland"),
+                                                    Qt::CaseInsensitive)) {
+        QImage viaPortal = grabScreenViaPortal();
+        if (viaPortal.isNull())
+            return QImage();
+        viaPortal.setDevicePixelRatio(1.0);
+        return cropToScreenIfNeeded(viaPortal, screen);
+    }
 
     // ── 抓 ──
     //   window == 0 表示"屏幕本身"。注意 Qt 的文档明确写了：
@@ -71,45 +141,12 @@ QImage grabScreen()
     if (img.isNull())
         return QImage();
 
-    const qreal dpr = img.devicePixelRatio() > 0.0 ? img.devicePixelRatio() : 1.0;
-
-    // ── 对账：抓回来的是"这一块屏"还是"整块虚拟桌面" ──
-    //
-    //  ★ 这里刻意不猜 Qt 的行为 ★
-    //    Qt 没有承诺 `grabWindow(0)` 在 `window == 0` 时抓的是
-    //    "这个 QScreen 那一块" 还是 "所有屏幕拼成的虚拟桌面"，
-    //    实测这段语义随平台与版本而变（Windows 上多屏时常常是整块桌面）。
-    //    猜错的后果不是崩溃，而是**截出来的图比屏幕大一圈、边上多出别的
-    //    显示器的内容** —— 用户只会觉得"这工具怎么老是截错"。
-    //
-    //    所以：抓完之后**量一次尺寸**，只有确实抓回了整块桌面时才裁。
-    //    两条路径（抓单屏 / 抓整桌面）因此都落到同一个结果上。
-    const QSize grabbedLogical(qRound(img.width()  / dpr),
-                               qRound(img.height() / dpr));
-
-    if (grabbedLogical != screen->geometry().size()
-        && grabbedLogical == screen->virtualGeometry().size()) {
-
-        // 整块桌面的原点 = virtualGeometry().topLeft()，
-        // 目标屏那块是它内部的一个偏移矩形（逻辑坐标），再乘 dpr 换成设备像素。
-        const QRect logical = screen->geometry().translated(
-            -screen->virtualGeometry().topLeft());
-        const QRect device(qRound(logical.x()      * dpr),
-                           qRound(logical.y()      * dpr),
-                           qRound(logical.width()  * dpr),
-                           qRound(logical.height() * dpr));
-
-        const QImage cropped = img.copy(device);
-        if (!cropped.isNull())
-            img = cropped;
-        // 裁不出来（尺寸对不上到连 copy 都失败）也照样往下走：
-        // ★ 宁可给一张"大了一圈但内容完整"的图，也不要给一张空的 ★
-        //   大图用户能自己裁，空图只能重来。
-    }
+    img = cropToScreenIfNeeded(img, screen);
 
     // ── 契约②：dpr 归一 ──
     img.setDevicePixelRatio(1.0);
     return img;
 }
+
 
 } // namespace zl

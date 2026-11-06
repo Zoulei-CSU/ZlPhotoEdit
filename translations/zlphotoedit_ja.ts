@@ -1129,12 +1129,6 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
 <context>
     <name>zl::GlobalHotkey</name>
     <message>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="119"/>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="210"/>
-        <source>Global hotkeys are not supported on this platform (the current implementation is Windows-only).</source>
-        <translation>このシステムではグローバルショートカットはサポートされていません（現在の実装は Windows 専用です）。</translation>
-    </message>
-    <message>
         <location filename="../src/compat/GlobalHotkey.cpp" line="142"/>
         <source>No QApplication instance - cannot register the global hotkey.</source>
         <translation>QApplication インスタンスがないため、グローバルショートカットを登録できません。</translation>
@@ -1164,6 +1158,50 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
         <source>Failed to register the global hotkey %1 (system error code %2).</source>
         <translation>グローバルショートカット %1 の登録に失敗しました（システムエラーコード %2）。</translation>
     </message>
+        <message>
+            <source>Global hotkeys are not supported on this platform.</source>
+            <translation>このプラットフォームではグローバルホットキーはサポートされていません。</translation>
+        </message>
+        <message>
+            <source>This Wayland session needs the desktop portal (QtDBus), which this build does not include.</source>
+            <translation>この Wayland セッションにはデスクトップポータル（QtDBus）が必要ですが、このビルドには含まれていません。</translation>
+        </message>
+        <message>
+            <source>This X11 session needs Xlib support, which this build does not include.</source>
+            <translation>この X11 セッションには Xlib サポートが必要ですが、このビルドには含まれていません。</translation>
+        </message>
+        <message>
+            <source>Cannot connect to the X server, so global hotkeys are unavailable.</source>
+            <translation>X サーバーに接続できないため、グローバルホットキーは使用できません。</translation>
+        </message>
+        <message>
+            <source>The key %1 has no keycode in the current keyboard layout.</source>
+            <translation>キー %1 は現在のキーボードレイアウトに対応するキーコードがありません。</translation>
+        </message>
+        <message>
+            <source>Cannot subscribe to the desktop portal's shortcut events.</source>
+            <translation>デスクトップポータルのショートカットイベントを購読できません。</translation>
+        </message>
+        <message>
+            <source>The desktop portal refused to open a shortcut session.</source>
+            <translation>デスクトップポータルがショートカットセッションの作成を拒否しました。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no shortcut session.</source>
+            <translation>デスクトップポータルがショートカットセッションを返しませんでした。</translation>
+        </message>
+        <message>
+            <source>This Wayland desktop does not provide the GlobalShortcuts portal, so global hotkeys are unavailable. While the program has focus, %1 still works.</source>
+            <translation>この Wayland デスクトップはグローバルショートカットポータルを提供していないため、グローバルホットキーは使用できません。プログラムが前面にあるときは %1 が使えます。</translation>
+        </message>
+        <message>
+            <source>The desktop did not grant the global hotkey %1 (the shortcut request was declined, timed out, or this application is not installed as a desktop application).</source>
+            <translation>デスクトップがグローバルホットキー %1 を許可しませんでした（要求が拒否されたか、タイムアウトしたか、このアプリケーションがデスクトップアプリとしてインストールされていません）。</translation>
+        </message>
+        <message>
+            <source>Capture the screen into a new tab</source>
+            <translation>画面をキャプチャして新しいタブで開く</translation>
+        </message>
 </context>
 <context>
     <name>zl::GridSettingsDialog</name>
@@ -2437,11 +2475,6 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>スクリーンショットを利用できません</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
-        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>この Wayland セッションではアプリケーションが画面を読み取れないため、内蔵のスクリーンショットは使用できません。システムのスクリーンショットショートカットで撮影し、Ctrl+V でここに新しいレイヤーとして貼り付けてください。</translation>
-    </message>
-    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>キャプチャー-%1</translation>
@@ -3457,6 +3490,14 @@ Recover them? Layer information is not preserved.</source>
         <source>Document Enhancement</source>
         <translation>文書補正</translation>
     </message>
+        <message>
+            <source>This Wayland session does not allow applications to read the screen and offers no desktop portal, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+            <translation>この Wayland セッションではアプリケーションが画面を読み取れず、利用できるデスクトップポータルもないため、内蔵の画面キャプチャは動作しません。システムのスクリーンショットキーで撮影し、Ctrl+V で新しいレイヤーとして貼り付けてください。</translation>
+        </message>
+        <message>
+            <source>Waiting for the desktop portal to return the screen…</source>
+            <translation>デスクトップポータルが画面を返すのを待っています…</translation>
+        </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -4101,5 +4142,40 @@ ICO は 1 辺が最大 %3 ピクセルのアイコン形式です（Windows の�
 
 「画像 → 画像サイズ」で画像を %3 ピクセル以下にしてから、ICO として保存してください。</translation>
     </message>
+</context>
+    <context>
+        <name>zl::ScreenCapture</name>
+        <message>
+            <source>The desktop portal did not answer the capture request.</source>
+            <translation>デスクトップポータルが画面キャプチャ要求に応答しませんでした。</translation>
+        </message>
+            <message>
+            <source>The desktop portal did not respond in time. The screen capture request was dropped.</source>
+            <translation>デスクトップポータルが時間内に応答しなかったため、画面キャプチャ要求は破棄されました。</translation>
+        </message>
+        <message>
+            <source>The screen capture request was declined.</source>
+            <translation>画面キャプチャ要求が拒否されました。</translation>
+        </message>
+        <message>
+            <source>The desktop portal reported an error while capturing the screen.</source>
+            <translation>デスクトップポータルが画面キャプチャ中にエラーを報告しました。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no image.</source>
+            <translation>デスクトップポータルが画像を返しませんでした。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned an unreadable location.</source>
+            <translation>デスクトップポータルが読み取れない場所を返しました。</translation>
+        </message>
+        <message>
+            <source>The captured image could not be read.</source>
+            <translation>キャプチャした画像を読み取れませんでした。</translation>
+        </message>
+        <message>
+            <source>Cannot reach the desktop session bus.</source>
+            <translation>デスクトップのセッションバスに接続できません。</translation>
+        </message>
 </context>
 </TS>

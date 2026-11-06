@@ -1123,12 +1123,6 @@ Causes possibles&#xa0;: le fichier est corrompu, le format n’est pas pris en c
 <context>
     <name>zl::GlobalHotkey</name>
     <message>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="119"/>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="210"/>
-        <source>Global hotkeys are not supported on this platform (the current implementation is Windows-only).</source>
-        <translation>Les raccourcis globaux ne sont pas pris en charge sur cette plateforme (l’implémentation actuelle est réservée à Windows).</translation>
-    </message>
-    <message>
         <location filename="../src/compat/GlobalHotkey.cpp" line="142"/>
         <source>No QApplication instance - cannot register the global hotkey.</source>
         <translation>Aucune instance QApplication — impossible d’enregistrer le raccourci global.</translation>
@@ -1158,6 +1152,50 @@ Causes possibles&#xa0;: le fichier est corrompu, le format n’est pas pris en c
         <source>Failed to register the global hotkey %1 (system error code %2).</source>
         <translation>Échec de l’enregistrement du raccourci global %1 (code d’erreur système %2).</translation>
     </message>
+        <message>
+            <source>Global hotkeys are not supported on this platform.</source>
+            <translation>Les raccourcis globaux ne sont pas pris en charge sur cette plateforme.</translation>
+        </message>
+        <message>
+            <source>This Wayland session needs the desktop portal (QtDBus), which this build does not include.</source>
+            <translation>Cette session Wayland nécessite le portail du bureau (QtDBus), absent de cette compilation.</translation>
+        </message>
+        <message>
+            <source>This X11 session needs Xlib support, which this build does not include.</source>
+            <translation>Cette session X11 nécessite la prise en charge de Xlib, absente de cette compilation.</translation>
+        </message>
+        <message>
+            <source>Cannot connect to the X server, so global hotkeys are unavailable.</source>
+            <translation>Impossible de se connecter au serveur X : les raccourcis globaux sont indisponibles.</translation>
+        </message>
+        <message>
+            <source>The key %1 has no keycode in the current keyboard layout.</source>
+            <translation>La touche %1 n'a pas de code dans la disposition de clavier actuelle.</translation>
+        </message>
+        <message>
+            <source>Cannot subscribe to the desktop portal's shortcut events.</source>
+            <translation>Impossible de s'abonner aux événements de raccourci du portail du bureau.</translation>
+        </message>
+        <message>
+            <source>The desktop portal refused to open a shortcut session.</source>
+            <translation>Le portail du bureau a refusé d'ouvrir une session de raccourcis.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no shortcut session.</source>
+            <translation>Le portail du bureau n'a renvoyé aucune session de raccourcis.</translation>
+        </message>
+        <message>
+            <source>This Wayland desktop does not provide the GlobalShortcuts portal, so global hotkeys are unavailable. While the program has focus, %1 still works.</source>
+            <translation>Ce bureau Wayland ne fournit pas le portail des raccourcis globaux : les raccourcis globaux sont indisponibles. Lorsque le programme a le focus, %1 fonctionne toujours.</translation>
+        </message>
+        <message>
+            <source>The desktop did not grant the global hotkey %1 (the shortcut request was declined, timed out, or this application is not installed as a desktop application).</source>
+            <translation>Le bureau n'a pas accordé le raccourci global %1 (demande refusée, expirée, ou cette application n'est pas installée comme application de bureau).</translation>
+        </message>
+        <message>
+            <source>Capture the screen into a new tab</source>
+            <translation>Capturer l'écran dans un nouvel onglet</translation>
+        </message>
 </context>
 <context>
     <name>zl::GridSettingsDialog</name>
@@ -2424,11 +2462,6 @@ Le fichier est peut-être corrompu, ou les données d’image utilisent un encod
         <translation>Capture d’écran indisponible</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
-        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>Cette session Wayland n’autorise pas les applications à lire l’écran ; la capture intégrée ne peut donc pas fonctionner. Faites une capture avec le raccourci du système, puis appuyez sur Ctrl+V pour la coller ici comme nouveau calque.</translation>
-    </message>
-    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>Capture-%1</translation>
@@ -3443,6 +3476,14 @@ Recover them? Layer information is not preserved.</source>
         <source>Document Enhancement</source>
         <translation>Amélioration de document</translation>
     </message>
+        <message>
+            <source>This Wayland session does not allow applications to read the screen and offers no desktop portal, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+            <translation>Cette session Wayland n'autorise pas les applications à lire l'écran et ne propose aucun portail du bureau : la capture intégrée ne peut pas fonctionner. Faites une capture avec le raccourci du système, puis collez-la avec Ctrl+V comme nouveau calque.</translation>
+        </message>
+        <message>
+            <source>Waiting for the desktop portal to return the screen…</source>
+            <translation>En attente de l'image renvoyée par le portail du bureau…</translation>
+        </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -4086,5 +4127,40 @@ ICO est un format d’icône dont l’arête ne peut dépasser %3 pixels (Window
 
 Utilisez Image → Taille de l’image pour réduire l’image à %3 pixels ou moins, puis enregistrez en ICO.</translation>
     </message>
+</context>
+    <context>
+        <name>zl::ScreenCapture</name>
+        <message>
+            <source>The desktop portal did not answer the capture request.</source>
+            <translation>Le portail du bureau n'a pas répondu à la demande de capture.</translation>
+        </message>
+            <message>
+            <source>The desktop portal did not respond in time. The screen capture request was dropped.</source>
+            <translation>Le portail du bureau n'a pas répondu à temps. La demande de capture a été abandonnée.</translation>
+        </message>
+        <message>
+            <source>The screen capture request was declined.</source>
+            <translation>La demande de capture d'écran a été refusée.</translation>
+        </message>
+        <message>
+            <source>The desktop portal reported an error while capturing the screen.</source>
+            <translation>Le portail du bureau a signalé une erreur lors de la capture.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no image.</source>
+            <translation>Le portail du bureau n'a renvoyé aucune image.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned an unreadable location.</source>
+            <translation>Le portail du bureau a renvoyé un emplacement illisible.</translation>
+        </message>
+        <message>
+            <source>The captured image could not be read.</source>
+            <translation>L'image capturée n'a pas pu être lue.</translation>
+        </message>
+        <message>
+            <source>Cannot reach the desktop session bus.</source>
+            <translation>Impossible de joindre le bus de session du bureau.</translation>
+        </message>
 </context>
 </TS>

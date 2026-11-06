@@ -17,6 +17,7 @@
 // ============================================================================
 
 #include <QImage>
+#include <QString>
 
 namespace zl {
 
@@ -69,6 +70,48 @@ enum class CaptureBlock {
 //    macOS 上这个条件天然为假。少一个 `#if`，就少一处"换平台忘了改"。
 CaptureBlock screenCaptureBlock();
 
+// ---------------------------------------------------------------------------
+//  Wayland：走 xdg-desktop-portal 抓屏
+// ---------------------------------------------------------------------------
+//  合成器不允许客户端读屏幕上不属于自己的像素，`grabWindow()` 在 Wayland 上
+//  恒失败 —— 这是设计，不是缺陷。官方给的唯一正路是桌面门户
+//  （org.freedesktop.portal.Screenshot）：由合成器自己截，把图写到
+//  $XDG_RUNTIME_DIR 下一个临时文件，再把 file:// URI 回给我们。
+//
+//  ★ 这条路的三个"必须照做"，缺一个就会失效 ★
+//    ① **先订阅再调用**：portal 先返回一个 request handle，结果是以
+//       Response 信号回来的。non-interactive 截图可能在我们拿到 handle
+//       之前就已经回完 —— 后订阅就永远等不到（见铁律第九章）。
+//    ② **结果是个临时文件，读走即删**：留在 $XDG_RUNTIME_DIR 里会一直堆积。
+//    ③ **必须有超时**：部分桌面会插入一次授权对话框，用户不点就永远没有
+//       Response。没有超时的同步等待会把界面焊死。
+//
+//  拿不到图（没有门户、用户拒绝、超时、文件读不出来）一律返回空图，
+//  与 grabScreen() 的契约③一致。
+bool  screenCapturePortalAvailable();
+QImage grabScreenViaPortal();
+
+// 本次抓屏**是否会走**桌面门户（= Wayland 会话 且 门户可用）。
+//
+// ★ 与 screenCapturePortalAvailable() 分开是有原因的 ★
+//   后者只回答"这台机器上有没有门户" —— 在 X11 桌面上它同样可能是 true
+//   （很多发行版默认就装着 portal）。上层要的是"我这一次会不会走进
+//   那条会阻塞、会弹授权框的路"，所以必须把会话类型一起算进来。
+//   有了这一个函数，上层就不必自己写 `platformName().contains("wayland")`
+//   —— 平台判断继续留在 compat 里。
+bool screenCaptureUsesPortal();
+
+// 上一次 grabScreen() 失败的**具体**原因（可以直接给用户看）。
+// 空字符串 = 没有额外信息，调用方用通用文案即可。
+//
+// ★ 为什么需要它 ★
+//   门户这条路的失败有好几种完全不同的含义：用户点了"拒绝"、
+//   等太久没人应答、后端返回了图但文件读不出来。压成一句通用的
+//   "截图失败"，用户唯一能做的就是反复重试 —— 而重试对"被拒绝"
+//   是没有意义的。
+QString screenCaptureLastFailure();
+
 QImage grabScreen();
+
 
 } // namespace zl

@@ -408,14 +408,22 @@ jobs:
           #   而构建全绿。见 CMakeLists.txt 的 ZLPE_REQUIRE_I18N。
           apt-get install -y --no-install-recommends \
             qt6-base-dev qt6-svg-dev qt6-l10n-tools libgl1-mesa-dev \
+            libx11-dev \
             cmake ninja-build g++ dpkg-dev fakeroot
+          # ★ libx11-dev 是 X11 全局热键（XGrabKey）的编译依赖 ★
+          #   不装不会让构建失败（find_package(X11 QUIET)），但打出来的包
+          #   在 X11 桌面上**没有全局快捷键**，而且没有任何报错 —— 属于
+          #   "构建全绿、功能静默少一块"，只能靠这里补上。
+          #   QtDBus 不用单独装：它属于 qtbase，qt6-base-dev 已含。
 
       - name: 安装系统 Qt6 + 打包工具（RPM 系）
         if: matrix.fmt == 'rpm'
         run: |
           # ★ qt6-linguist 提供 lrelease（/usr/lib64/qt6/bin，不在 PATH）★
           dnf install -y qt6-qtbase-devel qt6-qtsvg-devel qt6-linguist \
-            mesa-libGL-devel cmake ninja-build gcc-c++ rpm-build
+            mesa-libGL-devel libX11-devel cmake ninja-build gcc-c++ rpm-build
+          # libX11-devel：X11 全局热键的编译依赖，理由同 Deb 段。
+          # 缺了它构建照样绿，只是 X11 桌面上没有全局快捷键。
 
       - name: 配置 + 构建（★ 链系统 Qt，不给 CMAKE_PREFIX_PATH）
         run: |

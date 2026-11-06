@@ -1118,8 +1118,20 @@ static void testAppIdentityAndIcon()
           "★ exe 图标源文件 resources/logo.ico 存在");
     if (!QFileInfo::exists(icoPath))
         std::printf("       找不到：%s\n", qUtf8Printable(icoPath));
+
+    // ★ 这条断言必须跟着"构建有没有接入 .rc"走，而不是无条件要求为真 ★
+    //   .rc 只有 Windows 构建会编（rc.exe 是 MSVC 工具链的一部分）。
+    //   在别的平台上写死 true，等于要求构建去做一件它不该做的事 ——
+    //   那条用例会在每个非 Windows 平台上红着，而且红得"很有道理"，
+    //   于是没人再去区分"真失败"和"这里不适用"。
+    //   判据用构建宏（ZLPE_HAS_EXE_ICON），不是平台名：宏就是构建事实本身。
+#if defined(ZLPE_HAS_EXE_ICON) && ZLPE_HAS_EXE_ICON
     check(appinfo::hasExeIcon(),
           "★ 当前构建已接入 Windows 资源图标（.rc 编进去了，不是白底窗户）");
+#else
+    check(!appinfo::hasExeIcon(),
+          "未接入 PE 资源的构建不应声称有 exe 图标");
+#endif
 
     // .rc 本身也要在 —— 它才是"接进去"这件事的实体
     {
@@ -3207,9 +3219,10 @@ static void testScreenCaptureMenu()
         std::printf("       缺图标：%s\n", qUtf8Printable(iconless.join(QStringLiteral(", "))));
 
     // ── ②.5 会话限制的判断不能"恒真" ──
-    //   Wayland 会话里抓屏必然失败，上层据此改成"用系统截图键 + Ctrl+V
-    //   粘贴"的提示。但如果这个判断写错了方向（比如无脑返回 Wayland），
-    //   **所有桌面**都会看到"当前环境不支持截图" —— 那比原来的 bug 更糟：
+    //   抓屏整体被阻塞时（第 26 章之前 Wayland 一律如此；现在只有门户也
+    //   不可用才算），上层据此改成"用系统截图键 + Ctrl+V 粘贴"的提示。
+    //   但如果这个判断写错了方向（比如无脑返回 Wayland），**所有桌面**
+    //   都会看到"当前环境不支持截图" —— 那比原来的 bug 更糟：
     //   用户会以为软件坏了，其实一切正常。
     //   自检跑在 offscreen 平台上，正确答案必须是 None。
     check(zl::screenCaptureBlock() == zl::CaptureBlock::None,
@@ -3325,8 +3338,15 @@ static void testGlobalHotkey()
     //     开发机上真被占用了就会红，而那是假失败。
     //     Ctrl+Alt+Shift 三修饰 + F13 及以上：只有扩展键位的键盘才发得出，
     //     全系统几乎不可能有程序登记它。
+    //
+    //   ★ 为什么表里还留着 F11 / F12 ★
+    //     F13~F24 在 Windows 上是"虚拟键码存在、物理键位没有"，照样能登记；
+    //     但 X11 走的是 keysym → keycode 这条路，**没有物理键位就没有键码**，
+    //     登记会直接失败（错误信息是"该键在当前键盘布局中没有键码"）。
+    //     标准键盘一定有 F11/F12 的键位，所以它们能兜住 X11 这一侧。
     const char *candidates[] = { "Ctrl+Alt+Shift+F13", "Ctrl+Alt+Shift+F14",
-                                 "Ctrl+Alt+Shift+F15", "Ctrl+Alt+Shift+F16" };
+                                 "Ctrl+Alt+Shift+F15", "Ctrl+Alt+Shift+F16",
+                                 "Ctrl+Alt+Shift+F12", "Ctrl+Alt+Shift+F11" };
     bool reg = false;
     QString why;
     for (const char *c : candidates) {
@@ -3355,26 +3375,37 @@ static void testGlobalHotkey()
         ++count;
     });
 
-    check(hk.simulateActivation(kId), "把一条 WM_HOTKEY 投进本线程消息队列");
-    pumpUntil([&] { return count > 0; }, 500);
+    // ★ 先问一句"这个平台能不能伪造按键" ★
+    //   X11 的被动抓键只认真实按键（合成事件带 send_event 标记，被 grab 忽略），
+    //   Wayland 更是没有应用侧入口 —— simulateActivation() 在那两个平台上
+    //   如实返回 false。把它当成"失败"报出来，只会得到一条永远红着的用例，
+    //   看日志的人还得自己去查"这是不是环境差异"。
+    if (!GlobalHotkey::supportsActivationSimulation()) {
+        std::printf("       跳过 ②~④ 的模拟断言：当前平台无法伪造系统按键。\n");
+        hk.unregister(kId);
+        check(!hk.isRegistered(kId), "注销后 isRegistered 为假");
+    } else {
+        check(hk.simulateActivation(kId), "把一条 WM_HOTKEY 投进本线程消息队列");
+        pumpUntil([&] { return count > 0; }, 500);
 
-    checkEqInt(count, 1, "★★ 系统消息走通：WM_HOTKEY → nativeEventFilter → activated()");
-    checkEqInt(gotId, kId, "信号带来的 id 就是登记时用的那一个");
+        checkEqInt(count, 1, "★★ 系统消息走通：WM_HOTKEY → nativeEventFilter → activated()");
+        checkEqInt(gotId, kId, "信号带来的 id 就是登记时用的那一个");
 
-    // ── ③ 没登记过的 id：什么都不该发生 ──
-    //   ★ 这条防的是"来了消息就发信号"这种粗糙实现 ★
-    //     同一个进程里将来可能有第二个热键使用者，靠 id 才分得清。
-    hk.simulateActivation(kId + 100);
-    pumpUntil([&] { return count > 1; }, 200);
-    checkEqInt(count, 1, "★ 没登记过的 id 不触发任何东西");
+        // ── ③ 没登记过的 id：什么都不该发生 ──
+        //   ★ 这条防的是"来了消息就发信号"这种粗糙实现 ★
+        //     同一个进程里将来可能有第二个热键使用者，靠 id 才分得清。
+        hk.simulateActivation(kId + 100);
+        pumpUntil([&] { return count > 1; }, 200);
+        checkEqInt(count, 1, "★ 没登记过的 id 不触发任何东西");
 
-    // ── ④ 注销之后不再响应 ──
-    hk.unregister(kId);
-    check(!hk.isRegistered(kId), "注销后 isRegistered 为假");
+        // ── ④ 注销之后不再响应 ──
+        hk.unregister(kId);
+        check(!hk.isRegistered(kId), "注销后 isRegistered 为假");
 
-    hk.simulateActivation(kId);
-    pumpUntil([&] { return count > 1; }, 200);
-    checkEqInt(count, 1, "★ 注销之后同一条消息不再触发");
+        hk.simulateActivation(kId);
+        pumpUntil([&] { return count > 1; }, 200);
+        checkEqInt(count, 1, "★ 注销之后同一条消息不再触发");
+    }
 
     // ── ⑤ 不合法的组合键：被拒绝**并且**给出能读的原因 ──
     //   ★ 这一条比"返回 false"重要得多 ★
@@ -3502,6 +3533,12 @@ static void testScreenCaptureFlow()
     //   只有登记成功才走得通（登记失败的原因与提示见上一组）。
     GlobalHotkey *hk = w->globalHotkey();
     if (hk && hk->isRegistered(MainWindow::kCaptureHotkeyId)) {
+        if (!GlobalHotkey::supportsActivationSimulation()) {
+            // 热键登记是成功的，缺的只是"伪造一次按键"的入口 ——
+            // 这是平台差异，不是功能没做完。说清楚，别让它看起来像失败。
+            std::printf("       跳过热键触发那一节：当前平台无法伪造系统按键"
+                        "（登记本身已成功）。\n");
+        } else {
         const int beforeHot = tabs->count();
         const int grabsHot  = grabCount;
 
@@ -3513,6 +3550,7 @@ static void testScreenCaptureFlow()
         checkEqInt(tabs->count(), beforeHot + 1,
                    "★★ 全局热键 → 信号 → 截图 → 新页（整条链路走通）");
         checkLastPageIs(tabs, shot, nextTitle());
+        }
     } else {
         // ★ 不静默跳过 ★：把"这一段没跑到"说出来，否则覆盖率掉了没人知道。
         //   同时说清"这是环境差异、不是功能坏了" —— 免得看日志的人去查代码。

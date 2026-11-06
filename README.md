@@ -133,6 +133,21 @@ Photoshop 太重了。我只是偶尔 P 一下图，为一两次调整去装一�
 - 立即截图另挂**全局快捷键 `Ctrl+Alt+S`** —— 程序最小化时照样能按
 - 截取光标所在屏，结果开成**一页内存文档**（不落盘）
 
+**各平台的"全局"是怎么做到的**（同一份代码，三条互不相干的实现）：
+
+| 平台 | 抓屏 | 全局热键 |
+| --- | --- | --- |
+| Windows | `QScreen::grabWindow` | `RegisterHotKey` + `WM_HOTKEY` |
+| Linux X11 | `QScreen::grabWindow` | `XGrabKey`（独立 X 连接；NumLock / CapsLock 四种组合全抓） |
+| Linux Wayland | `xdg-desktop-portal` 的 `Screenshot` | `xdg-desktop-portal` 的 `GlobalShortcuts` |
+
+Wayland 下应用无权读屏，截图必须由合成器代劳，所以**第一次会看到系统自己的
+授权提示**；全局热键同样需要一次授权，且要求程序以桌面应用方式安装
+（门户靠 `.desktop` 文件认出调用方）。桌面支持面：GNOME 46+ / KDE Plasma 5.27+。
+
+Linux 的这两个依赖（`QtDBus`、`X11`）都是**可选**的：缺哪个只让对应的那条路
+退回"不支持"并给出说明，不影响其它平台，也不影响另一条路。
+
 ### 自动保存与崩溃恢复
 
 - 有未保存修改的文档每 **15 秒**写一份快照到用户数据目录（只存扁平合成图，**不存图层结构**）

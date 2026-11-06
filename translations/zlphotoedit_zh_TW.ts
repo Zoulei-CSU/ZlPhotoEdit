@@ -1123,12 +1123,6 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
 <context>
     <name>zl::GlobalHotkey</name>
     <message>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="119"/>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="210"/>
-        <source>Global hotkeys are not supported on this platform (the current implementation is Windows-only).</source>
-        <translation>本平台不支援全域快速鍵（目前實現僅 Windows）。</translation>
-    </message>
-    <message>
         <location filename="../src/compat/GlobalHotkey.cpp" line="142"/>
         <source>No QApplication instance - cannot register the global hotkey.</source>
         <translation>沒有 QApplication 實例，無法註冊全域快速鍵。</translation>
@@ -1158,6 +1152,50 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
         <source>Failed to register the global hotkey %1 (system error code %2).</source>
         <translation>註冊全域快速鍵 %1 失敗（系統錯誤碼 %2）。</translation>
     </message>
+        <message>
+            <source>Global hotkeys are not supported on this platform.</source>
+            <translation>目前平台不支援全域快速鍵。</translation>
+        </message>
+        <message>
+            <source>This Wayland session needs the desktop portal (QtDBus), which this build does not include.</source>
+            <translation>目前 Wayland 工作階段需要桌面入口（QtDBus），但此建置未包含該模組。</translation>
+        </message>
+        <message>
+            <source>This X11 session needs Xlib support, which this build does not include.</source>
+            <translation>目前 X11 工作階段需要 Xlib 支援，但此建置未包含該模組。</translation>
+        </message>
+        <message>
+            <source>Cannot connect to the X server, so global hotkeys are unavailable.</source>
+            <translation>無法連線 X 伺服器，全域快速鍵無法使用。</translation>
+        </message>
+        <message>
+            <source>The key %1 has no keycode in the current keyboard layout.</source>
+            <translation>按鍵 %1 在目前鍵盤配置中沒有對應的鍵碼。</translation>
+        </message>
+        <message>
+            <source>Cannot subscribe to the desktop portal's shortcut events.</source>
+            <translation>無法訂閱桌面入口的快速鍵事件。</translation>
+        </message>
+        <message>
+            <source>The desktop portal refused to open a shortcut session.</source>
+            <translation>桌面入口拒絕建立快速鍵工作階段。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no shortcut session.</source>
+            <translation>桌面入口未傳回快速鍵工作階段。</translation>
+        </message>
+        <message>
+            <source>This Wayland desktop does not provide the GlobalShortcuts portal, so global hotkeys are unavailable. While the program has focus, %1 still works.</source>
+            <translation>目前 Wayland 桌面未提供全域快速鍵入口，因此全域快速鍵無法使用。程式在前景時 %1 仍然有效。</translation>
+        </message>
+        <message>
+            <source>The desktop did not grant the global hotkey %1 (the shortcut request was declined, timed out, or this application is not installed as a desktop application).</source>
+            <translation>桌面未授予全域快速鍵 %1（請求被拒絕、等待逾時，或本程式未以桌面應用程式的方式安裝）。</translation>
+        </message>
+        <message>
+            <source>Capture the screen into a new tab</source>
+            <translation>擷取螢幕並開啟為新分頁</translation>
+        </message>
 </context>
 <context>
     <name>zl::GridSettingsDialog</name>
@@ -2425,11 +2463,6 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>無法截圖</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
-        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>目前 Wayland 工作階段不允許應用程式讀取螢幕內容，程式內建的截圖無法使用。請用系統截圖快速鍵截圖，再按 Ctrl+V 貼到這裡作為新圖層。</translation>
-    </message>
-    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>螢幕擷圖-%1</translation>
@@ -3444,6 +3477,14 @@ Recover them? Layer information is not preserved.</source>
         <source>Document Enhancement</source>
         <translation>文件增強</translation>
     </message>
+        <message>
+            <source>This Wayland session does not allow applications to read the screen and offers no desktop portal, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+            <translation>目前 Wayland 工作階段不允許應用程式讀取螢幕，也沒有可用的桌面入口，因此內建螢幕擷取無法運作。請用系統擷取快速鍵擷取，再按 Ctrl+V 貼為新圖層。</translation>
+        </message>
+        <message>
+            <source>Waiting for the desktop portal to return the screen…</source>
+            <translation>正在等待桌面入口傳回螢幕影像…</translation>
+        </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -4087,5 +4128,40 @@ ICO 是圖示格式，邊長上限為 %3 像素（Windows 官方口徑是 256，
 
 請先用「影像 → 影像大小」把影像縮小到 %3 像素以內，再另存新檔 ICO。</translation>
     </message>
+</context>
+    <context>
+        <name>zl::ScreenCapture</name>
+        <message>
+            <source>The desktop portal did not answer the capture request.</source>
+            <translation>桌面入口未回應螢幕擷取請求。</translation>
+        </message>
+            <message>
+            <source>The desktop portal did not respond in time. The screen capture request was dropped.</source>
+            <translation>桌面入口未及時回應，螢幕擷取請求已作廢。</translation>
+        </message>
+        <message>
+            <source>The screen capture request was declined.</source>
+            <translation>螢幕擷取請求被拒絕。</translation>
+        </message>
+        <message>
+            <source>The desktop portal reported an error while capturing the screen.</source>
+            <translation>桌面入口在擷取螢幕時回報錯誤。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no image.</source>
+            <translation>桌面入口未傳回影像。</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned an unreadable location.</source>
+            <translation>桌面入口傳回的路徑無法讀取。</translation>
+        </message>
+        <message>
+            <source>The captured image could not be read.</source>
+            <translation>擷取的影像無法讀取。</translation>
+        </message>
+        <message>
+            <source>Cannot reach the desktop session bus.</source>
+            <translation>無法連線桌面工作階段匯流排。</translation>
+        </message>
 </context>
 </TS>

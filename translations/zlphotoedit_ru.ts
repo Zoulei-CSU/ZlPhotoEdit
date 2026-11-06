@@ -1129,12 +1129,6 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
 <context>
     <name>zl::GlobalHotkey</name>
     <message>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="119"/>
-        <location filename="../src/compat/GlobalHotkey.cpp" line="210"/>
-        <source>Global hotkeys are not supported on this platform (the current implementation is Windows-only).</source>
-        <translation>Глобальные сочетания клавиш не поддерживаются в этой системе (текущая реализация работает только в Windows).</translation>
-    </message>
-    <message>
         <location filename="../src/compat/GlobalHotkey.cpp" line="142"/>
         <source>No QApplication instance - cannot register the global hotkey.</source>
         <translation>Нет экземпляра QApplication — нельзя зарегистрировать глобальное сочетание клавиш.</translation>
@@ -1164,6 +1158,50 @@ Possible causes: the file is corrupted, the format is unsupported, or the file i
         <source>Failed to register the global hotkey %1 (system error code %2).</source>
         <translation>Не удалось зарегистрировать глобальное сочетание %1 (код системной ошибки %2).</translation>
     </message>
+        <message>
+            <source>Global hotkeys are not supported on this platform.</source>
+            <translation>Глобальные горячие клавиши не поддерживаются на этой платформе.</translation>
+        </message>
+        <message>
+            <source>This Wayland session needs the desktop portal (QtDBus), which this build does not include.</source>
+            <translation>Этому сеансу Wayland требуется портал рабочего стола (QtDBus), не включённый в данную сборку.</translation>
+        </message>
+        <message>
+            <source>This X11 session needs Xlib support, which this build does not include.</source>
+            <translation>Этому сеансу X11 требуется поддержка Xlib, не включённая в данную сборку.</translation>
+        </message>
+        <message>
+            <source>Cannot connect to the X server, so global hotkeys are unavailable.</source>
+            <translation>Не удаётся подключиться к серверу X, поэтому глобальные горячие клавиши недоступны.</translation>
+        </message>
+        <message>
+            <source>The key %1 has no keycode in the current keyboard layout.</source>
+            <translation>У клавиши %1 нет кода в текущей раскладке клавиатуры.</translation>
+        </message>
+        <message>
+            <source>Cannot subscribe to the desktop portal's shortcut events.</source>
+            <translation>Не удаётся подписаться на события горячих клавиш портала.</translation>
+        </message>
+        <message>
+            <source>The desktop portal refused to open a shortcut session.</source>
+            <translation>Портал рабочего стола отказался открыть сеанс горячих клавиш.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no shortcut session.</source>
+            <translation>Портал рабочего стола не вернул сеанс горячих клавиш.</translation>
+        </message>
+        <message>
+            <source>This Wayland desktop does not provide the GlobalShortcuts portal, so global hotkeys are unavailable. While the program has focus, %1 still works.</source>
+            <translation>Этот рабочий стол Wayland не предоставляет портал глобальных горячих клавиш, поэтому они недоступны. Когда программа активна, %1 всё ещё работает.</translation>
+        </message>
+        <message>
+            <source>The desktop did not grant the global hotkey %1 (the shortcut request was declined, timed out, or this application is not installed as a desktop application).</source>
+            <translation>Рабочий стол не предоставил глобальную горячую клавишу %1 (запрос отклонён, истекло время ожидания, или приложение не установлено как приложение рабочего стола).</translation>
+        </message>
+        <message>
+            <source>Capture the screen into a new tab</source>
+            <translation>Захватить экран в новую вкладку</translation>
+        </message>
 </context>
 <context>
     <name>zl::GridSettingsDialog</name>
@@ -2437,11 +2475,6 @@ The file may be corrupted, or the image data uses an unsupported encoding.</sour
         <translation>Снимок экрана недоступен</translation>
     </message>
     <message>
-        <location filename="../src/ui/MainWindowCommands.cpp" line="610"/>
-        <source>This Wayland session does not allow applications to read the screen, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
-        <translation>Этот сеанс Wayland не разрешает приложениям читать экран, поэтому встроенный снимок экрана работать не может. Сделайте снимок системным сочетанием клавиш, затем нажмите Ctrl+V, чтобы вставить его сюда как новый слой.</translation>
-    </message>
-    <message>
         <location filename="../src/ui/MainWindowCommands.cpp" line="672"/>
         <source>Screenshot-%1</source>
         <translation>Снимок-%1</translation>
@@ -3457,6 +3490,14 @@ Recover them? Layer information is not preserved.</source>
         <source>Document Enhancement</source>
         <translation>Улучшение документа</translation>
     </message>
+        <message>
+            <source>This Wayland session does not allow applications to read the screen and offers no desktop portal, so the built-in capture cannot work. Take a screenshot with the system shortcut, then press Ctrl+V to paste it here as a new layer.</source>
+            <translation>Этот сеанс Wayland не разрешает приложениям читать экран и не предоставляет портал рабочего стола, поэтому встроенный захват не работает. Сделайте снимок системным сочетанием клавиш и вставьте его через Ctrl+V как новый слой.</translation>
+        </message>
+        <message>
+            <source>Waiting for the desktop portal to return the screen…</source>
+            <translation>Ожидание изображения экрана от портала рабочего стола…</translation>
+        </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -4101,5 +4142,40 @@ ICO — формат значков с максимальной стороной
 
 С помощью «Изображение → Размер изображения» уменьшите изображение до %3 пикселей или менее, затем сохраните как ICO.</translation>
     </message>
+</context>
+    <context>
+        <name>zl::ScreenCapture</name>
+        <message>
+            <source>The desktop portal did not answer the capture request.</source>
+            <translation>Портал рабочего стола не ответил на запрос захвата.</translation>
+        </message>
+            <message>
+            <source>The desktop portal did not respond in time. The screen capture request was dropped.</source>
+            <translation>Портал рабочего стола не ответил вовремя. Запрос захвата отменён.</translation>
+        </message>
+        <message>
+            <source>The screen capture request was declined.</source>
+            <translation>Запрос захвата экрана отклонён.</translation>
+        </message>
+        <message>
+            <source>The desktop portal reported an error while capturing the screen.</source>
+            <translation>Портал рабочего стола сообщил об ошибке при захвате экрана.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned no image.</source>
+            <translation>Портал рабочего стола не вернул изображение.</translation>
+        </message>
+        <message>
+            <source>The desktop portal returned an unreadable location.</source>
+            <translation>Портал рабочего стола вернул недоступный путь.</translation>
+        </message>
+        <message>
+            <source>The captured image could not be read.</source>
+            <translation>Не удалось прочитать захваченное изображение.</translation>
+        </message>
+        <message>
+            <source>Cannot reach the desktop session bus.</source>
+            <translation>Не удаётся подключиться к шине сеанса рабочего стола.</translation>
+        </message>
 </context>
 </TS>
