@@ -57,6 +57,7 @@
 #include "ui/HueSaturationDialog.h"
 #include "ui/CurvesDialog.h"
 #include "ui/LevelsDialog.h"
+#include "ui/DocumentEnhanceDialog.h"
 #include "ui/ImageSizeDialog.h"
 #include "ui/CanvasSizeDialog.h"
 #include "ui/GridSettingsDialog.h"
@@ -76,6 +77,7 @@
 #include "commands/GeometryChangeCommand.h"
 
 #include "engine/Filters.h"
+#include "engine/DocumentScan.h"
 #include "engine/Geometry.h"
 #include "engine/IcoWriter.h"
 #include "engine/ImageMeta.h"
@@ -3889,6 +3891,79 @@ void MainWindow::cropToSelection()
     applyCropFromTool(m_doc->selection().bounds());
 }
 
+// ===========================================================================
+//  透视校正（文档扫描第一步）
+// ===========================================================================
+//
+//  与裁剪几乎逐行对应 —— 这不是巧合：两者都是"把所有图层换成另一组位图，
+//  换一个新画布尺寸"，收尾完全一样。区别只在几何动作本身：
+//  裁剪是平移 + 取矩形，透视是重采样 + 展平。
+//
+//  ★ 为什么这里的检查比裁剪多两条 ★
+//    ① 四角必须构成凸四边形（工具的 emitRequest 已经挡了一次，
+//       但信号是可以被别处 emit 的 —— 和内存预检同理，入口处再验一次）
+//    ② 结果尺寸必须有下限：用户可能把四个角挤在一个小角落里，
+//       suggestOutputSize 会给出 30×20 这种"展平出来是一团糊"的尺寸。
+//       低于 32px 直接拒绝并提示，比让他撤销一次更省事。
+void MainWindow::applyPerspectiveFromTool(const QPolygonF &quad, const QSize &outputSize)
+{
+    if (!m_doc || !m_commandStack)
+        return;
+
+    if (m_doc->layerCount() == 0) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("No layer to operate on"), 2500);
+        return;
+    }
+
+    // 锁定检查：与裁剪同一档（"任意图层锁定即拒绝"）。
+    // 展平会改写**所有**图层的位图，而"锁定"的语义正是"别碰这一层"。
+    const LayerList &layers = m_doc->layers();
+    for (int i = 0; i < layers.count(); ++i) {
+        const Layer *l = layers.layer(i);
+        if (l && l->isLocked()) {
+            if (m_statusBar)
+                m_statusBar->showMessage(
+                    tr("Layer \"%1\" is locked - unlock it before correcting perspective")
+                        .arg(l->name()), 3500);
+            return;
+        }
+    }
+
+    if (!scan::isQuadUsable(quad)) {
+        if (m_statusBar)
+            m_statusBar->showMessage(
+                tr("The four corners are not a valid quadrilateral - drag them apart"), 3500);
+        return;
+    }
+
+    if (outputSize.width() < 32 || outputSize.height() < 32) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("The corrected area is too small"), 3000);
+        return;
+    }
+
+    // ★ 快照必须在修改之前 ★（与裁剪同一顺序，不能颠倒）
+    const GeometryChangeCommand::Snapshot before =
+        GeometryChangeCommand::captureState(m_doc);
+
+    if (!m_doc->unwarpPerspective(quad, outputSize)) {
+        if (m_statusBar)
+            m_statusBar->showMessage(tr("Perspective correction failed"), 3000);
+        return;
+    }
+
+    commitGeometryChange(before, GeometryChangeCommand::Kind::Perspective,
+                         tr("Perspective Correction"));
+
+    if (m_statusBar) {
+        m_statusBar->showMessage(tr("Straightened to %1 × %2 px")
+                                     .arg(outputSize.width())
+                                     .arg(outputSize.height()),
+                                 3000);
+    }
+}
+
 // ============================================================================
 //  D. 图层操作
 // ============================================================================
@@ -4991,6 +5066,18 @@ void MainWindow::openLevels()
     // 两者共用 histogram::luminance()，统计口径一致 ——
     // 否则用户会在曲线里看到的峰值位置与色阶对不上。
     runAdjustment(new LevelsDialog(base, this), base, tr("Levels"));
+}
+
+void MainWindow::openDocumentEnhance()
+{
+    // 与上面三个完全同一条流程 —— 这正是把它做成 AdjustmentDialog
+    // 子类的收益：预览、取消、撤销、选区混合全部是现成的。
+    const QImage base = prepareAdjustmentSource();
+    if (base.isNull())
+        return;
+
+    runAdjustment(new DocumentEnhanceDialog(base, this), base,
+                  tr("Document Enhancement"));
 }
 
 // ---------------------------------------------------------------------------

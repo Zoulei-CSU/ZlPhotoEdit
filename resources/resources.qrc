@@ -6,6 +6,7 @@
     <file>icons/action_screen_capture.svg</file>
     <file>icons/adjust_brightness.svg</file>
     <file>icons/adjust_curves.svg</file>
+    <file>icons/adjust_docscan.svg</file>
     <file>icons/adjust_grayscale.svg</file>
     <file>icons/adjust_hue.svg</file>
     <file>icons/adjust_invert.svg</file>
@@ -76,6 +77,7 @@
     <file>icons/tool_line.svg</file>
     <file>icons/tool_magicwand.svg</file>
     <file>icons/tool_move.svg</file>
+    <file>icons/tool_perspective.svg</file>
     <file>icons/tool_rect.svg</file>
     <file>icons/tool_rectselect.svg</file>
     <file>icons/tool_text.svg</file>

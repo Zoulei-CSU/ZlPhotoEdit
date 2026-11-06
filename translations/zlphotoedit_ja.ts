@@ -1027,6 +1027,33 @@ Delete キー: 選択したポイントを削除</translation>
         <translation>無題</translation>
     </message>
 </context>
+<context>    <name>zl::DocumentEnhanceDialog</name>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="16"/>
+        <source>Document Enhancement</source>
+        <translation>文書補正</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="31"/>
+        <source>Remove Shadow</source>
+        <translation>影を除去</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="32"/>
+        <source>Darken Text</source>
+        <translation>文字を濃く</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="33"/>
+        <source>Whiten Paper</source>
+        <translation>紙を白く</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="35"/>
+        <source>Convert to black &amp;&amp; white</source>
+        <translation>白黒に変換</translation>
+    </message>
+</context>
 <context>
     <name>zl::DocumentManager</name>
     <message>
@@ -3375,6 +3402,61 @@ Recover them? Layer information is not preserved.</source>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>このビルドでは印刷できません。PDF 書き出しをお使いください</translation>
     </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="474"/>
+        <source>Document Enhancement(&amp;D)...</source>
+        <translation>文書補正(&amp;D)...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
+        <source>Flatten uneven lighting and turn a photographed page into white paper with black text</source>
+        <translation>不均一な照明を均し、撮影したページを白地に黒文字にします</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="567"/>
+        <source>Perspective Correction(&amp;P)</source>
+        <translation>パース補正(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <source>Drag the four paper corners to straighten a photographed page</source>
+        <translation>紙の四隅をドラッグして、傾いて撮影されたページをまっすぐにします</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3927"/>
+        <source>Layer "%1" is locked - unlock it before correcting perspective</source>
+        <translation>レイヤー「%1」はロックされています。パース補正の前にロックを解除してください</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3936"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>四隅が有効な四角形になっていません。離して配置してください</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
+        <source>The corrected area is too small</source>
+        <translation>補正する領域が小さすぎます</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3952"/>
+        <source>Perspective correction failed</source>
+        <translation>パース補正に失敗しました</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3960"/>
+        <source>Straightened to %1 × %2 px</source>
+        <translation>%1 × %2 px に補正しました</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <source>Perspective Correction</source>
+        <translation>パース補正</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5080"/>
+        <source>Document Enhancement</source>
+        <translation>文書補正</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3449,6 +3531,33 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
         <source>No document</source>
         <translation>ドキュメントがありません</translation>
+    </message>
+</context>
+<context>    <name>zl::PerspectiveTool</name>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.h" line="55"/>
+        <source>Perspective Correction</source>
+        <translation>パース補正</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="156"/>
+        <source>Drag a corner onto the paper corner - zoom in for precision</source>
+        <translation>角を紙の角にドラッグします。拡大するとより正確に合わせられます</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="158"/>
+        <source>Drag a corner onto the paper corner</source>
+        <translation>角を紙の角にドラッグします</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="223"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>四隅が有効な四角形になっていません。離して配置してください</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="322"/>
+        <source>%1 × %2 px</source>
+        <translation>%1 × %2 px</translation>
     </message>
 </context>
 <context>

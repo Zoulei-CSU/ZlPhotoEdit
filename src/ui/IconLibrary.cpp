@@ -286,6 +286,8 @@ QString iconNameForTool(const QString &toolId)
         {"rectselect",     "tool_rectselect"},
         {"ellipseselect",  "tool_ellipseselect"},
         {"crop",           "tool_crop"},
+        // ── 文档扫描（透视校正）──
+        {"perspective",    "tool_perspective"},
         // ── 以下是 Phase 6「绘制工具补全」要接的，图标已就位 ──
         {"bucket",         "tool_bucket"},
         {"eyedropper",     "tool_eyedropper"},

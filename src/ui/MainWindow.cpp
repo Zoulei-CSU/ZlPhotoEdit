@@ -35,6 +35,7 @@
 #include "tools/BrushTool.h"
 #include "tools/SelectionTool.h"
 #include "tools/CropTool.h"
+#include "tools/PerspectiveTool.h"
 #include "tools/BucketTool.h"
 #include "tools/ColorPickerTool.h"
 #include "tools/MagicWandTool.h"
@@ -764,6 +765,22 @@ void MainWindow::setupTools()
     connect(cropTool, &CropTool::cropRequested,
             this, &MainWindow::applyCropFromTool);
     m_toolManager->addTool(cropTool);
+
+    // ── 透视校正（文档扫描的第一步）──
+    //
+    // ★ 紧挨着裁剪注册 ★
+    //   两者是"同一类操作的两个精度档"：裁剪只能收成横平竖直的矩形，
+    //   透视能把斜着拍的纸先拉正。工具箱顺序 = 注册顺序，排在一起
+    //   用户找得到，也不会在两者之间来回穿。
+    //
+    // ★ 它同样不自己压命令 ★
+    //   拖好四角后发 perspectiveRequested()，走 commitGeometryChange
+    //   那条所有几何操作共用的收尾（快照 → 内存预检 → 压栈）。
+    //   理由与 CropTool 完全一致，见 CropTool.h 顶部第 ③ 条。
+    auto *perspectiveTool = new PerspectiveTool(nullptr, m_commandStack, m_toolManager);
+    connect(perspectiveTool, &PerspectiveTool::perspectiveRequested,
+            this, &MainWindow::applyPerspectiveFromTool);
+    m_toolManager->addTool(perspectiveTool);
 
     // ── Phase 6d：视图导航（抓手 / 缩放）──
     //

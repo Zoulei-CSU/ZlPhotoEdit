@@ -32,6 +32,7 @@
 #include <QStringList>
 #include <QSize>
 #include <QRect>
+#include <QPolygonF>
 #include <QColor>
 #include <QImage>
 #include <QIcon>
@@ -598,6 +599,9 @@ private:
     void openCurves();
     void openLevels();
 
+    // 文档增强（去阴影 / 白底黑字）。与上面几个同一条 runAdjustment 流程。
+    void openDocumentEnhance();
+
     // ── 调整对话框的统一流程 ──
     //
     // ★ 预览机制 ★
@@ -660,6 +664,16 @@ private:
     //   要到内存耗尽时才暴露。
     void applyCropFromTool(const QRect &rect);
     void cropToSelection();
+
+    // ── 透视校正（四角展平）──
+    //
+    // 工具箱的透视校正工具（P）在画布上拖好四角后发 perspectiveRequested()，
+    // 落到这里。收尾与裁剪完全一样（commitGeometryChange），
+    // 理由见上面「裁剪」那段：内存预检只能有一个入口。
+    //
+    // outputSize 由工具按四边长度算好（engine::scan::suggestOutputSize），
+    // 主窗口不重新算 —— 否则"工具显示 2480×3508、结果却是别的尺寸"。
+    void applyPerspectiveFromTool(const QPolygonF &quad, const QSize &outputSize);
 
     void flipHorizontal();
     void flipVertical();
@@ -888,6 +902,7 @@ private:
     QAction *m_actionHueSaturation = nullptr;
     QAction *m_actionCurves = nullptr;
     QAction *m_actionLevels = nullptr;
+    QAction *m_actionDocumentEnhance = nullptr;   // 调整 → 文档增强（白底黑字）
 
     QAction *m_actionImageSize = nullptr;
     QAction *m_actionCanvasSize = nullptr;
@@ -899,6 +914,7 @@ private:
     QAction *m_actionFlipH = nullptr;
     QAction *m_actionFlipV = nullptr;
     QAction *m_actionCrop = nullptr;          // 图像 → 裁剪（裁到选区包围盒）
+    QAction *m_actionPerspective = nullptr;   // 图像 → 透视校正（激活四角工具）
 
     QAction *m_actionLayerNew = nullptr;
     QAction *m_actionLayerDuplicate = nullptr;

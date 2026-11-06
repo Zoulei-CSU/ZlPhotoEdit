@@ -466,6 +466,19 @@ void MainWindow::setupActions()
     m_actionLevels->setStatusTip(tr("Adjust the tonal distribution with the histogram black/white points and midtones"));
     connect(m_actionLevels, &QAction::triggered, this, &MainWindow::openLevels);
 
+    // 文档增强：拍纸质文件"白底黑字"的一步。
+    //
+    // ★ 不配快捷键 ★
+    //   它不在"高频到要背下来"的那一档（多数人一个项目只做几次），
+    //   却会占掉一个 Ctrl+ 组合。快捷键先留给真正高频的操作。
+    m_actionDocumentEnhance = new QAction(tr("Document Enhancement(&D)..."), this);
+    m_actionDocumentEnhance->setObjectName(QStringLiteral("actionDocumentEnhance"));
+    setActionIcon(m_actionDocumentEnhance, QStringLiteral("adjust_docscan"));
+    m_actionDocumentEnhance->setStatusTip(
+        tr("Flatten uneven lighting and turn a photographed page into white paper with black text"));
+    connect(m_actionDocumentEnhance, &QAction::triggered,
+            this, &MainWindow::openDocumentEnhance);
+
     // ─────────────────────────────────────────────────────────────────────
     //  图像尺寸（图像大小 / 画布大小）
     // ─────────────────────────────────────────────────────────────────────
@@ -545,6 +558,24 @@ void MainWindow::setupActions()
     setActionIcon(m_actionCrop, QStringLiteral("tool_crop"));
     m_actionCrop->setStatusTip(tr("Crop the canvas to the bounding box of the current selection"));
     connect(m_actionCrop, &QAction::triggered, this, &MainWindow::cropToSelection);
+
+    // 透视校正：菜单只负责"把工具叫出来"，具体四角由用户在画布上拖。
+    //
+    // ★ 为什么菜单项不自己弹一个参数框 ★
+    //   与裁剪同一条理由：操作数是空间信息，只能用画布上的手柄表达。
+    //   菜单这里的作用是"让不知道怎么切工具的用户也能找到它"。
+    m_actionPerspective = new QAction(tr("Perspective Correction(&P)"), this);
+    m_actionPerspective->setObjectName(QStringLiteral("actionPerspective"));
+    setActionIcon(m_actionPerspective, QStringLiteral("tool_perspective"));
+    m_actionPerspective->setStatusTip(
+        tr("Drag the four paper corners to straighten a photographed page"));
+    connect(m_actionPerspective, &QAction::triggered, this, [this]() {
+        // 用工具 id 激活，而不是在这里 new 一个工具出来 ——
+        // 工具箱按钮与菜单项必须指向**同一个**工具实例，
+        // 否则两边的四角状态会各存一份，用户在菜单里拖完再从工具箱点一次就全丢了。
+        if (m_toolManager)
+            m_toolManager->setActiveTool(QStringLiteral("perspective"));
+    });
 
     // ─────────────────────────────────────────────────────────────────────
     //  图层
@@ -1062,6 +1093,11 @@ void MainWindow::setupMenus()
     adjustMenu->addAction(m_actionCurves);
     adjustMenu->addAction(m_actionLevels);
     adjustMenu->addSeparator();
+    // ★ 文档增强排在"色阶"之后、去色之前 ★
+    //   它本质是"色阶 + 匀光"的合成动作，与上面两项同类；
+    //   放在去色/反相（纯运算、无参数）之前，分组关系才对。
+    adjustMenu->addAction(m_actionDocumentEnhance);
+    adjustMenu->addSeparator();
     adjustMenu->addAction(m_actionGrayscale);
     adjustMenu->addAction(m_actionInvert);
 
@@ -1082,6 +1118,9 @@ void MainWindow::setupMenus()
     imageMenu->addAction(m_actionFlipV);
     imageMenu->addSeparator();
     imageMenu->addAction(m_actionCrop);
+    // 透视校正与裁剪是"一对"：裁剪收成矩形，透视把四边形拉成矩形。
+    // 排在一起，用户拍歪了纸时不会想到去"裁剪"里找。
+    imageMenu->addAction(m_actionPerspective);
 
     // ★ 菜单弹出时刷新「裁剪」的可用性 ★
     //   文档目前没有"选区已变化"信号（选区在 core 里，发信号要改 Document），

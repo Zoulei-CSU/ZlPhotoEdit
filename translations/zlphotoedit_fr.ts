@@ -1025,6 +1025,33 @@ Suppr&#xa0;: supprime le point sélectionné</translation>
         <translation>Sans titre</translation>
     </message>
 </context>
+<context>    <name>zl::DocumentEnhanceDialog</name>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="16"/>
+        <source>Document Enhancement</source>
+        <translation>Amélioration de document</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="31"/>
+        <source>Remove Shadow</source>
+        <translation>Supprimer l'ombre</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="32"/>
+        <source>Darken Text</source>
+        <translation>Renforcer le texte</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="33"/>
+        <source>Whiten Paper</source>
+        <translation>Blanchir le papier</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="35"/>
+        <source>Convert to black &amp;&amp; white</source>
+        <translation>Convertir en noir et blanc</translation>
+    </message>
+</context>
 <context>
     <name>zl::DocumentManager</name>
     <message>
@@ -3361,6 +3388,61 @@ Recover them? Layer information is not preserved.</source>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>L&apos;impression n&apos;est pas disponible dans cette version ; utilisez Exporter en PDF</translation>
     </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="474"/>
+        <source>Document Enhancement(&amp;D)...</source>
+        <translation>Amélioration de document(&amp;D)...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
+        <source>Flatten uneven lighting and turn a photographed page into white paper with black text</source>
+        <translation>Aplanir un éclairage inégal et transformer une page photographiée en papier blanc avec un texte noir</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="567"/>
+        <source>Perspective Correction(&amp;P)</source>
+        <translation>Correction de perspective(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <source>Drag the four paper corners to straighten a photographed page</source>
+        <translation>Faites glisser les quatre coins du papier pour redresser une page photographiée</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3927"/>
+        <source>Layer "%1" is locked - unlock it before correcting perspective</source>
+        <translation>Le calque « %1 » est verrouillé - déverrouillez-le avant de corriger la perspective</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3936"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>Les quatre coins ne forment pas un quadrilatère valide - écartez-les</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
+        <source>The corrected area is too small</source>
+        <translation>La zone corrigée est trop petite</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3952"/>
+        <source>Perspective correction failed</source>
+        <translation>La correction de perspective a échoué</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3960"/>
+        <source>Straightened to %1 × %2 px</source>
+        <translation>Redressé en %1 × %2 px</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <source>Perspective Correction</source>
+        <translation>Correction de perspective</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5080"/>
+        <source>Document Enhancement</source>
+        <translation>Amélioration de document</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3435,6 +3517,33 @@ Décoché&#xa0;: déplace toujours le contenu du calque actif</translation>
         <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
         <source>No document</source>
         <translation>Aucun document</translation>
+    </message>
+</context>
+<context>    <name>zl::PerspectiveTool</name>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.h" line="55"/>
+        <source>Perspective Correction</source>
+        <translation>Correction de perspective</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="156"/>
+        <source>Drag a corner onto the paper corner - zoom in for precision</source>
+        <translation>Faites glisser un coin sur le coin du papier - zoomez pour plus de précision</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="158"/>
+        <source>Drag a corner onto the paper corner</source>
+        <translation>Faites glisser un coin sur le coin du papier</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="223"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>Les quatre coins ne forment pas un quadrilatère valide - écartez-les</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="322"/>
+        <source>%1 × %2 px</source>
+        <translation>%1 × %2 px</translation>
     </message>
 </context>
 <context>

@@ -1027,6 +1027,33 @@ Delete: удалить выбранную точку</translation>
         <translation>Безымянный</translation>
     </message>
 </context>
+<context>    <name>zl::DocumentEnhanceDialog</name>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="16"/>
+        <source>Document Enhancement</source>
+        <translation>Улучшение документа</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="31"/>
+        <source>Remove Shadow</source>
+        <translation>Убрать тени</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="32"/>
+        <source>Darken Text</source>
+        <translation>Затемнить текст</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="33"/>
+        <source>Whiten Paper</source>
+        <translation>Отбелить бумагу</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="35"/>
+        <source>Convert to black &amp;&amp; white</source>
+        <translation>Преобразовать в чёрно-белое</translation>
+    </message>
+</context>
 <context>
     <name>zl::DocumentManager</name>
     <message>
@@ -3375,6 +3402,61 @@ Recover them? Layer information is not preserved.</source>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>Печать недоступна в этой сборке; используйте экспорт в PDF</translation>
     </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="474"/>
+        <source>Document Enhancement(&amp;D)...</source>
+        <translation>Улучшение документа(&amp;D)...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
+        <source>Flatten uneven lighting and turn a photographed page into white paper with black text</source>
+        <translation>Выровнять неравномерное освещение и превратить снятую страницу в белый лист с чёрным текстом</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="567"/>
+        <source>Perspective Correction(&amp;P)</source>
+        <translation>Коррекция перспективы(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <source>Drag the four paper corners to straighten a photographed page</source>
+        <translation>Перетащите четыре угла бумаги, чтобы выпрямить снятую страницу</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3927"/>
+        <source>Layer "%1" is locked - unlock it before correcting perspective</source>
+        <translation>Слой «%1» заблокирован — снимите блокировку перед коррекцией перспективы</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3936"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>Четыре угла не образуют корректный четырёхугольник — разнесите их</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
+        <source>The corrected area is too small</source>
+        <translation>Исправляемая область слишком мала</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3952"/>
+        <source>Perspective correction failed</source>
+        <translation>Не удалось выполнить коррекцию перспективы</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3960"/>
+        <source>Straightened to %1 × %2 px</source>
+        <translation>Выпрямлено до %1 × %2 пикс.</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <source>Perspective Correction</source>
+        <translation>Коррекция перспективы</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5080"/>
+        <source>Document Enhancement</source>
+        <translation>Улучшение документа</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3449,6 +3531,33 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
         <source>No document</source>
         <translation>Нет документа</translation>
+    </message>
+</context>
+<context>    <name>zl::PerspectiveTool</name>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.h" line="55"/>
+        <source>Perspective Correction</source>
+        <translation>Коррекция перспективы</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="156"/>
+        <source>Drag a corner onto the paper corner - zoom in for precision</source>
+        <translation>Перетащите угол на угол бумаги — увеличьте для точности</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="158"/>
+        <source>Drag a corner onto the paper corner</source>
+        <translation>Перетащите угол на угол бумаги</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="223"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>Четыре угла не образуют корректный четырёхугольник — разнесите их</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="322"/>
+        <source>%1 × %2 px</source>
+        <translation>%1 × %2 пикс.</translation>
     </message>
 </context>
 <context>

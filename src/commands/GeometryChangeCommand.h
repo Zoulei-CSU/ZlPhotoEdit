@@ -49,7 +49,8 @@ public:
         Rotate90,          // 90° 倍数旋转
         RotateArbitrary,   // 任意角度旋转
         Flip,              // 翻转
-        Crop               // 裁剪
+        Crop,              // 裁剪
+        Perspective        // 透视展平（四角校正）
     };
 
     // ── 构造 ──

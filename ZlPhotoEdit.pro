@@ -76,6 +76,7 @@ SOURCES += \
     src/engine/Transform.cpp \
     src/engine/Adjust.cpp \
     src/engine/Filters.cpp \
+    src/engine/DocumentScan.cpp \
     src/engine/Histogram.cpp \
     src/engine/Brush.cpp \
     src/engine/Fill.cpp \
@@ -100,6 +101,7 @@ SOURCES += \
     src/tools/BrushTool.cpp \
     src/tools/SelectionTool.cpp \
     src/tools/CropTool.cpp \
+    src/tools/PerspectiveTool.cpp \
     src/tools/BucketTool.cpp \
     src/tools/ColorPickerTool.cpp \
     src/tools/MagicWandTool.cpp \
@@ -124,6 +126,7 @@ SOURCES += \
     src/ui/CurvesDialog.cpp \
     src/ui/LevelsWidget.cpp \
     src/ui/LevelsDialog.cpp \
+    src/ui/DocumentEnhanceDialog.cpp \
     src/ui/SizeChangeDialogBase.cpp \
     src/ui/ImageSizeDialog.cpp \
     src/ui/CanvasSizeDialog.cpp \
@@ -155,6 +158,7 @@ HEADERS += \
     src/engine/Transform.h \
     src/engine/Adjust.h \
     src/engine/Filters.h \
+    src/engine/DocumentScan.h \
     src/engine/Histogram.h \
     src/engine/Brush.h \
     src/engine/Fill.h \
@@ -180,6 +184,7 @@ HEADERS += \
     src/tools/BrushTool.h \
     src/tools/SelectionTool.h \
     src/tools/CropTool.h \
+    src/tools/PerspectiveTool.h \
     src/tools/BucketTool.h \
     src/tools/ColorPickerTool.h \
     src/tools/MagicWandTool.h \
@@ -199,6 +204,7 @@ HEADERS += \
     src/ui/CurvesDialog.h \
     src/ui/LevelsWidget.h \
     src/ui/LevelsDialog.h \
+    src/ui/DocumentEnhanceDialog.h \
     src/ui/SizeChangeDialogBase.h \
     src/ui/ImageSizeDialog.h \
     src/ui/CanvasSizeDialog.h \

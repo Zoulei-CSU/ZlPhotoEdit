@@ -5,10 +5,12 @@
 #include "engine/Resample.h"
 #include "engine/Transform.h"
 #include "engine/Adjust.h"
+#include "engine/DocumentScan.h"
 #include "engine/Filters.h"
 
 #include <QFileInfo>
 #include <QPainter>
+#include <QVector>
 #include <QtMath>
 
 namespace zl {
@@ -954,6 +956,73 @@ bool Document::crop(const QRect &rect)
     markDirty();
     return true;
 }
+
+// ===========================================================================
+//  透视展平
+// ===========================================================================
+
+bool Document::unwarpPerspective(const QPolygonF &quad, const QSize &outputSize,
+                                 ResampleMethod method)
+{
+    if (quad.size() != 4 || !outputSize.isValid() || outputSize.isEmpty())
+        return false;
+    if (!scan::isQuadUsable(quad))
+        return false;
+    if (m_layers.count() == 0)
+        return false;
+
+    // ── ① 先把所有图层都算出来，再统一替换 ──
+    //
+    // ★ 不能边算边替换 ★
+    //   中途有任何一层失败（奇异矩阵），前面已经替换掉的图层就回不去了，
+    //   而画布尺寸还没换 —— 文档立刻处于"图层与画布不一致"的破坏状态。
+    //   先全算完再统一写，失败时一个像素都没动。
+    QVector<QImage> warped;
+    warped.reserve(m_layers.count());
+
+    for (int i = 0; i < m_layers.count(); ++i) {
+        const Layer *layer = m_layers.layer(i);
+        if (!layer)
+            continue;
+
+        const QImage result = scan::unwarp(layer->image(), quad, outputSize, method);
+        if (result.isNull())
+            return false;
+        warped.append(result);
+    }
+
+    // ── ② 选区蒙版也走同一条变换 ──
+    //
+    // 展平是重采样，选区的"锯齿边界"会被插值成半透明灰阶，这正确。
+    // 选区未激活（全选）时不需要变换 —— 画布换尺寸后它天然还是全选。
+    const bool hasSelection = m_selection.isActive();
+    QImage warpedMask;
+    if (hasSelection) {
+        warpedMask = scan::unwarpMask(m_selection.mask(), quad, outputSize);
+        if (warpedMask.isNull())
+            return false;
+    }
+
+    // ── ③ 落地 ──
+    int k = 0;
+    for (int i = 0; i < m_layers.count(); ++i) {
+        Layer *layer = m_layers.layer(i);
+        if (!layer)
+            continue;
+        layer->setImage(warped[k++]);
+    }
+
+    setCanvasSizeInternal(outputSize);
+
+    if (hasSelection)
+        m_selection.setMask(warpedMask);
+    else
+        m_selection.resizeCanvas(outputSize);
+
+    markDirty();
+    return true;
+}
+
 
 // ===========================================================================
 //  文件状态

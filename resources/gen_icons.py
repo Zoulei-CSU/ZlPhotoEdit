@@ -167,6 +167,17 @@ ICONS["tool_ellipseselect"] = [ellipse(12, 12, 8.5, 6.5, dash=DASH)]
 ICONS["tool_crop"] = [
     path("M6.5 2.5v15h15"), path("M2.5 6.5h15v15"),
 ]
+ICONS["tool_perspective"] = [
+    #   ★ 一个"上窄下宽"的梯形 + 四个角上的实心小方点 ★
+    #   梯形本身说明"这块区域是斜的"；四个角点说明"这四个角可以拖"。
+    #   缺了角点的话，梯形会被读成"某个几何图形"（甚至与 tool_rect 混），
+    #   而这四个点才是这个工具真正的操作对象。
+    #   透视方向取"上窄下宽"：手机拍桌面上的纸，永远是远端窄、近端宽，
+    #   方向对了，用户扫一眼就知道它是干什么的。
+    path("M6.8 5.4L17.2 5.4L20.4 18.6L3.6 18.6Z"),
+    circle(6.8, 5.4, 1.15, fill=SOLID), circle(17.2, 5.4, 1.15, fill=SOLID),
+    circle(3.6, 18.6, 1.15, fill=SOLID), circle(20.4, 18.6, 1.15, fill=SOLID),
+]
 ICONS["tool_bucket"] = [
     #   ★ 45° 斜放的桶，在 24px 下只会被读成"斜方块" ★
     #   改成正视：桶口椭圆 + 梯形桶身 + 提手 + 桶边一滴。
@@ -331,6 +342,19 @@ ICONS["adjust_levels"] = [
     rect(5.0, 13.8, 2.2, 6, fill=TINT), rect(8.0, 9.8, 2.2, 10, fill=TINT),
     rect(11.0, 5.8, 2.2, 14, fill=TINT), rect(14.0, 11.3, 2.2, 8.5, fill=TINT),
     rect(17.0, 15.3, 2.2, 4.5, fill=TINT),
+]
+ICONS["adjust_docscan"] = [
+    #   ★ 一张纸 + 三条字，纸角折起来 ★
+    #   这个图标的难点是"它必须不像别的图标"。同一菜单里已经有直方图
+    #   （adjust_levels 的柱条）、曲线（adjust_curves 的折线）、
+    #   半黑半白的圆（adjust_grayscale），都是"抽象图形"。
+    #   所以这里画一个**具体的东西**：带折角的纸 —— 轮廓独一无二，
+    #   16px 下也能与那几个区分开。
+    #   折角用 TINT 压一层，是整套图标里表示"面/厚度"的统一手法。
+    path("M5.2 3.6h9.6l4 4v12.8h-13.6z"),
+    path("M14.8 3.6v4h4", fill=TINT),
+    line(7.8, 11.0, 16.2, 11.0), line(7.8, 14.0, 16.2, 14.0),
+    line(7.8, 17.0, 12.8, 17.0),
 ]
 ICONS["adjust_grayscale"] = [
     circle(12, 12, 8.6),

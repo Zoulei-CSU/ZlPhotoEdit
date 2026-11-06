@@ -35,6 +35,7 @@
 #include <QString>
 #include <QSize>
 #include <QRect>
+#include <QPolygonF>
 
 namespace zl {
 
@@ -207,6 +208,19 @@ public:
 
     // 裁剪：取出指定矩形区域成为新画布。
     bool crop(const QRect &rect);
+
+    // 透视展平：把 quad 四角围出的四边形拉正成 outputSize 大小的新画布。
+    //
+    // quad 顺序同 engine::scan::unwarp（左上 → 右上 → 右下 → 左下）。
+    //
+    // ★ 为什么它必须在 Document 层、而不是只调一次 engine::scan::unwarp ★
+    //   与裁剪/缩放同一个理由：本工程有一条隐含不变量"每个图层位图的尺寸
+    //   恒等于画布尺寸"（画笔落点、滤镜遍历、选区蒙版全按画布坐标索引）。
+    //   展平会换画布尺寸，就必须**所有图层 + 选区**一起换，且换完尺寸一致。
+    //   只在工具里对付当前图层，会立刻破坏这条不变量，症状是其他图层
+    //   变成错位或被裁掉 —— 而且要到用户切换图层时才看得见。
+    bool unwarpPerspective(const QPolygonF &quad, const QSize &outputSize,
+                           ResampleMethod method = ResampleMethod::Bicubic);
 
     // ── 图层操作 ──
     // 这些是"原始操作"，不做任何撤销处理 —— 撤销由 commands 层包装。

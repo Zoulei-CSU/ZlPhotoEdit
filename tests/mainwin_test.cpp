@@ -78,6 +78,7 @@
 #include "commands/CommandStack.h"
 #include "tools/ToolManager.h"
 #include "tools/AbstractTool.h"
+#include "tools/PerspectiveTool.h"
 #include "core/Document.h"
 #include "core/Layer.h"
 #include "core/Selection.h"
@@ -622,6 +623,125 @@ static void testCropToSelection()
                "活动图层位图宽度 == 裁剪后的画布宽度");
     checkEqInt(doc->activeLayer()->image().height(), after.height(),
                "活动图层位图高度 == 裁剪后的画布高度");
+
+    delete w;
+}
+
+// ---------------------------------------------------------------------------
+//  [6b] 透视校正：四角 → Enter → 画布被拉正 + 可撤销
+// ---------------------------------------------------------------------------
+//  ★ 这一组盯的是"接线"，不是算法 ★
+//    展平算法在 scan_test 里逐像素验过。这里要验的是**装配**：
+//    菜单能不能把工具叫出来、工具发的信号有没有人接、收尾有没有压撤销。
+//    这三件事任何一件断了，算法再对也没用 —— 而且症状是"菜单点了没反应"
+//    或者"拉正了但撤销不回去"，很难从算法层面看出来。
+static void testPerspectiveCorrection()
+{
+    beginGroup("透视校正：菜单 → 工具 → 展平 → 撤销");
+
+    MainWindow *w = newWindow(QStringLiteral("move"));
+    CanvasView *cv = currentCanvasOf(w);
+    Document *doc = cv ? cv->document() : nullptr;
+    check(cv && doc, "拿到当前画布与文档");
+    if (!cv || !doc) {
+        delete w;
+        return;
+    }
+
+    const QSize before = doc->canvasSize();
+
+    // ── ① 菜单项存在，且能把工具叫出来 ──
+    QAction *act = w->findChild<QAction *>(QStringLiteral("actionPerspective"));
+    check(act != nullptr, "菜单里有「透视校正」动作（actionPerspective）");
+    if (!act) {
+        delete w;
+        return;
+    }
+
+    act->trigger();
+    QApplication::processEvents();
+
+    AbstractTool *active = cv->activeTool();
+    check(active != nullptr && active->id() == QLatin1String("perspective"),
+          "触发菜单后活动工具是 perspective（菜单与工具是同一个实例）");
+
+    auto *tool = qobject_cast<PerspectiveTool *>(active);
+    check(tool != nullptr, "活动工具确实是 PerspectiveTool");
+    if (!tool) {
+        delete w;
+        return;
+    }
+
+    // ── ② 默认已播种四个角（内缩 6%）──
+    const QPolygonF seeded = tool->currentQuad();
+    checkEqInt(seeded.size(), 4, "工具已播种四个角");
+    check(seeded.size() == 4 && seeded[0].x() > 0 && seeded[0].y() > 0,
+          "播种的四角在画布内缩（角柄不会有一半落在画布外）");
+
+    // ── ③ 拖左上角到画布左上角附近 ──
+    //
+    //   走真实的鼠标事件而不是直接改 m_quad：要验的正是"画布 → 工具"
+    //   这段事件派发（坐标系换算、命中测试、拖动钳制）。
+    if (seeded.size() == 4) {
+        const QPointF from = cv->imageToWidget(seeded[0]);
+        const QPointF to   = cv->imageToWidget(QPointF(4.0, 4.0));
+
+        auto send = [cv](QEvent::Type t, const QPointF &pos,
+                         Qt::MouseButton btn, Qt::MouseButtons btns) {
+            QMouseEvent e(t, pos, btn, btns, Qt::NoModifier);
+            QApplication::sendEvent(cv, &e);
+        };
+        send(QEvent::MouseButtonPress, from, Qt::LeftButton, Qt::LeftButton);
+        send(QEvent::MouseMove, to, Qt::NoButton, Qt::LeftButton);
+        send(QEvent::MouseButtonRelease, to, Qt::LeftButton, Qt::NoButton);
+        QApplication::processEvents();
+
+        const QPointF moved = tool->currentQuad().value(0);
+        check(std::abs(moved.x() - 4.0) < 2.0 && std::abs(moved.y() - 4.0) < 2.0,
+              "拖左上角后该角落在指定位置（命中测试与坐标换算都对）");
+    }
+
+    // ── ④ Enter 提交：画布真的换尺寸 ──
+    {
+        QKeyEvent press(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
+        QApplication::sendEvent(cv, &press);
+        QApplication::processEvents();
+    }
+
+    const QSize after = doc->canvasSize();
+    check(after != before, "Enter 后画布尺寸变成展平后的尺寸");
+
+    // ★ 尺寸变了不算完 —— 图层位图必须跟着换 ★
+    //   本工程的隐含不变量是"图层位图尺寸恒等于画布尺寸"。
+    //   只在 Document 里换 m_canvasSize 而忘了重采样图层，
+    //   症状是画面被裁掉一半，而尺寸断言看不出来。
+    checkEqInt(doc->activeLayer()->image().width(), after.width(),
+               "活动图层位图宽度 == 展平后的画布宽度");
+    checkEqInt(doc->activeLayer()->image().height(), after.height(),
+               "活动图层位图高度 == 展平后的画布高度");
+
+    // ── ⑤ 撤销：回到原尺寸 ──
+    //   ★ 这条是"收尾走了 commitGeometryChange"的证据 ★
+    //     若工具自己 push 了一个别的命令（或者压根没压），这里会红。
+    QAction *undo = w->findChild<QAction *>(QStringLiteral("actionUndo"));
+    check(undo != nullptr, "拿到撤销动作");
+    if (undo) {
+        undo->trigger();
+        QApplication::processEvents();
+        check(doc->canvasSize() == before, "撤销后画布回到原尺寸");
+        checkEqInt(doc->activeLayer()->image().width(), before.width(),
+                   "撤销后图层位图宽度也回到原尺寸");
+    }
+
+    // ── ⑥ 切走工具后四角作废（不偷偷执行）──
+    act->trigger();
+    QApplication::processEvents();
+    const QSize beforeSwitch = doc->canvasSize();
+    if (toolsOf(w))
+        toolsOf(w)->setActiveTool(QStringLiteral("move"));
+    QApplication::processEvents();
+    checkEqInt(doc->canvasSize().width(), beforeSwitch.width(),
+               "切走工具不会偷偷执行展平（未确认的四边形直接丢弃）");
 
     delete w;
 }
@@ -4893,6 +5013,7 @@ int main(int argc, char **argv)
     testToolInvariantSurvivesNewDocument();
     testCropMenuEnabledState();
     testCropToSelection();
+    testPerspectiveCorrection();
     testIcons();
     testIconsFollowTheme();
     testAppIdentityAndIcon();

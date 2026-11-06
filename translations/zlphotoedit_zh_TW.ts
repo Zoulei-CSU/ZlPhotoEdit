@@ -1025,6 +1025,33 @@ Delete：刪除選取點</translation>
         <translation>未命名</translation>
     </message>
 </context>
+<context>    <name>zl::DocumentEnhanceDialog</name>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="16"/>
+        <source>Document Enhancement</source>
+        <translation>文件增強</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="31"/>
+        <source>Remove Shadow</source>
+        <translation>去除陰影</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="32"/>
+        <source>Darken Text</source>
+        <translation>加深文字</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="33"/>
+        <source>Whiten Paper</source>
+        <translation>紙張提白</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/DocumentEnhanceDialog.cpp" line="35"/>
+        <source>Convert to black &amp;&amp; white</source>
+        <translation>轉為黑白</translation>
+    </message>
+</context>
 <context>
     <name>zl::DocumentManager</name>
     <message>
@@ -3362,6 +3389,61 @@ Recover them? Layer information is not preserved.</source>
         <source>Printing is unavailable in this build; use Export PDF instead</source>
         <translation>此版本不支援直接列印，請改用匯出 PDF</translation>
     </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="474"/>
+        <source>Document Enhancement(&amp;D)...</source>
+        <translation>文件增強(&amp;D)...</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="478"/>
+        <source>Flatten uneven lighting and turn a photographed page into white paper with black text</source>
+        <translation>均平不均勻的光線，把拍攝的頁面變成白紙黑字</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="567"/>
+        <source>Perspective Correction(&amp;P)</source>
+        <translation>透視校正(&amp;P)</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowActions.cpp" line="571"/>
+        <source>Drag the four paper corners to straighten a photographed page</source>
+        <translation>拖動紙的四個角，把拍歪的頁面擺正</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3927"/>
+        <source>Layer "%1" is locked - unlock it before correcting perspective</source>
+        <translation>圖層「%1」已鎖定 —— 請先解鎖再做透視校正</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3936"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>四個角不構成有效的四邊形 —— 請把它們拉開</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3942"/>
+        <source>The corrected area is too small</source>
+        <translation>校正區域太小</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3952"/>
+        <source>Perspective correction failed</source>
+        <translation>透視校正失敗</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3960"/>
+        <source>Straightened to %1 × %2 px</source>
+        <translation>已擺正為 %1 × %2 像素</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="3957"/>
+        <source>Perspective Correction</source>
+        <translation>透視校正</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/MainWindowCommands.cpp" line="5080"/>
+        <source>Document Enhancement</source>
+        <translation>文件增強</translation>
+    </message>
 </context>
 <context>
     <name>zl::MoveOptions</name>
@@ -3436,6 +3518,33 @@ Unchecked: always move the content of the active layer</source>
         <location filename="../src/ui/NavigatorPanel.cpp" line="216"/>
         <source>No document</source>
         <translation>無文件</translation>
+    </message>
+</context>
+<context>    <name>zl::PerspectiveTool</name>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.h" line="55"/>
+        <source>Perspective Correction</source>
+        <translation>透視校正</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="156"/>
+        <source>Drag a corner onto the paper corner - zoom in for precision</source>
+        <translation>把角柄拖到紙的角上 —— 放大後可拖得更準</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="158"/>
+        <source>Drag a corner onto the paper corner</source>
+        <translation>把角柄拖到紙的角上</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="223"/>
+        <source>The four corners are not a valid quadrilateral - drag them apart</source>
+        <translation>四個角不構成有效的四邊形 —— 請把它們拉開</translation>
+    </message>
+    <message>
+        <location filename="../src/tools/PerspectiveTool.cpp" line="322"/>
+        <source>%1 × %2 px</source>
+        <translation>%1 × %2 像素</translation>
     </message>
 </context>
 <context>

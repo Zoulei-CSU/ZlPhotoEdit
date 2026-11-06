@@ -42,6 +42,7 @@
 #include "ui/CurveEditor.h"
 #include "ui/LevelsDialog.h"
 #include "ui/LevelsWidget.h"
+#include "ui/DocumentEnhanceDialog.h"
 #include "ui/SizeChangeDialogBase.h"
 #include "ui/ImageSizeDialog.h"
 #include "ui/CanvasSizeDialog.h"
@@ -255,6 +256,75 @@ static void testBrightnessContrast()
     dlg.resetParams();
     check(!dlg.isChanged(), "复位后回到未修改");
     checkPixelSame(dlg.apply(src), src, 5, 5, "复位后 apply 又逐位不变");
+}
+
+// ---------------------------------------------------------------------------
+//  文档增强
+// ---------------------------------------------------------------------------
+static void testDocumentEnhance()
+{
+    std::printf("\n[文档增强] 对话框\n");
+
+    const QImage src = makeSource();
+    DocumentEnhanceDialog dlg(src);
+
+    // ── 默认参数就是"一次真实的增强"，所以这里与别的对话框相反 ──
+    //
+    // ★ 这条断言是刻意写成"应该为 true"的 ★
+    //   别的调整对话框默认 = 恒等变换，isChanged() 为 false 才不会留空记录。
+    //   而本对话框的默认（50/50/50）本来就要改画面：用户打开、看预览满意、
+    //   点确定，期望效果被应用。若照抄 false，症状是"预览里纸是白的，
+    //   点确定又变回灰的"，而且毫无提示。
+    check(dlg.isChanged(), "默认参数也算「已修改」（默认就是一次增强）");
+
+    // 先推离默认值，再复位 —— 否则复位到同一个值不会触发 valueChanged，
+    // 这条断言会假失败（测试自身的坑，不是实现的坑）。
+    checkEq(pushSliders(&dlg, 75), 3, "有三个滑块（去阴影 / 加深文字 / 提白）");
+    check(slidersMatchSpinBoxes(&dlg), "滑块与数字框双向同步");
+
+    int previews = 0;
+    QObject::connect(&dlg, &AdjustmentDialog::previewNeeded,
+                     [&previews]() { ++previews; });
+    dlg.resetParams();
+    check(previews > 0, "复位会请求预览（不是静默改值）");
+
+    // ── 参数真的被读进 apply ──
+    const scan::EnhanceParams p = dlg.params();
+    checkEq(p.shadow, 50, "复位后去阴影回到 50");
+    checkEq(p.contrast, 50, "复位后加深文字回到 50");
+    checkEq(p.whiten, 50, "复位后提白回到 50");
+    check(!p.grayscale, "复位后不勾黑白");
+
+    // ── apply 确实改了像素，但没动尺寸与 alpha ──
+    const QImage out = dlg.apply(src);
+    checkEq(out.width(), src.width(), "apply 不改变宽");
+    checkEq(out.height(), src.height(), "apply 不改变高");
+    check(rawPixel(out, 5, 5) != rawPixel(src, 5, 5), "apply 改变了像素");
+    checkEq(qAlpha(rawPixel(out, 0, 0)), 128, "增强不破坏半透明像素的 alpha");
+
+    // ── 勾上黑白 → 三通道相等 ──
+    QCheckBox *grayBox = dlg.findChild<QCheckBox *>();
+    check(grayBox != nullptr, "存在「转为黑白」勾选框");
+    if (grayBox) {
+        // 第一个 QCheckBox 是基类的「预览」，找文字里带"黑白"的那个
+        const QList<QCheckBox *> boxes = dlg.findChildren<QCheckBox *>();
+        QCheckBox *target = nullptr;
+        for (QCheckBox *b : boxes) {
+            if (b != grayBox && b->text().contains(QStringLiteral("black")))
+                target = b;
+        }
+        if (!target && boxes.size() >= 2)
+            target = boxes.last();
+
+        if (target) {
+            target->setChecked(true);
+            check(dlg.params().grayscale, "勾选后参数里 grayscale 为真");
+
+            const QRgb c = rawPixel(dlg.apply(src), 5, 5);
+            check(qRed(c) == qGreen(c) && qGreen(c) == qBlue(c),
+                  "黑白模式下三通道相等");
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -1414,6 +1484,7 @@ int main(int argc, char **argv)
     testImageSizeDialog();
     testCanvasSizeDialog();
     testRotateImageDialog();
+    testDocumentEnhance();
 
     std::printf("\n================================================\n");
     std::printf("  通过 %d 项，失败 %d 项\n", g_passed, g_failed);

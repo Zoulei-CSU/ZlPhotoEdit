@@ -148,6 +148,7 @@ moc_headers_for() {
                   src/ui/CurvesDialog.h \
                   src/ui/LevelsWidget.h \
                   src/ui/LevelsDialog.h \
+                  src/ui/DocumentEnhanceDialog.h \
                   src/ui/SizeChangeDialogBase.h \
                   src/ui/ImageSizeDialog.h \
                   src/ui/CanvasSizeDialog.h \
@@ -299,6 +300,7 @@ moc_headers_for() {
                   src/tools/BrushTool.h \
                   src/tools/SelectionTool.h \
                   src/tools/CropTool.h \
+                  src/tools/PerspectiveTool.h \
                   src/tools/BucketTool.h \
                   src/tools/MagicWandTool.h \
                   src/tools/ColorPickerTool.h \
@@ -321,6 +323,7 @@ moc_headers_for() {
                   src/ui/CurvesDialog.h \
                   src/ui/LevelsWidget.h \
                   src/ui/LevelsDialog.h \
+                  src/ui/DocumentEnhanceDialog.h \
                   src/ui/SizeChangeDialogBase.h \
                   src/ui/ImageSizeDialog.h \
                   src/ui/CanvasSizeDialog.h \
@@ -759,6 +762,19 @@ run_one() {
                 src/engine/Histogram.cpp \
                 src/engine/Filters.cpp
             ;;
+        scan)
+            # 文档扫描：透视展平 + 白底黑字增强。
+            # 与 adjust 同属"纯引擎"一档 —— 只链一个 .cpp，
+            # 不需要 Q_OBJECT、不需要 Widgets（QPainter 在 Qt5Gui 里，
+            # 而 Qt5Gui 是所有测试默认就链的）。
+            #
+            # ★ 它同时也是"引擎不依赖界面"的证据 ★
+            #   哪天有人在 DocumentScan.cpp 里 include 了 QWidget，
+            #   这里会立刻编译失败。
+            build_and_run scan_test \
+                tests/scan_test.cpp \
+                src/engine/DocumentScan.cpp
+            ;;
         ruler)
             # 标尺刻度与单位换算。**本工程里最轻的一个测试** —— 它只链
             # engine/RulerMetrics.cpp（无 Q_OBJECT、无 Widgets），
@@ -804,6 +820,7 @@ run_one() {
                 src/ui/CurvesDialog.cpp \
                 src/ui/LevelsWidget.cpp \
                 src/ui/LevelsDialog.cpp \
+                src/ui/DocumentEnhanceDialog.cpp \
                 src/ui/SizeChangeDialogBase.cpp \
                 src/ui/ImageSizeDialog.cpp \
                 src/ui/CanvasSizeDialog.cpp \
@@ -814,6 +831,7 @@ run_one() {
                 src/engine/Lut.cpp \
                 src/engine/Histogram.cpp \
                 src/engine/Filters.cpp \
+                src/engine/DocumentScan.cpp \
                 src/engine/Geometry.cpp \
                 src/engine/Resample.cpp \
                 src/core/ImageTypes.cpp
@@ -1321,6 +1339,7 @@ run_one() {
                 src/engine/Transform.cpp \
                 src/engine/Adjust.cpp \
                 src/engine/Filters.cpp \
+                src/engine/DocumentScan.cpp \
                 src/engine/Histogram.cpp \
                 src/engine/Brush.cpp \
                 src/engine/Fill.cpp \
@@ -1344,6 +1363,7 @@ run_one() {
                 src/tools/BrushTool.cpp \
                 src/tools/SelectionTool.cpp \
                 src/tools/CropTool.cpp \
+                src/tools/PerspectiveTool.cpp \
                 src/tools/BucketTool.cpp \
                 src/tools/ColorPickerTool.cpp \
                 src/tools/MagicWandTool.cpp \
@@ -1366,6 +1386,7 @@ run_one() {
                 src/ui/CurvesDialog.cpp \
                 src/ui/LevelsWidget.cpp \
                 src/ui/LevelsDialog.cpp \
+                src/ui/DocumentEnhanceDialog.cpp \
                 src/ui/SizeChangeDialogBase.cpp \
                 src/ui/ImageSizeDialog.cpp \
                 src/ui/CanvasSizeDialog.cpp \
@@ -1407,6 +1428,7 @@ else
     run_one fill
     run_one selection
     run_one adjust
+    run_one scan
     run_one ui_smoke
     run_one geometry
     run_one perf
